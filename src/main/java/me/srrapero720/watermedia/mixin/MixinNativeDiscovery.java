@@ -31,9 +31,15 @@ public abstract class MixinNativeDiscovery {
 
     @Shadow protected abstract boolean tryLoadingLibrary();
 
-    @Inject(method = "discover", at = @At(value = "INVOKE", target = "Luk/co/caprica/vlcj/factory/discovery/NativeDiscovery;tryLoadingLibrary()Z", ordinal = 0, remap = false), cancellable = true)
-    private void injectDiscover(CallbackInfoReturnable<Boolean> cir) {
-        if (!alreadyFound) {
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public final boolean discover() {
+        if (alreadyFound) {
+            return true;
+        } else {
             for (NativeDiscoveryStrategy discoveryStrategy : discoveryStrategies) {
                 if (discoveryStrategy.supported()) {
                     String path = discoveryStrategy.discover();
@@ -47,25 +53,21 @@ public abstract class MixinNativeDiscovery {
                             discoveredPath = path;
                             onFound(path, discoveryStrategy);
                             alreadyFound = true;
-                            cir.setReturnValue(true);
-                            return;
+                            return true;
                         } else {
-                            if (attemptFix(path, discoveryStrategy))
+                            if(attemptFix(path, discoveryStrategy))
                                 continue;
                             // We have to stop here, because we already added a search path for the native library and
                             // any further search paths we add will be tried AFTER the one that already failed - the
                             // subsequent directories we may like to try will never actually be tried
                             onFailed(path, discoveryStrategy);
-                            cir.setReturnValue(false);
-                            return;
+                            return false;
                         }
                     }
                 }
             }
             onNotFound();
-            cir.setReturnValue(false);
-        } else {
-            cir.setReturnValue(true);
+            return false;
         }
     }
 
