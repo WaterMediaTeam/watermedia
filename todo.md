@@ -1,17 +1,20 @@
 # TODO LIST
-- Add to gradle all required libraries - Status: Done ✅
+- Add to gradle all required libraries ``Status: Done ✅``
   - https://github.com/sealedtx/java-youtube-downloader
   - https://github.com/walkyst/lavaplayer-fork
   - https://github.com/aikaterna/lavaplayer-natives
   - https://github.com/CreativeMD/vlcj
   - https://github.com/CreativeMD/vlcj-natives
   - https://github.com/mpatric/mp3agic
-- Shadow all dependencies to jar with different package (me.srrapero720.<library-name>) - Status: Done ✅
-- Migrate to Parchment mappings - Status: Done ✅
-- Add support to fabric (main class)
-- Wrap required binaries in resources folder
+- Shadow/Relocate package of dependencies (me.srrapero720.<library-name>) ``Status: Done ✅``
+- Migrate to Parchment mappings``Status: Done ✅``
+- Add fabric to gradle ``Status: Waiting``
+- Make classes for each loader ``Status: Waiting``
+- Create a mixin based on these commids (SrRapero720) ``Status: Waiting``
+  - https://github.com/CreativeMD/vlcj/commit/0d26cae33082b1783fa4057776a07f9d857037e6
+- Wrap required binaries in resources folder ``Status: Waiting``
 - make an unzip impl to extract all binaries in ``config/watermedia/bins/<binaries-dir>``
-- Make a loader for all libraries (before mod-loading state)
+- Handle pre-loading state to load API
 - Creates a LazyAPI to testings (make sure all works properly).
 - Makes a LibVLC discover (first search into windows/mac dirs, if no founds bins then loads wrapped bins)
 - ...

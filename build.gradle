@@ -1,33 +1,33 @@
 buildscript {
     repositories {
+        jcenter()
+        mavenCentral()
+        maven { url = 'https://repo.spongepowered.org/maven' }
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://maven.parchmentmc.org' }
-        mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath "org.spongepowered:mixingradle:0.7-SNAPSHOT"
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 
 plugins {
-    id 'eclipse'
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '7.1.2' // Add this line
 }
+
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
-
-
-version = '1.0'
-group = 'me.srrapero720.watermedia' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'watermedia'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '2022.08.07-1.18.2'
+    mappings channel: 'parchment', version: '2022.11.06-1.18.2'
 
     runs {
         client {
@@ -37,6 +37,8 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             property 'forge.enabledGameTestNamespaces', 'watermedia'
+            arg '--mixin.config'
+            arg 'watermedia.mixin.json'
 
             mods {
                 watermedia {
@@ -50,8 +52,9 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
             property 'forge.enabledGameTestNamespaces', 'watermedia'
+            arg '--mixin.config'
+            arg 'watermedia.mixin.json'
 
             mods {
                 watermedia {
@@ -65,15 +68,20 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven { url 'https://jitpack.io' }
+    jcenter()
+    mavenCentral()
+    maven { url "https://repo.spongepowered.org/maven" }
+    maven { url "https://maven.tterrag.com/" }
     maven {
-        name = 'Sponge / Mixin'
-        url = 'https://repo.spongepowered.org/repository/maven-public/'
+        url "https://www.cursemaven.com"
+        content { includeGroup "curse.maven" }
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.2.0'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     implementation 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     implementation 'com.github.walkyst:lavaplayer-fork:1.4.1'
@@ -101,18 +109,20 @@ shadowJar {
     relocate 'uk.co.caprica', 'me.srrapero720.caprica'
 }
 
+mixin { add sourceSets.main, "watermedia.mixin-refmap.json" }
+
 // Make the reobfJar task depend on shadowJar
 tasks.build.dependsOn shadowJar
 
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "watermedia",
-                "Specification-Vendor"    : "srrapero720",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Specification-Title"     : project.name,
+                "Specification-Vendor"    : project.author,
+                "Specification-Version"   : project.version, // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "srrapero720",
+                "Implementation-Vendor"   : project.author,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
