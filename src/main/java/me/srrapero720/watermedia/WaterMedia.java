@@ -6,8 +6,8 @@ package me.srrapero720.watermedia;
  */
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WaterMedia {
-    public static WaterMedia self;
-    public static RuntimeException state;
+    private static volatile WaterMedia self;
+    private static RuntimeException state;
 
     /**
      * Get a WaterMedia ready instance
@@ -18,8 +18,13 @@ public class WaterMedia {
      * @throws IllegalStateException if instance is null and if loading state failed
      */
     public static WaterMedia get() {
-        if (self == null && !load()) throw new IllegalMediaLoadingState();
-        return self;
+        var instance = self;
+        if (instance != null) return instance;
+
+        synchronized(WaterMedia.class) {
+            if (self == null && !load()) throw new IllegalMediaLoadingState();
+            return self;
+        }
     }
 
     /**
@@ -28,7 +33,7 @@ public class WaterMedia {
      * tries to load everything if isn't loaded, but if cant load anything then throws a IllegalStateException
      * @return Library load state (true if is loaded)
      */
-    public static boolean load() {
+    private static boolean load() {
         if (self != null) return true;
         self = new WaterMedia();
         // REST OF CODE
