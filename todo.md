@@ -1,13 +1,13 @@
 # TODO LIST
-- Add to gradle all required libraries - Status: none
+- Add to gradle all required libraries - Status: Done ✅
   - https://github.com/sealedtx/java-youtube-downloader
   - https://github.com/walkyst/lavaplayer-fork
   - https://github.com/aikaterna/lavaplayer-natives
   - https://github.com/CreativeMD/vlcj
   - https://github.com/CreativeMD/vlcj-natives
   - https://github.com/mpatric/mp3agic
-- Shadow all dependencies to jar with different package (me.srrapero720.<library-name>)
-- Migrate to Parchment mappings
+- Shadow all dependencies to jar with different package (me.srrapero720.<library-name>) - Status: Done ✅
+- Migrate to Parchment mappings - Status: Done ✅
 - Add support to fabric (main class)
 - Wrap required binaries in resources folder
 - make a unzip impl to extract all binaries in ``config/watermedia/bins/<binaries-dir>``
