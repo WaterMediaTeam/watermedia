@@ -5,7 +5,7 @@ package me.srrapero720.watermedia;
  * This is loader-safe, because each mod-loader is a IWaterMedia.
  */
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-public abstract class WaterMedia {
+public class WaterMedia {
     public static WaterMedia self;
     public static RuntimeException state;
 
@@ -30,11 +30,12 @@ public abstract class WaterMedia {
      */
     public static boolean load() {
         if (self != null) return true;
+        self = new WaterMedia();
         // REST OF CODE
         return false;
     }
 
-    static void fakeEvent() {
+    void onFakeEvent() {
         // Como deben verse los handlers para X cosa
     }
 
