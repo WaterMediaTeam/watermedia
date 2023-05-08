@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "waterframes",
+  "version": "${version}",
+
+  "name": "WATERFrAMES",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "SrRapero720",
+    "Goedix"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "pack.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.srrapero720.watermedia.FabricMedia"
+    ]
+  },
+  "mixins": [
+    "watermedia.mixin.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "fabric-api": "*",
+    "minecraft": "~1.19.4",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

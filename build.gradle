@@ -2,8 +2,10 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url = "https://maven.fabricmc.net/" }
+        maven { url = "https://maven.architectury.dev/" }
+        maven { url = "https://maven.minecraftforge.net/" }
         maven { url = 'https://repo.spongepowered.org/maven' }
-        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
@@ -80,8 +82,11 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.2.0'
+    minecraft "net.minecraftforge:forge:${project.mcV}-${project.fgV}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    // FABRIC LOADER
+    implementation "net.fabricmc:fabric-loader:0.14.19"
 
     implementation 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     implementation 'com.github.walkyst:lavaplayer-fork:1.4.1'
@@ -95,6 +100,13 @@ dependencies {
     implementation("uk.co.caprica:vlcj-natives:5.0.0-SNAPSHOT") {
         exclude group: 'net.java.dev.jna', module: 'jna-jpms'
         exclude group: 'net.java.dev.jna', module: 'jna-platform-jpms'
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
     }
 }
 
@@ -125,6 +137,9 @@ jar {
                 "Implementation-Vendor"   : project.author,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
+    }
+    from("LICENSE") {
+        rename { "${it}_${base.archivesName.get()}"}
     }
 }
 
