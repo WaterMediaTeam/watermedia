@@ -10,7 +10,7 @@
 - Migrate to Parchment mappings - Status: Done ✅
 - Add support to fabric (main class)
 - Wrap required binaries in resources folder
-- make a unzip impl to extract all binaries in ``config/watermedia/bins/<binaries-dir>``
+- make an unzip impl to extract all binaries in ``config/watermedia/bins/<binaries-dir>``
 - Make a loader for all libraries (before mod-loading state)
 - Creates a LazyAPI to testings (make sure all works properly).
 - Makes a LibVLC discover (first search into windows/mac dirs, if no founds bins then loads wrapped bins)
