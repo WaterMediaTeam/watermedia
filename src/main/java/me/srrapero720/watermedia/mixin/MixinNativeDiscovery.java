@@ -1,6 +1,7 @@
 package me.srrapero720.watermedia.mixin;
 
 import com.sun.jna.NativeLibrary;
+import me.srrapero720.watermedia.vlc.BetterNativeDiscovery;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -16,8 +17,7 @@ import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 public abstract class MixinNativeDiscovery {
 
     @Shadow private static boolean alreadyFound;
-    @Final
-    @Shadow private Iterable<NativeDiscoveryStrategy> discoveryStrategies;
+    @Final @Shadow private Iterable<NativeDiscoveryStrategy> discoveryStrategies;
     @Shadow private NativeDiscoveryStrategy successfulStrategy;
     @Shadow private String discoveredPath;
 
@@ -32,8 +32,8 @@ public abstract class MixinNativeDiscovery {
     @Shadow protected abstract boolean tryLoadingLibrary();
 
     /**
-     * @author
-     * @reason
+     * @author SrRapero720, Goedix
+     * @reason You shouldn't do mixins on our libraries, btw, we just "try to fix" discovery to continue discovering.
      */
     @Overwrite
     public final boolean discover() {
@@ -55,8 +55,12 @@ public abstract class MixinNativeDiscovery {
                             alreadyFound = true;
                             return true;
                         } else {
-                            if(attemptFix(path, discoveryStrategy))
-                                continue;
+                            // Ignore this warning
+                            // Mixin a class makes it a instance of the mixed class
+                            // Extending the mixed class keeps extending by this class
+                            if (((Object) this instanceof BetterNativeDiscovery nat)) {
+                                if (nat.attemptFix(path, discoveryStrategy)) continue;
+                            }
                             // We have to stop here, because we already added a search path for the native library and
                             // any further search paths we add will be tried AFTER the one that already failed - the
                             // subsequent directories we may like to try will never actually be tried
@@ -69,10 +73,5 @@ public abstract class MixinNativeDiscovery {
             onNotFound();
             return false;
         }
-    }
-
-    public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
-        // Your implementation here
-        return false;
     }
 }
