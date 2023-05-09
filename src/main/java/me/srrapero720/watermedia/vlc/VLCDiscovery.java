@@ -19,6 +19,7 @@ public class VLCDiscovery {
     public static volatile MediaPlayerFactory factory;
     private static Field searchPaths;
     private static Field libraries;
+
     
     public static boolean isLoaded() {
         return loaded;
@@ -47,7 +48,7 @@ public class VLCDiscovery {
             successful = discovery.discover();
             loaded = true;
             if (successful) {
-                factory = new MediaPlayerFactory("--quiet");
+                factory = new MediaPlayerFactory("--no-metadata-network-access", "--file-logging", "--logfile", "logs/vlc.log", "--logmode", "text", "--verbose", "2", "--no-quiet");
                 LOGGER.info("Loaded VLC in '{}'", discovery.discoveredPath());
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> factory.release()));
             } else

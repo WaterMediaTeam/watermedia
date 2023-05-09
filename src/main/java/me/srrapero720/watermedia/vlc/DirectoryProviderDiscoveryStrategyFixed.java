@@ -40,7 +40,7 @@ import java.util.*;
  * Provider implementations have a priority. All of the standard provider implementations have a priority &lt; 0, see
  * {@link DiscoveryProviderPriority}. A client application with its own provider implementations can return a priority
  * value as appropriate to ensure their own provider is used before or after the other implementations. */
-abstract public class DirectoryProviderDiscoveryStrategyFixed extends BaseNativeDiscoveryStrategy {
+public abstract class DirectoryProviderDiscoveryStrategyFixed extends BaseNativeDiscoveryStrategy {
     
     /** Service loader for the directory provider implementations. */
     private static final List<DiscoveryDirectoryProvider> directoryProviders = Arrays.asList(

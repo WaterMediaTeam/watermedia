@@ -22,13 +22,9 @@ public abstract class MixinNativeDiscovery {
     @Shadow private String discoveredPath;
 
     @Shadow protected abstract void onFound(String path, NativeDiscoveryStrategy strategy);
-
     @Shadow protected abstract void onFailed(String path, NativeDiscoveryStrategy strategy);
-
     @Shadow protected abstract void onNotFound();
-
     @Shadow protected abstract void tryPluginPath(String path, NativeDiscoveryStrategy discoveryStrategy);
-
     @Shadow protected abstract boolean tryLoadingLibrary();
 
     /**
