@@ -58,7 +58,7 @@ public abstract class MixinNativeDiscovery {
                             // Ignore this warning
                             // Mixin a class makes it a instance of the mixed class
                             // Extending the mixed class keeps extending by this class
-                            if (((Object) this instanceof BetterNativeDiscovery nat)) {
+                            if ((Object) this instanceof BetterNativeDiscovery nat) {
                                 if (nat.attemptFix(path, discoveryStrategy)) continue;
                             }
                             // We have to stop here, because we already added a search path for the native library and

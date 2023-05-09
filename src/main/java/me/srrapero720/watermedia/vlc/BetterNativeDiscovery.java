@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import com.sun.jna.NativeLibrary;
 import me.srrapero720.watermedia.tools.ReflectTools;
 import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.Overwrite;
 import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
@@ -16,9 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 public class BetterNativeDiscovery extends NativeDiscovery {
-    private static final Logger LOG = LogUtils.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static Field searchPaths;
     private static Field libraries;
+
+    public BetterNativeDiscovery(NativeDiscoveryStrategy... discoveryStrategies) {
+        super(discoveryStrategies);
+    }
 
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
@@ -33,9 +36,21 @@ public class BetterNativeDiscovery extends NativeDiscovery {
             paths.remove(RuntimeUtil.getLibVlcCoreLibraryName());
             libs.remove(RuntimeUtil.getLibVlcLibraryName());
             paths.remove(RuntimeUtil.getLibVlcLibraryName());
-            LOG.info("Failed to load VLC in '{}'", path);
+            LOGGER.info("Failed to load VLC in '{}'", path);
             return true;
-        } catch (IllegalArgumentException | IllegalAccessException e) {}
+        } catch (IllegalArgumentException | IllegalAccessException ignored) {}
         return false;
+    }
+
+    @Override
+    protected void onFailed(String path, NativeDiscoveryStrategy strategy) {
+        LOGGER.info("Failed to load VLC in '{}' stop searching", path);
+        super.onFailed(path, strategy);
+    }
+
+    @Override
+    protected void onNotFound() {
+        LOGGER.info("Could not find VLC in any of the given paths");
+        super.onNotFound();
     }
 }
