@@ -13,7 +13,8 @@ import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 
-@Mixin(NativeDiscovery.class)
+// When a class isn't obfuscated requires turn off remap
+@Mixin(value = NativeDiscovery.class, remap = false)
 public abstract class MixinNativeDiscovery {
 
     @Shadow private static boolean alreadyFound;
