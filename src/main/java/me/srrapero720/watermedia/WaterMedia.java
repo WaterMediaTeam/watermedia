@@ -1,5 +1,7 @@
 package me.srrapero720.watermedia;
 
+import me.srrapero720.watermedia.vlc.VLC;
+
 /**
  * Here goes all required methods to load WATERMeDIA
  * This is loader-safe, because each mod-loader is a IWaterMedia.
@@ -36,8 +38,12 @@ public class WaterMedia {
     private static boolean load() {
         if (self != null) return true;
         self = new WaterMedia();
+
+        if (!VLC.load()) return false;
+//        if (!LavaPlayer.load()) return false;
+
         // REST OF CODE
-        return false;
+        return true;
     }
 
     void onFakeEvent() {
