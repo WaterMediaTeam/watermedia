@@ -10,7 +10,7 @@ public class ShutdownHook extends Thread {
     @Override
     public void run() {
         LOGGER.info("Shutdown VLC");
-        if (VLCDiscovery.isAvailable()) VLCDiscovery.factory.release();
+        if (VLCDiscovery.isReady()) VLCDiscovery.factory.release();
         LOGGER.info("Shutdown finished");
     }
 }
