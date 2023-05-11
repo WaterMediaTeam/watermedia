@@ -27,6 +27,19 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
+minecraft.runs.all {
+    // Tell forge to include your libraries in the classpath
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+
+
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     mappings channel: 'parchment', version: '2022.11.06-1.18.2'
@@ -87,16 +100,16 @@ dependencies {
     // FABRIC LOADER
     implementation "net.fabricmc:fabric-loader:0.14.19"
 
-    implementation 'com.github.sealedtx:java-youtube-downloader:3.2.3'
-    implementation 'com.github.walkyst:lavaplayer-fork:1.4.1'
-    implementation 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'
-    implementation 'com.mpatric:mp3agic:0.9.1'
-    implementation("uk.co.caprica:vlcj:5.0.0-SNAPSHOT") {
+    library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
+    library 'com.github.walkyst:lavaplayer-fork:1.4.1'
+    library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'
+    library 'com.mpatric:mp3agic:0.9.1'
+    library("uk.co.caprica:vlcj:5.0.0-SNAPSHOT") {
         exclude group: 'net.java.dev.jna', module: 'jna-jpms'
         exclude group: 'net.java.dev.jna', module: 'jna-platform-jpms'
     }
 
-    implementation("uk.co.caprica:vlcj-natives:5.0.0-SNAPSHOT") {
+    library("uk.co.caprica:vlcj-natives:5.0.0-SNAPSHOT") {
         exclude group: 'net.java.dev.jna', module: 'jna-jpms'
         exclude group: 'net.java.dev.jna', module: 'jna-platform-jpms'
     }
@@ -110,7 +123,7 @@ processResources {
 }
 
 shadowJar {
-    configurations = [project.configurations.runtimeClasspath]
+    configurations = [project.configurations.library]
 
     // Add relocation rules for each dependency
     relocate 'com.github.sealedtx', 'me.srrapero720.sealedtx'
