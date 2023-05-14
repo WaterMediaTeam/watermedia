@@ -100,7 +100,6 @@ dependencies {
     // FABRIC LOADER
     implementation "net.fabricmc:fabric-loader:0.14.19"
 
-    library 'net.java.dev.jna:jna:5.13.0'
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     library 'com.github.walkyst:lavaplayer-fork:1.4.1'
     library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'
