@@ -5,8 +5,12 @@ import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
 import java.net.URL;
 
 public class GoogleDrive {
-    private final String URI;
+    // Hey there, good looking?
+    // Probably you want to use this, but no do that
+    // You can make your own free key... or even use WATERMeDIA (contains the same key but you need to use as dependency)
+    // help me sharing my mod and i will help you making more fancy code to steal, FOR FREE!
     private static final String apiKey = "AIzaSyBiFNT6TTo506kCYYwA2NHqs36TlXC1DMo";
+    private final String URI;
 
     public GoogleDrive(String googleDriveLink) { this.URI = constructApiUrl(googleDriveLink, apiKey); }
     public String get() { return URI; }
