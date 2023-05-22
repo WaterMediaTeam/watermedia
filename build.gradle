@@ -101,17 +101,21 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:0.14.19"
 
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
-    library 'com.github.walkyst:lavaplayer-fork:1.4.1'
+    library ('com.github.walkyst:lavaplayer-fork:1.4.1') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
     library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'
     library 'com.mpatric:mp3agic:0.9.1'
     library("uk.co.caprica:vlcj:5.0.0-SNAPSHOT") {
-        exclude group: 'net.java.dev.jna', module: 'jna-jpms'
-        exclude group: 'net.java.dev.jna', module: 'jna-platform-jpms'
+        exclude group: 'net.java.dev.jna', module: 'jna'
+        exclude group: 'com.sun.jna', module: 'jna'
+        exclude group: 'net.java.dev.jna', module: 'jna-platform'
     }
 
     library("uk.co.caprica:vlcj-natives:5.0.0-SNAPSHOT") {
-        exclude group: 'net.java.dev.jna', module: 'jna-jpms'
-        exclude group: 'net.java.dev.jna', module: 'jna-platform-jpms'
+        exclude group: 'net.java.dev.jna', module: 'jna'
+        exclude group: 'com.sun.jna', module: 'jna'
+        exclude group: 'net.java.dev.jna', module: 'jna-platform'
     }
 }
 
@@ -171,5 +175,6 @@ publishing {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+    it.options.encoding = 'UTF-8'
+    it.options.release = 17
 }
