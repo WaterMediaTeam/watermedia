@@ -2,6 +2,7 @@ package me.srrapero720.watermedia;
 
 import com.mojang.logging.LogUtils;
 import me.srrapero720.watermedia.vlc.VLC;
+import me.srrapero720.watermedia.vlc.util.VLCShutdownHook;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -23,6 +24,9 @@ public class WaterMedia {
 	public static boolean load(File gameDir) {
 		if (!VLC.load(gameDir)) return false;
 //        if (!LavaPlayer.load()) return false;
+
+		// SHUTDOWN HOOKS
+		Runtime.getRuntime().addShutdownHook(new VLCShutdownHook());
 		return true;
 	}
 }

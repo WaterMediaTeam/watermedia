@@ -5,10 +5,10 @@ import me.srrapero720.watermedia.vlc.VLC;
 import org.slf4j.Logger;
 
 // TODO: added as working hook
-public class ShutdownHook extends Thread {
+public class VLCShutdownHook extends Thread {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public ShutdownHook() {
+    public VLCShutdownHook() {
         super();
         this.setDaemon(true);
         this.setName("VLC-ShutdownHook");
