@@ -8,6 +8,12 @@ import org.slf4j.Logger;
 public class ShutdownHook extends Thread {
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    public ShutdownHook() {
+        super();
+        this.setDaemon(true);
+        this.setName("VLC-ShutdownHook");
+    }
+
     @Override
     public void run() {
         LOGGER.info("Shutdown VLC");
