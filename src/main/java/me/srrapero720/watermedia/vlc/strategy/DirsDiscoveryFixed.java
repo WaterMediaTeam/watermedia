@@ -17,13 +17,16 @@
  * Copyright 2009-2022 Caprica Software Limited.
  */
 
-package me.srrapero720.watermedia.vlc;
+package me.srrapero720.watermedia.vlc.strategy;
 
+import me.srrapero720.watermedia.vlc.LocalFileDiscoveryDirectoryProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.factory.discovery.provider.*;
 import uk.co.caprica.vlcj.factory.discovery.strategy.BaseNativeDiscoveryStrategy;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.util.*;
 
@@ -40,7 +43,7 @@ import java.util.*;
  * Provider implementations have a priority. All of the standard provider implementations have a priority &lt; 0, see
  * {@link DiscoveryProviderPriority}. A client application with its own provider implementations can return a priority
  * value as appropriate to ensure their own provider is used before or after the other implementations. */
-public abstract class DirectoryProviderDiscoveryStrategyFixed extends BaseNativeDiscoveryStrategy {
+public abstract class DirsDiscoveryFixed extends BaseNativeDiscoveryStrategy {
     
     /** Service loader for the directory provider implementations. */
     private static final List<DiscoveryDirectoryProvider> directoryProviders = Arrays.asList(
@@ -61,7 +64,7 @@ public abstract class DirectoryProviderDiscoveryStrategyFixed extends BaseNative
      *            filename patterns to search for, as regular expressions
      * @param pluginPathFormats
      *            directory name templates used to find the VLC plugin directory, printf style. */
-    public DirectoryProviderDiscoveryStrategyFixed(String[] filenamePatterns, String[] pluginPathFormats) {
+    public DirsDiscoveryFixed(String[] filenamePatterns, String[] pluginPathFormats) {
         super(filenamePatterns, pluginPathFormats);
     }
     
@@ -87,8 +90,11 @@ public abstract class DirectoryProviderDiscoveryStrategyFixed extends BaseNative
     
     @Contract("_ -> param1")
     private @NotNull List<DiscoveryDirectoryProvider> sort(@NotNull List<DiscoveryDirectoryProvider> providers) {
+        // TODO: add a ENV CHECK to order local as first on DEV and ProgramFiles dir on PROD
+
         providers.sort((a1, a2) -> a2.priority() - a1.priority());
 //        providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
+        providers.forEach(value -> LOGGER.info("Provider detected ({}) {}", providers.indexOf(value), value.getClass().getSimpleName()));
         return providers;
     }
     

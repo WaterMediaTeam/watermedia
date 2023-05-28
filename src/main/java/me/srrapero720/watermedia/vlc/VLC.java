@@ -30,7 +30,7 @@ public class VLC {
         if (state.equals(Semaphore.READY)) return true;
 
         return ThreadUtil.tryAndReturn((defaultVar) -> {
-            discovery = new BetterNativeDiscovery(new WindowsNativeFixed(), new MacOsNativeFixed(), new LinuxNativeFixed());
+            discovery = new NativeDiscovery(new WindowsNativeFixed(), new MacOsNativeFixed(), new LinuxNativeFixed());
             if (discovery.discover()) {
                 onLightUpdate(Semaphore.READY);
                 factory = new MediaPlayerFactory("--no-metadata-network-access", "--file-logging", "--logfile", "logs/vlc.log", "--logmode", "text", "--verbose", "2", "--no-quiet");

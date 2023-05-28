@@ -152,6 +152,7 @@ public class NativeDiscovery {
             searchPaths = ReflectTools.field(NativeLibrary.class, "searchPaths");
             libraries = ReflectTools.field(NativeLibrary.class, "libraries");
         }
+        LOGGER.info("Failed to load VLC in '{}' using '{}'", path, discoveryStrategy.getClass().getSimpleName());
         try {
             Map<String, Reference<NativeLibrary>> libs = (Map<String, Reference<NativeLibrary>>) libraries.get(null);
             Map<String, List<String>> paths = (Map<String, List<String>>) searchPaths.get(null);
@@ -159,7 +160,6 @@ public class NativeDiscovery {
             paths.remove(RuntimeUtil.getLibVlcCoreLibraryName());
             libs.remove(RuntimeUtil.getLibVlcLibraryName());
             paths.remove(RuntimeUtil.getLibVlcLibraryName());
-            LOGGER.info("Failed to load VLC in '{}'", path);
             return true;
         } catch (IllegalArgumentException | IllegalAccessException ignored) {}
         return false;
@@ -244,6 +244,7 @@ public class NativeDiscovery {
      * @param strategy discovery strategy that found the native libraries
      */
     protected void onFound(String path, NativeDiscoveryStrategy strategy) {
+        LOGGER.info("Founded VLC in '{}' using '{}'", path, strategy.getClass().getSimpleName());
     }
 
     /**
@@ -255,12 +256,14 @@ public class NativeDiscovery {
      * @param strategy discovery strategy that found, but failed to load, the native library
      */
     protected void onFailed(String path, NativeDiscoveryStrategy strategy) {
+        LOGGER.info("Failed to load VLC in '{}' using '{}' stop searching", path, strategy.getClass().getSimpleName());
     }
 
     /**
      * Template method invoked if the native libraries could not be found by any known discovery strategy.
      */
     protected void onNotFound() {
+        LOGGER.info("Could not find VLC in any of the given paths");
     }
 
 }

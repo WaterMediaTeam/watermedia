@@ -19,12 +19,11 @@
 
 package me.srrapero720.watermedia.vlc.strategy;
 
-import me.srrapero720.watermedia.vlc.DirectoryProviderDiscoveryStrategyFixed;
 import uk.co.caprica.vlcj.binding.lib.LibC;
 import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 
 /** Default implementation of a native discovery strategy that searches directories on the Windows operating system. */
-public class WindowsNativeFixed extends DirectoryProviderDiscoveryStrategyFixed {
+public class WindowsNativeFixed extends DirsDiscoveryFixed {
     
     private static final String[] FILENAME_PATTERNS = new String[] { "libvlc\\.dll", "libvlccore\\.dll" };
     
