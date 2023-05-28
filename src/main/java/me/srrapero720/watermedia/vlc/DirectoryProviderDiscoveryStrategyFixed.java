@@ -87,7 +87,8 @@ public abstract class DirectoryProviderDiscoveryStrategyFixed extends BaseNative
     
     @Contract("_ -> param1")
     private @NotNull List<DiscoveryDirectoryProvider> sort(@NotNull List<DiscoveryDirectoryProvider> providers) {
-        providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
+        providers.sort((a1, a2) -> a2.priority() - a1.priority());
+//        providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
         return providers;
     }
     

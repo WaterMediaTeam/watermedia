@@ -9,15 +9,22 @@ import org.slf4j.Logger;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
+import java.io.File;
+
 public class VLC {
     public enum Semaphore { FAILED, UNLOADED, LOADING, READY }
     private static final Logger LOGGER = LogUtils.getLogger();
     private static Semaphore state = Semaphore.UNLOADED;
     private static NativeDiscovery discovery;
-    public static volatile MediaPlayerFactory factory;
+    public static MediaPlayerFactory factory;
 
     public static Semaphore getLightState() { return state; }
     private static void onLightUpdate(Semaphore state) { VLC.state = state; }
+
+    public static boolean load(File gameDir) {
+        ResourceExtractor.extract(gameDir);
+        return load();
+    }
 
     public static boolean load() {
         if (state.equals(Semaphore.READY)) return true;

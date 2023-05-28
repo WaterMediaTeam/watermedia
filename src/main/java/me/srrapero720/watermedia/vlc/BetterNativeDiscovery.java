@@ -8,7 +8,6 @@ import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 
-
 import java.lang.ref.Reference;
 import java.lang.reflect.Field;
 import java.util.List;

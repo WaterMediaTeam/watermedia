@@ -106,24 +106,6 @@ dependencies {
     }
     library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'
     library 'com.mpatric:mp3agic:0.9.1'
-    library("uk.co.caprica:vlcj:5.0.0-SNAPSHOT") {
-        exclude group: 'net.java.dev.jna', module: 'jna'
-        exclude group: 'com.sun.jna', module: 'jna'
-        exclude group: 'net.java.dev.jna', module: 'jna-platform'
-    }
-
-    library("uk.co.caprica:vlcj-natives:5.0.0-SNAPSHOT") {
-        exclude group: 'net.java.dev.jna', module: 'jna'
-        exclude group: 'com.sun.jna', module: 'jna'
-        exclude group: 'net.java.dev.jna', module: 'jna-platform'
-    }
-}
-
-processResources {
-    inputs.property "version", project.version
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
 }
 
 shadowJar {
@@ -176,5 +158,4 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
-    it.options.release = 17
 }

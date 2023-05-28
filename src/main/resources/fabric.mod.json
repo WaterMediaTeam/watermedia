@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "waterframes",
-  "version": "${version}",
+  "version": "${file.jarVersion}",
 
   "name": "WATERFrAMES",
   "description": "This is an example description! Tell everyone what your mod is about!",

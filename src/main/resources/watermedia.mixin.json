@@ -5,6 +5,5 @@
   "refmap": "watermedia.mixin-refmap.json",
   "minVersion": "0.8",
   "mixins": [
-    "MixinNativeDiscovery"
   ]
 }
