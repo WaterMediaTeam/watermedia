@@ -1,6 +1,7 @@
 package me.srrapero720.watermedia.vlc;
 
 import com.mojang.logging.LogUtils;
+import me.srrapero720.watermedia.vlc.provider.LocalFileProvider;
 import me.srrapero720.watermedia.vlc.strategy.LinuxNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.MacOsNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.WindowsNativeFixed;
@@ -9,20 +10,24 @@ import org.slf4j.Logger;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
-import java.io.File;
+import java.nio.file.Path;
 
-public class VLC {
+public class VLCLoader {
     public enum Semaphore { FAILED, UNLOADED, LOADING, READY }
     private static final Logger LOGGER = LogUtils.getLogger();
     private static Semaphore state = Semaphore.UNLOADED;
     private static NativeDiscovery discovery;
     public static MediaPlayerFactory factory;
 
-    public static Semaphore getLightState() { return state; }
-    private static void onLightUpdate(Semaphore state) { VLC.state = state; }
+    // LOCAL FILE (esto no deberia estar aqui, pero no se como enviar el DIR de forma no tan agresiva.
+    public static LocalFileProvider LFP;
 
-    public static boolean load(File gameDir) {
-        ResourceExtractor.extract(gameDir);
+    // SEMAPHORE
+    public static Semaphore getLightState() { return state; }
+    private static void onLightUpdate(Semaphore state) { VLCLoader.state = state; }
+
+    public static boolean load(Path gameDir) {
+        LFP = new LocalFileProvider(gameDir);
         return load();
     }
 

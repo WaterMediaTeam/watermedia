@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 @Mod("watermedia")
 public class ForgeMedia {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean status = WaterMedia.load(FMLPaths.GAMEDIR.get().toFile());
+    private static final boolean status = WaterMedia.load(FMLPaths.GAMEDIR.get());
 
     public ForgeMedia() {
         MinecraftForge.EVENT_BUS.register(this);

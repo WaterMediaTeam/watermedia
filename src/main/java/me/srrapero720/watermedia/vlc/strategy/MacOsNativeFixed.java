@@ -24,9 +24,7 @@ import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 
 /** Default implementation of a native discovery strategy that searches directories on the macOS operating system. */
 public class MacOsNativeFixed extends DirsDiscoveryFixed {
-    
     private static final String[] FILENAME_PATTERNS = new String[] { "libvlc\\.dylib", "libvlccore\\.dylib" };
-    
     /** Format string to prepare the plugin path environment variable value. */
     private static final String[] PLUGIN_PATH_FORMATS = new String[] { "%s/plugins" };
     

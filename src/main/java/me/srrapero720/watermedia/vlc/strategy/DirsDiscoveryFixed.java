@@ -19,7 +19,8 @@
 
 package me.srrapero720.watermedia.vlc.strategy;
 
-import me.srrapero720.watermedia.vlc.LocalFileDiscoveryDirectoryProvider;
+import me.srrapero720.watermedia.vlc.VLCLoader;
+import me.srrapero720.watermedia.vlc.provider.LocalFileProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
@@ -47,7 +48,7 @@ public abstract class DirsDiscoveryFixed extends BaseNativeDiscoveryStrategy {
     
     /** Service loader for the directory provider implementations. */
     private static final List<DiscoveryDirectoryProvider> directoryProviders = Arrays.asList(
-            new LocalFileDiscoveryDirectoryProvider(),
+            VLCLoader.LFP,
             new UserDirConfigFileDiscoveryDirectoryProvider(),
             new ConfigDirConfigFileDiscoveryDirectoryProvider(),
             new JnaLibraryPathDirectoryProvider(),

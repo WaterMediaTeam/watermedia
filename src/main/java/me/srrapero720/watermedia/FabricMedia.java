@@ -11,7 +11,7 @@ import org.slf4j.Logger;
  */
 public class FabricMedia implements ModInitializer {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean status = WaterMedia.load(FabricLoader.getInstance().getGameDir().toFile());
+    private static final boolean status = WaterMedia.load(FabricLoader.getInstance().getGameDir());
     @Override
     public void onInitialize() {
         if (FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER))

@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+// TODO: Desechar clase (no planeo usar WATERCoRE como dependencia de este mod)
 public class ThreadUtil {
     private static Thread THREADLG = null;
     private static final org.slf4j.Logger LOGGER = LogUtils.getLogger();

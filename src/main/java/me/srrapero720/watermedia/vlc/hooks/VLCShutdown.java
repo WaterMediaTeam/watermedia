@@ -1,14 +1,14 @@
-package me.srrapero720.watermedia.vlc.util;
+package me.srrapero720.watermedia.vlc.hooks;
 
 import com.mojang.logging.LogUtils;
-import me.srrapero720.watermedia.vlc.VLC;
+import me.srrapero720.watermedia.vlc.VLCLoader;
 import org.slf4j.Logger;
 
 // TODO: added as working hook
-public class VLCShutdownHook extends Thread {
+public class VLCShutdown extends Thread {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public VLCShutdownHook() {
+    public VLCShutdown() {
         super();
         this.setDaemon(true);
         this.setName("VLC-ShutdownHook");
@@ -17,7 +17,7 @@ public class VLCShutdownHook extends Thread {
     @Override
     public void run() {
         LOGGER.info("Shutdown VLC");
-        if (VLC.getLightState().equals(VLC.Semaphore.READY)) VLC.factory.release();
+        if (VLCLoader.getLightState().equals(VLCLoader.Semaphore.READY)) VLCLoader.factory.release();
         LOGGER.info("Shutdown finished");
     }
 }
