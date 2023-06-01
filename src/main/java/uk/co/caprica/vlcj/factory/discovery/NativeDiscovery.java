@@ -2,7 +2,7 @@ package uk.co.caprica.vlcj.factory.discovery;
 
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.StringArray;
-import me.srrapero720.watermedia.access.ReflectTools;
+import me.srrapero720.watermedia.util.ReflectUtil;
 import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.binding.internal.libvlc_instance_t;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -149,8 +149,8 @@ public class NativeDiscovery {
     private static Field libraries;
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         if (searchPaths == null) {
-            searchPaths = ReflectTools.field(NativeLibrary.class, "searchPaths");
-            libraries = ReflectTools.field(NativeLibrary.class, "libraries");
+            searchPaths = ReflectUtil.getFieldFrom(NativeLibrary.class, "searchPaths");
+            libraries = ReflectUtil.getFieldFrom(NativeLibrary.class, "libraries");
         }
         LOGGER.info("Failed to load VLC in '{}' using '{}'", path, discoveryStrategy.getClass().getSimpleName());
         try {
