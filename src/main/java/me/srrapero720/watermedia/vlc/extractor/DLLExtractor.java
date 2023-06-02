@@ -1,8 +1,10 @@
 package me.srrapero720.watermedia.vlc.extractor;
 
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.vlc.DLLMappings;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -153,23 +155,26 @@ public enum DLLExtractor {
     // Function to extract the DLL to the appropriate directory
     public void extract() {
         String arch = getSystemArchitecture();
-        String destinationPath = "cache/vlc/" + (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
+        String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
+        String destinationPath = "cache/vlc/" + relativePath;
+        String originPath = "/vlc/" + arch + "/" + relativePath;
 
         try {
-            Path dllDestintationPath = Paths.get(destinationPath);
-            if (!Files.exists(dllDestintationPath)) {
-                String originPath = "/vlc/" + arch + "/" + (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-                InputStream is = getClass().getResourceAsStream(originPath);
-                if (is != null) {
-                    Files.createDirectories(dllDestintationPath.getParent());
-                    Files.copy(is, dllDestintationPath);
-                } else {
-                    System.out.println("Resource not found: " + originPath);
+            Path dllDestinationPath = Paths.get(destinationPath);
+            if (!Files.exists(dllDestinationPath)) {
+                try (InputStream is = getClass().getResourceAsStream(originPath)) {
+                    if (is != null) {
+                        Files.createDirectories(dllDestinationPath.getParent());
+                        Files.copy(is, dllDestinationPath);
+                    } else {
+                        WaterMedia.LOGGER.error("Resource not found: {}", originPath);
+                    }
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to extract DLL: " + pluginFolder, e);
+        } catch (FileNotFoundException fnfe) {
+            WaterMedia.LOGGER.error("Failed to extract DLL, file not found: {}" + pluginFolder, fnfe);
+        } catch (IOException ioe) {
+            WaterMedia.LOGGER.error("Failed to extract DLL due to I/O error: {}" + pluginFolder, ioe);
         }
     }
-
 }
