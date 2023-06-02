@@ -1,8 +1,10 @@
 package me.srrapero720.watermedia.vlc.provider;
 
+import java.io.File;
 import java.nio.file.Path;
 
 import me.srrapero720.watermedia.vlc.extractor.DLLExtractor;
+import me.srrapero720.watermedia.vlc.extractor.LuaExtractor;
 import uk.co.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -20,15 +22,17 @@ public class LocalFileProvider implements DiscoveryDirectoryProvider {
         var vlc = GAME_DIR.resolve("cache/vlc/");
         LOGGER.info("Path from file extraction is '{}'", vlc.toAbsolutePath().toFile());
 
-        // TODO: HAY QUE REVISAR SI YA EXISTEN BINARIOS O SI HAY QUE ACTUALIZARLOS
+        // HAY QUE REVISAR SI YA EXISTEN BINARIOS O SI HAY QUE ACTUALIZARLOS
         // SOLO DEBE EXTRAER LOS BINARIOS SI HAY QUE ACTUALIZAR LOS BINARIOS (SI EXISTEN ARCHIVOS DEBE BORRARLOS Y EXTRAER)
         // O SI NO EXISTEN ARCHIVOS.
         // CASO CONTRARIO NO DEBE HACER NADA
+        // TODO: Crear un archivo de configuracion y que este determine si debe re-extraer los bins
         if (true) {
-            LOGGER.warn("Extracting WRAPPED BINS before VLCJ attempt to load local files");
-            for (DLLExtractor binary : DLLExtractor.values()) {
-                binary.extract();
-            }
+            LOGGER.warn("Extracting BINS before VLCJ attempt to load local files");
+            for (var binary: DLLExtractor.values()) binary.extract();
+
+            LOGGER.warn("Also extracting LUA scripts");
+            for (var luac: LuaExtractor.values()) luac.extract();
         } else {
             LOGGER.warn("Local bins detected, ignoring extractor");
         }
