@@ -6,6 +6,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 
@@ -15,7 +16,7 @@ import org.slf4j.Logger;
 @Mod("watermedia")
 public class ForgeMedia {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean status = WaterMedia.load(FMLPaths.GAMEDIR.get());
+    private static final boolean status = WaterMedia.load(FMLPaths.GAMEDIR.get(), !FMLLoader.isProduction());
 
     public ForgeMedia() {
         MinecraftForge.EVENT_BUS.register(this);

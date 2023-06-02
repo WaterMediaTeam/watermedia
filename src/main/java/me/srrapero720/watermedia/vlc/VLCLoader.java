@@ -1,12 +1,12 @@
 package me.srrapero720.watermedia.vlc;
 
-import com.mojang.logging.LogUtils;
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.vlc.provider.LocalFileProvider;
+import me.srrapero720.watermedia.vlc.strategy.DirsDiscoveryFixed;
 import me.srrapero720.watermedia.vlc.strategy.LinuxNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.MacOsNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.WindowsNativeFixed;
 import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
-import org.slf4j.Logger;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
@@ -27,8 +27,9 @@ public class VLCLoader {
     public static Semaphore getLightState() { return state; }
     private static void onLightUpdate(Semaphore state) { VLCLoader.state = state; }
 
-    public static boolean load(Path gameDir) {
+    public static boolean load(Path gameDir, boolean devMode) {
         LFP = new LocalFileProvider(gameDir);
+        DirsDiscoveryFixed.devSort = devMode;
         return load();
     }
 

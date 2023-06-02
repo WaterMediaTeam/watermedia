@@ -21,8 +21,8 @@ public class WaterMedia {
 	 * Loads all the libraries. if someting is wrong throws an error and keeps game in safe-mode
 	 * @return Library load state (true if is loaded)
 	 */
-	public static boolean load(Path gameDir) {
-		if (!VLCLoader.load(gameDir)) return false;
+	public static boolean load(Path gameDir, boolean envDevMode) {
+		if (!VLCLoader.load(gameDir, envDevMode)) return false;
 //        if (!LavaPlayer.load()) return false;
 
 		// SHUTDOWN HOOKS
