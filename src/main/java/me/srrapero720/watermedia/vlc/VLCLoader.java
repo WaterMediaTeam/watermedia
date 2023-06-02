@@ -12,9 +12,10 @@ import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
 import java.nio.file.Path;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 public class VLCLoader {
     public enum Semaphore { FAILED, UNLOADED, LOADING, READY }
-    private static final Logger LOGGER = LogUtils.getLogger();
     private static Semaphore state = Semaphore.UNLOADED;
     private static NativeDiscovery discovery;
     public static MediaPlayerFactory factory;

@@ -46,7 +46,6 @@ public class VLCPlayer extends AbstractPlayer {
         player.mediaPlayer().controls().stopAsync();
     }
 
-
     @Override
     public synchronized void seekTo(long time) {
         if (player == null) return;
