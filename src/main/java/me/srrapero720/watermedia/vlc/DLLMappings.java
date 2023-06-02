@@ -120,8 +120,8 @@ public enum DLLMappings {
 
 
     DLLMappings(@Nullable String pluginDir, Arch arch) {
-
-
+        this.name(); // this give you filename
+        this.ordinal(); // this give you ordinal number (based on code ordering)
     }
 
     public boolean extract() {
