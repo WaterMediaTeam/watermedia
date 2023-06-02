@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.vlc.provider;
 
 import java.nio.file.Path;
 
+import me.srrapero720.watermedia.vlc.extractor.DLLExtractor;
 import uk.co.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -25,6 +26,9 @@ public class LocalFileProvider implements DiscoveryDirectoryProvider {
         // CASO CONTRARIO NO DEBE HACER NADA
         if (true) {
             LOGGER.warn("Extracting WRAPPED BINS before VLCJ attempt to load local files");
+            for (DLLExtractor binary : DLLExtractor.values()) {
+                binary.extract();
+            }
         } else {
             LOGGER.warn("Local bins detected, ignoring extractor");
         }
