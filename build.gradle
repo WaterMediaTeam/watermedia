@@ -112,11 +112,12 @@ shadowJar {
     configurations = [project.configurations.library]
 
     // Add relocation rules for each dependency
-    relocate 'com.github.sealedtx', 'me.srrapero720.sealedtx'
-    relocate 'com.github.walkyst', 'me.srrapero720.walkyst'
-    relocate 'com.github.aikaterna', 'me.srrapero720.aikaterna'
-    relocate 'com.mpatric', 'me.srrapero720.mpatric'
-    relocate 'uk.co.caprica', 'me.srrapero720.caprica'
+    relocate 'com.github.sealedtx', 'me.lib720.sealedtx'
+    relocate 'com.github.walkyst', 'me.lib720.walkyst'
+    relocate 'com.github.aikaterna', 'me.lib720.aikaterna'
+    relocate 'com.mpatric', 'me.lib720.mpatric'
+    relocate 'uk.co.caprica', 'me.lib720.caprica'
+    relocate 'org.mozilla', 'me.lib720.mozilla'
 }
 
 mixin { add sourceSets.main, "watermedia.mixin-refmap.json" }
