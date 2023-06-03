@@ -71,7 +71,7 @@ public enum LuaExtractor {
     public String getName() { return name() + ".luac"; }
 
     public void extract() {
-        String relativePath = "lua/" + dir + (file == null ? getName() : file + ".luac");
+        String relativePath = "lua/" + dir + "/" + (file == null ? getName() : file + ".luac");
         String destinationPath = "cache/vlc/" + relativePath;
         String originPath = "/vlc/" + relativePath;
 
