@@ -20,7 +20,14 @@ public class VLCPlayer extends AbstractPlayer {
     @Override
     public synchronized void start() {
         if (player == null) return;
-        ThreadUtil.thread(() -> player.mediaPlayer().media().start(url));
+        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url));
+    }
+
+    @Override
+    public synchronized void start(String url) {
+        super.start(url);
+        if (player == null) return;
+        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url));
     }
 
     @Override

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
-public class DriveCompat extends AbstractCompat {
+public class DriveCompatVideoUrl extends CompatVideoUrl {
     private static final String API_KEY = "AIzaSyBiFNT6TTo506kCYYwA2NHqs36TlXC1DMo";
     private static final String API_URL = "https://www.googleapis.com/drive/v3/files/%s?alt=media&key=%s";
 
@@ -24,6 +24,6 @@ public class DriveCompat extends AbstractCompat {
         if (end == -1) end = url.getPath().length();
         var fileID = url.getPath().substring(start, end);
 
-        return String.format(API_URL, fileID, API_KEY);
+        return storeUrl(url, String.format(API_URL, fileID, API_KEY));
     }
 }

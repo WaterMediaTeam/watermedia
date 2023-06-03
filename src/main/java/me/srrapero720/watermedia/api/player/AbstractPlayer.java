@@ -1,11 +1,22 @@
 package me.srrapero720.watermedia.api.player;
 
+import me.srrapero720.watermedia.api.compat.CompatVideoUrl;
 import org.checkerframework.common.value.qual.IntRange;
 
 public abstract class AbstractPlayer {
-    protected final String url;
-    public AbstractPlayer(String url) { this.url = url; }
+    protected String url;
+    public AbstractPlayer(String url) {
+        this.compat(url);
+    }
+
+    private void compat(String url) {
+        var compat = CompatVideoUrl.compat(url);
+        if (compat != null) this.url = compat;
+        else this.url = url;
+    }
+
     public abstract void start();
+    public void start(String url) { compat(url); }
     public abstract void play();
     public abstract void pause();
     public abstract void setPauseMode(boolean isPaused);
