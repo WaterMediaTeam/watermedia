@@ -7,4 +7,8 @@ public class TickMediaUtil {
     public static long gameTicksToMs(int ticks) {
         return ticks * 50L;
     }
+
+    public static long msToGameTicks(long ticks) {
+        return ticks / 50L;
+    }
 }

@@ -3,7 +3,6 @@ package me.srrapero720.watermedia.api.player;
 import me.srrapero720.watermedia.util.TickMediaUtil;
 import me.srrapero720.watermedia.vlc.VLCLoader;
 import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
-import org.checkerframework.common.value.qual.IntRange;
 import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
@@ -50,7 +49,7 @@ public class VLCPlayer extends AbstractPlayer {
     @Override
     public synchronized void stop() {
         if (player == null) return;
-        player.mediaPlayer().controls().stopAsync();
+        player.mediaPlayer().controls().stop();
     }
 
     @Override
@@ -62,7 +61,7 @@ public class VLCPlayer extends AbstractPlayer {
     @Override
     public synchronized void seekFastTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(TickMediaUtil.gameTicksToMs(ticks));
+        player.mediaPlayer().controls().setTime(ticks);
     }
 
     @Override
@@ -81,6 +80,18 @@ public class VLCPlayer extends AbstractPlayer {
     public synchronized void setRepeatMode(boolean repeatMode) {
         if (player == null) return;
         player.mediaPlayer().controls().setRepeat(repeatMode);
+    }
+
+    @Override
+    public synchronized boolean isValid() {
+        if (player == null) return false;
+        return player.mediaPlayer().media().isValid();
+    }
+
+    @Override
+    public synchronized boolean isPlaying() {
+        if (player == null) return false;
+        return player.mediaPlayer().status().isPlaying();
     }
 
     @Override
@@ -106,7 +117,7 @@ public class VLCPlayer extends AbstractPlayer {
     }
 
     @Override
-    public synchronized void setVolume(@IntRange(from = 0, to = 100) int volume) {
+    public synchronized void setVolume(int volume) {
         if (player == null) return;
         player.mediaPlayer().audio().setVolume(volume);
     }
@@ -129,8 +140,33 @@ public class VLCPlayer extends AbstractPlayer {
     public synchronized long getGameTickDuration() {
         if (player == null) return 0L;
         var info = player.mediaPlayer().media().info();
-        if (info != null) return info.duration();
+        if (info != null) return TickMediaUtil.msToGameTicks(info.duration());
         return 0L;
+    }
+
+    public synchronized long getNewDuration() {
+        if (player == null) return 0L;
+        return player.mediaPlayer().status().length();
+    }
+
+    public synchronized long getGameTickNewDuration() {
+        if (player == null) return 0L;
+        return TickMediaUtil.msToGameTicks(player.mediaPlayer().status().length());
+    }
+
+    public synchronized long getTime() {
+        if (player == null) return 0L;
+        return player.mediaPlayer().status().time();
+    }
+
+    public synchronized long getGameTickTime() {
+        if (player == null) return 0L;
+        return TickMediaUtil.msToGameTicks(player.mediaPlayer().status().time());
+    }
+
+    public synchronized boolean isSeekable() {
+        if (player == null) return false;
+        return player.mediaPlayer().status().isSeekable();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.player;
 
 import me.srrapero720.watermedia.api.compat.CompatVideoUrl;
-import org.checkerframework.common.value.qual.IntRange;
+import me.srrapero720.watermedia.util.TickMediaUtil;
 
 public abstract class AbstractPlayer {
     protected String url;
@@ -32,15 +32,23 @@ public abstract class AbstractPlayer {
     public abstract long getDuration();
     public abstract long getGameTickDuration();
 
+    public abstract long getTime();
+
+    public abstract long getGameTickTime();
+
+    public abstract boolean isSeekable();
     public abstract void setRepeatMode(boolean repeatMode);
     public abstract boolean getRepeatMode();
+
+    public abstract boolean isPlaying();
+    public abstract boolean isValid();
 
     public abstract void setSpeed(float rate);
     public abstract void fastFoward();
     public abstract void rewind();
     public synchronized void fastBackward() { rewind(); }
 
-    public abstract void setVolume(@IntRange(from = 0, to = 100) int volume);
+    public abstract void setVolume(int volume);
     public abstract int getVolume();
 
     public abstract void release();

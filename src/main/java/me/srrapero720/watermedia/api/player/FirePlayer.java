@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api.player;
 
-import org.checkerframework.common.value.qual.IntRange;
-
 public class FirePlayer extends AbstractPlayer {
     public FirePlayer(String url) {
         super(url);
@@ -63,12 +61,37 @@ public class FirePlayer extends AbstractPlayer {
     }
 
     @Override
+    public long getTime() {
+        return 0;
+    }
+
+    @Override
+    public long getGameTickTime() {
+        return 0;
+    }
+
+    @Override
+    public boolean isSeekable() {
+        return false;
+    }
+
+    @Override
     public void setRepeatMode(boolean repeatMode) {
 
     }
 
     @Override
     public boolean getRepeatMode() {
+        return false;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return false;
+    }
+
+    @Override
+    public boolean isValid() {
         return false;
     }
 
@@ -88,7 +111,7 @@ public class FirePlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setVolume(@IntRange(from = 0, to = 100) int volume) {
+    public void setVolume(int volume) {
 
     }
 

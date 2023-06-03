@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api.player;
 
-import org.checkerframework.common.value.qual.IntRange;
-
 // TODO: Implementar semaforo de VLC para determinar si VLC funciona, si no entonces que use LavaPlayer.
 // TODO: Tambien revisar si la URL la puede soportar el VLC o por el contrario es mejor usar LavaPlayer.
 public class WaterPlayer extends AbstractPlayer {
@@ -65,12 +63,37 @@ public class WaterPlayer extends AbstractPlayer {
     }
 
     @Override
+    public long getTime() {
+        return 0;
+    }
+
+    @Override
+    public long getGameTickTime() {
+        return 0;
+    }
+
+    @Override
+    public boolean isSeekable() {
+        return false;
+    }
+
+    @Override
     public void setRepeatMode(boolean repeatMode) {
 
     }
 
     @Override
     public boolean getRepeatMode() {
+        return false;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return false;
+    }
+
+    @Override
+    public boolean isValid() {
         return false;
     }
 
@@ -90,7 +113,7 @@ public class WaterPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setVolume(@IntRange(from = 0, to = 100) int volume) {
+    public void setVolume(int volume) {
 
     }
 
