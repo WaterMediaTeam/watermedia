@@ -1,4 +1,5 @@
 package me.srrapero720.watermedia.api.compat;
 
-public class TwitterCompat {
+public class TikTokCompat {
+
 }
