@@ -4,14 +4,14 @@
   "version": "${file.jarVersion}",
 
   "name": "WATERFrAMES",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Multimedia Power!",
   "authors": [
     "SrRapero720",
     "Goedix"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/SrRapero720/watermedia"
   },
 
   "license": "CC0-1.0",
@@ -20,7 +20,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.srrapero720.watermedia.FabricMedia"
+      "me.srrapero720.watermedia.loaders.FabricMediaLoader"
     ]
   },
   "mixins": [
@@ -30,7 +30,7 @@
   "depends": {
     "fabricloader": ">=0.14.19",
     "fabric-api": "*",
-    "minecraft": "~1.19.4",
+    "minecraft": ">=1.16.5",
     "java": ">=17"
   },
   "suggests": {
