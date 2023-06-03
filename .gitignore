@@ -19,6 +19,7 @@ build
 
 # other
 eclipse
+logs
 run
 
 # Files from Forge MDK
