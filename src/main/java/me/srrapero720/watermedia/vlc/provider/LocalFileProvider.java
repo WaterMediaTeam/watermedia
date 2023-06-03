@@ -61,7 +61,5 @@ public class LocalFileProvider implements DiscoveryDirectoryProvider {
         return new String[] { vlc.toAbsolutePath().toString() };
     }
 
-    private String getCurrentVlcVersion() {
-        return "1.0.0";
-    }
+    private String getCurrentVlcVersion() { return "20230603"; } // Nightlies version: https://artifacts.videolan.org/vlc/nightly-win64-llvm/
 }
