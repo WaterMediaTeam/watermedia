@@ -55,7 +55,7 @@ public class LocalFileProvider implements DiscoveryDirectoryProvider {
                 LOGGER.error("Could not write to configuration file", e);
             }
         } else {
-            LOGGER.warn("Local bins detected, ignoring extractor");
+            LOGGER.warn("Extracted Bins detected... skip extracting");
         }
 
         return new String[] { vlc.toAbsolutePath().toString() };
