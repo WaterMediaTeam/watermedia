@@ -3,9 +3,9 @@ package me.srrapero720.watermedia.api.player;
 import me.srrapero720.watermedia.util.TickMediaUtil;
 import me.srrapero720.watermedia.vlc.VLCLoader;
 import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
-import me.lib720.caprica.player.component.CallbackMediaPlayerComponent;
-import me.lib720.caprica.player.embedded.videosurface.callback.BufferFormatCallback;
-import me.lib720.caprica.player.embedded.videosurface.callback.RenderCallback;
+import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 
 import javax.annotation.Nullable;
 

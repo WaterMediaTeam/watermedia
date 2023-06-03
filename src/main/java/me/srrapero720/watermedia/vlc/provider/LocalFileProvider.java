@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 import me.srrapero720.watermedia.vlc.extractor.DLLExtractor;
 import me.srrapero720.watermedia.vlc.extractor.LuaExtractor;
-import me.lib720.caprica.factory.discovery.provider.DiscoveryDirectoryProvider;
+import me.lib720.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 

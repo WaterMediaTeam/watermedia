@@ -6,8 +6,8 @@ import me.srrapero720.watermedia.vlc.strategy.LinuxNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.MacOsNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.WindowsNativeFixed;
 import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
-import me.lib720.caprica.factory.MediaPlayerFactory;
-import me.lib720.caprica.factory.discovery.NativeDiscovery;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 
 import java.nio.file.Path;
 
