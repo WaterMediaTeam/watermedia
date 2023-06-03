@@ -63,7 +63,7 @@ public class VLCPlayer extends AbstractPlayer {
     }
 
     @Override
-    public synchronized void seekFastTo(int ticks) {
+    public synchronized void seekFastTo(long ticks) {
         if (player == null) return;
         player.mediaPlayer().controls().setTime(ticks);
     }

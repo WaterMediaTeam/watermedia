@@ -25,7 +25,7 @@ public abstract class AbstractPlayer {
 
     /* seekTo */
     public abstract void seekTo(long time);
-    public abstract void seekFastTo(int ticks);
+    public abstract void seekFastTo(long ticks);
     public abstract void seekGameTicksTo(int ticks);
     public abstract void seekGameTickFastTo(int ticks);
 

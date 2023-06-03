@@ -38,7 +38,7 @@ public class WaterPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void seekFastTo(int ticks) {
+    public void seekFastTo(long ticks) {
 
     }
 
