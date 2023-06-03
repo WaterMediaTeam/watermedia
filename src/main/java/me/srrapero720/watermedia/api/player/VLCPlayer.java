@@ -148,12 +148,12 @@ public class VLCPlayer extends AbstractPlayer {
         return 0L;
     }
 
-    public synchronized long getNewDuration() {
+    public synchronized long getMediaLength() {
         if (player == null) return 0L;
         return player.mediaPlayer().status().length();
     }
 
-    public synchronized long getGameTickNewDuration() {
+    public synchronized long getGameTickMediaLength() {
         if (player == null) return 0L;
         return TickMediaUtil.msToGameTicks(player.mediaPlayer().status().length());
     }
