@@ -3,9 +3,9 @@ package me.srrapero720.watermedia.api.player;
 import me.srrapero720.watermedia.util.TickMediaUtil;
 import me.srrapero720.watermedia.vlc.VLCLoader;
 import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
-import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
+import me.lib720.caprica.player.component.CallbackMediaPlayerComponent;
+import me.lib720.caprica.player.embedded.videosurface.callback.BufferFormatCallback;
+import me.lib720.caprica.player.embedded.videosurface.callback.RenderCallback;
 
 import javax.annotation.Nullable;
 
@@ -14,6 +14,10 @@ public class VLCPlayer extends AbstractPlayer {
     public VLCPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         super(url);
         this.player = new CallbackMediaPlayerComponent(VLCLoader.factory, null, null, false, renderCallback, bufferFormatCallback, null);
+    }
+
+    public synchronized CallbackMediaPlayerComponent getRawPlayer() {
+        return player;
     }
 
     @Override

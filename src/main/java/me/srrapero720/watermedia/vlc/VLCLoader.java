@@ -1,14 +1,13 @@
 package me.srrapero720.watermedia.vlc;
 
-import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.vlc.provider.LocalFileProvider;
 import me.srrapero720.watermedia.vlc.strategy.DirsDiscoveryFixed;
 import me.srrapero720.watermedia.vlc.strategy.LinuxNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.MacOsNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.WindowsNativeFixed;
 import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.lib720.caprica.factory.MediaPlayerFactory;
+import me.lib720.caprica.factory.discovery.NativeDiscovery;
 
 import java.nio.file.Path;
 

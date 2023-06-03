@@ -116,7 +116,6 @@ shadowJar {
     relocate 'com.github.walkyst', 'me.lib720.walkyst'
     relocate 'com.github.aikaterna', 'me.lib720.aikaterna'
     relocate 'com.mpatric', 'me.lib720.mpatric'
-    relocate 'uk.co.caprica', 'me.lib720.caprica'
     relocate 'org.mozilla', 'me.lib720.mozilla'
 }
 

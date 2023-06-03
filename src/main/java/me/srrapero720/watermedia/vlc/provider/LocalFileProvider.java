@@ -1,13 +1,12 @@
 package me.srrapero720.watermedia.vlc.provider;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import me.srrapero720.watermedia.vlc.extractor.DLLExtractor;
 import me.srrapero720.watermedia.vlc.extractor.LuaExtractor;
-import uk.co.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
+import me.lib720.caprica.factory.discovery.provider.DiscoveryDirectoryProvider;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 

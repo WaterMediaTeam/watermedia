@@ -19,8 +19,8 @@
 
 package me.srrapero720.watermedia.vlc.strategy;
 
-import uk.co.caprica.vlcj.binding.lib.LibC;
-import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
+import me.lib720.caprica.binding.lib.LibC;
+import me.lib720.caprica.binding.support.runtime.RuntimeUtil;
 
 /** Default implementation of a native discovery strategy that searches directories on the Windows operating system. */
 public class WindowsNativeFixed extends DirsDiscoveryFixed {

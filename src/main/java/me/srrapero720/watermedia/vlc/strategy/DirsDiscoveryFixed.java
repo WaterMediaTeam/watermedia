@@ -19,13 +19,12 @@
 
 package me.srrapero720.watermedia.vlc.strategy;
 
+import me.lib720.caprica.factory.discovery.provider.*;
 import me.srrapero720.watermedia.vlc.VLCLoader;
-import me.srrapero720.watermedia.vlc.provider.LocalFileProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
-import uk.co.caprica.vlcj.factory.discovery.provider.*;
-import uk.co.caprica.vlcj.factory.discovery.strategy.BaseNativeDiscoveryStrategy;
+import me.lib720.caprica.factory.discovery.NativeDiscovery;
+import me.lib720.caprica.factory.discovery.strategy.BaseNativeDiscoveryStrategy;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
