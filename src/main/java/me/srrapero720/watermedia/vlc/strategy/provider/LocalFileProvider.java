@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import me.srrapero720.watermedia.vlc.VLCLoader;
 import me.srrapero720.watermedia.vlc.extractor.DLLExtractor;
 import me.srrapero720.watermedia.vlc.extractor.LuaExtractor;
 import me.lib720.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
@@ -30,7 +31,7 @@ public class LocalFileProvider implements DiscoveryDirectoryProvider {
             if (Files.exists(config)) {
                 String configVersion = Files.readString(config);
                 // Add a way to get the current VLC version you want to install
-                String expectedVersion = getCurrentVlcVersion();
+                String expectedVersion = VLCLoader.getVersion();
                 shouldExtract = !configVersion.equals(expectedVersion);
             } else {
                 shouldExtract = true;
@@ -49,7 +50,7 @@ public class LocalFileProvider implements DiscoveryDirectoryProvider {
 
             try {
                 // Write the version of VLC binaries you just installed
-                Files.writeString(config, getCurrentVlcVersion());
+                Files.writeString(config, VLCLoader.getVersion());
             } catch (IOException e) {
                 LOGGER.error("Could not write to configuration file", e);
             }
@@ -59,6 +60,4 @@ public class LocalFileProvider implements DiscoveryDirectoryProvider {
 
         return new String[] { vlc.toAbsolutePath().toString() };
     }
-
-    private String getCurrentVlcVersion() { return "20230530"; } // Nightlies version: https://artifacts.videolan.org/vlc/nightly-win64-llvm/
 }

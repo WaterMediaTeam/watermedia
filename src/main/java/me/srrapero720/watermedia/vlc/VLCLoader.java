@@ -32,6 +32,9 @@ public class VLCLoader {
     public static boolean isDevMode() { return DEV_MODE; }
     public static LocalFileProvider getLocalFileProvider() { return new LocalFileProvider(GAME_DIR); }
 
+    // Comes from: https://artifacts.videolan.org/vlc/nightly-win64-llvm/
+    public static String getVersion() { return "20230604"; }
+
     public static boolean load() {
         if (state.equals(VLCState.READY)) return true;
 
