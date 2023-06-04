@@ -117,6 +117,8 @@ shadowJar {
     relocate 'com.github.aikaterna', 'me.lib720.aikaterna'
     relocate 'com.mpatric', 'me.lib720.mpatric'
     relocate 'org.mozilla', 'me.lib720.mozilla'
+
+    archiveFileName = "${project.archivesBaseName}-${project.version}.jar"
 }
 
 // Make the reobfJar task depend on shadowJar
