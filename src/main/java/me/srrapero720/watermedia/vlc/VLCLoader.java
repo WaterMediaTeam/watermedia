@@ -39,7 +39,7 @@ public class VLCLoader {
             var discovery = new NativeDiscovery(new WindowsNativeFixed(), new MacOsNativeFixed(), new LinuxNativeFixed());
 
             if (discovery.discover()) {
-                FACTORY = new MediaPlayerFactory(discovery, "--aout=directsound", "--file-logging", "--logfile", "logs/vlc/lastest.log", "--logmode", "text", "--verbose", "2", "--no-quiet");
+                FACTORY = new MediaPlayerFactory(discovery, "--aout=directsound", "--file-caching=6000", "--file-logging", "--logfile", "logs/vlc/lastest.log", "--logmode", "text", "--verbose", "2", "--no-quiet");
 
                 Runtime.getRuntime().addShutdownHook(new VLCShutdown());
                 LOGGER.info("VLC Loaded on path '{}'", discovery.discoveredPath());
