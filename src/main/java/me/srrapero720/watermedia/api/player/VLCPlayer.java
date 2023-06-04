@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.player;
 
+import me.lib720.caprica.vlcj.player.base.Equalizer;
 import me.srrapero720.watermedia.util.TickMediaUtil;
 import me.srrapero720.watermedia.vlc.VLCLoader;
 import me.srrapero720.watermedia.watercore_supplier.ThreadUtil;
@@ -23,14 +24,14 @@ public class VLCPlayer extends AbstractPlayer {
     @Override
     public synchronized void start() {
         if (player == null) return;
-        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url));
+        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, ":aout=direcsound"));
     }
 
     @Override
     public synchronized void start(String url) {
         super.start(url);
         if (player == null) return;
-        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url));
+        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, ":aout=direcsound"));
     }
 
     @Override
