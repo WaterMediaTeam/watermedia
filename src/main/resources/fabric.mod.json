@@ -23,10 +23,6 @@
       "me.srrapero720.watermedia.loaders.FabricMediaLoader"
     ]
   },
-  "mixins": [
-    "watermedia.mixin.json"
-  ],
-
   "depends": {
     "fabricloader": ">=0.14.19",
     "fabric-api": "*",

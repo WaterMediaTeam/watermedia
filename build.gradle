@@ -119,8 +119,6 @@ shadowJar {
     relocate 'org.mozilla', 'me.lib720.mozilla'
 }
 
-mixin { add sourceSets.main, "watermedia.mixin-refmap.json" }
-
 // Make the reobfJar task depend on shadowJar
 tasks.build.dependsOn shadowJar
 

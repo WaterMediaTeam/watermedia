@@ -1,7 +1,0 @@
-{
-  "required": false,
-  "compatibilityLevel": "JAVA_17",
-  "refmap": "watermedia.mixin-refmap.json",
-  "minVersion": "0.8",
-  "mixins": []
-}
