@@ -8,7 +8,7 @@ version="${file.jarVersion}" #mandatory
 displayName="WATERMeDIA" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia" #optional
-logoFile="examplemod.png" #optional
+logoFile="pack.png" #optional
 credits="This VLCJ discovery is possible by CreativeMD" #optional
 authors="SrRapero720 and Goedix" #optional
 description='''
@@ -19,6 +19,6 @@ Multimedia Power!
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.18.2,1.19)"
+    versionRange="[1.17,1.20)"
     ordering="NONE"
     side="CLIENT"
