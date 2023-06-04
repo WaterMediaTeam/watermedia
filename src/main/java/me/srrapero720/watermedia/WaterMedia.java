@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import me.srrapero720.watermedia.api.compat.CompatVideoUrl;
 import me.srrapero720.watermedia.lavaplayer.LavaPlayerLoader;
 import me.srrapero720.watermedia.vlc.VLCLoader;
-import me.srrapero720.watermedia.vlc.hooks.VLCShutdown;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -23,10 +22,6 @@ public class WaterMedia {
 		if (!CompatVideoUrl.load()) return false;
 		if (!VLCLoader.load(gameDir, envDevMode)) return false;
         if (!LavaPlayerLoader.load()) return false;
-
-
-		// SHUTDOWN HOOKS
-		Runtime.getRuntime().addShutdownHook(new VLCShutdown());
 		return true;
 	}
 }

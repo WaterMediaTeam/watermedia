@@ -22,11 +22,8 @@ package me.srrapero720.watermedia.vlc.strategy;
 import me.lib720.caprica.vlcj.binding.lib.LibC;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 
-/** Default implementation of a native discovery strategy that searches directories on the Linux operating system. */
 public class LinuxNativeFixed extends DirsDiscoveryFixed {
-    
     private static final String[] FILENAME_PATTERNS = new String[] { "libvlc\\.so(?:\\.\\d)*", "libvlccore\\.so(?:\\.\\d)*" };
-    
     private static final String[] PLUGIN_PATH_FORMATS = new String[] { "%s/plugins", "%s/vlc/plugins" };
     
     public LinuxNativeFixed() {
@@ -34,13 +31,8 @@ public class LinuxNativeFixed extends DirsDiscoveryFixed {
     }
     
     @Override
-    public boolean supported() {
-        return RuntimeUtil.isNix();
-    }
+    public boolean supported() { return RuntimeUtil.isNix(); }
     
     @Override
-    protected boolean setPluginPath(String pluginPath) {
-        return LibC.INSTANCE.setenv(PLUGIN_ENV_NAME, pluginPath, 1) == 0;
-    }
-    
+    protected boolean setPluginPath(String pluginPath) { return LibC.INSTANCE.setenv(PLUGIN_ENV_NAME, pluginPath, 1) == 0; }
 }

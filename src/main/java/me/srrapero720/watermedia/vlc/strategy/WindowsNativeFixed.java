@@ -32,13 +32,10 @@ public class WindowsNativeFixed extends DirsDiscoveryFixed {
     }
     
     @Override
-    public boolean supported() {
-        return RuntimeUtil.isWindows();
-    }
+    public boolean supported() { return RuntimeUtil.isWindows(); }
     
     @Override
     protected boolean setPluginPath(String pluginPath) {
         return LibC.INSTANCE._putenv(String.format("%s=%s", PLUGIN_ENV_NAME, pluginPath)) == 0;
     }
-    
 }

@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.vlc;
 
-import me.srrapero720.watermedia.vlc.provider.LocalFileProvider;
-import me.srrapero720.watermedia.vlc.strategy.DirsDiscoveryFixed;
+import me.srrapero720.watermedia.vlc.strategy.provider.LocalFileProvider;
 import me.srrapero720.watermedia.vlc.strategy.LinuxNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.MacOsNativeFixed;
 import me.srrapero720.watermedia.vlc.strategy.WindowsNativeFixed;
@@ -14,39 +13,43 @@ import java.nio.file.Path;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VLCLoader {
-    public enum Semaphore { FAILED, UNLOADED, LOADING, READY }
-    private static Semaphore state = Semaphore.UNLOADED;
-    private static NativeDiscovery discovery;
-    public static MediaPlayerFactory factory;
-
-    // LOCAL FILE (esto no deberia estar aqui, pero no se como enviar el DIR de forma no tan agresiva.
-    public static LocalFileProvider LFP;
+    private static VLCState state = VLCState.UNLOADED;
+    private static MediaPlayerFactory FACTORY;
+    private static Path GAME_DIR;
+    private static boolean DEV_MODE;
 
     // SEMAPHORE
-    public static Semaphore getLightState() { return state; }
-    private static void onLightUpdate(Semaphore state) { VLCLoader.state = state; }
+    public static VLCState getLightState() { return state; }
+    private static void setLightState(VLCState state) { VLCLoader.state = state; }
 
     public static boolean load(Path gameDir, boolean devMode) {
-        LFP = new LocalFileProvider(gameDir);
-        DirsDiscoveryFixed.devSort = devMode;
+        GAME_DIR = gameDir;
+        DEV_MODE = devMode;
         return load();
     }
 
+    public static MediaPlayerFactory getFactory() { return FACTORY; }
+    public static boolean isDevMode() { return DEV_MODE; }
+    public static LocalFileProvider getLocalFileProvider() { return new LocalFileProvider(GAME_DIR); }
+
     public static boolean load() {
-        if (state.equals(Semaphore.READY)) return true;
+        if (state.equals(VLCState.READY)) return true;
 
         return ThreadUtil.tryAndReturn((defaultVar) -> {
-            discovery = new NativeDiscovery(new WindowsNativeFixed(), new MacOsNativeFixed(), new LinuxNativeFixed());
+            var discovery = new NativeDiscovery(new WindowsNativeFixed(), new MacOsNativeFixed(), new LinuxNativeFixed());
+
             if (discovery.discover()) {
-                onLightUpdate(Semaphore.READY);
-                factory = new MediaPlayerFactory("--no-metadata-network-access", "--file-logging", "--logfile", "logs/vlc.log", "--logmode", "text", "--verbose", "2", "--no-quiet");
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> factory.release()));
+                FACTORY = new MediaPlayerFactory(discovery, "--aout=directsound", "--file-logging", "--logfile", "logs/vlc/lastest.log", "--logmode", "text", "--verbose", "2", "--no-quiet");
+
+                Runtime.getRuntime().addShutdownHook(new VLCShutdown());
                 LOGGER.info("VLC Loaded on path '{}'", discovery.discoveredPath());
+
+                setLightState(VLCState.READY);
                 return true;
             } else LOGGER.info("Failed to load VLC");
             return defaultVar;
         }, (e) -> {
-            onLightUpdate(Semaphore.FAILED);
+            setLightState(VLCState.FAILED);
             LOGGER.error("VLC failed to load", e);
         }, false);
     }

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.vlc.provider;
+package me.srrapero720.watermedia.vlc.strategy.provider;
 
 import java.io.IOException;
 import java.nio.file.Files;

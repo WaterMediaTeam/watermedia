@@ -13,7 +13,7 @@ public class VLCPlayer extends AbstractPlayer {
     protected CallbackMediaPlayerComponent player;
     public VLCPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         super(url);
-        this.player = new CallbackMediaPlayerComponent(VLCLoader.factory, null, null, false, renderCallback, bufferFormatCallback, null);
+        this.player = new CallbackMediaPlayerComponent(VLCLoader.getFactory(), null, null, false, renderCallback, bufferFormatCallback, null);
     }
 
     public synchronized CallbackMediaPlayerComponent getRawPlayer() {

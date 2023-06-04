@@ -1,6 +1,8 @@
-package me.srrapero720.watermedia.vlc.hooks;
+package me.srrapero720.watermedia.vlc;
 
+import me.srrapero720.watermedia.vlc.VLCState;
 import me.srrapero720.watermedia.vlc.VLCLoader;
+
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 // TODO: added as working hook
@@ -14,8 +16,7 @@ public class VLCShutdown extends Thread {
     @Override
     public void run() {
         LOGGER.info("Shutdown VLC");
-        LOGGER.error("Shutdown is disabled... system should close itself");
-//        if (VLCLoader.getLightState().equals(VLCLoader.Semaphore.READY)) VLCLoader.factory.release();
+        if (VLCLoader.getLightState().equals(VLCState.READY)) VLCLoader.getFactory().release();
         LOGGER.info("Shutdown finished");
     }
 }

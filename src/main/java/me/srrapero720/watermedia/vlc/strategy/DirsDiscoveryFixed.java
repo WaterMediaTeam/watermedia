@@ -44,11 +44,8 @@ import java.util.*;
  * {@link DiscoveryProviderPriority}. A client application with its own provider implementations can return a priority
  * value as appropriate to ensure their own provider is used before or after the other implementations. */
 public abstract class DirsDiscoveryFixed extends BaseNativeDiscoveryStrategy {
-    public static boolean devSort = false;
-    
-    /** Service loader for the directory provider implementations. */
     private static final List<DiscoveryDirectoryProvider> directoryProviders = Arrays.asList(
-            VLCLoader.LFP,
+            VLCLoader.getLocalFileProvider(),
             new UserDirConfigFileDiscoveryDirectoryProvider(),
             new ConfigDirConfigFileDiscoveryDirectoryProvider(),
             new JnaLibraryPathDirectoryProvider(),
@@ -91,9 +88,9 @@ public abstract class DirsDiscoveryFixed extends BaseNativeDiscoveryStrategy {
     
     @Contract("_ -> param1")
     private @NotNull List<DiscoveryDirectoryProvider> sort(@NotNull List<DiscoveryDirectoryProvider> providers) {
-        if (devSort) providers.sort((a1, a2) -> a2.priority() - a1.priority());
+        if (VLCLoader.isDevMode()) providers.sort((a1, a2) -> a2.priority() - a1.priority());
         else providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
-        LOGGER.info("Using {} priority to load VLC", devSort ? "DEV_MODE" : "PROD_MODE");
+        LOGGER.info("Using {} priority to load VLC", VLCLoader.isDevMode() ? "DEV_MODE" : "PROD_MODE");
         return providers;
     }
     
