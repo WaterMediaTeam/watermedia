@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class StardeosCompat {
     public static void main(String[] args) {
-        String videoId = "63f46ee22ada8aa4fafc11cd"; // Reemplaza "your_video_id" con el ID real del video
+        String videoId = "63f46ee22ada8aa4fafc11cd"; // ID del video
 
         try {
             URL url = new URL("https://stardeos.com/api/v2/videos/" + videoId);
@@ -16,7 +16,7 @@ public class StardeosCompat {
             connection.setRequestMethod("GET");
 
             // Agregar los encabezados
-            connection.setRequestProperty("Referer", "https://stardeos.com"); // Establece el Referer a un sitio web válido
+            connection.setRequestProperty("Referer", "https://stardeos.com");
             connection.setRequestProperty("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
             connection.setRequestProperty("accept-encoding", "gzip, deflate, br");
             connection.setRequestProperty("accept-language", "es-419,es;q=0.9,es-ES;q=0.8,en;q=0.7,en-GB;q=0.6,en-US;q=0.5");
@@ -60,23 +60,7 @@ public class StardeosCompat {
     }
 
     private static String parseFileUrl(String jsonResponse) {
-        // Aquí debes implementar la lógica para analizar el JSON y extraer el "fileUrl" que contiene "_high.m3u8"
-        // Puedes usar una biblioteca JSON como Gson o JSON.simple para analizar el JSON.
-        // A continuación se muestra un ejemplo básico de cómo podrías hacerlo manualmente:
-
-        // Supongamos que el formato JSON de respuesta es algo como:
-        // {
-        //     "files": [
-        //         {
-        //             "fileUrl": "https://example.com/video_high.m3u8"
-        //         },
-        //         {
-        //             "fileUrl": "https://example.com/video_low.m3u8"
-        //         }
-        //     ]
-        // }
-
-        // Analizar el JSON manualmente
+        // Analiza el JSON
         String fileUrl = null;
         int startIndex = jsonResponse.indexOf("\"files\":");
         if (startIndex != -1) {
