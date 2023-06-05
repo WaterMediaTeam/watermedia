@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.vlc;
 
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 

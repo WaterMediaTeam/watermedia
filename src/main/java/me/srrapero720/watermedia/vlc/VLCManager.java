@@ -1,10 +1,11 @@
 package me.srrapero720.watermedia.vlc;
 
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
-import me.lib720.caprica.vlcj.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
-import me.lib720.caprica.vlcj.factory.discovery.strategy.MacOsNativeDiscoveryStrategy;
-import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
+
+import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj4.factory.discovery.NativeDiscovery;
+import me.lib720.caprica.vlcj4.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
+import me.lib720.caprica.vlcj4.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
+import me.lib720.caprica.vlcj4.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class VLCManager {
 
     public static MediaPlayerFactory createVLCPlayerFactory() { return createVLCPlayerFactory(DEFAULT_VLC_ARGS); }
     public static MediaPlayerFactory createVLCPlayerFactory(String[] vlcArgs) {
-        var discovery = new NativeDiscovery(new WindowsNativeDiscoveryStrategy(), new MacOsNativeDiscoveryStrategy(), new LinuxNativeDiscoveryStrategy());
+        var discovery = new NativeDiscovery(new WindowsNativeDiscoveryStrategy(), new OsxNativeDiscoveryStrategy(), new LinuxNativeDiscoveryStrategy());
         if (discovery.discover()) {
             var factory = new MediaPlayerFactory(discovery, vlcArgs);
             Runtime.getRuntime().addShutdownHook(new VLCReleaseHook(factory));
