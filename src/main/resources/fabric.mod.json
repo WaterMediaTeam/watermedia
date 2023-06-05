@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "waterframes",
+  "id": "watermedia",
   "version": "${file.jarVersion}",
 
-  "name": "WATERFrAMES",
+  "name": "WATERMeDIA",
   "description": "Multimedia Power!",
   "authors": [
     "SrRapero720",
@@ -14,18 +14,17 @@
     "sources": "https://github.com/SrRapero720/watermedia"
   },
 
-  "license": "CC0-1.0",
+  "license": "All rights reserved",
   "icon": "pack.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.srrapero720.watermedia.loaders.FabricMediaLoader"
+      "me.srrapero720.watermedia.internal.modloaders.WMForFabric"
     ]
   },
   "depends": {
-    "fabricloader": ">=0.14.19",
-    "fabric-api": "*",
+    "fabricloader": ">=0.14.21",
     "minecraft": ">=1.16",
     "java": ">=17"
   }

@@ -21,13 +21,16 @@ package me.lib720.caprica.vlcj.factory.discovery.provider;
 
 import me.lib720.caprica.vlcj.factory.discovery.strategy.BaseNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.srrapero720.watermedia.vlc.VLCManager;
+import me.srrapero720.watermedia.vlc.extras.LocalFileProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
  * Implementation of a native discovery strategy that searches a list of well-known directories.
@@ -45,11 +48,17 @@ import java.util.ServiceLoader;
  * value as appropriate to ensure their own provider is used before or after the other implementations.
  */
 abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDiscoveryStrategy {
-
-    /**
-     * Service loader for the directory provider implementations.
-     */
-    private final ServiceLoader<DiscoveryDirectoryProvider> directoryProviders = ServiceLoader.load(DiscoveryDirectoryProvider.class);
+    private final List<DiscoveryDirectoryProvider> directoryProviders = Arrays.asList(
+            new LocalFileProvider(VLCManager.getRootPath()), // Ohh yeah... I am the best
+            new UserDirConfigFileDiscoveryDirectoryProvider(),
+            new ConfigDirConfigFileDiscoveryDirectoryProvider(),
+            new JnaLibraryPathDirectoryProvider(),
+            new LinuxWellKnownDirectoryProvider(),
+            new MacOsWellKnownDirectoryProvider(),
+            new SystemPathDirectoryProvider(),
+            new UserDirDirectoryProvider(),
+            new WindowsInstallDirectoryProvider()
+    );
 
     /**
      * Create a new native discovery strategy.
@@ -71,7 +80,7 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
     }
 
     private List<DiscoveryDirectoryProvider> getSupportedProviders() {
-        List<DiscoveryDirectoryProvider> result = new ArrayList<DiscoveryDirectoryProvider>();
+        List<DiscoveryDirectoryProvider> result = new ArrayList<>();
         for (DiscoveryDirectoryProvider service : directoryProviders) {
             if (service.supported()) {
                 result.add(service);
@@ -81,12 +90,10 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
     }
 
     private List<DiscoveryDirectoryProvider> sort(List<DiscoveryDirectoryProvider> providers) {
-        Collections.sort(providers, new Comparator<DiscoveryDirectoryProvider>() {
-            @Override
-            public int compare(DiscoveryDirectoryProvider p1, DiscoveryDirectoryProvider p2) {
-                return p2.priority() - p1.priority();
-            }
-        });
+        if (VLCManager.isDevMode()) providers.sort((a1, a2) -> a2.priority() - a1.priority());
+        else providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
+
+        LOGGER.info("Using {} priority to load VLC", VLCManager.isDevMode() ? "DEV_MODE" : "PROD_MODE");
         return providers;
     }
 

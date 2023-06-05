@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia;
 
 import com.mojang.logging.LogUtils;
-import me.srrapero720.watermedia.api.compat.CompatVideoUrl;
-import me.srrapero720.watermedia.lavaplayer.LavaPlayerLoader;
-import me.srrapero720.watermedia.vlc.VLCLoader;
+import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
+import me.srrapero720.watermedia.lavaplayer.LPManager;
+import me.srrapero720.watermedia.vlc.VLCManager;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -18,10 +18,15 @@ public class WaterMedia {
 	public static final String MOD_ID = "watermedia";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static boolean load(Path gameDir, boolean envDevMode) {
-		if (!CompatVideoUrl.load()) return false;
-		if (!VLCLoader.load(gameDir, envDevMode)) return false;
-        if (!LavaPlayerLoader.load()) return false;
+	public static boolean load(Path gameDir, boolean inDev) {
+		// PRE-API LOADERS
+		if (!CompatVideoUrl.init()) return false;
+
+		// BINARIES LOADERS
+		if (!VLCManager.init(gameDir, inDev)) return false;
+        if (!LPManager.init()) return false;
+
+		// POST-API LOADERS
 		return true;
 	}
 }

@@ -43,9 +43,7 @@ public class WindowsNativeDiscoveryStrategy extends DirectoryProviderDiscoverySt
     }
 
     @Override
-    public boolean supported() {
-        return RuntimeUtil.isWindows();
-    }
+    public boolean supported() { return RuntimeUtil.isWindows(); }
 
     @Override
     protected boolean setPluginPath(String pluginPath) {

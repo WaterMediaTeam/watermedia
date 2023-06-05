@@ -11,7 +11,7 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.MacOsNativeDiscoveryStr
 import me.lib720.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
-import me.srrapero720.watermedia.util.ReflectUtil;
+import me.srrapero720.watermedia.internal.util.ReflectUtil;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Field;

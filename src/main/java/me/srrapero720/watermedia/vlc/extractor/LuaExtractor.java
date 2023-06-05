@@ -88,9 +88,9 @@ public enum LuaExtractor {
                 }
             }
         } catch (FileNotFoundException fnfe) {
-            LOGGER.error("Failed to extract LUAC, file not found: {}" + originPath, fnfe);
+            LOGGER.error("Failed to extract from {}, file not found: {}", originPath, fnfe);
         } catch (IOException ioe) {
-            LOGGER.error("Failed to extract LUAC due to I/O error: {}" + originPath, ioe);
+            LOGGER.error("Failed to extract from {} to {} due to I/O error: {}", originPath, destinationPath, ioe);
         }
     }
 }
