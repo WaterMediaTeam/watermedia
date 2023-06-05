@@ -1,10 +1,8 @@
-package me.srrapero720.watermedia.api.media;
-
-import me.srrapero720.watermedia.api.media.BasePlayer;
+package me.srrapero720.watermedia.api.media.players;
 
 // TODO: Implementar semaforo de VLC para determinar si VLC funciona, si no entonces que use LavaPlayer.
 // TODO: Tambien revisar si la URL la puede soportar el VLC o por el contrario es mejor usar LavaPlayer.
-public class WaterPlayer extends BasePlayer {
+public class WaterPlayer extends Player {
     public WaterPlayer(String url) {
         super(url);
     }

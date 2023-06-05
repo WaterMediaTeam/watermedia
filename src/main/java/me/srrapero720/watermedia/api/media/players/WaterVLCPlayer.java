@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.media;
+package me.srrapero720.watermedia.api.media.players;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.srrapero720.watermedia.internal.util.TickMediaUtil;
@@ -10,13 +10,13 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallba
 
 import javax.annotation.Nullable;
 
-public class VLCWaterPlayer extends BasePlayer {
+public class WaterVLCPlayer extends Player {
     protected CallbackMediaPlayerComponent player;
-    public VLCWaterPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+    public WaterVLCPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         this(url, VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
     }
 
-    public VLCWaterPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+    public WaterVLCPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         super(url);
         this.player = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
     }
@@ -192,7 +192,6 @@ public class VLCWaterPlayer extends BasePlayer {
         if (player == null) return;
         player.mediaPlayer().release();
         player = null;
-        System.gc();
     }
 }
 

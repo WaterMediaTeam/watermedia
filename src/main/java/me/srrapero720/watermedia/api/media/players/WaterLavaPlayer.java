@@ -1,9 +1,9 @@
-package me.srrapero720.watermedia.api.media;
+package me.srrapero720.watermedia.api.media.players;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-public class LPWaterPlayer extends BasePlayer {
-    public LPWaterPlayer(String url) {
+public class WaterLavaPlayer extends Player {
+    public WaterLavaPlayer(String url) {
         super(url);
     }
 

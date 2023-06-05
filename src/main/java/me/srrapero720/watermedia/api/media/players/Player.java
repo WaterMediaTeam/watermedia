@@ -1,10 +1,10 @@
-package me.srrapero720.watermedia.api.media;
+package me.srrapero720.watermedia.api.media.players;
 
 import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
 
-public abstract class BasePlayer {
+public abstract class Player {
     protected String url;
-    public BasePlayer(String url) {
+    public Player(String url) {
         this.compat(url);
     }
 
