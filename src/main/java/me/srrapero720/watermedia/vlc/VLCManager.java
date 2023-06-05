@@ -58,9 +58,6 @@ public class VLCManager {
     }
 
     public static final String[] DEFAULT_VLC_ARGS = new String[] {
-            "--aout",
-            "directsound",
-
             "--file-caching",
             "6000",
 
