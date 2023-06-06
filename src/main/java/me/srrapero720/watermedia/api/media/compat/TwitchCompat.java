@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.media.compat;
 
-import me.srrapero720.watermedia.api.media.compat.util.twitch.TwitchUtil;
+import me.srrapero720.watermedia.api.util.twitch.TwitchUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.media.compat.util.twitch;
+package me.srrapero720.watermedia.api.util.twitch;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
