@@ -13,7 +13,8 @@ public abstract class CompatVideoUrl {
 
     public static boolean init() {
         COMPATS = new CompatVideoUrl[] {
-                new DriveCompatVideoUrl()
+                new DriveCompatVideoUrl(),
+                new TwitchCompat()
         };
         return true;
     }
