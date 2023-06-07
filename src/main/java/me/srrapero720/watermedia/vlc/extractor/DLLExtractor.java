@@ -30,6 +30,7 @@ public enum DLLExtractor {
     libadummy_plugin("audio_output"),
     libamem_plugin("audio_output"),
     libwaveout_plugin("audio_output"),
+    libdirectsound_plugin("audio_output"),
 
     // plugins/codec
     liba52_plugin("codec"),
@@ -37,11 +38,11 @@ public enum DLLExtractor {
     libaes3_plugin("codec"),
     libaom_plugin("codec"),
     libaraw_plugin("codec"),
-    libaribcaption_plugin("codec"),
     libaribsub_plugin("codec"),
     libavcodec_plugin("codec"),
     libcc_plugin("codec"),
     libcdg_plugin("codec"),
+    libcrystalhd_plugin("codec"),
     libcvdsub_plugin("codec"),
     libd3d11va_plugin("codec"),
     libdav1d_plugin("codec"),
@@ -65,12 +66,14 @@ public enum DLLExtractor {
     liboggspots_plugin("codec"),
     libopus_plugin("codec"),
     libpng_plugin("codec"),
+    libqsv_plugin("codec"),
     librawvideo_plugin("codec"),
     librtp_rawvid_plugin("codec"),
     librtpvideo_plugin("codec"),
     libschroedinger_plugin("codec"),
     libscte18_plugin("codec"),
     libscte27_plugin("codec"),
+    libsdl_image_plugin("codec"),
     libspdif_plugin("codec"),
     libspeex_plugin("codec"),
     libspudec_plugin("codec"),
@@ -118,8 +121,7 @@ public enum DLLExtractor {
 
     // plugins/video_output
     libvmem_plugin("video_output"),
-    libwdummy_plugin("video_output"),
-    libwin32_window_plugin("video_output");
+    libvdummy_plugin("video_output");
 
     public final String pluginFolder;
 
