@@ -10,7 +10,6 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath "org.spongepowered:mixingradle:0.7-SNAPSHOT"
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
@@ -22,7 +21,6 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -49,10 +47,7 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
             property 'forge.enabledGameTestNamespaces', 'watermedia'
-            arg '--mixin.config'
-            arg 'watermedia.mixin.json'
 
             mods {
                 watermedia {
@@ -67,9 +62,6 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'watermedia'
-            arg '--mixin.config'
-            arg 'watermedia.mixin.json'
-
             mods {
                 watermedia {
                     source sourceSets.main
@@ -95,7 +87,6 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.mcV}-${project.fgV}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // FABRIC LOADER
     implementation "net.fabricmc:fabric-loader:0.14.19"
