@@ -26,23 +26,7 @@ import java.nio.ByteBuffer;
 /**
  * Callback invoked by the {@link CallbackVideoSurface} when the format of the video changes.
  */
-public interface BufferFormatCallback {
-
-    /**
-     * Returns a {@link BufferFormat} instance specifying how the {@link CallbackVideoSurface} should structure its
-     * internal buffers.
-     * <p>
-     * Note that it is possible that some versions of VLC provide the wrong value for the sourceHeight parameter, and
-     * more than that it might invoke this callback multiple times with different values for the sourceHeight. Your own
-     * callback implementation may need to mitigate this (e.g. by ignoring the sourceHeight changes on subsequent
-     * invocations of your callback).
-     *
-     * @param sourceWidth video width
-     * @param sourceHeight video height
-     * @return buffer format, must never be <code>null</code>
-     */
-    BufferFormat getBufferFormat(int sourceWidth, int sourceHeight);
-
+public interface BufferFormatCallback extends UnAllocBufferFormatCallback {
     /**
      * Invoked when new video buffers have been allocated.
      *
