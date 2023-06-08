@@ -101,6 +101,7 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:0.14.19"
 
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
+    library 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 //    library ('com.github.walkyst:lavaplayer-fork:1.4.1') {
 //        exclude group: 'org.slf4j', module: 'slf4j-api'
 //    }
@@ -117,6 +118,7 @@ shadowJar {
     relocate 'com.github.aikaterna', 'me.lib720.aikaterna'
     relocate 'com.mpatric', 'me.lib720.mpatric'
     relocate 'org.mozilla', 'me.lib720.mozilla'
+    relocate 'com.fasterxml.jackson', 'me.lib720.jackson'
 
     archiveFileName = "${project.archivesBaseName}-${project.version}.jar"
 }
