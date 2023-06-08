@@ -26,7 +26,7 @@ public record LocalFileProvider(Path rootPath) implements DiscoveryDirectoryProv
         var version = this.getLocalVersion(config);
 
         // Check if we need to update binaries
-        if (!version.equals(VLCManager.getVersion())) {
+        if (version != null && !version.equals(VLCManager.getVersion())) {
             this.extract();
             this.setLocalVersion(config);
         } else {
