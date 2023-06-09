@@ -1,24 +1,23 @@
 modLoader="javafml" #mandatory
-loaderVersion="[40,)"
+loaderVersion="[36,)"
 license="All rights reserved"
-issueTrackerURL="https://github.com/SrRapero720/watermedia/issues" #optional
-[[mods]] #mandatory
-modId="watermedia" #mandatory
-version="${file.jarVersion}" #mandatory
-displayName="WATERMeDIA" #mandatory
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia" #optional
-logoFile="pack.png" #optional
-credits="This VLCJ discovery is possible by CreativeMD" #optional
-authors="SrRapero720 and Goedix" #optional
-description='''
-Multimedia Power!
-'''
-# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
+[[mods]]
+    modId="watermedia"
+    version="${file.jarVersion}"
+    displayName="WATERMeDIA"
+    #updateJSONURL="https://change.me.example.invalid/updates.json"
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia"
+    logoFile="pack.png" #optional
+    credits="VLC to VideoLAN team, VLCJ by caprica, VLCJ discovery by CreativeMD"
+    authors="SrRapero720 and Goedix"
+    description='''
+    Library to expand Minecraft entertainment using multimedia content
+    Powered by WATERCoRE
+    '''
 [[dependencies.watermedia]]
     modId="minecraft"
     mandatory=true
-# This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.17,1.20)"
+    versionRange="[1.17,)" # ON FORGE ONLY SUPPORTS 1.17 (MIN JAVA IS 15 FEATURES)
     ordering="NONE"
     side="CLIENT"
