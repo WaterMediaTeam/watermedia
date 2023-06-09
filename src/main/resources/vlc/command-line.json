@@ -1,0 +1,17 @@
+[
+  "--file-caching",
+  "3000",
+
+  "--network-caching",
+  "3000",
+
+  "--http-reconnect",
+
+  "--file-logging",
+  "--logfile",
+  "logs/vlc/latest.log",
+  "--logmode", "text",
+  "--verbose", "2",
+
+  "--no-quiet"
+]

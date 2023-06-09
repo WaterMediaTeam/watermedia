@@ -1,14 +1,15 @@
-package me.srrapero720.watermedia.vlc.extractor;
+package me.srrapero720.watermedia.vlc;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public enum DLLExtractor {
+public enum BinManager {
     // CORES
     libvlc(null),
     libvlccore(null),
@@ -125,9 +126,7 @@ public enum DLLExtractor {
 
     public final String pluginFolder;
 
-    DLLExtractor(String dllName) {
-        this.pluginFolder = dllName;
-    }
+    BinManager(String pluginDir) { this.pluginFolder = pluginDir; }
 
     // Function to determine the architecture of the system
     public String getSystemArchitecture() {
@@ -141,11 +140,7 @@ public enum DLLExtractor {
         }
     }
 
-    public String getName() {
-        // Depending on the system architecture, return the appropriate DLL name with extension
-        // TODO: If other architectures are supported, add them here
-        return name() + ".dll";
-    }
+    public String getName() { return name() + ".dll"; }
 
 
     // Function to extract the DLL to the appropriate directory
@@ -159,7 +154,7 @@ public enum DLLExtractor {
         try {
             Path dllDestinationPath = Paths.get(destinationPath);
             if (!Files.exists(dllDestinationPath)) {
-                try (var is = getClass().getResourceAsStream(originPath)) {
+                try (InputStream is = getClass().getResourceAsStream(originPath)) {
                     if (is != null) {
                         Files.createDirectories(dllDestinationPath.getParent());
                         Files.copy(is, dllDestinationPath);

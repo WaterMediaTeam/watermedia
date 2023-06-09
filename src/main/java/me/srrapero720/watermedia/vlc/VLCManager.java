@@ -13,18 +13,18 @@ import java.util.Arrays;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VLCManager {
-    private static final String version = "20230604";
+    private static final String version = "20230608";
 
     private static boolean devMode;
     private static Path rootPath;
     private static MediaPlayerFactory defaultFactory;
 
-    // Comes from: https://artifacts.videolan.org/vlc/nightly-win64-llvm/
+    // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
     public static String getVersion() { return version; }
 
     public static boolean isDevMode() { return devMode; }
-    public static boolean isLoaded() { return defaultFactory != null; }
     public static Path getRootPath() { return rootPath; }
+    public static boolean isLoaded() { return defaultFactory != null; }
     public static MediaPlayerFactory getDefaultFactory() { return defaultFactory; }
 
     public static boolean init(Path gameDir, boolean devMode) {
@@ -54,13 +54,18 @@ public class VLCManager {
             return factory;
         }
 
-        LOGGER.error("VLC was not discovered in your system.");
+        LOGGER.error("VLC was not found on your system.");
         return null;
     }
 
     public static final String[] DEFAULT_VLC_ARGS = new String[] {
             "--file-caching",
-            "6000",
+            "3000",
+
+            "--network-caching",
+            "3000",
+
+            "--http-reconnect",
 
             "--file-logging",
             "--logfile",
@@ -70,4 +75,21 @@ public class VLCManager {
 
             "--no-quiet"
     };
+
+    private static class VLCReleaseHook extends Thread {
+        public final MediaPlayerFactory factory;
+        VLCReleaseHook(MediaPlayerFactory factory) {
+            super();
+            this.setDaemon(true);
+            this.setName("VLC-ReleaseHook");
+            this.factory = factory;
+        }
+
+        @Override
+        public void run() {
+            LOGGER.info("Shutdown VLC");
+            if (factory != null) factory.release();
+            LOGGER.info("Shutdown finished");
+        }
+    }
 }

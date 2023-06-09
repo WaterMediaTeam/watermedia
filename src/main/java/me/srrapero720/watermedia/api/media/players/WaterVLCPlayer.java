@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.media.players;
 
-import me.srrapero720.watermedia.internal.util.TickMediaUtil;
+import me.srrapero720.watermedia.internal.util.MediaUtil;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import me.srrapero720.watermedia.internal.util.ThreadUtil;
 import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
@@ -85,13 +85,13 @@ public class WaterVLCPlayer extends Player {
     @Override
     public void seekGameTicksTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(TickMediaUtil.gameTicksToMs(ticks));
+        player.mediaPlayer().controls().setTime(MediaUtil.gameTicksToMs(ticks));
     }
 
     @Override
     public void seekGameTickFastTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(TickMediaUtil.gameTicksToMs(ticks));
+        player.mediaPlayer().controls().setTime(MediaUtil.gameTicksToMs(ticks));
     }
 
     @Override
@@ -158,7 +158,7 @@ public class WaterVLCPlayer extends Player {
     public long getGameTickDuration() {
         if (player == null) return 0L;
         var info = player.mediaPlayer().media().info();
-        if (info != null) return TickMediaUtil.msToGameTicks(info.duration());
+        if (info != null) return MediaUtil.msToGameTicks(info.duration());
         return 0L;
     }
 
@@ -169,7 +169,7 @@ public class WaterVLCPlayer extends Player {
 
     public long getGameTickMediaLength() {
         if (player == null) return 0L;
-        return TickMediaUtil.msToGameTicks(player.mediaPlayer().status().length());
+        return MediaUtil.msToGameTicks(player.mediaPlayer().status().length());
     }
 
     public long getTime() {
@@ -179,7 +179,7 @@ public class WaterVLCPlayer extends Player {
 
     public long getGameTickTime() {
         if (player == null) return 0L;
-        return TickMediaUtil.msToGameTicks(player.mediaPlayer().status().time());
+        return MediaUtil.msToGameTicks(player.mediaPlayer().status().time());
     }
 
     public boolean isSeekable() {

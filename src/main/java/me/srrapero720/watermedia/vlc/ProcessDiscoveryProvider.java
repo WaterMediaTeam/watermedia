@@ -1,17 +1,14 @@
-package me.srrapero720.watermedia.vlc.extras;
+package me.srrapero720.watermedia.vlc;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import me.srrapero720.watermedia.internal.util.ThreadUtil;
-import me.srrapero720.watermedia.vlc.VLCManager;
-import me.srrapero720.watermedia.vlc.extractor.DLLExtractor;
-import me.srrapero720.watermedia.vlc.extractor.LuaExtractor;
 import me.lib720.caprica.vlcj4.factory.discovery.provider.DiscoveryDirectoryProvider;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public record LocalFileProvider(Path rootPath) implements DiscoveryDirectoryProvider {
+public record ProcessDiscoveryProvider(Path rootPath) implements DiscoveryDirectoryProvider {
 
     @Override
     public int priority() { return 5; }
@@ -38,11 +35,11 @@ public record LocalFileProvider(Path rootPath) implements DiscoveryDirectoryProv
 
     private void extract() {
         LOGGER.warn("Running Windows bin extraction from JAR to local files");
-        for (var binary : DLLExtractor.values()) binary.extract();
+        for (var binary : BinManager.values()) binary.extract();
         LOGGER.warn("Windows bin extraction finished");
 
         LOGGER.warn("Running VLC LUAC script extraction from JAR to local files");
-        for (var luac : LuaExtractor.values()) luac.extract();
+        for (var luac : LuaManager.values()) luac.extract();
         LOGGER.warn("VLC LUAC script extraction finished");
     }
 

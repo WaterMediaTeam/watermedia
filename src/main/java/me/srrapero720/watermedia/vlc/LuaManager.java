@@ -1,6 +1,4 @@
-package me.srrapero720.watermedia.vlc.extractor;
-
-import org.stringtemplate.v4.STErrorListener;
+package me.srrapero720.watermedia.vlc;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,7 +8,7 @@ import java.nio.file.Paths;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public enum LuaExtractor {
+public enum LuaManager {
     VLSub("extensions"),
 
     cli("intf"),
@@ -24,10 +22,10 @@ public enum LuaExtractor {
     httprequests("intf/modules"),
 
 
-    musicbrainz("00_musicbrainz", "meta/art"),
-    googleimage("01_googleimage", "meta/art"),
-    frenchtv("02_frenchtv", "meta/art"),
-    lastfm("03_lastfm", "meta/art"),
+    musicbrainz("meta/art", "00_musicbrainz"),
+    googleimage("meta/art", "01_googleimage"),
+    frenchtv("meta/art", "02_frenchtv"),
+    lastfm("meta/art", "03_lastfm"),
 
     filename("meta/reader"),
 
@@ -54,16 +52,15 @@ public enum LuaExtractor {
     youtube("playlist"),
 
     icecast("sd"),
-    jamendo_2("jamendo", "sd"),
-    ;
+    jamendo_2("sd", "jamendo");
 
     private final String dir;
     private final String file;
-    LuaExtractor(String dir) {
+    LuaManager(String dir) {
         this.dir = dir;
         this.file = null;
     }
-    LuaExtractor(String file, String dir) {
+    LuaManager(String dir, String file) {
         this.dir = dir;
         this.file = file;
     }
