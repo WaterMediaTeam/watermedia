@@ -4,10 +4,10 @@
   "version": "${file.jarVersion}",
 
   "name": "WATERMeDIA",
-  "description": "Multimedia Power!",
+  "description": "Library to expand Minecraft entertainment using multimedia content\nPowered by WATERCoRE",
   "authors": [
     "SrRapero720",
-    "Goedix"
+    "nGoedix"
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/watermedia/",
@@ -26,6 +26,6 @@
   "depends": {
     "fabricloader": ">=0.14.21",
     "minecraft": ">=1.16",
-    "java": ">=17"
+    "java": ">=15"
   }
 }
