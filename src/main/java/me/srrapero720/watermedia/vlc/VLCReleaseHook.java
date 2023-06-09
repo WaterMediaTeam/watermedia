@@ -17,7 +17,6 @@ class VLCReleaseHook extends Thread {
     public void run() {
         LOGGER.info("Shutdown VLC");
         if (factory != null) factory.release();
-        if (VLCManager.isDevMode()) VLCManager.getDefaultFactory().release();
         LOGGER.info("Shutdown finished");
     }
 }
