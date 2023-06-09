@@ -83,6 +83,4 @@ public class StardeosCompat extends CompatVideoUrl {
 
         return null;
     }
-
-    private record FileUrlObject(String fileUrl, int label, boolean alert) {}
 }

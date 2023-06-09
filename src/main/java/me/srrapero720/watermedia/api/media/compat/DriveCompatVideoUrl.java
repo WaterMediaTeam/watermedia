@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.media.compat;
 
+import me.srrapero720.watermedia.MediaConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -16,7 +17,7 @@ public class DriveCompatVideoUrl extends CompatVideoUrl {
     @Override
     public String build(@NotNull URL url) {
         super.build(url);
-        if (CACHE.containsKey(url.toString())) return CACHE.get(url.toString());
+        if (isStored(url)) return getStored(url);
 
         // PATH GETTER
         final var start = url.getPath().indexOf("/file/d/") + 8;

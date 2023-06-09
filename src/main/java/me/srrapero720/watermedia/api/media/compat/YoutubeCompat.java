@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.media.compat;
 
+import me.srrapero720.watermedia.MediaConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -18,7 +19,7 @@ public class YoutubeCompat extends CompatVideoUrl {
     @Override
     public String build(@NotNull URL url) {
         super.build(url);
-        if (CACHE.containsKey(url.toString())) return CACHE.get(url.toString());
+        if (isStored(url)) return getStored(url);
 
         Matcher matcher = PATTERN.matcher(url.toString());
         if (matcher.find()) {

@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.media.compat;
 
+import me.srrapero720.watermedia.MediaConfig.MediaQuality;
 import me.srrapero720.watermedia.internal.util.ThreadUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,8 @@ public abstract class CompatVideoUrl {
     }
 
     protected synchronized static String storeUrl(URL url, String result) { CACHE.put(url.toString(), result); return result; }
+    protected static String getStored(URL url) { return CACHE.get(url.toString()); }
+    protected static boolean isStored(URL url) { return CACHE.containsKey(url.toString()); }
     public abstract boolean isValid(@NotNull URL url);
     public String build(@NotNull URL url) {
         if (!isValid(url)) throw new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat");

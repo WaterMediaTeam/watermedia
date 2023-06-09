@@ -8,11 +8,6 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-
-/**
- * Here goes all required methods to load WATERMeDIA
- * This is loader-safe, because each mod-loader is a IWaterMedia.
- */
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WaterMedia {
 	public static final String MOD_ID = "watermedia";
@@ -28,5 +23,9 @@ public class WaterMedia {
 
 		// POST-API LOADERS
 		return true;
+	}
+
+	public static boolean load(Path gameDir, MediaConfig config, boolean inDev) {
+		throw new UnsupportedOperationException("This method isn't supported yet");
 	}
 }
