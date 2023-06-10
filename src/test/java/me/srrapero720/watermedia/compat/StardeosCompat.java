@@ -1,80 +1,51 @@
 package me.srrapero720.watermedia.compat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+import com.mojang.logging.LogUtils;
+import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
+import me.srrapero720.watermedia.api.network.StardeosApi;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Pattern;
 
-public class StardeosCompat {
-    public static void main(String[] args) {
-        String videoId = "63f46ee22ada8aa4fafc11cd"; // ID del video
+// Planned
+public class StardeosCompat extends CompatVideoUrl {
+    public static final Logger LOGGER = LogUtils.getLogger();
+    private static final Pattern regex = Pattern.compile("\\/video\\/([a-zA-Z0-9]+)$");
 
-        try {
-            URL url = new URL("https://stardeos.com/api/v2/videos/" + videoId);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-
-            // Agregar los encabezados
-            connection.setRequestProperty("Referer", "https://stardeos.com");
-            connection.setRequestProperty("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
-            connection.setRequestProperty("accept-encoding", "gzip, deflate, br");
-            connection.setRequestProperty("accept-language", "es-419,es;q=0.9,es-ES;q=0.8,en;q=0.7,en-GB;q=0.6,en-US;q=0.5");
-            connection.setRequestProperty("cache-control", "max-age=0");
-            connection.setRequestProperty("dnt", "1");
-            connection.setRequestProperty("if-none-match", "W/\"937-q+BbFxUBt2FyxcUwnVmJUATAPUI\"");
-            connection.setRequestProperty("sec-ch-ua", "\"Microsoft Edge\";v=\"113\", \"Chromium\";v=\"113\", \"Not-A.Brand\";v=\"24\"");
-            connection.setRequestProperty("sec-ch-ua-mobile", "?0");
-            connection.setRequestProperty("sec-ch-ua-platform", "\"Windows\"");
-            connection.setRequestProperty("sec-fetch-dest", "document");
-            connection.setRequestProperty("sec-fetch-mode", "navigate");
-            connection.setRequestProperty("sec-fetch-site", "none");
-            connection.setRequestProperty("sec-fetch-user", "?1");
-            connection.setRequestProperty("upgrade-insecure-requests", "1");
-            connection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57");
-
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                // Analizar la respuesta JSON
-                String jsonResponse = response.toString();
-                // Analizar el parámetro "files" y extraer el "fileUrl" que contiene "_high.m3u8"
-                String fileUrl = parseFileUrl(jsonResponse);
-
-                System.out.println("fileUrl: " + fileUrl);
-            } else {
-                System.out.println("Error en la solicitud. Codigo de respuesta: " + responseCode);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws MalformedURLException {
+        LOGGER.info(new StardeosCompat().build(new URL("https://stardeos.com/video/63fb79912ada8aa4fafc1b6a")));
     }
 
-    private static String parseFileUrl(String jsonResponse) {
-        // Analiza el JSON
-        String fileUrl = null;
-        int startIndex = jsonResponse.indexOf("\"files\":");
-        if (startIndex != -1) {
-            int endIndex = jsonResponse.indexOf("]", startIndex);
-            if (endIndex != -1) {
-                String filesJson = jsonResponse.substring(startIndex, endIndex + 1);
-                int fileUrlIndex = filesJson.indexOf("\"fileUrl\":");
-                if (fileUrlIndex != -1) {
-                    int urlStartIndex = filesJson.indexOf("\"", fileUrlIndex + 1) + 1;
-                    int urlEndIndex = filesJson.indexOf("\"", urlStartIndex);
-                    fileUrl = filesJson.substring(urlStartIndex, urlEndIndex);
+    @Override
+    public boolean isValid(@NotNull URL url) { return url.toString().contains("stardeos.com/video/"); }
+
+    @Override
+    public String build(@NotNull URL url) {
+        super.build(url);
+
+        // OBTEN EL VIDEO ID
+        var matcher = regex.matcher(url.toString());
+        if (!matcher.find()) return null;
+        var videoId = matcher.group(1);
+
+        // INICIA CONEXION CON EL SERVIDOR EXTERNO
+        var call = StardeosApi.NET.getVideoInfo(videoId);
+        try {
+            var res = call.execute();
+            if (res.isSuccessful() && res.body() != null) {
+                for (var file: res.body().files) {
+                    if (file.fileUrl.contains("high") && !file.alert) return file.fileUrl;
                 }
+            } else {
+                LOGGER.error("Detected Stardeos.com but request to get real URL wasn't successfuly \n\nStatus code: {}\n\nResponse: {}", res.code(), res.body());
             }
+        } catch (Exception e) {
+            LOGGER.error("Detected Stardeos.com but request to get real URL wasn't successfuly");
         }
-        return fileUrl;
+
+        return null;
     }
 }

@@ -3,9 +3,10 @@ package me.srrapero720.watermedia.network.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class StardeosVideo {
+public class StardeosVideo implements Serializable {
     @SerializedName("id")
     @Expose
     public String id;

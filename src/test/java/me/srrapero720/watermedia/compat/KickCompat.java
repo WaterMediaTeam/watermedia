@@ -1,13 +1,20 @@
-package me.srrapero720.watermedia.api.media.compat;
+package me.srrapero720.watermedia.compat;
 
+import com.mojang.logging.LogUtils;
+import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
 import me.srrapero720.watermedia.api.network.KickApi;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-
 public class KickCompat extends CompatVideoUrl {
+    public static final Logger LOGGER = LogUtils.getLogger();
+    public static void main(String[] args) throws MalformedURLException {
+        LOGGER.info(new KickCompat().build(new URL("https://kick.com/lornexia")));
+    }
+
 
     @Override
     public boolean isValid(@NotNull URL url) {

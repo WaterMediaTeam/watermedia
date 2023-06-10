@@ -1,6 +1,6 @@
-package me.srrapero720.watermedia.network;
+package me.srrapero720.watermedia.api.network;
 
-import me.srrapero720.watermedia.network.models.StardeosVideo;
+import me.srrapero720.watermedia.api.network.models.StardeosVideo;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;

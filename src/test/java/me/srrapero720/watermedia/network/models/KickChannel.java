@@ -4,7 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class KickChannel {
+import java.io.Serializable;
+
+public class KickChannel implements Serializable {
     @SerializedName("id")
     @Expose
     public int id;
@@ -26,7 +28,7 @@ public abstract class KickChannel {
     @Nullable
     public isLive isStreaming;
 
-    public static abstract class isLive {
+    public static class isLive implements Serializable {
         @SerializedName("id")
         @Expose
         public int id;
