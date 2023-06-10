@@ -2,7 +2,7 @@ package me.srrapero720.watermedia;
 
 import com.mojang.logging.LogUtils;
 import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
-import me.srrapero720.watermedia.lavaplayer.LPManager;
+import me.srrapero720.watermedia.lavaplayer.LavaManager;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import org.slf4j.Logger;
 
@@ -19,7 +19,7 @@ public class WaterMedia {
 
 		// BINARIES LOADERS
 		if (!VLCManager.init(gameDir, inDev)) return false;
-        if (!LPManager.init()) return false;
+        if (!LavaManager.init()) return false;
 
 		// POST-API LOADERS
 		return true;
