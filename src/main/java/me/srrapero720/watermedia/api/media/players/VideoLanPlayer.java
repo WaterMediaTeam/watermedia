@@ -1,154 +1,153 @@
-package me.srrapero720.watermedia.api.media.players.sync;
+package me.srrapero720.watermedia.api.media.players;
 
+import me.srrapero720.watermedia.internal.util.WaterUtil;
+import me.srrapero720.watermedia.vlc.VLCManager;
+import me.srrapero720.watermedia.internal.util.ThreadUtil;
 import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj4.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.RenderCallback;
-import me.srrapero720.watermedia.api.media.players.Player;
-import me.srrapero720.watermedia.internal.util.ThreadUtil;
-import me.srrapero720.watermedia.internal.util.WaterUtil;
-import me.srrapero720.watermedia.vlc.VLCManager;
 
 import javax.annotation.Nullable;
 
-public class SyncVLCPlayer extends Player {
-    protected volatile CallbackMediaPlayerComponent player;
-    public SyncVLCPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+public class VideoLanPlayer extends Player {
+    protected CallbackMediaPlayerComponent player;
+    public VideoLanPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         this(url, VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
     }
 
-    public SyncVLCPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+    public VideoLanPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         super(url);
         this.player = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
     }
 
-    public synchronized CallbackMediaPlayerComponent getRawPlayer() {
+    public CallbackMediaPlayerComponent getRawPlayer() {
         return player;
     }
 
 
     @Override
-    public synchronized void start() {
+    public void start() {
         this.start(new String[0]);
     }
 
     @Override
-    public synchronized void start(String url) {
+    public void start(String url) {
         this.start(url, new String[0]);
     }
 
-    public synchronized void start(String... vlcArgs) {
+    public void start(String... vlcArgs) {
         if (player == null) return;
         ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, vlcArgs));
     }
 
-    public synchronized void start(String url, String... vlcArgs) {
+    public void start(String url, String... vlcArgs) {
         super.start(url);
         if (player == null) return;
         ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, vlcArgs));
     }
 
     @Override
-    public synchronized void play() {
+    public void play() {
         if (player == null) return;
         player.mediaPlayer().controls().play();
     }
 
     @Override
-    public synchronized void pause() {
+    public void pause() {
         if (player == null) return;
         if (player.mediaPlayer().status().canPause()) player.mediaPlayer().controls().pause();
     }
 
     @Override
-    public synchronized void setPauseMode(boolean isPaused) {
+    public void setPauseMode(boolean isPaused) {
         player.mediaPlayer().controls().setPause(isPaused);
     }
 
     @Override
-    public synchronized void stop() {
+    public void stop() {
         if (player == null) return;
         player.mediaPlayer().controls().stop();
     }
 
     @Override
-    public synchronized void seekTo(long time) {
+    public void seekTo(long time) {
         if (player == null) return;
         player.mediaPlayer().controls().setTime(time);
     }
 
     @Override
-    public synchronized void seekFastTo(long ticks) {
+    public void seekFastTo(long ticks) {
         if (player == null) return;
         player.mediaPlayer().controls().setTime(ticks);
     }
 
     @Override
-    public synchronized void seekGameTicksTo(int ticks) {
+    public void seekGameTicksTo(int ticks) {
         if (player == null) return;
         player.mediaPlayer().controls().setTime(WaterUtil.gameTicksToMs(ticks));
     }
 
     @Override
-    public synchronized void seekGameTickFastTo(int ticks) {
+    public void seekGameTickFastTo(int ticks) {
         if (player == null) return;
         player.mediaPlayer().controls().setTime(WaterUtil.gameTicksToMs(ticks));
     }
 
     @Override
-    public synchronized void setRepeatMode(boolean repeatMode) {
+    public void setRepeatMode(boolean repeatMode) {
         if (player == null) return;
         player.mediaPlayer().controls().setRepeat(repeatMode);
     }
 
     @Override
-    public synchronized boolean isValid() {
+    public boolean isValid() {
         if (player == null) return false;
         return player.mediaPlayer().media().isValid();
     }
 
     @Override
-    public synchronized boolean isPlaying() {
+    public boolean isPlaying() {
         if (player == null) return false;
         return player.mediaPlayer().status().isPlaying();
     }
 
     @Override
-    public synchronized boolean getRepeatMode() {
+    public boolean getRepeatMode() {
         if (player == null) return false;
         return player.mediaPlayer().controls().getRepeat();
     }
 
     @Override
-    public synchronized void fastFoward() {
+    public void fastFoward() {
         if (player == null) return;
         player.mediaPlayer().controls().skipTime(5L);
     }
 
     @Override
-    public synchronized void setSpeed(float rate) {
+    public void setSpeed(float rate) {
         player.mediaPlayer().controls().setRate(rate);
     }
 
     @Override
-    public synchronized void rewind() {
+    public void rewind() {
         player.mediaPlayer().controls().skipTime(-5L);
     }
 
     @Override
-    public synchronized void setVolume(int volume) {
+    public void setVolume(int volume) {
         if (player == null) return;
         player.mediaPlayer().audio().setVolume(volume);
     }
 
     @Override
-    public synchronized int getVolume() {
+    public int getVolume() {
         if (player == null) return 0;
         return player.mediaPlayer().audio().volume();
     }
 
     @Override
-    public synchronized long getDuration() {
+    public long getDuration() {
         if (player == null) return 0L;
         var info = player.mediaPlayer().media().info();
         if (info != null) return info.duration();
@@ -156,40 +155,40 @@ public class SyncVLCPlayer extends Player {
     }
 
     @Override
-    public synchronized long getGameTickDuration() {
+    public long getGameTickDuration() {
         if (player == null) return 0L;
         var info = player.mediaPlayer().media().info();
         if (info != null) return WaterUtil.msToGameTicks(info.duration());
         return 0L;
     }
 
-    public synchronized long getMediaLength() {
+    public long getMediaLength() {
         if (player == null) return 0L;
         return player.mediaPlayer().status().length();
     }
 
-    public synchronized long getGameTickMediaLength() {
+    public long getGameTickMediaLength() {
         if (player == null) return 0L;
         return WaterUtil.msToGameTicks(player.mediaPlayer().status().length());
     }
 
-    public synchronized long getTime() {
+    public long getTime() {
         if (player == null) return 0L;
         return player.mediaPlayer().status().time();
     }
 
-    public synchronized long getGameTickTime() {
+    public long getGameTickTime() {
         if (player == null) return 0L;
         return WaterUtil.msToGameTicks(player.mediaPlayer().status().time());
     }
 
-    public synchronized boolean isSeekable() {
+    public boolean isSeekable() {
         if (player == null) return false;
         return player.mediaPlayer().status().isSeekable();
     }
 
     @Override
-    public synchronized void release() {
+    public void release() {
         if (player == null) return;
         player.mediaPlayer().release();
         player = null;
