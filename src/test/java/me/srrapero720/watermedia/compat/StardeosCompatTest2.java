@@ -22,7 +22,7 @@ public class StardeosCompatTest2 {
 
             // Agregar los encabezados
             connection.setRequestProperty("Referer", "https://stardeos.com");
-            connection.setRequestProperty("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+            connection.setRequestProperty("accept", "application/json");
             connection.setRequestProperty("accept-encoding", "gzip, deflate, br");
             connection.setRequestProperty("accept-language", "es-419,es;q=0.9,es-ES;q=0.8,en;q=0.7,en-GB;q=0.6,en-US;q=0.5");
             connection.setRequestProperty("cache-control", "max-age=0");
