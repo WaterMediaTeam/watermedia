@@ -9,11 +9,11 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface StardeosApi {
-    me.srrapero720.watermedia.api.network.StardeosApi NET = new Retrofit.Builder()
+    StardeosApi NET = new Retrofit.Builder()
             .baseUrl("https://stardeos.com/api/v2/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(new OkHttpClient.Builder()/*.addInterceptor(new BasicAuthInterceptor(API_USER_NAME, API_PASSWORD))*/.build())
-            .build().create(me.srrapero720.watermedia.api.network.StardeosApi.class);
+            .build().create(StardeosApi.class);
 
     @GET("videos/{vid}")
     Call<StardeosVideo> getVideoInfo(@Path("vid") String vid);

@@ -11,11 +11,11 @@ import retrofit2.http.Headers;
 import retrofit2.http.Path;
 
 public interface KickApi {
-    me.srrapero720.watermedia.api.network.KickApi NET = new Retrofit.Builder()
+    KickApi NET = new Retrofit.Builder()
             .baseUrl("https://kick.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(new OkHttpClient.Builder()/*.addInterceptor(new BasicAuthInterceptor(API_USER_NAME, API_PASSWORD))*/.build())
-            .build().create(me.srrapero720.watermedia.api.network.KickApi.class);
+            .build().create(KickApi.class);
 
     @Headers({"accept: application/json",})
     @GET("channels/{ch}")

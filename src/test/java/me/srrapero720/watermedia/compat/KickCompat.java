@@ -13,6 +13,7 @@ public class KickCompat extends CompatVideoUrl {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static void main(String[] args) throws MalformedURLException {
         LOGGER.info(new KickCompat().build(new URL("https://kick.com/lornexia")));
+        LOGGER.info(new KickCompat().build(new URL("https://kick.com/video/af9f91d4-9cbc-4395-8f35-9ef9f245fb8c")));
     }
 
 
