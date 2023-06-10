@@ -17,6 +17,7 @@ public abstract class CompatVideoUrl {
                 new DriveCompatVideoUrl(),
                 new TwitchCompat(),
                 new YoutubeCompat(),
+                new KickCompat()
         };
         return true;
     }

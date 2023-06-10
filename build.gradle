@@ -99,6 +99,8 @@ dependencies {
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     library 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     library 'com.squareup.retrofit2:retrofit:2.6.4'
+    library 'com.squareup.retrofit2:converter-gson:2.9.0'
+    library 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.8'
     library 'com.mpatric:mp3agic:0.9.1'
 }
 
@@ -112,7 +114,7 @@ shadowJar {
     relocate 'com.mpatric', 'me.lib720.mpatric'
     relocate 'org.mozilla', 'me.lib720.mozilla'
     relocate 'com.fasterxml.jackson', 'me.lib720.jackson'
-    relocate 'com.squareup', 'me.lib720'
+    relocate 'retrofit2', 'me.lib720.retrofit2'
 
     archiveFileName = "${project.archivesBaseName}-${project.version}.jar"
 }

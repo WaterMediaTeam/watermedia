@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 public class TwitchUtil {
-
     private static final Gson gson = new Gson();
 
     public static List<StreamQuality> getStream(String stream) throws IOException, StreamNotFound {
@@ -27,8 +26,7 @@ public class TwitchUtil {
         JsonElement response = post(stream);
         String signature = extractFromResponse(response, "signature");
         String value = extractFromResponse(response, "value");
-        return String.format(TwitchApiConstants.TTV_API_URL_TEMPLATE, stream)
-                + buildUrlParameters(signature, value);
+        return String.format(TwitchApiConstants.TTV_API_URL_TEMPLATE, stream) + buildUrlParameters(signature, value);
     }
 
     private static String extractFromResponse(JsonElement response, String key) {
@@ -45,8 +43,7 @@ public class TwitchUtil {
         conn.setRequestProperty("x-donate-to", "https://ttv.lol/donate");
 
         int responseCode = conn.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_NOT_FOUND)
-            throw new StreamNotFound("Stream not found");
+        if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) throw new StreamNotFound("Stream not found");
         return (responseCode == HttpURLConnection.HTTP_OK) ?
                 new String(conn.getInputStream().readAllBytes()) :
                 new String(conn.getErrorStream().readAllBytes());
