@@ -58,7 +58,7 @@ public class LavaPlayer extends Player {
     }
 
     @Override
-    public long getGameTickDuration() {
+    public int getGameTickDuration() {
         return 0;
     }
 
@@ -68,7 +68,7 @@ public class LavaPlayer extends Player {
     }
 
     @Override
-    public long getGameTickTime() {
+    public int getGameTickTime() {
         return 0;
     }
 

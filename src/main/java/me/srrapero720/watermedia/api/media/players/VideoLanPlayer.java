@@ -155,11 +155,11 @@ public class VideoLanPlayer extends Player {
     }
 
     @Override
-    public long getGameTickDuration() {
-        if (player == null) return 0L;
+    public int getGameTickDuration() {
+        if (player == null) return 0;
         var info = player.mediaPlayer().media().info();
         if (info != null) return WaterUtil.msToGameTicks(info.duration());
-        return 0L;
+        return 0;
     }
 
     public long getMediaLength() {
@@ -167,8 +167,8 @@ public class VideoLanPlayer extends Player {
         return player.mediaPlayer().status().length();
     }
 
-    public long getGameTickMediaLength() {
-        if (player == null) return 0L;
+    public int getGameTickMediaLength() {
+        if (player == null) return 0;
         return WaterUtil.msToGameTicks(player.mediaPlayer().status().length());
     }
 
@@ -177,8 +177,8 @@ public class VideoLanPlayer extends Player {
         return player.mediaPlayer().status().time();
     }
 
-    public long getGameTickTime() {
-        if (player == null) return 0L;
+    public int getGameTickTime() {
+        if (player == null) return 0;
         return WaterUtil.msToGameTicks(player.mediaPlayer().status().time());
     }
 

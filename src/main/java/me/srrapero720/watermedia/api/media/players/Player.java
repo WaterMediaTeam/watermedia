@@ -29,11 +29,11 @@ public abstract class Player {
     public abstract void seekGameTickFastTo(int ticks);
 
     public abstract long getDuration();
-    public abstract long getGameTickDuration();
+    public abstract int getGameTickDuration();
 
     public abstract long getTime();
 
-    public abstract long getGameTickTime();
+    public abstract int getGameTickTime();
 
     public abstract boolean isSeekable();
     public abstract void setRepeatMode(boolean repeatMode);
