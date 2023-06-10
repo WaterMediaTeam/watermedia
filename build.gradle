@@ -25,19 +25,6 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-configurations {
-    library
-    implementation.extendsFrom library
-}
-
-minecraft.runs.all {
-    // Tell forge to include your libraries in the classpath
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-    }
-}
-
-
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     mappings channel: 'parchment', version: '2022.11.06-1.18.2'
@@ -71,6 +58,12 @@ minecraft {
     }
 }
 
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
@@ -85,18 +78,27 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.mcV}-${project.fgV}"
+    minecraft "net.minecraftforge:forge:${project.minev}-${project.forgev}"
 
-    // FABRIC LOADER
-    implementation "net.fabricmc:fabric-loader:0.14.19"
+    // FABRIC LOADER (just to get classes info, NEVER USE IT outside WMForFabric)
+    implementation "net.fabricmc:fabric-loader:${project.fabricv}"
 
+    // TODO: Pending to impl
+    //library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'
+    //    library ('com.github.walkyst:lavaplayer-fork:1.4.1') {
+    //        exclude group: 'org.slf4j', module: 'slf4j-api'
+    //    }
+
+    // UTIL
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     library 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-//    library ('com.github.walkyst:lavaplayer-fork:1.4.1') {
-//        exclude group: 'org.slf4j', module: 'slf4j-api'
-//    }
-//    library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'
+    library 'com.squareup.retrofit2:retrofit:2.6.4'
     library 'com.mpatric:mp3agic:0.9.1'
 }
 
@@ -110,6 +112,7 @@ shadowJar {
     relocate 'com.mpatric', 'me.lib720.mpatric'
     relocate 'org.mozilla', 'me.lib720.mozilla'
     relocate 'com.fasterxml.jackson', 'me.lib720.jackson'
+    relocate 'com.squareup', 'me.lib720'
 
     archiveFileName = "${project.archivesBaseName}-${project.version}.jar"
 }
