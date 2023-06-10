@@ -6,7 +6,7 @@ import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferForma
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.RenderCallback;
 import me.srrapero720.watermedia.api.media.players.Player;
 import me.srrapero720.watermedia.internal.util.ThreadUtil;
-import me.srrapero720.watermedia.internal.util.MediaUtil;
+import me.srrapero720.watermedia.internal.util.WaterUtil;
 import me.srrapero720.watermedia.vlc.VLCManager;
 
 import javax.annotation.Nullable;
@@ -86,13 +86,13 @@ public class SyncVLCPlayer extends Player {
     @Override
     public synchronized void seekGameTicksTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(MediaUtil.gameTicksToMs(ticks));
+        player.mediaPlayer().controls().setTime(WaterUtil.gameTicksToMs(ticks));
     }
 
     @Override
     public synchronized void seekGameTickFastTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(MediaUtil.gameTicksToMs(ticks));
+        player.mediaPlayer().controls().setTime(WaterUtil.gameTicksToMs(ticks));
     }
 
     @Override
@@ -159,7 +159,7 @@ public class SyncVLCPlayer extends Player {
     public synchronized long getGameTickDuration() {
         if (player == null) return 0L;
         var info = player.mediaPlayer().media().info();
-        if (info != null) return MediaUtil.msToGameTicks(info.duration());
+        if (info != null) return WaterUtil.msToGameTicks(info.duration());
         return 0L;
     }
 
@@ -170,7 +170,7 @@ public class SyncVLCPlayer extends Player {
 
     public synchronized long getGameTickMediaLength() {
         if (player == null) return 0L;
-        return MediaUtil.msToGameTicks(player.mediaPlayer().status().length());
+        return WaterUtil.msToGameTicks(player.mediaPlayer().status().length());
     }
 
     public synchronized long getTime() {
@@ -180,7 +180,7 @@ public class SyncVLCPlayer extends Player {
 
     public synchronized long getGameTickTime() {
         if (player == null) return 0L;
-        return MediaUtil.msToGameTicks(player.mediaPlayer().status().time());
+        return WaterUtil.msToGameTicks(player.mediaPlayer().status().time());
     }
 
     public synchronized boolean isSeekable() {

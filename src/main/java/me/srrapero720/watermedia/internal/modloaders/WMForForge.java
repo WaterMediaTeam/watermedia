@@ -7,6 +7,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loader for FORGE
@@ -14,7 +15,7 @@ import org.slf4j.Logger;
  */
 @Mod("watermedia")
 public class WMForForge {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(WaterMedia.class);
 
     public WMForForge() {
         if (FMLEnvironment.dist.isDedicatedServer()) {

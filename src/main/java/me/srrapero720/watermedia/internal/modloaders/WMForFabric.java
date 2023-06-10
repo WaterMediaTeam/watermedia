@@ -6,13 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loader for FABRIC
  * Doing things with FABRIC classes/api is safe
  */
 public class WMForFabric implements ModInitializer {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(WaterMedia.class);
     private static void load() {
         WaterMedia.load(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().isDevelopmentEnvironment());
     }
