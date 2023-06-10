@@ -4,10 +4,18 @@ import me.srrapero720.watermedia.MediaConfig;
 import me.srrapero720.watermedia.api.util.twitch.TwitchUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.URL;
 
 // Planned
 public class TwitchCompat extends CompatVideoUrl {
+
+    static {
+        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+    }
+
     @Override
     public boolean isValid(@NotNull URL url) {
         return (url.getHost().equals("www.twitch.tv") || url.getHost().equals("twitch.tv")) && url.getPath().startsWith("/");
