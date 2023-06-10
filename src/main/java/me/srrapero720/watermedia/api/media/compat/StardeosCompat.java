@@ -1,14 +1,8 @@
 package me.srrapero720.watermedia.api.media.compat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import me.srrapero720.watermedia.network.StardeosApi;
-import org.apache.commons.io.IOUtils;
+import me.srrapero720.watermedia.api.network.StardeosApi;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Pattern;
 
@@ -20,7 +14,7 @@ public class StardeosCompat extends CompatVideoUrl {
 
     @Override
     public boolean isValid(@NotNull URL url) {
-        return url.getPath().contains("stardeos.com/video/");
+        return url.getHost().contains("stardeos.com");
     }
 
     @Override
