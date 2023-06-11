@@ -23,7 +23,7 @@ public record ProcessDiscoveryProvider(Path rootPath) implements DiscoveryDirect
         var version = this.getLocalVersion(config);
 
         // Check if we need to update binaries
-        if (version != null && !version.equals(VLCManager.getVersion())) {
+        if (version == null || !version.equals(VLCManager.getVersion())) {
             this.extract();
             this.setLocalVersion(config);
         } else {
