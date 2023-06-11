@@ -3,11 +3,12 @@ package me.srrapero720.watermedia.internal.util;
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.LoggerFactory;
 
 // This class comes from WATERCoRE and isn't sync with WATERCoRE main project
 public class ThreadUtil {
     private static Thread THREADLG = null;
-    private static final org.slf4j.Logger LOGGER = LogUtils.getLogger();
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger("ThreadUtil");
     private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> System.out.println("Fatal exception on ThreadUtils - " + e);
 
     public static void printStackTrace(Exception e) { e.printStackTrace(); }
