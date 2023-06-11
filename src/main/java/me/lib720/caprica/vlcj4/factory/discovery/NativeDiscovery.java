@@ -108,7 +108,7 @@ public class NativeDiscovery {
      * <p>
      * If this component has already discovered the native libraries, calling this method again will have no effect.
      *
-     * @return
+     * @return is discovered
      */
     public final boolean discover() {
         if (alreadyFound) {
@@ -147,6 +147,7 @@ public class NativeDiscovery {
 
     private static Field searchPaths;
     private static Field libraries;
+    @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         if (searchPaths == null) {
             searchPaths = WaterUtil.getClassField(NativeLibrary.class, "searchPaths");

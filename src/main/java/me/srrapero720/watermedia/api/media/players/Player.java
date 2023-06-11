@@ -1,21 +1,40 @@
 package me.srrapero720.watermedia.api.media.players;
 
 import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
+import me.srrapero720.watermedia.api.media.players.handler.event.Event;
+import org.checkerframework.checker.index.qual.PolyUpperBound;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class Player {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Player<T extends Player<T>> {
     protected String url;
+    protected final List<Event<T>> events = new ArrayList<>();
+
+    @Deprecated
     public Player(String url) {
         this.compat(url);
     }
 
-    private void compat(String url) {
+    public Player() {}
+
+    protected void compat(String url) {
         var compat = CompatVideoUrl.compat(url);
         if (compat != null) this.url = compat;
         else this.url = url;
     }
 
+    public void addEventListener(Event<T> event) {
+        events.add(event);
+    }
+    public void removeEventListener(Event<T> event) {
+        events.remove(event);
+    }
+
+    @Deprecated(forRemoval = true)
     public abstract void start();
-    public void start(String url) { compat(url); }
+    public void start(@NotNull CharSequence url) { compat(url.toString()); }
     public abstract void play();
     public abstract void pause();
     public abstract void setPauseMode(boolean isPaused);
@@ -29,11 +48,11 @@ public abstract class Player {
     public abstract void seekGameTickFastTo(int ticks);
 
     public abstract long getDuration();
-    public abstract long getGameTickDuration();
+    public abstract int getGameTickDuration();
 
     public abstract long getTime();
 
-    public abstract long getGameTickTime();
+    public abstract int getGameTickTime();
 
     public abstract boolean isSeekable();
     public abstract void setRepeatMode(boolean repeatMode);

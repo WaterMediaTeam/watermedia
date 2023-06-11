@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.network;
 
-import me.srrapero720.watermedia.network.models.KickChannel;
-import me.srrapero720.watermedia.network.models.KickVideo;
+import me.srrapero720.watermedia.api.network.models.KickChannel;
+import me.srrapero720.watermedia.api.network.models.KickVideo;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;

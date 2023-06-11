@@ -1,17 +1,17 @@
 package me.srrapero720.watermedia;
 
-import com.mojang.logging.LogUtils;
 import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
 import me.srrapero720.watermedia.lavaplayer.LavaManager;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WaterMedia {
-	public static final String MOD_ID = "watermedia";
-	public static final Logger LOGGER = LogUtils.getLogger();
+	public static final String ID = "watermedia";
+	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
 	public static boolean load(Path gameDir, boolean inDev) {
 		// PRE-API LOADERS
