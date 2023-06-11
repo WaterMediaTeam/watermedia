@@ -1,9 +1,15 @@
 package me.srrapero720.watermedia.api.media.players;
 
 import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
+import me.srrapero720.watermedia.api.media.players.handler.event.Event;
+import org.checkerframework.checker.index.qual.PolyUpperBound;
 
-public abstract class Player {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Player<T extends Player<T>> {
     protected String url;
+    protected final List<Event<T>> events = new ArrayList<>();
     public Player(String url) {
         this.compat(url);
     }
@@ -12,6 +18,13 @@ public abstract class Player {
         var compat = CompatVideoUrl.compat(url);
         if (compat != null) this.url = compat;
         else this.url = url;
+    }
+
+    public void addEventListener(Event<T> event) {
+        events.add(event);
+    }
+    public void removeEventListener(Event<T> event) {
+        events.remove(event);
     }
 
     public abstract void start();

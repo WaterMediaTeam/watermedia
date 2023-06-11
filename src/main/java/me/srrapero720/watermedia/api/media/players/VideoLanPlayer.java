@@ -1,5 +1,10 @@
 package me.srrapero720.watermedia.api.media.players;
 
+import me.lib720.caprica.vlcj4.media.MediaRef;
+import me.lib720.caprica.vlcj4.media.TrackType;
+import me.lib720.caprica.vlcj4.player.base.MediaPlayer;
+import me.lib720.caprica.vlcj4.player.base.MediaPlayerEventListener;
+import me.srrapero720.watermedia.api.media.players.handler.event.*;
 import me.srrapero720.watermedia.internal.util.WaterUtil;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import me.srrapero720.watermedia.internal.util.ThreadUtil;
@@ -9,8 +14,11 @@ import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferForma
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.RenderCallback;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class VideoLanPlayer extends Player {
+public class VideoLanPlayer extends Player<VideoLanPlayer> {
+    protected boolean buffering = false;
     protected CallbackMediaPlayerComponent player;
     public VideoLanPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         this(url, VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
@@ -18,13 +26,127 @@ public class VideoLanPlayer extends Player {
 
     public VideoLanPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         super(url);
+        var _self = this;
+
         this.player = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
+        this.player.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener() {
+            @Override public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {}
+
+            @Override
+            public void opening(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof PlayerStarting<VideoLanPlayer> ev) ev.call(_self, _self.url);
+            }
+
+            @Override
+            public void buffering(MediaPlayer mediaPlayer, float newCache) {
+                _self.buffering = true;
+                for (var event: events) if (event instanceof PlayerBuffering<VideoLanPlayer> ev) ev.call(_self, newCache);
+            }
+
+            @Override
+            public void playing(MediaPlayer mediaPlayer) {
+                for (var event: events) {
+                    if (event instanceof MediaPlaying<VideoLanPlayer> ev) ev.call(_self);
+                    if (_self.buffering && event instanceof PlayerBufferingFinished<VideoLanPlayer> ev) {
+                        ev.call(_self);
+                    }
+                }
+                _self.buffering = false;
+            }
+
+            @Override
+            public void paused(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof MediaPause<VideoLanPlayer> ev) ev.call(_self);
+            }
+
+            @Override
+            public void stopped(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof MediaStopped<VideoLanPlayer> ev) ev.call(_self);
+            }
+
+            @Override
+            public void forward(MediaPlayer mediaPlayer) {
+
+            }
+
+            @Override
+            public void backward(MediaPlayer mediaPlayer) {
+
+            }
+
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof MediaFinished<VideoLanPlayer> ev) ev.call(_self);
+            }
+
+            @Override
+            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
+
+            }
+
+            @Override
+            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
+                for (var event: events) if (event instanceof MediaTimeChanged<VideoLanPlayer> ev) ev.call(_self, _self.getTime(), newPosition);
+            }
+
+            @Override
+            public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {}
+
+            @Override
+            public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {}
+
+            @Override
+            public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {}
+
+            @Override
+            public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {}
+
+            @Override
+            public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {}
+
+            @Override
+            public void videoOutput(MediaPlayer mediaPlayer, int newCount) {}
+
+            @Override
+            public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {}
+
+            @Override
+            public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {}
+
+            @Override
+            public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {}
+
+            @Override
+            public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {}
+
+            @Override
+            public void corked(MediaPlayer mediaPlayer, boolean corked) {}
+
+            @Override
+            public void muted(MediaPlayer mediaPlayer, boolean muted) {}
+
+            @Override
+            public void volumeChanged(MediaPlayer mediaPlayer, float volume) {}
+
+            @Override
+            public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {}
+
+            @Override
+            public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {}
+
+            @Override
+            public void error(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof PlayerException<VideoLanPlayer> ev) ev.call(_self, null);
+            }
+
+            @Override
+            public void mediaPlayerReady(MediaPlayer mediaPlayer) {
+
+            }
+        });
     }
 
-    public CallbackMediaPlayerComponent getRawPlayer() {
-        return player;
-    }
-
+    public CallbackMediaPlayerComponent getRawPlayer() { return player; }
 
     @Override
     public void start() {
@@ -51,6 +173,7 @@ public class VideoLanPlayer extends Player {
     public void play() {
         if (player == null) return;
         player.mediaPlayer().controls().play();
+        for (var event: events) if (event instanceof MediaResume<VideoLanPlayer> ev) ev.call(this, this.getTime());
     }
 
     @Override
