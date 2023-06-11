@@ -274,12 +274,14 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
         return player.mediaPlayer().audio().volume();
     }
 
+    /**
+     * Equals to <pre>player.mediaPlayer().status().length()</pre>
+     * @return Player duration
+     */
     @Override
     public long getDuration() {
         if (player == null) return 0L;
-        var info = player.mediaPlayer().media().info();
-        if (info != null) return info.duration();
-        return 0L;
+        return player.mediaPlayer().status().length();
     }
 
     @Override
@@ -290,9 +292,16 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
         return 0;
     }
 
-    public long getMediaLength() {
+    /**
+     * Equals to <pre>player.mediaPlayer().media().info().duration()</pre>
+     * @return Media information about duration
+     */
+    public long getStatusDuration() {
         if (player == null) return 0L;
-        return player.mediaPlayer().status().length();
+
+        var info = player.mediaPlayer().media().info();
+        if (info != null) return info.duration();
+        return 0L;
     }
 
     public int getGameTickMediaLength() {
