@@ -12,6 +12,7 @@ import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj4.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.RenderCallback;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +27,8 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
 
     @Deprecated(forRemoval = true)
     public VideoLanPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        super(url);
+        this(factory, renderCallback, bufferFormatCallback);
+        super.compat(url);
     }
 
     public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
@@ -159,19 +161,21 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     @Deprecated(forRemoval = true)
     public void start() { this.start(new String[0]); }
 
-    @Override
-    public void start(String url) { this.start(url, new String[0]); }
-
     @Deprecated(forRemoval = true)
-    public void start(String... vlcArgs) {
+    public void start(String[] vlcArgs) {
         if (player == null) return;
         ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, vlcArgs));
     }
 
-    public void start(String url, String... vlcArgs) {
-        super.start(url);
+    @Override
+    public void start(@NotNull CharSequence url) { this.start(url, new String[0]); }
+
+    public synchronized void start(CharSequence url, String[] vlcArgs) {
         if (player == null) return;
-        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, vlcArgs));
+        ThreadUtil.thread(() -> {
+            super.start(url.toString());
+            player.mediaPlayer().media().start(this.url, vlcArgs);
+        });
     }
 
     @Override

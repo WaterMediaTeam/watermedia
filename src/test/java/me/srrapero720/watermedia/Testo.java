@@ -10,5 +10,7 @@ public class Testo {
 
         });
 
+        player.start("urk");
+
     }
 }
