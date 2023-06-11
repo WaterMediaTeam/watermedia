@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.api.media.compat;
 
-import me.srrapero720.watermedia.MediaConfig.MediaQuality;
 import me.srrapero720.watermedia.internal.util.ThreadUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,21 +9,22 @@ import java.util.Map;
 
 public abstract class CompatVideoUrl {
     public static final Map<String, String> CACHE = new HashMap<>();
-    public static CompatVideoUrl[] COMPATS = null;
+    public static CompatVideoUrl[] COMPAT_LIST = null;
 
     public static boolean init() {
-        COMPATS = new CompatVideoUrl[] {
-                new DriveCompatVideoUrl(),
-                new TwitchCompat(),
+        COMPAT_LIST = new CompatVideoUrl[] {
                 new YoutubeCompat(),
-                new KickCompat()
+                new TwitchCompat(),
+                new KickCompat(),
+                new DriveCompatVideoUrl(),
+                new TwitterCompat(),
         };
         return true;
     }
 
     public static String compat(String url) {
         return ThreadUtil.tryAndReturn(defaultVar -> {
-            for (var compat: COMPATS) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
+            for (var compat: COMPAT_LIST) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
             return defaultVar;
         }, url);
     }
