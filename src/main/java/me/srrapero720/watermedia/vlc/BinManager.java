@@ -133,10 +133,10 @@ public enum BinManager {
         String arch = System.getProperty("os.arch");
         if (arch.equals("amd64") || arch.equals("x86_64")) {
             return "win-x64";
-        } else if (arch.equals("arm64")) {
-            return "win-arm64";
+//        } else if (arch.equals("arm64")) {
+//            return "win-arm64";
         } else {
-            throw new UnsupportedOperationException("Unsupported system architecture: " + arch);
+            return "dummy";
         }
     }
 
