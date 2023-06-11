@@ -14,20 +14,27 @@ import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferForma
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.RenderCallback;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class VideoLanPlayer extends Player<VideoLanPlayer> {
     protected boolean buffering = false;
     protected CallbackMediaPlayerComponent player;
+
+    @Deprecated(forRemoval = true)
     public VideoLanPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         this(url, VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
     }
 
+    @Deprecated(forRemoval = true)
     public VideoLanPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         super(url);
-        var _self = this;
+    }
 
+    public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+        this(VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
+    }
+
+    public VideoLanPlayer(MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+        var _self = this;
         this.player = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
         this.player.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener() {
             @Override public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {}
@@ -149,15 +156,13 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     public CallbackMediaPlayerComponent getRawPlayer() { return player; }
 
     @Override
-    public void start() {
-        this.start(new String[0]);
-    }
+    @Deprecated(forRemoval = true)
+    public void start() { this.start(new String[0]); }
 
     @Override
-    public void start(String url) {
-        this.start(url, new String[0]);
-    }
+    public void start(String url) { this.start(url, new String[0]); }
 
+    @Deprecated(forRemoval = true)
     public void start(String... vlcArgs) {
         if (player == null) return;
         ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, vlcArgs));

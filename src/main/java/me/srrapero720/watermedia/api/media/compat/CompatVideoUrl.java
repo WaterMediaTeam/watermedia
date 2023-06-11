@@ -26,7 +26,7 @@ public abstract class CompatVideoUrl {
         return ThreadUtil.tryAndReturn(defaultVar -> {
             for (var compat: COMPATS) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
             return defaultVar;
-        }, null);
+        }, url);
     }
 
     protected synchronized static String storeUrl(URL url, String result) { CACHE.put(url.toString(), result); return result; }

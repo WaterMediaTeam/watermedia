@@ -10,9 +10,13 @@ import java.util.List;
 public abstract class Player<T extends Player<T>> {
     protected String url;
     protected final List<Event<T>> events = new ArrayList<>();
+
+    @Deprecated
     public Player(String url) {
         this.compat(url);
     }
+
+    public Player() {}
 
     private void compat(String url) {
         var compat = CompatVideoUrl.compat(url);
@@ -27,6 +31,7 @@ public abstract class Player<T extends Player<T>> {
         events.remove(event);
     }
 
+    @Deprecated(forRemoval = true)
     public abstract void start();
     public void start(String url) { compat(url); }
     public abstract void play();
