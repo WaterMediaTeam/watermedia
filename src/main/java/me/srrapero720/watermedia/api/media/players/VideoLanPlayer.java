@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 public class VideoLanPlayer extends Player<VideoLanPlayer> {
     protected boolean buffering = false;
     protected CallbackMediaPlayerComponent player;
@@ -26,6 +28,10 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
 
     public VideoLanPlayer(MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         var _self = this;
+        if (!VLCManager.isLoaded()) {
+            LOGGER.error("[VideoLanPlayer] Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
+            return;
+        }
         this.player = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
         this.player.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener() {
             @Override public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {}
