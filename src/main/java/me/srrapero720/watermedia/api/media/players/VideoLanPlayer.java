@@ -20,17 +20,6 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     protected boolean buffering = false;
     protected CallbackMediaPlayerComponent player;
 
-    @Deprecated(forRemoval = true)
-    public VideoLanPlayer(String url, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        this(url, VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
-    }
-
-    @Deprecated(forRemoval = true)
-    public VideoLanPlayer(String url, MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        this(factory, renderCallback, bufferFormatCallback);
-        super.compat(url);
-    }
-
     public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         this(VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
     }
