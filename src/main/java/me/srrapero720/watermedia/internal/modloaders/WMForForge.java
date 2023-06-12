@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.internal.modloaders;
 
-import com.mojang.logging.LogUtils;
 import me.srrapero720.watermedia.WaterMedia;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;

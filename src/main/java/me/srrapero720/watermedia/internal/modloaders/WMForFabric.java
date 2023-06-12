@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.internal.modloaders;
 
-import com.mojang.logging.LogUtils;
 import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
@@ -21,7 +20,13 @@ public class WMForFabric implements ModInitializer {
     public WMForFabric() {
         if (FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER)) {
             if (FabricLoader.getInstance().isDevelopmentEnvironment()) LOGGER.warn("WATERMeDIA shouldn't be installed on server. Ignoring crash because we are in DEV MODE.");
-            else throw new IllegalStateException("WATERMeDIA shouldn't be installed on server!!");
+            else {
+                LOGGER.warn("###########################  CAREFULL  ###################################");
+                LOGGER.warn("Message from SrRapero720: Fabric is a bullshit, and i cant prevent you to install WATERMeDIA on servers");
+                LOGGER.warn("If you see this message i highly suggest to switch to FORGE. this mod may uses unsafe client side classes and methods");
+                LOGGER.warn("and is not tested or designed to be on servers. expect crashes");
+                LOGGER.warn("###########################  CAREFULL  ###################################");
+            }
         } else load();
     }
 
