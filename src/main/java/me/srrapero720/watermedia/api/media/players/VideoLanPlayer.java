@@ -158,16 +158,6 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     public CallbackMediaPlayerComponent getRawPlayer() { return player; }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public void start() { this.start(new String[0]); }
-
-    @Deprecated(forRemoval = true)
-    public void start(String[] vlcArgs) {
-        if (player == null) return;
-        ThreadUtil.threadTry(() -> player.mediaPlayer().media().start(this.url, vlcArgs), null, null);
-    }
-
-    @Override
     public void start(@NotNull CharSequence url) { this.start(url, new String[0]); }
 
     public synchronized void start(CharSequence url, String[] vlcArgs) {

@@ -12,12 +12,8 @@ public abstract class Player<T extends Player<T>> {
     protected String url;
     protected final List<Event<T>> events = new ArrayList<>();
 
-    @Deprecated
-    public Player(String url) {
-        this.compat(url);
+    public Player() {
     }
-
-    public Player() {}
 
     protected void compat(String url) {
         var compat = CompatVideoUrl.compat(url);
@@ -28,12 +24,11 @@ public abstract class Player<T extends Player<T>> {
     public void addEventListener(Event<T> event) {
         events.add(event);
     }
+
     public void removeEventListener(Event<T> event) {
         events.remove(event);
     }
 
-    @Deprecated(forRemoval = true)
-    public abstract void start();
     public void start(@NotNull CharSequence url) { compat(url.toString()); }
     public abstract void play();
     public abstract void pause();

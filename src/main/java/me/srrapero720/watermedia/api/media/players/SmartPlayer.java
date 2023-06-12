@@ -1,14 +1,6 @@
 package me.srrapero720.watermedia.api.media.players;
 
-public class SmartPlayer extends Player {
-    public SmartPlayer(String url) {
-        super(url);
-    }
-
-    @Override
-    public void start() {
-
-    }
+public class SmartPlayer extends Player<SmartPlayer> {
 
     @Override
     public void play() {
