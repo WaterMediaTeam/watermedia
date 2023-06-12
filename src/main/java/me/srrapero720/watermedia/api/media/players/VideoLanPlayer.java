@@ -164,7 +164,7 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     @Deprecated(forRemoval = true)
     public void start(String[] vlcArgs) {
         if (player == null) return;
-        ThreadUtil.thread(() -> player.mediaPlayer().media().start(this.url, vlcArgs));
+        ThreadUtil.threadTry(() -> player.mediaPlayer().media().start(this.url, vlcArgs), null, null);
     }
 
     @Override
@@ -172,10 +172,10 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
 
     public synchronized void start(CharSequence url, String[] vlcArgs) {
         if (player == null) return;
-        ThreadUtil.thread(() -> {
+        ThreadUtil.threadTry(() -> {
             super.start(url.toString());
             player.mediaPlayer().media().start(this.url, vlcArgs);
-        });
+        }, null, null);
     }
 
     @Override

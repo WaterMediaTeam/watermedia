@@ -43,10 +43,26 @@ public class WaterUtil {
         }
     }
 
-    public static ClassLoader classLoader() { return WaterUtil.class.getClassLoader(); }
-    public static InputStream resourceAsStream(String path) { return classLoader().getResourceAsStream(path); }
+    /**
+     * Gets a resource from WaterMedia jar
+     * @param path where is located the specific file
+     * @return a InputStream with the file.
+     */
+    public static InputStream resourceAsStream(String path) { return WaterUtil.class.getClassLoader().getResourceAsStream(path); }
 
+
+    /**
+     * Gets a StringArray from a json inside WaterMedia jar resources
+     * @param path where is located the specific JSON
+     * @return a String[] with the JSON content
+     */
     public static String[] getArrayStringFromRes(String path) { return getJsonListFromRes(path).toArray(new String[0]); }
+
+    /**
+     * Gets a List[String] from a json inside WaterMedia jar resources
+     * @param path where is located the specific JSON
+     * @return a List[String] with the JSON content
+     */
     public static List<String> getJsonListFromRes(String path) {
         List<String> result = new ArrayList<>();
         try (InputStream stream = resourceAsStream(path); BufferedReader reader = (stream != null) ? new BufferedReader(new InputStreamReader(stream)) : null) {
