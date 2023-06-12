@@ -6,6 +6,7 @@ import me.lib720.caprica.vlcj4.factory.discovery.NativeDiscovery;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
+import me.srrapero720.watermedia.internal.util.WaterUtil;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -15,22 +16,21 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class VLCManager {
     private static final String version = "20230608";
 
-    private static boolean devMode;
+    private static boolean firstSystem;
     private static Path rootPath;
     private static MediaPlayerFactory defaultFactory;
 
     // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
     public static String getVersion() { return version; }
 
-    public static boolean isDevMode() { return devMode; }
+    public static boolean isFirstSystem() { return firstSystem; }
     public static Path getRootPath() { return rootPath; }
     public static boolean isLoaded() { return defaultFactory != null; }
     public static MediaPlayerFactory getDefaultFactory() { return defaultFactory; }
 
-    public static boolean init(Path gameDir, boolean devMode) {
+    public static boolean init(Path gameDir, boolean checkFirstSystem) {
         rootPath = gameDir;
-        VLCManager.devMode = devMode;
-
+        firstSystem = checkFirstSystem;
         if (isLoaded()) return true;
 
         try {
@@ -43,7 +43,7 @@ public class VLCManager {
         return isLoaded();
     }
 
-    public static MediaPlayerFactory createVLCPlayerFactory() { return createVLCPlayerFactory(DEFAULT_VLC_ARGS); }
+    public static MediaPlayerFactory createVLCPlayerFactory() { return createVLCPlayerFactory(WaterUtil.getArrayStringFromRes("vlc/command-line.json")); }
     public static MediaPlayerFactory createVLCPlayerFactory(String[] vlcArgs) {
         var discovery = new NativeDiscovery(new WindowsNativeDiscoveryStrategy(), new OsxNativeDiscoveryStrategy(), new LinuxNativeDiscoveryStrategy());
         if (discovery.discover()) {
@@ -57,24 +57,6 @@ public class VLCManager {
         LOGGER.error("VLC was not found on your system.");
         return null;
     }
-
-    public static final String[] DEFAULT_VLC_ARGS = new String[] {
-            "--file-caching",
-            "3000",
-
-            "--network-caching",
-            "3000",
-
-            "--http-reconnect",
-
-            "--file-logging",
-            "--logfile",
-            "logs/vlc/latest.log",
-            "--logmode", "text",
-            "--verbose", "2",
-
-            "--no-quiet"
-    };
 
     private static class VLCReleaseHook extends Thread {
         public final MediaPlayerFactory factory;
