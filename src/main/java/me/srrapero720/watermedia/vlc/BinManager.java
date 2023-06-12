@@ -1,13 +1,6 @@
 package me.srrapero720.watermedia.vlc;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import me.srrapero720.watermedia.internal.util.WaterUtil;
 
 public enum BinManager {
     // CORES
@@ -142,31 +135,13 @@ public enum BinManager {
 
     public String getName() { return name() + ".dll"; }
 
-
-    // Function to extract the DLL to the appropriate directory
-    // TODO: add a version check to force re-extract when
-    public void extract() {
-        String arch = getSystemArchitecture();
+    public void delete() {
         String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-        String destinationPath = "cache/vlc/" + relativePath;
-        String originPath = "/vlc/" + arch + "/" + relativePath;
+        WaterUtil.deleteFrom("cache/vlc/" + relativePath);
+    }
 
-        try {
-            Path dllDestinationPath = Paths.get(destinationPath);
-            if (!Files.exists(dllDestinationPath)) {
-                try (InputStream is = getClass().getResourceAsStream(originPath)) {
-                    if (is != null) {
-                        Files.createDirectories(dllDestinationPath.getParent());
-                        Files.copy(is, dllDestinationPath);
-                    } else {
-                        LOGGER.error("Resource not found: {}", originPath);
-                    }
-                }
-            }
-        } catch (FileNotFoundException fnfe) {
-            LOGGER.error("Failed to extract DLL, file not found: {}" + pluginFolder, fnfe);
-        } catch (IOException ioe) {
-            LOGGER.error("Failed to extract DLL due to I/O error: {}" + pluginFolder, ioe);
-        }
+    public void extract() {
+        String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
+        WaterUtil.extractFrom("/vlc/" + getSystemArchitecture() + "/" + relativePath, "cache/vlc/" + relativePath);
     }
 }

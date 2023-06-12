@@ -18,7 +18,7 @@ public class WaterMedia {
 		if (!CompatVideoUrl.init()) return false;
 
 		// BINARIES LOADERS
-		if (!VLCManager.init(gameDir, inDev)) return false;
+		if (!VLCManager.init(gameDir, true)) return false;
         if (!LavaManager.init()) return false;
 
 		// POST-API LOADERS

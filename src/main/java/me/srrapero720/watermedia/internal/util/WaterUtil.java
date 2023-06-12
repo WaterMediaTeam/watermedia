@@ -2,13 +2,12 @@ package me.srrapero720.watermedia.internal.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.logging.LogUtils;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,5 +72,32 @@ public class WaterUtil {
         } finally { result.forEach(LOGGER::debug); }
 
         return result;
+    }
+
+    public static void extractFrom(String originPath, String destinationPath) {
+        try (var is = resourceAsStream(originPath)) {
+            Path dllDestinationPath = Paths.get(destinationPath);
+            if (is != null) {
+                Files.createDirectories(dllDestinationPath.getParent());
+                Files.copy(is, dllDestinationPath);
+            } else {
+                LOGGER.error("Resource not found: {}", originPath);
+            }
+        } catch (FileNotFoundException fnfe) {
+            LOGGER.error("Failed to extract from {}, file not found: {}", originPath, fnfe);
+        } catch (IOException ioe) {
+            LOGGER.error("Failed to extract from {} to {} due to I/O error: {}", originPath, destinationPath, ioe);
+        } catch (Exception e) {
+            LOGGER.error("Failed to extract from {} to {} due to unexpected error: {}", originPath, destinationPath, e);
+        }
+    }
+
+    public static void deleteFrom(String destinationPath) {
+        try {
+            Path path = Paths.get(destinationPath);
+            if (Files.exists(path)) Files.delete(path);
+        } catch (Exception e) {
+            LOGGER.error("Failed to delete from {} due to unexpected error", destinationPath, e);
+        }
     }
 }

@@ -23,18 +23,29 @@ public record ProcessDiscoveryProvider(Path rootPath) implements DiscoveryDirect
         var version = this.getLocalVersion(config);
 
         // Check if we need to update binaries
-        if (version == null || !version.equals(VLCManager.getVersion())) {
+        if (version == null || !version.equals(VLCManager.version)) {
+            this.clear();
             this.extract();
             this.setLocalVersion(config);
         } else {
-            LOGGER.warn("VLC extracted match with the wrapped version. Skipping...");
+            LOGGER.warn("VLC detected and match with the wrapped version");
         }
 
         return new String[]{vlc.toAbsolutePath().toString()};
     }
 
+    private void clear() {
+        LOGGER.warn("Running bin deletion from local files");
+        for (var binary : BinManager.values()) binary.delete();
+        LOGGER.warn("Bin deletion finished");
+
+        LOGGER.warn("Running VLC LUAC script deletion from local files");
+        for (var luac : LuaManager.values()) luac.delete();
+        LOGGER.warn("VLC LUAC script deletion finished");
+    }
+
     private void extract() {
-        LOGGER.warn("Running Windows bin extraction from JAR to local files");
+        LOGGER.warn("Running bin extraction from JAR to local files");
         for (var binary : BinManager.values()) binary.extract();
         LOGGER.warn("Windows bin extraction finished");
 
@@ -47,6 +58,6 @@ public record ProcessDiscoveryProvider(Path rootPath) implements DiscoveryDirect
         return ThreadUtil.tryAndReturn(defaultVar -> Files.exists(from) ? Files.readString(from) : defaultVar, null);
     }
     private void setLocalVersion(Path from) {
-        ThreadUtil.trySimple(() -> Files.writeString(from, VLCManager.getVersion()), e -> LOGGER.error("Could not write to configuration file", e));
+        ThreadUtil.trySimple(() -> Files.writeString(from, VLCManager.version), e -> LOGGER.error("Could not write to configuration file", e));
     }
 }

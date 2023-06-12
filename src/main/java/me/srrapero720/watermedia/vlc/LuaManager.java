@@ -1,12 +1,6 @@
 package me.srrapero720.watermedia.vlc;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import me.srrapero720.watermedia.internal.util.WaterUtil;
 
 public enum LuaManager {
     VLSub("extensions"),
@@ -67,27 +61,12 @@ public enum LuaManager {
 
     public String getName() { return name() + ".luac"; }
 
+    public void delete() {
+        WaterUtil.deleteFrom("cache/vlc/" + "lua/" + dir + "/" + (file == null ? getName() : file + ".luac"));
+    }
+
     public void extract() {
         String relativePath = "lua/" + dir + "/" + (file == null ? getName() : file + ".luac");
-        String destinationPath = "cache/vlc/" + relativePath;
-        String originPath = "/vlc/" + relativePath;
-
-        try {
-            Path dllDestinationPath = Paths.get(destinationPath);
-            if (!Files.exists(dllDestinationPath)) {
-                try (var is = getClass().getResourceAsStream(originPath)) {
-                    if (is != null) {
-                        Files.createDirectories(dllDestinationPath.getParent());
-                        Files.copy(is, dllDestinationPath);
-                    } else {
-                        LOGGER.error("Resource not found: {}", originPath);
-                    }
-                }
-            }
-        } catch (FileNotFoundException fnfe) {
-            LOGGER.error("Failed to extract from {}, file not found: {}", originPath, fnfe);
-        } catch (IOException ioe) {
-            LOGGER.error("Failed to extract from {} to {} due to I/O error: {}", originPath, destinationPath, ioe);
-        }
+        WaterUtil.extractFrom("/vlc/" + relativePath, "cache/vlc/" + relativePath);
     }
 }

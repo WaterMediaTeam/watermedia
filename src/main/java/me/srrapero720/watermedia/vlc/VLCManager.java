@@ -6,6 +6,7 @@ import me.lib720.caprica.vlcj4.factory.discovery.NativeDiscovery;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
+import me.srrapero720.watermedia.internal.util.ThreadUtil;
 import me.srrapero720.watermedia.internal.util.WaterUtil;
 
 import java.nio.file.Path;
@@ -14,31 +15,29 @@ import java.util.Arrays;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VLCManager {
-    private static final String version = "20230608";
+    // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
+    public static final String version = "20230608-0224";
 
-    private static boolean firstSystem;
+    private static boolean forceFirstLocal;
     private static Path rootPath;
+
     private static MediaPlayerFactory defaultFactory;
 
-    // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
-    public static String getVersion() { return version; }
-
-    public static boolean isFirstSystem() { return firstSystem; }
+    public static boolean forceFirstLocal() { return forceFirstLocal; }
     public static Path getRootPath() { return rootPath; }
     public static boolean isLoaded() { return defaultFactory != null; }
     public static MediaPlayerFactory getDefaultFactory() { return defaultFactory; }
 
-    public static boolean init(Path gameDir, boolean checkFirstSystem) {
+    public static boolean init(Path gameDir, boolean forceLocal) {
         rootPath = gameDir;
-        firstSystem = checkFirstSystem;
+        forceFirstLocal = forceLocal;
         if (isLoaded()) return true;
 
-        try {
-            defaultFactory = createVLCPlayerFactory();
-        } catch (Exception e) {
-            LOGGER.error("Something failed while loading VLC binaries", e);
-            defaultFactory = null;
-        }
+        defaultFactory = ThreadUtil.tryAndReturn(
+                defaultVar -> createVLCPlayerFactory(),
+                e -> LOGGER.error("Something failed while loading VLC binaries", e),
+                null
+        );
 
         return isLoaded();
     }

@@ -91,10 +91,10 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
     }
 
     private List<DiscoveryDirectoryProvider> sort(List<DiscoveryDirectoryProvider> providers) {
-        if (VLCManager.isFirstSystem()) providers.sort((a1, a2) -> a2.priority() - a1.priority());
+        if (VLCManager.forceFirstLocal()) providers.sort((a1, a2) -> a2.priority() - a1.priority());
         else providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
 
-        LOGGER.info("Using {} priority to load VLC", VLCManager.isFirstSystem() ? "DEV_MODE" : "PROD_MODE");
+        LOGGER.info("Using {} priority to load VLC", VLCManager.forceFirstLocal() ? "LOCAL_MODE" : "SYSTEM_MODE");
         return providers;
     }
 
