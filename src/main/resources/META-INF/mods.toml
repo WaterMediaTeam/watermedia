@@ -1,23 +1,20 @@
 modLoader="javafml" #mandatory
-loaderVersion="[37,)"
-license="All rights reserved"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
 issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
 [[mods]]
-    modId="watermedia"
+    modId="${mod_id}"
     version="${file.jarVersion}"
-    displayName="WATERMeDIA"
+    displayName="${mod_name}"
     #updateJSONURL="https://change.me.example.invalid/updates.json"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia"
     logoFile="pack.png" #optional
     credits="VLC to VideoLAN team, VLCJ by caprica, VLCJ discovery by CreativeMD"
-    authors="SrRapero720 and Goedix"
-    description='''
-    Library to expand Minecraft entertainment using multimedia content
-    Powered by WATERCoRE
-    '''
-[[dependencies.watermedia]]
+    authors="${mod_authors}"
+    description='''${mod_description}'''
+[[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17,)" # ON FORGE ONLY SUPPORTS 1.17 (MIN JAVA IS 15 FEATURES)
+    versionRange="${forge_version_range}"# ON FORGE ONLY SUPPORTS 1.17 (MIN JAVA IS 15 FEATURES)
     ordering="NONE"
     side="CLIENT"

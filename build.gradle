@@ -1,56 +1,38 @@
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven { url = "https://maven.fabricmc.net/" }
-        maven { url = "https://maven.architectury.dev/" }
-        maven { url = "https://maven.minecraftforge.net/" }
-        maven { url = 'https://repo.spongepowered.org/maven' }
-        maven { url = 'https://maven.parchmentmc.org' }
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
-
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+version = modversion
+group = modgroup
+base {
+    archivesName = modid
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     mappings channel: 'parchment', version: '2022.11.06-1.18.2'
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    copyIdeResources = true
     runs {
         client {
+            taskName "WATERMeDIA JVM 17"
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'watermedia'
+            property 'forge.enabledGameTestNamespaces', modid
 
             mods {
-                watermedia {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'watermedia'
-            mods {
-                watermedia {
+                "${modid}" {
                     source sourceSets.main
                 }
             }
@@ -84,7 +66,7 @@ configurations {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.minev}-${project.forgev}"
+    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
 
     // FABRIC LOADER (just to get classes info, NEVER USE IT outside WMForFabric)
     implementation "net.fabricmc:fabric-loader:${project.fabricv}"
@@ -105,6 +87,24 @@ dependencies {
     library 'com.mpatric:mp3agic:0.9.1'
 }
 
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
+def replaceProperties = [
+        minecraft_version: mcversion, minecraft_version_range: mcrange,
+        forge_version: fgversion, forge_version_range: fgrange,
+        loader_version_range: fgrange,
+        mod_id: modid, mod_name: modname, mod_license: modlicense, mod_version: modversion,
+        mod_authors: modauthor, mod_description: mod_description
+]
+processResources {
+    inputs.properties replaceProperties
+    replaceProperties.put 'project', project
+
+    filesMatching(resourceTargets) {
+        expand replaceProperties
+    }
+}
+
+
 shadowJar {
     configurations = [project.configurations.library]
 
@@ -118,7 +118,7 @@ shadowJar {
     relocate 'com.fasterxml.jackson', 'me.lib720.jackson'
     relocate 'retrofit2', 'me.lib720.retrofit2'
 
-    archiveFileName = "${project.archivesBaseName}-${project.version}.jar"
+    archiveFileName = "${project.modid}-${project.mcversion}-${project.modversion}.jar"
 }
 
 // Make the reobfJar task depend on shadowJar
@@ -127,12 +127,12 @@ tasks.build.dependsOn shadowJar
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : project.name,
-                "Specification-Vendor"    : project.author,
-                "Specification-Version"   : project.version,
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : project.author,
+                "Specification-Title"     : project.modname,
+                "Specification-Vendor"    : project.modauthor,
+                "Specification-Version"   : project.modversion,
+                "Implementation-Title"    : project.modname,
+                "Implementation-Version"  : project.modversion,
+                "Implementation-Vendor"   : project.modauthor,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
