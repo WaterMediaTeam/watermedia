@@ -1,21 +1,11 @@
-package me.srrapero720.watermedia.compat;
+package me.srrapero720.watermedia.api.video.patch;
 
-import com.mojang.logging.LogUtils;
-import me.srrapero720.watermedia.api.video.patch.BaseVideoPatch;
 import me.srrapero720.watermedia.api.video.patch.util.kick.KickAPI;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
-public class Kick extends BaseVideoPatch {
-    public static final Logger LOGGER = LogUtils.getLogger();
-    public static void main(String[] args) throws MalformedURLException {
-        LOGGER.info(new Kick().build(new URL("https://kick.com/lornexia")));
-        LOGGER.info(new Kick().build(new URL("https://kick.com/video/af9f91d4-9cbc-4395-8f35-9ef9f245fb8c")));
-    }
-
+public class KickPatch extends BaseVideoPatch {
 
     @Override
     public boolean isValid(@NotNull URL url) {
@@ -23,7 +13,7 @@ public class Kick extends BaseVideoPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) {
+    public String build(@NotNull URL url) throws Exception {
         super.build(url);
 
         if (url.getPath().contains("/video/")) {
@@ -32,7 +22,7 @@ public class Kick extends BaseVideoPatch {
                  var res = call.execute();
                  if (res.isSuccessful() && res.body() != null) return res.body().url;
              } catch (Exception e) {
-                 LOGGER.error("Detected Kick.com video but Compat failed to get real URL", e);
+                 throw new PatchingUrlException(url.toString(), e);
              }
         } else {
             var call = KickAPI.NET.getChannelInfo(url.getPath().replace("/", ""));
@@ -40,7 +30,7 @@ public class Kick extends BaseVideoPatch {
                 var res = call.execute();
                 if (res.isSuccessful() && res.body() != null) return res.body().url;
             } catch (Exception e) {
-                LOGGER.error("Detected Kick.com stream but Compat failed to get real URL", e);
+                throw new PatchingUrlException(url.toString(), e);
             }
         }
 

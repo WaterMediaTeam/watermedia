@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api;
 
-import me.srrapero720.watermedia.api.media.patch.BaseVideoPatch;
-import me.srrapero720.watermedia.api.media.players.VideoLanPlayer;
+import me.srrapero720.watermedia.api.video.patch.BaseVideoPatch;
+import me.srrapero720.watermedia.api.video.players.VideoLanPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;

@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.media.patch.BaseVideoPatch;
+import me.srrapero720.watermedia.api.video.patch.BaseVideoPatch;
 import me.srrapero720.watermedia.lavaplayer.LavaManager;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import org.slf4j.Logger;

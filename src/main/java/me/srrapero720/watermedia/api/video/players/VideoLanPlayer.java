@@ -1,0 +1,342 @@
+package me.srrapero720.watermedia.api.video.players;
+
+import me.lib720.caprica.vlcj4.media.MediaRef;
+import me.lib720.caprica.vlcj4.media.TrackType;
+import me.lib720.caprica.vlcj4.player.base.MediaPlayer;
+import me.lib720.caprica.vlcj4.player.base.MediaPlayerEventListener;
+import me.srrapero720.watermedia.api.MediaApiCore;
+import me.srrapero720.watermedia.api.video.players.events.common.*;
+import me.srrapero720.watermedia.vlc.VLCManager;
+import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj4.player.component.CallbackMediaPlayerComponent;
+import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferFormatCallback;
+import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.RenderCallback;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+
+import java.awt.*;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
+public class VideoLanPlayer extends Player<VideoLanPlayer> {
+    private boolean buffering = false;
+    private CallbackMediaPlayerComponent player;
+
+    public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) { this(VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback); }
+
+    public VideoLanPlayer(MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+        final VideoLanPlayer $this = this;
+        if (!VLCManager.isLoaded()) {
+            LOGGER.error("[VideoLanPlayer] Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
+            return;
+        }
+
+        this.player = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
+        this.player.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener() {
+            @Override public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {}
+
+            @Override
+            public void opening(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof PlayerPreparingEvent<VideoLanPlayer> ev) ev.call($this, $this.url);
+            }
+
+            @Override
+            public void buffering(MediaPlayer mediaPlayer, float newCache) {
+                $this.buffering = true;
+//                for (var event: events) if (event instanceof PlayerBuffer<VideoLanPlayer> ev) ev.call($this, newCache);
+            }
+
+            @Override
+            public void playing(MediaPlayer mediaPlayer) {
+                for (var event: events) {
+                    if (event instanceof PlayerStartedEvent<VideoLanPlayer> ev) ev.call($this);
+                    if ($this.buffering && event instanceof PlayerReadyEvent<VideoLanPlayer> ev) {
+                        ev.call($this);
+                    }
+                }
+                $this.buffering = false;
+            }
+
+            @Override
+            public void paused(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof MediaPauseEvent<VideoLanPlayer> ev) ev.call($this);
+            }
+
+            @Override
+            public void stopped(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof MediaStopped<VideoLanPlayer> ev) ev.call($this);
+            }
+
+            @Override
+            public void forward(MediaPlayer mediaPlayer) {
+
+            }
+
+            @Override
+            public void backward(MediaPlayer mediaPlayer) {
+
+            }
+
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof MediaFinishEvent<VideoLanPlayer> ev) ev.call($this);
+            }
+
+            @Override
+            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
+
+            }
+
+            @Override
+            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
+                for (var event: events) if (event instanceof MediaTimeChanged<VideoLanPlayer> ev) ev.call($this, $this.getTime(), newPosition);
+            }
+
+            @Override
+            public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {}
+
+            @Override
+            public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {}
+
+            @Override
+            public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {}
+
+            @Override
+            public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {}
+
+            @Override
+            public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {}
+
+            @Override
+            public void videoOutput(MediaPlayer mediaPlayer, int newCount) {}
+
+            @Override
+            public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {}
+
+            @Override
+            public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {}
+
+            @Override
+            public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {}
+
+            @Override
+            public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {}
+
+            @Override
+            public void corked(MediaPlayer mediaPlayer, boolean corked) {}
+
+            @Override
+            public void muted(MediaPlayer mediaPlayer, boolean muted) {}
+
+            @Override
+            public void volumeChanged(MediaPlayer mediaPlayer, float volume) {}
+
+            @Override
+            public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {}
+
+            @Override
+            public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {}
+
+            @Override
+            public void error(MediaPlayer mediaPlayer) {
+                for (var event: events) if (event instanceof PlayerExceptionEvent<VideoLanPlayer> ev) ev.call($this, null);
+            }
+
+            @Override
+            public void mediaPlayerReady(MediaPlayer mediaPlayer) {
+
+            }
+        });
+    }
+
+    public CallbackMediaPlayerComponent getRawPlayer() { return player; }
+
+    @Override
+    public void start(@NotNull CharSequence url) { this.start(url, new String[0]); }
+
+    @Override
+    public void prepare(@NotNull CharSequence url) { this.prepare(url, new String[0]); }
+    public void prepare(@NotNull CharSequence url, String[] vlcArgs) {
+        if (player == null) return;
+        ThreadUtil.threadTry(() -> {
+            super.start(url.toString());
+            player.mediaPlayer().media().prepare(this.url, vlcArgs);
+        }, null, null);
+    }
+
+    public synchronized void start(CharSequence url, String[] vlcArgs) {
+        if (player == null) return;
+        ThreadUtil.threadTry(() -> {
+            super.start(url.toString());
+            player.mediaPlayer().media().start(this.url, vlcArgs);
+        }, null, null);
+    }
+
+    public Dimension getVideoDimension() {
+        if (player != null) return player.mediaPlayer().video().videoDimension();
+        return null;
+    }
+
+    @Override
+    public void play() {
+        if (player == null) return;
+        player.mediaPlayer().controls().play();
+        for (var event: events) if (event instanceof MediaResume<VideoLanPlayer> ev) ev.call(this, this.getTime());
+    }
+
+    @Override
+    public void pause() {
+        if (player == null) return;
+        if (player.mediaPlayer().status().canPause()) player.mediaPlayer().controls().pause();
+    }
+
+    @Override
+    public void setPauseMode(boolean isPaused) {
+        player.mediaPlayer().controls().setPause(isPaused);
+    }
+
+    @Override
+    public void stop() {
+        if (player == null) return;
+        player.mediaPlayer().controls().stop();
+    }
+
+    @Override
+    public void seekTo(long time) {
+        if (player == null) return;
+        player.mediaPlayer().controls().setTime(time);
+    }
+
+    @Override
+    public void seekFastTo(long ticks) {
+        if (player == null) return;
+        player.mediaPlayer().controls().setTime(ticks);
+    }
+
+    @Override
+    public void seekGameTicksTo(int ticks) {
+        if (player == null) return;
+        player.mediaPlayer().controls().setTime(MediaApiCore.gameTicksToMs(ticks));
+    }
+
+    @Override
+    public void seekGameTickFastTo(int ticks) {
+        if (player == null) return;
+        player.mediaPlayer().controls().setTime(MediaApiCore.gameTicksToMs(ticks));
+    }
+
+    @Override
+    public void setRepeatMode(boolean repeatMode) {
+        if (player == null) return;
+        player.mediaPlayer().controls().setRepeat(repeatMode);
+    }
+
+    @Override
+    public boolean isValid() {
+        if (player == null) return false;
+        return player.mediaPlayer().media().isValid();
+    }
+
+    @Override
+    public boolean isPlaying() {
+        if (player == null) return false;
+        return player.mediaPlayer().status().isPlaying();
+    }
+
+    @Override
+    public boolean getRepeatMode() {
+        if (player == null) return false;
+        return player.mediaPlayer().controls().getRepeat();
+    }
+
+    @Override
+    public void fastFoward() {
+        if (player == null) return;
+        player.mediaPlayer().controls().skipTime(5L);
+    }
+
+    @Override
+    public void setSpeed(float rate) {
+        player.mediaPlayer().controls().setRate(rate);
+    }
+
+    @Override
+    public void rewind() {
+        player.mediaPlayer().controls().skipTime(-5L);
+    }
+
+    @Override
+    public void setVolume(int volume) {
+        if (player == null) return;
+        player.mediaPlayer().audio().setVolume(volume);
+    }
+
+    @Override
+    public int getVolume() {
+        if (player == null) return 0;
+        return player.mediaPlayer().audio().volume();
+    }
+
+    /**
+     * Equals to <pre>player.mediaPlayer().status().length()</pre>
+     * @return Player duration
+     */
+    @Override
+    public long getDuration() {
+        if (player == null) return 0L;
+        return player.mediaPlayer().status().length();
+    }
+
+    @Override
+    public int getGameTickDuration() {
+        if (player == null) return 0;
+        return MediaApiCore.msToGameTicks(player.mediaPlayer().status().length());
+    }
+
+    /**
+     * Equals to <pre>player.mediaPlayer().media().info().duration()</pre>
+     * @return Media information about duration
+     */
+    public long getStatusDuration() {
+        if (player == null) return 0L;
+
+        var info = player.mediaPlayer().media().info();
+        if (info != null) return info.duration();
+        return 0L;
+    }
+
+    public int getGameTickStatusDuration() {
+        if (player == null) return 0;
+        var info = player.mediaPlayer().media().info();
+        if (info != null) return MediaApiCore.msToGameTicks(info.duration());
+        return 0;
+    }
+
+    @Override
+    public long getTime() {
+        if (player == null) return 0L;
+        return player.mediaPlayer().status().time();
+    }
+
+    @Override
+    public int getGameTickTime() {
+        if (player == null) return 0;
+        return MediaApiCore.msToGameTicks(player.mediaPlayer().status().time());
+    }
+
+    @Override
+    public boolean isSeekable() {
+        if (player == null) return false;
+        return player.mediaPlayer().status().isSeekable();
+    }
+
+    @Override
+    public void release() {
+        if (player == null) return;
+        player.mediaPlayer().release();
+        player = null;
+    }
+}
+
