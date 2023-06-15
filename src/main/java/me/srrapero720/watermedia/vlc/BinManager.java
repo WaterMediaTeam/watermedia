@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.vlc;
 
-import me.srrapero720.watermedia.internal.util.WaterUtil;
+import me.srrapero720.watermedia.WMUtil;
 
 public enum BinManager {
     // CORES
@@ -196,11 +196,11 @@ public enum BinManager {
 
     public void delete() {
         String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-        WaterUtil.deleteFrom("cache/vlc/" + relativePath);
+        WMUtil.deleteFrom("cache/vlc/" + relativePath);
     }
 
     public void extract() {
         String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-        WaterUtil.extractFrom("/vlc/" + getSystemArchitecture() + "/" + relativePath, "cache/vlc/" + relativePath);
+        WMUtil.extractFrom("/vlc/" + getSystemArchitecture() + "/" + relativePath, "cache/vlc/" + relativePath);
     }
 }

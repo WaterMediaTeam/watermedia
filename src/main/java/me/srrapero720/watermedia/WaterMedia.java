@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
+import me.srrapero720.watermedia.api.media.patch.BaseVideoPatch;
 import me.srrapero720.watermedia.lavaplayer.LavaManager;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import org.slf4j.Logger;
@@ -14,18 +14,18 @@ public class WaterMedia {
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
 	public static boolean load(Path gameDir, boolean inDev) {
-		// PRE-API LOADERS
-		if (!CompatVideoUrl.init()) return false;
+		// PREPARE API
+		if (!BaseVideoPatch.init()) return false;
 
-		// BINARIES LOADERS
+		// API LOADERS
 		if (!VLCManager.init(gameDir, true)) return false;
         if (!LavaManager.init()) return false;
 
-		// POST-API LOADERS
+		// API VERIFY
 		return true;
 	}
 
-	public static boolean load(Path gameDir, MediaConfig config, boolean inDev) {
+	public static boolean load(Path gameDir, WMConfig config, boolean inDev) {
 		throw new UnsupportedOperationException("This method isn't supported yet");
 	}
 }

@@ -1,8 +1,7 @@
 package me.srrapero720.watermedia.api.media.players;
 
-import me.srrapero720.watermedia.api.media.compat.CompatVideoUrl;
-import me.srrapero720.watermedia.api.media.players.handler.event.Event;
-import org.checkerframework.checker.index.qual.PolyUpperBound;
+import me.srrapero720.watermedia.api.MediaApiCore;
+import me.srrapero720.watermedia.api.media.players.events.common.Event;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ public abstract class Player<T extends Player<T>> {
     }
 
     protected void compat(String url) {
-        var compat = CompatVideoUrl.compat(url);
+        var compat = MediaApiCore.patchNonStaticUrl(url);
         if (compat != null) this.url = compat;
         else this.url = url;
     }
@@ -30,6 +29,7 @@ public abstract class Player<T extends Player<T>> {
     }
 
     public void start(@NotNull CharSequence url) { compat(url.toString()); }
+    public void prepare(@NotNull CharSequence url) { compat(url.toString()); }
     public abstract void play();
     public abstract void pause();
     public abstract void setPauseMode(boolean isPaused);

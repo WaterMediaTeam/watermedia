@@ -6,8 +6,8 @@ import me.lib720.caprica.vlcj4.factory.discovery.NativeDiscovery;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
-import me.srrapero720.watermedia.internal.util.ThreadUtil;
-import me.srrapero720.watermedia.internal.util.WaterUtil;
+import me.srrapero720.watermedia.threads.ThreadUtil;
+import me.srrapero720.watermedia.WMUtil;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public class VLCManager {
         return isLoaded();
     }
 
-    public static MediaPlayerFactory createVLCPlayerFactory() { return createVLCPlayerFactory(WaterUtil.getArrayStringFromRes("vlc/command-line.json")); }
+    public static MediaPlayerFactory createVLCPlayerFactory() { return createVLCPlayerFactory(WMUtil.getArrayStringFromRes("vlc/command-line.json")); }
     public static MediaPlayerFactory createVLCPlayerFactory(String[] vlcArgs) {
         var discovery = new NativeDiscovery(new WindowsNativeDiscoveryStrategy(), new OsxNativeDiscoveryStrategy(), new LinuxNativeDiscoveryStrategy());
         if (discovery.discover()) {
