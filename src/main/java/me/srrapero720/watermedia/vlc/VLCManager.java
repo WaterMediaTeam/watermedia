@@ -16,7 +16,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VLCManager {
     // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
-    public static final String version = "20230608-0224";
+    public static final String version = "20230608-0224a";
 
     private static boolean forceFirstLocal;
     private static Path rootPath;
