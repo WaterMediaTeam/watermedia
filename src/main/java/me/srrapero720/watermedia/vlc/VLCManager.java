@@ -6,7 +6,7 @@ import me.lib720.caprica.vlcj4.factory.discovery.NativeDiscovery;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj4.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
-import me.srrapero720.watermedia.threads.ThreadUtil;
+import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.WMUtil;
 
 import java.nio.file.Path;

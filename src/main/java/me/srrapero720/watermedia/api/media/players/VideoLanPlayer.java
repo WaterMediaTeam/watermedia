@@ -7,7 +7,7 @@ import me.lib720.caprica.vlcj4.player.base.MediaPlayerEventListener;
 import me.srrapero720.watermedia.api.MediaApiCore;
 import me.srrapero720.watermedia.api.media.players.events.common.*;
 import me.srrapero720.watermedia.vlc.VLCManager;
-import me.srrapero720.watermedia.threads.ThreadUtil;
+import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj4.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferFormatCallback;

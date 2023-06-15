@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.threads;
+package me.srrapero720.watermedia.api.external;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
