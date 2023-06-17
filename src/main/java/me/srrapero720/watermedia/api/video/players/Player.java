@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Player<P extends Player<P>> extends EventManager<P> {
+public abstract class Player {
     protected String url;
     public Player() {}
 

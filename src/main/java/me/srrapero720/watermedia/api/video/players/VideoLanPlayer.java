@@ -22,7 +22,7 @@ import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class VideoLanPlayer extends Player<VideoLanPlayer> {
+public class VideoLanPlayer extends Player {
     private boolean buffering = false;
     private boolean prepared = false;
     private final EventManager<VideoLanPlayer> eventManager = new EventManager<>();
