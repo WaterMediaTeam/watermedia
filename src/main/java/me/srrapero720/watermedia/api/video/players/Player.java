@@ -1,31 +1,21 @@
 package me.srrapero720.watermedia.api.video.players;
 
 import me.srrapero720.watermedia.api.MediaApiCore;
+import me.srrapero720.watermedia.api.video.players.events.EventManager;
 import me.srrapero720.watermedia.api.video.players.events.common.Event;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Player<T extends Player<T>> {
+public abstract class Player<P extends Player<P>> extends EventManager<P> {
     protected String url;
-    protected final List<Event<T>> events = new ArrayList<>();
-
-    public Player() {
-    }
+    public Player() {}
 
     protected void compat(String url) {
         var compat = MediaApiCore.patchNonStaticUrl(url);
         if (compat != null) this.url = compat;
         else this.url = url;
-    }
-
-    public void addEventListener(Event<T> event) {
-        events.add(event);
-    }
-
-    public void removeEventListener(Event<T> event) {
-        events.remove(event);
     }
 
     public void start(@NotNull CharSequence url) { compat(url.toString()); }

@@ -5,6 +5,7 @@ import me.lib720.caprica.vlcj4.media.TrackType;
 import me.lib720.caprica.vlcj4.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj4.player.base.MediaPlayerEventListener;
 import me.srrapero720.watermedia.api.MediaApiCore;
+import me.srrapero720.watermedia.api.video.players.events.EventManager;
 import me.srrapero720.watermedia.api.video.players.events.common.*;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
@@ -17,144 +18,39 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 import java.awt.*;
+import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLanPlayer extends Player<VideoLanPlayer> {
     private boolean buffering = false;
+    private boolean prepared = false;
+    private final EventManager<VideoLanPlayer> eventManager = new EventManager<>();
+
     private CallbackMediaPlayerComponent player;
+    public CallbackMediaPlayerComponent getRawPlayerComponent() { return player; }
 
-    public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) { this(VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback); }
-
-    public VideoLanPlayer(MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        final VideoLanPlayer $this = this;
-        if (!VLCManager.isLoaded()) {
-            LOGGER.error("[VideoLanPlayer] Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
-            return;
-        }
-
-        this.player = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
-        this.player.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener() {
-            @Override public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {}
-
-            @Override
-            public void opening(MediaPlayer mediaPlayer) {
-                for (var event: events) if (event instanceof PlayerPreparingEvent<VideoLanPlayer> ev) ev.call($this, $this.url);
-            }
-
-            @Override
-            public void buffering(MediaPlayer mediaPlayer, float newCache) {
-                $this.buffering = true;
-//                for (var event: events) if (event instanceof PlayerBuffer<VideoLanPlayer> ev) ev.call($this, newCache);
-            }
-
-            @Override
-            public void playing(MediaPlayer mediaPlayer) {
-                for (var event: events) {
-                    if (event instanceof PlayerStartedEvent<VideoLanPlayer> ev) ev.call($this);
-                    if ($this.buffering && event instanceof PlayerReadyEvent<VideoLanPlayer> ev) {
-                        ev.call($this);
-                    }
-                }
-                $this.buffering = false;
-            }
-
-            @Override
-            public void paused(MediaPlayer mediaPlayer) {
-                for (var event: events) if (event instanceof MediaPauseEvent<VideoLanPlayer> ev) ev.call($this);
-            }
-
-            @Override
-            public void stopped(MediaPlayer mediaPlayer) {
-                for (var event: events) if (event instanceof MediaStopped<VideoLanPlayer> ev) ev.call($this);
-            }
-
-            @Override
-            public void forward(MediaPlayer mediaPlayer) {
-
-            }
-
-            @Override
-            public void backward(MediaPlayer mediaPlayer) {
-
-            }
-
-            @Override
-            public void finished(MediaPlayer mediaPlayer) {
-                for (var event: events) if (event instanceof MediaFinishEvent<VideoLanPlayer> ev) ev.call($this);
-            }
-
-            @Override
-            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-
-            }
-
-            @Override
-            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
-                for (var event: events) if (event instanceof MediaTimeChanged<VideoLanPlayer> ev) ev.call($this, $this.getTime(), newPosition);
-            }
-
-            @Override
-            public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {}
-
-            @Override
-            public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {}
-
-            @Override
-            public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {}
-
-            @Override
-            public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {}
-
-            @Override
-            public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {}
-
-            @Override
-            public void videoOutput(MediaPlayer mediaPlayer, int newCount) {}
-
-            @Override
-            public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {}
-
-            @Override
-            public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {}
-
-            @Override
-            public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {}
-
-            @Override
-            public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {}
-
-            @Override
-            public void corked(MediaPlayer mediaPlayer, boolean corked) {}
-
-            @Override
-            public void muted(MediaPlayer mediaPlayer, boolean muted) {}
-
-            @Override
-            public void volumeChanged(MediaPlayer mediaPlayer, float volume) {}
-
-            @Override
-            public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {}
-
-            @Override
-            public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {}
-
-            @Override
-            public void error(MediaPlayer mediaPlayer) {
-                for (var event: events) if (event instanceof PlayerExceptionEvent<VideoLanPlayer> ev) ev.call($this, null);
-            }
-
-            @Override
-            public void mediaPlayerReady(MediaPlayer mediaPlayer) {
-
-            }
-        });
+    @Deprecated(forRemoval = true)
+    public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+        this(VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
     }
 
-    public CallbackMediaPlayerComponent getRawPlayer() { return player; }
+    public VideoLanPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+        if (factory == null) factory = VLCManager.getDefaultFactory();
+
+        if (VLCManager.isLoaded()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
+        else LOGGER.error("[VideoLanPlayer] Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
+    }
 
     @Override
     public void start(@NotNull CharSequence url) { this.start(url, new String[0]); }
+    public synchronized void start(CharSequence url, String[] vlcArgs) {
+        if (player == null) return;
+        ThreadUtil.threadTry(() -> {
+            super.start(url.toString());
+            player.mediaPlayer().media().start(this.url, vlcArgs);
+        }, null, null);
+    }
 
     @Override
     public void prepare(@NotNull CharSequence url) { this.prepare(url, new String[0]); }
@@ -166,13 +62,6 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
         }, null, null);
     }
 
-    public synchronized void start(CharSequence url, String[] vlcArgs) {
-        if (player == null) return;
-        ThreadUtil.threadTry(() -> {
-            super.start(url.toString());
-            player.mediaPlayer().media().start(this.url, vlcArgs);
-        }, null, null);
-    }
 
     public Dimension getVideoDimension() {
         if (player != null) return player.mediaPlayer().video().videoDimension();
@@ -183,7 +72,6 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     public void play() {
         if (player == null) return;
         player.mediaPlayer().controls().play();
-        for (var event: events) if (event instanceof MediaResume<VideoLanPlayer> ev) ev.call(this, this.getTime());
     }
 
     @Override
@@ -194,6 +82,7 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
 
     @Override
     public void setPauseMode(boolean isPaused) {
+        if (player == null) return;
         player.mediaPlayer().controls().setPause(isPaused);
     }
 
@@ -206,6 +95,7 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     @Override
     public void seekTo(long time) {
         if (player == null) return;
+        eventManager.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
         player.mediaPlayer().controls().setTime(time);
     }
 
@@ -218,7 +108,9 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
     @Override
     public void seekGameTicksTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(MediaApiCore.gameTicksToMs(ticks));
+        var time = MediaApiCore.gameTicksToMs(ticks);
+        eventManager.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
+        player.mediaPlayer().controls().setTime(time);
     }
 
     @Override
@@ -259,11 +151,13 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
 
     @Override
     public void setSpeed(float rate) {
+        if (player == null) return;
         player.mediaPlayer().controls().setRate(rate);
     }
 
     @Override
     public void rewind() {
+        if (player == null) return;
         player.mediaPlayer().controls().skipTime(-5L);
     }
 
@@ -337,6 +231,156 @@ public class VideoLanPlayer extends Player<VideoLanPlayer> {
         if (player == null) return;
         player.mediaPlayer().release();
         player = null;
+    }
+
+
+    private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback) {
+        final var component = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
+        final var $this = this;
+
+        component.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener() {
+            @Override
+            public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
+                prepared = false;
+            }
+
+            @Override
+            public void opening(MediaPlayer mediaPlayer) {
+                eventManager.callPlayerPreparingEvent($this, new PlayerPreparingEvent.EventData());
+            }
+
+            @Override
+            public void buffering(MediaPlayer mediaPlayer, float newCache) {
+                eventManager.callPlayerBufferProgressEvent($this, new PlayerBuffer.EventProgressData(newCache));
+                buffering = true;
+            }
+
+            @Override
+            public void playing(MediaPlayer mediaPlayer) {
+                if (buffering) eventManager.callPlayerBufferEndEvent($this, new PlayerBuffer.EventEndData());
+                buffering = false;
+
+                if (!prepared) eventManager.callPlayerStartedEvent($this, new PlayerStartedEvent.EventData());
+                else eventManager.callMediaResumeEvent($this, new MediaResumeEvent.EventData(player.mediaPlayer().status().length()));
+            }
+
+            @Override
+            public void paused(MediaPlayer mediaPlayer) {
+                eventManager.callMediaPauseEvent($this, new MediaPauseEvent.EventData(player.mediaPlayer().status().length()));
+            }
+
+            @Override
+            public void stopped(MediaPlayer mediaPlayer) {
+                eventManager.callMediaStoppedEvent($this, new MediaStoppedEvent.EventData(player.mediaPlayer().status().length()));
+            }
+
+            @Override
+            public void forward(MediaPlayer mediaPlayer) {
+
+            }
+
+            @Override
+            public void backward(MediaPlayer mediaPlayer) {
+
+            }
+
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+                ThreadUtil.trySimple(() -> eventManager.callMediaFinishEvent($this, new MediaFinishEvent.EventData(new URL(url))));
+            }
+
+            @Override
+            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {}
+
+            @Override
+            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {}
+
+            @Override
+            public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
+
+            }
+
+            @Override
+            public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
+
+            }
+
+            @Override
+            public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
+
+            }
+
+            @Override
+            public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
+
+            }
+
+            @Override
+            public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
+
+            }
+
+            @Override
+            public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
+
+            }
+
+            @Override
+            public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
+
+            }
+
+            @Override
+            public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {
+
+            }
+
+            @Override
+            public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {
+
+            }
+
+            @Override
+            public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {
+
+            }
+
+            @Override
+            public void corked(MediaPlayer mediaPlayer, boolean corked) {
+
+            }
+
+            @Override
+            public void muted(MediaPlayer mediaPlayer, boolean muted) {
+
+            }
+
+            @Override
+            public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
+                eventManager.callMediaVolumeUpdate($this, new MediaVolumeUpdateEvent.EventData($this.getVolume(), (int) volume));
+            }
+
+            @Override
+            public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
+
+            }
+
+            @Override
+            public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {}
+
+            @Override
+            public void error(MediaPlayer mediaPlayer) {
+                eventManager.callPlayerExceptionEvent($this, new PlayerExceptionEvent.EventData(new RuntimeException("Something is wrong on VideoLanPlayer instance")));
+            }
+
+            @Override
+            public void mediaPlayerReady(MediaPlayer mediaPlayer) {
+                prepared = true;
+                eventManager.callPlayerReadyEvent($this, new PlayerReadyEvent.EventData());
+            }
+        });
+
+        return component;
     }
 }
 

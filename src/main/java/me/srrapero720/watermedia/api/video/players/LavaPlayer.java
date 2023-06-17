@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.video.players;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-public class LavaPlayer extends Player<LavaPlayer> {
+public class LavaPlayer extends Player {
 
     @Override
     public void play() {

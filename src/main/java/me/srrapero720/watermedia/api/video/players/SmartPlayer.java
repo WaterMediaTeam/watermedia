@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.video.players;
 
-public class SmartPlayer extends Player<SmartPlayer> {
+public class SmartPlayer extends Player {
 
     @Override
     public void play() {
@@ -18,7 +18,6 @@ public class SmartPlayer extends Player<SmartPlayer> {
     }
 
     @Override
-
     public void stop() {}
 
     @Override
