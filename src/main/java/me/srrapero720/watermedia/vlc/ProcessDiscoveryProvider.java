@@ -4,7 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.lib720.caprica.vlcj4.factory.discovery.provider.DiscoveryDirectoryProvider;
+import me.lib720.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 

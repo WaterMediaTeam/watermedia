@@ -1,11 +1,11 @@
 package me.srrapero720.watermedia.vlc;
 
 
-import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj4.factory.discovery.NativeDiscovery;
-import me.lib720.caprica.vlcj4.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
-import me.lib720.caprica.vlcj4.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
-import me.lib720.caprica.vlcj4.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.lib720.caprica.vlcj.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
+import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
+import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.WMUtil;
 

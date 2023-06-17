@@ -4,8 +4,6 @@ import me.srrapero720.watermedia.api.video.players.Player;
 import me.srrapero720.watermedia.api.video.players.events.common.*;
 
 public class EventManager<P extends Player> {
-    // STORES ALL RAW EVENTS
-    private Event<Object, P> event = null;
     private MediaFinishEvent<P> mediaFinish = null;
     private MediaPauseEvent<P> mediaPause = null;
     private MediaResumeEvent<P> mediaResume = null;
@@ -19,7 +17,6 @@ public class EventManager<P extends Player> {
     private PlayerReadyEvent<P> playerReady = null;
     private PlayerStartedEvent<P> playerStarted = null;
 
-    public void setEvent(Event<Object, P> ev) { event = ev; }
     public void setMediaFinishEvent(MediaFinishEvent<P> ev) { mediaFinish = ev; }
     public void setMediaPauseEvent(MediaPauseEvent<P> ev) { mediaPause = ev; }
     public void setMediaResumeEvent(MediaResumeEvent<P> ev) { mediaResume = ev; }
@@ -34,7 +31,6 @@ public class EventManager<P extends Player> {
     public void setPlayerStartedEvent(PlayerStartedEvent<P> ev) { playerStarted = ev; }
 
 
-    public void callEvent(P player, Object o) { event.call(player, o); }
     public void callMediaFinishEvent(P player, MediaFinishEvent.EventData o) { if (mediaFinish != null) mediaFinish.call(player, o); }
     public void callMediaPauseEvent(P player, MediaPauseEvent.EventData o) { if (mediaPause != null) mediaPause.call(player, o); }
     public void callMediaResumeEvent(P player, MediaResumeEvent.EventData o) { if (mediaResume != null) mediaResume.call(player, o); }

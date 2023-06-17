@@ -1,18 +1,18 @@
 package me.srrapero720.watermedia.api.video.players;
 
-import me.lib720.caprica.vlcj4.media.MediaRef;
-import me.lib720.caprica.vlcj4.media.TrackType;
-import me.lib720.caprica.vlcj4.player.base.MediaPlayer;
-import me.lib720.caprica.vlcj4.player.base.MediaPlayerEventListener;
+import me.lib720.caprica.vlcj.media.MediaRef;
+import me.lib720.caprica.vlcj.media.TrackType;
+import me.lib720.caprica.vlcj.player.base.MediaPlayer;
+import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
 import me.srrapero720.watermedia.api.MediaApiCore;
 import me.srrapero720.watermedia.api.video.players.events.EventManager;
 import me.srrapero720.watermedia.api.video.players.events.common.*;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.lib720.caprica.vlcj4.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj4.player.component.CallbackMediaPlayerComponent;
-import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.BufferFormatCallback;
-import me.lib720.caprica.vlcj4.player.embedded.videosurface.callback.RenderCallback;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class VideoLanPlayer extends Player {
     private boolean buffering = false;
     private boolean prepared = false;
-    private final EventManager<VideoLanPlayer> eventManager = new EventManager<>();
+    public final EventManager<VideoLanPlayer> events = new EventManager<>();
 
     private CallbackMediaPlayerComponent player;
     public CallbackMediaPlayerComponent getRawPlayerComponent() { return player; }
@@ -95,7 +95,7 @@ public class VideoLanPlayer extends Player {
     @Override
     public void seekTo(long time) {
         if (player == null) return;
-        eventManager.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
+        events.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
         player.mediaPlayer().controls().setTime(time);
     }
 
@@ -109,7 +109,7 @@ public class VideoLanPlayer extends Player {
     public void seekGameTicksTo(int ticks) {
         if (player == null) return;
         var time = MediaApiCore.gameTicksToMs(ticks);
-        eventManager.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
+        events.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
         player.mediaPlayer().controls().setTime(time);
     }
 
@@ -246,32 +246,32 @@ public class VideoLanPlayer extends Player {
 
             @Override
             public void opening(MediaPlayer mediaPlayer) {
-                eventManager.callPlayerPreparingEvent($this, new PlayerPreparingEvent.EventData());
+                events.callPlayerPreparingEvent($this, new PlayerPreparingEvent.EventData());
             }
 
             @Override
             public void buffering(MediaPlayer mediaPlayer, float newCache) {
-                eventManager.callPlayerBufferProgressEvent($this, new PlayerBuffer.EventProgressData(newCache));
+                events.callPlayerBufferProgressEvent($this, new PlayerBuffer.EventProgressData(newCache));
                 buffering = true;
             }
 
             @Override
             public void playing(MediaPlayer mediaPlayer) {
-                if (buffering) eventManager.callPlayerBufferEndEvent($this, new PlayerBuffer.EventEndData());
+                if (buffering) events.callPlayerBufferEndEvent($this, new PlayerBuffer.EventEndData());
                 buffering = false;
 
-                if (!prepared) eventManager.callPlayerStartedEvent($this, new PlayerStartedEvent.EventData());
-                else eventManager.callMediaResumeEvent($this, new MediaResumeEvent.EventData(player.mediaPlayer().status().length()));
+                if (!prepared) events.callPlayerStartedEvent($this, new PlayerStartedEvent.EventData());
+                else events.callMediaResumeEvent($this, new MediaResumeEvent.EventData(player.mediaPlayer().status().length()));
             }
 
             @Override
             public void paused(MediaPlayer mediaPlayer) {
-                eventManager.callMediaPauseEvent($this, new MediaPauseEvent.EventData(player.mediaPlayer().status().length()));
+                events.callMediaPauseEvent($this, new MediaPauseEvent.EventData(player.mediaPlayer().status().length()));
             }
 
             @Override
             public void stopped(MediaPlayer mediaPlayer) {
-                eventManager.callMediaStoppedEvent($this, new MediaStoppedEvent.EventData(player.mediaPlayer().status().length()));
+                events.callMediaStoppedEvent($this, new MediaStoppedEvent.EventData(player.mediaPlayer().status().length()));
             }
 
             @Override
@@ -286,7 +286,7 @@ public class VideoLanPlayer extends Player {
 
             @Override
             public void finished(MediaPlayer mediaPlayer) {
-                ThreadUtil.trySimple(() -> eventManager.callMediaFinishEvent($this, new MediaFinishEvent.EventData(new URL(url))));
+                ThreadUtil.trySimple(() -> events.callMediaFinishEvent($this, new MediaFinishEvent.EventData(new URL(url))));
             }
 
             @Override
@@ -357,7 +357,7 @@ public class VideoLanPlayer extends Player {
 
             @Override
             public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
-                eventManager.callMediaVolumeUpdate($this, new MediaVolumeUpdateEvent.EventData($this.getVolume(), (int) volume));
+                events.callMediaVolumeUpdate($this, new MediaVolumeUpdateEvent.EventData($this.getVolume(), (int) volume));
             }
 
             @Override
@@ -370,13 +370,13 @@ public class VideoLanPlayer extends Player {
 
             @Override
             public void error(MediaPlayer mediaPlayer) {
-                eventManager.callPlayerExceptionEvent($this, new PlayerExceptionEvent.EventData(new RuntimeException("Something is wrong on VideoLanPlayer instance")));
+                events.callPlayerExceptionEvent($this, new PlayerExceptionEvent.EventData(new RuntimeException("Something is wrong on VideoLanPlayer instance")));
             }
 
             @Override
             public void mediaPlayerReady(MediaPlayer mediaPlayer) {
                 prepared = true;
-                eventManager.callPlayerReadyEvent($this, new PlayerReadyEvent.EventData());
+                events.callPlayerReadyEvent($this, new PlayerReadyEvent.EventData());
             }
         });
 
