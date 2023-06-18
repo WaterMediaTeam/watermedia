@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
-public class TwitterPatch extends BaseVideoPatch {
+public class TwitterPatch extends AbstractURLPatch {
 
     private static final Gson gson = new Gson();
 
@@ -16,7 +16,7 @@ public class TwitterPatch extends BaseVideoPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws Exception {
+    public String build(@NotNull URL url) throws PatchingUrlException {
         super.build(url);
         try {
             return new TweetScrapper(gson).extractVideo(String.valueOf(url)).get(0);

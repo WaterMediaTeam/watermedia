@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
-public class KickPatch extends BaseVideoPatch {
+public class KickPatch extends AbstractURLPatch {
 
     @Override
     public boolean isValid(@NotNull URL url) {
@@ -13,7 +13,7 @@ public class KickPatch extends BaseVideoPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws Exception {
+    public String build(@NotNull URL url) throws PatchingUrlException {
         super.build(url);
 
         if (url.getPath().contains("/video/")) {

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
-public class DrivePatch extends BaseVideoPatch {
+public class DrivePatch extends AbstractURLPatch {
     private static final String API_KEY = "AIzaSyBiFNT6TTo506kCYYwA2NHqs36TlXC1DMo";
     private static final String API_URL = "https://www.googleapis.com/drive/v3/files/%s?alt=media&key=%s";
 
@@ -14,7 +14,7 @@ public class DrivePatch extends BaseVideoPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws Exception {
+    public String build(@NotNull URL url) throws PatchingUrlException {
         super.build(url);
 
         // PATH GETTER

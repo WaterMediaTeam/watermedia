@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class YoutubePatch extends BaseVideoPatch {
+public class YoutubePatch extends AbstractURLPatch {
     private static final Pattern PATTERN = Pattern.compile("(?:(?:youtube\\.com\\/(?:watch\\?.*v=|user\\/\\S+|(?:v|embed)\\/)|youtu\\.be\\/)([^&\\n?#]+))");
 
     @Override
@@ -17,28 +17,32 @@ public class YoutubePatch extends BaseVideoPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws Exception {
+    public String build(@NotNull URL url) throws PatchingUrlException {
         super.build(url);
 
         Matcher matcher = PATTERN.matcher(url.toString());
         if (matcher.find()) {
-            String videoId = matcher.group(1);
-            var videoInfo = new YoutubeDownloader().getVideoInfo(new RequestVideoInfo(videoId)).data();
+            try {
+                String videoId = matcher.group(1);
+                var videoInfo = new YoutubeDownloader().getVideoInfo(new RequestVideoInfo(videoId)).data();
 
-            // BEST WITH AUDIO
-            var bestWithAudio = videoInfo.bestVideoWithAudioFormat();
-            if (bestWithAudio != null) return bestWithAudio.url();
+                // BEST WITH AUDIO
+                var bestWithAudio = videoInfo.bestVideoWithAudioFormat();
+                if (bestWithAudio != null) return bestWithAudio.url();
 
-            // WITHOUT AUDIO
-            var bestWithoutAudio = videoInfo.bestVideoFormat();
-            if (bestWithoutAudio != null) return bestWithoutAudio.url();
+                // WITHOUT AUDIO
+                var bestWithoutAudio = videoInfo.bestVideoFormat();
+                if (bestWithoutAudio != null) return bestWithoutAudio.url();
 
-            // WITHOUT VIDEO
-            var bestWithoutVideo = videoInfo.bestAudioFormat();
-            if (bestWithoutVideo != null) bestWithoutVideo.url();
+                // WITHOUT VIDEO
+                var bestWithoutVideo = videoInfo.bestAudioFormat();
+                if (bestWithoutVideo != null) bestWithoutVideo.url();
 
-            // GIVE IT TO VLC
-            return "https://www.youtube.com/watch?v=" + videoId;
+                // GIVE IT TO VLC
+                return "https://www.youtube.com/watch?v=" + videoId;
+            } catch (Exception e) {
+                throw new PatchingUrlException(url.toString(), e);
+            }
         }
 
         return null;

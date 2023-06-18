@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api;
 
-import me.srrapero720.watermedia.api.video.patch.BaseVideoPatch;
+import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
 import me.srrapero720.watermedia.api.video.players.VideoLanPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 
@@ -18,7 +18,7 @@ public final class MediaApiCore {
      */
     public static String patchNonStaticUrl(String url) {
         return ThreadUtil.tryAndReturn(defaultVar -> {
-            for (var compat: BaseVideoPatch.COMPAT_LIST) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
+            for (var compat: AbstractURLPatch.URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
             return defaultVar;
         }, e -> LOGGER.error("Exception occurred trying to run patchNonStaticUrl", e), url);
     }

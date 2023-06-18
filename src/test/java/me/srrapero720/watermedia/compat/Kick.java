@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.compat;
 
 import com.mojang.logging.LogUtils;
-import me.srrapero720.watermedia.api.video.patch.BaseVideoPatch;
+import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
 import me.srrapero720.watermedia.api.video.patch.util.kick.KickAPI;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class Kick extends BaseVideoPatch {
+public class Kick extends AbstractURLPatch {
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws MalformedURLException, PatchingUrlException {
         LOGGER.info(new Kick().build(new URL("https://kick.com/lornexia")));
         LOGGER.info(new Kick().build(new URL("https://kick.com/video/af9f91d4-9cbc-4395-8f35-9ef9f245fb8c")));
     }
@@ -23,7 +23,7 @@ public class Kick extends BaseVideoPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) {
+    public String build(@NotNull URL url) throws PatchingUrlException {
         super.build(url);
 
         if (url.getPath().contains("/video/")) {

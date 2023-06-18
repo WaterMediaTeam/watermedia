@@ -4,11 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
-public abstract class BaseVideoPatch {
-    public static BaseVideoPatch[] COMPAT_LIST = null;
+public abstract class AbstractURLPatch {
+    public static AbstractURLPatch[] URL_PATCHERS = null;
 
     public static boolean init() {
-        COMPAT_LIST = new BaseVideoPatch[] {
+        URL_PATCHERS = new AbstractURLPatch[] {
                 new YoutubePatch(),
                 new TwitchPatch(),
                 new KickPatch(),
@@ -18,12 +18,13 @@ public abstract class BaseVideoPatch {
         return true;
     }
     public abstract boolean isValid(@NotNull URL url);
-    public String build(@NotNull URL url) throws Exception {
-        if (!isValid(url)) throw new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat");
+    public String build(@NotNull URL url) throws PatchingUrlException {
+        if (!isValid(url)) throw new PatchingUrlException(url, new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat"));
         return null;
     }
 
     public static final class PatchingUrlException extends Exception {
         public PatchingUrlException(String url, Throwable t) { super("Failed to patch URL " + url, t); }
+        public PatchingUrlException(URL url, Throwable t) { super("Failed to patch URL " + url.toString(), t); }
     }
 }

@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.video.patch.BaseVideoPatch;
+import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
 import me.srrapero720.watermedia.lavaplayer.LavaManager;
 import me.srrapero720.watermedia.vlc.VLCManager;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ public class WaterMedia {
 
 	public static boolean load(Path gameDir) {
 		// PREPARE API
-		if (!BaseVideoPatch.init()) return false;
+		if (!AbstractURLPatch.init()) return false;
 		if (!ResourcesManager.init(gameDir)) return false;
 //		if (!ResourceManager.init(jarDir)) return false;
 
