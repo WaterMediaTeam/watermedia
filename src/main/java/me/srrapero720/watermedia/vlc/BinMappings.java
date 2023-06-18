@@ -183,13 +183,13 @@ public enum BinMappings {
 
     public String getName() { return name() + ".dll"; }
 
-    public void delete(Path from) {
-        String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-        MediaUtil.deleteFrom(from.toAbsolutePath() + relativePath);
-    }
-
     public void extract(Path to) {
         String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-        MediaUtil.extractFrom("/vlc/" + MediaUtil.getOsArch() + "/" + relativePath, to.toAbsolutePath() + relativePath);
+        MediaUtil.extractFrom("/vlc/" + MediaUtil.getOsArch() + "/" + relativePath, to.toAbsolutePath() + "/" + relativePath);
+    }
+
+    public void delete(Path from) {
+        String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
+        MediaUtil.deleteFrom(from.toAbsolutePath() + "/" + relativePath);
     }
 }
