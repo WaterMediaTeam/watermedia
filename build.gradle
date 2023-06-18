@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id 'idea'
     id 'maven-publish'
-//    id 'org.spongepowered.mixin' version '0.7.+'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
@@ -15,23 +16,26 @@ base {
 
 apply plugin: 'net.minecraftforge.gradle'
 
-sourceCompatibility = JavaVersion.VERSION_18
-targetCompatibility = JavaVersion.VERSION_18
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 println "Gradle Java: ${JavaVersion.current()}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '2022.11.06-1.18.2'
+    mappings channel: "${mappingsch}", version: "${mappings_version}-${mcversion}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
     runs {
         client {
-            taskName "runClient-J17"
+            taskName "MClient-${mcversion}"
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', modid
+
+            arg '--mixin.config'
+            arg 'watermedia.mixin.json'
 
             mods {
                 "${modid}" {
@@ -69,6 +73,7 @@ configurations {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // FABRIC LOADER (just to get classes info, NEVER USE IT outside WMForFabric)
     implementation "net.fabricmc:fabric-loader:${project.fabricv}"
@@ -106,6 +111,8 @@ processResources {
     }
 }
 
+mixin { add sourceSets.main, "waterframes.mixin-refmap.json" }
+
 
 shadowJar {
     configurations = [project.configurations.library]
@@ -120,7 +127,7 @@ shadowJar {
     relocate 'com.fasterxml.jackson', 'me.lib720.jackson'
     relocate 'retrofit2', 'me.lib720.retrofit2'
 
-    archiveFileName = "${project.modid}-${project.mcversion}-${project.modversion}.jar"
+    archiveFileName = "${project.modid}-${project.modversion}.jar"
 }
 
 // Make the reobfJar task depend on shadowJar
@@ -135,7 +142,10 @@ jar {
                 "Implementation-Title"    : project.modname,
                 "Implementation-Version"  : project.modversion,
                 "Implementation-Vendor"   : project.modauthor,
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+                "TweakOrder": 0,
+                "MixinConfigs": "watermedia.mixin.json"
         ])
     }
     from {
