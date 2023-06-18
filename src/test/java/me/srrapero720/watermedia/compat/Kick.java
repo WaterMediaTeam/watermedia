@@ -12,7 +12,7 @@ import java.net.URL;
 public class Kick extends AbstractURLPatch {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static void main(String[] args) throws MalformedURLException, PatchingUrlException {
-        LOGGER.info(new Kick().build(new URL("https://kick.com/lornexia")));
+        LOGGER.info(new Kick().build(new URL("https://kick.com/kenji")));
         LOGGER.info(new Kick().build(new URL("https://kick.com/video/af9f91d4-9cbc-4395-8f35-9ef9f245fb8c")));
     }
 
