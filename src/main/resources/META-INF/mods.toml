@@ -1,6 +1,7 @@
 modLoader="javafml" #mandatory
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
+logoFile="pack.png" #optional
 issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
 [[mods]]
     modId="${mod_id}"
