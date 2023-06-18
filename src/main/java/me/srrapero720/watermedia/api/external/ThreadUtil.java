@@ -56,6 +56,7 @@ public class ThreadUtil {
     public static Thread thread(Runnable runnable) {
         var thread = new Thread(runnable);
         thread.setName("WATERCoRE-" + String.valueOf(Math.random() * 100).replace(".", "-"));
+        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
         thread.setDaemon(true);
         thread.setUncaughtExceptionHandler(EXCEPTION_HANDLER);
         thread.start();
@@ -65,6 +66,7 @@ public class ThreadUtil {
     public static Thread threadNonDaemon(Runnable runnable) {
         var thread = new Thread(runnable);
         thread.setName("WATERCoRE-" + String.valueOf(Math.random() * 100).replace(".", "-"));
+        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
         thread.setDaemon(false);
         thread.setUncaughtExceptionHandler(EXCEPTION_HANDLER);
         thread.start();

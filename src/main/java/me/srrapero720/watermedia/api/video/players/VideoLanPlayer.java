@@ -1,22 +1,21 @@
 package me.srrapero720.watermedia.api.video.players;
 
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.media.MediaRef;
 import me.lib720.caprica.vlcj.media.TrackType;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.video.players.events.EventManager;
-import me.srrapero720.watermedia.api.video.players.events.common.*;
-import me.srrapero720.watermedia.vlc.VLCManager;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.api.video.players.events.EventManager;
+import me.srrapero720.watermedia.api.video.players.events.common.*;
+import me.srrapero720.watermedia.vlc.VLCManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
 import java.awt.*;
 import java.net.URL;
 
@@ -25,6 +24,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class VideoLanPlayer extends Player {
     private boolean buffering = false;
     private boolean prepared = false;
+    private static Thread THREAD = Thread.currentThread();
     public final EventManager<VideoLanPlayer> events = new EventManager<>();
 
     private CallbackMediaPlayerComponent player;
@@ -33,6 +33,7 @@ public class VideoLanPlayer extends Player {
     @Deprecated(forRemoval = true)
     public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         this(VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
+
     }
 
     public VideoLanPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
@@ -229,8 +230,10 @@ public class VideoLanPlayer extends Player {
     @Override
     public void release() {
         if (player == null) return;
-        player.mediaPlayer().release();
-        player = null;
+        ThreadUtil.thread(() -> {
+            player.mediaPlayer().release();
+            player = null;
+        });
     }
 
 
@@ -241,22 +244,26 @@ public class VideoLanPlayer extends Player {
         component.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener() {
             @Override
             public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 prepared = false;
             }
 
             @Override
             public void opening(MediaPlayer mediaPlayer) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 events.callPlayerPreparingEvent($this, new PlayerPreparingEvent.EventData());
             }
 
             @Override
             public void buffering(MediaPlayer mediaPlayer, float newCache) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 events.callPlayerBufferProgressEvent($this, new PlayerBuffer.EventProgressData(newCache));
                 buffering = true;
             }
 
             @Override
             public void playing(MediaPlayer mediaPlayer) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 if (buffering) events.callPlayerBufferEndEvent($this, new PlayerBuffer.EventEndData());
                 buffering = false;
 
@@ -266,115 +273,127 @@ public class VideoLanPlayer extends Player {
 
             @Override
             public void paused(MediaPlayer mediaPlayer) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 events.callMediaPauseEvent($this, new MediaPauseEvent.EventData(player.mediaPlayer().status().length()));
             }
 
             @Override
             public void stopped(MediaPlayer mediaPlayer) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 events.callMediaStoppedEvent($this, new MediaStoppedEvent.EventData(player.mediaPlayer().status().length()));
             }
 
             @Override
             public void forward(MediaPlayer mediaPlayer) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void backward(MediaPlayer mediaPlayer) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void finished(MediaPlayer mediaPlayer) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 ThreadUtil.trySimple(() -> events.callMediaFinishEvent($this, new MediaFinishEvent.EventData(new URL(url))));
             }
 
             @Override
-            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {}
+            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
+            }
 
             @Override
-            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {}
+            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
+            }
 
             @Override
             public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void corked(MediaPlayer mediaPlayer, boolean corked) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void muted(MediaPlayer mediaPlayer, boolean muted) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
             public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 events.callMediaVolumeUpdate($this, new MediaVolumeUpdateEvent.EventData($this.getVolume(), (int) volume));
             }
 
             @Override
             public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
-
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             }
 
             @Override
-            public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {}
+            public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
+            }
 
             @Override
             public void error(MediaPlayer mediaPlayer) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 events.callPlayerExceptionEvent($this, new PlayerExceptionEvent.EventData(new RuntimeException("Something is wrong on VideoLanPlayer instance")));
             }
 
             @Override
             public void mediaPlayerReady(MediaPlayer mediaPlayer) {
+                if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
                 prepared = true;
                 events.callPlayerReadyEvent($this, new PlayerReadyEvent.EventData());
             }

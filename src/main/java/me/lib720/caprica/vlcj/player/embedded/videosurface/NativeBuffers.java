@@ -65,6 +65,7 @@ final class NativeBuffers {
      * @return
      */
     int allocate(BufferFormat bufferFormat) {
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
         int planeCount = bufferFormat.getPlaneCount();
         int[] pitchValues = bufferFormat.getPitches();
         int[] lineValues = bufferFormat.getLines();
@@ -86,6 +87,7 @@ final class NativeBuffers {
     }
 
     void free() {
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
         if (nativeBuffers != null) {
             if (lockBuffers) {
                 for (int i = 0; i < nativeBuffers.length; i++) {

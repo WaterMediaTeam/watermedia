@@ -59,10 +59,12 @@ final class ByteBufferFactory {
      * @return native address pointer
      */
     static long getAddress(ByteBuffer buffer) {
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
         return UnsafeAccess.UNSAFE.getLong(buffer, addressOffset);
     }
 
     private static long getAddressOffset() {
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
         try {
             return UnsafeAccess.UNSAFE.objectFieldOffset(Buffer.class.getDeclaredField("address"));
         }
@@ -79,6 +81,7 @@ final class ByteBufferFactory {
      * @return aligned byte buffer
      */
     private static ByteBuffer allocateAlignedBuffer(int capacity, int alignment) {
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
         ByteBuffer result;
         ByteBuffer buffer = ByteBuffer.allocateDirect(capacity + alignment);
         long address = getAddress(buffer);
@@ -101,6 +104,7 @@ final class ByteBufferFactory {
         private static final Unsafe UNSAFE;
 
         static {
+            if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
             try {
                 Field field = Unsafe.class.getDeclaredField("theUnsafe");
                 field.setAccessible(true);
