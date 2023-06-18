@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "watermedia",
-  "version": "${file.jarVersion}",
+  "version": "${mod_version}",
 
   "name": "WATERMeDIA",
   "description": "Library to expand Minecraft entertainment using multimedia content\nPowered by WATERCoRE",
