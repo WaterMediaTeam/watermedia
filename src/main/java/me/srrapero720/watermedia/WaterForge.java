@@ -22,5 +22,6 @@ public class WaterForge {
         } else load();
     }
 
-    public static void load() { WaterMedia.load(FMLPaths.GAMEDIR.get(), !FMLLoader.isProduction()); }
+    /* FMLLoader.getLoadingModList().getModFileById("watermedia").getFile().getFilePath(), */
+    public static void load() { WaterMedia.load(FMLPaths.GAMEDIR.get()); }
 }

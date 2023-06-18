@@ -21,7 +21,6 @@ package me.lib720.caprica.vlcj.factory.discovery.provider;
 
 import me.lib720.caprica.vlcj.factory.discovery.strategy.BaseNativeDiscoveryStrategy;
 import me.srrapero720.watermedia.vlc.VLCManager;
-import me.srrapero720.watermedia.vlc.ProcessDiscoveryProvider;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDiscoveryStrategy {
 
     private final List<DiscoveryDirectoryProvider> directoryProviders = Arrays.asList(
-            new ProcessDiscoveryProvider(VLCManager.getRootPath()), // Ohh yeah... I am the best
+            new LocalDirectoryProvider(), // Ohh yeah... I am the best
             new UserDirDirectoryProvider(),
             new ConfigDirConfigFileDiscoveryDirectoryProvider(),
             new JnaLibraryPathDirectoryProvider(),

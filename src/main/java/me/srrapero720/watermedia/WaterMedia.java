@@ -13,9 +13,11 @@ public class WaterMedia {
 	public static final String ID = "watermedia";
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
-	public static boolean load(Path gameDir, boolean inDev) {
+	public static boolean load(Path gameDir) {
 		// PREPARE API
 		if (!BaseVideoPatch.init()) return false;
+		if (!ResourcesManager.init(gameDir)) return false;
+//		if (!ResourceManager.init(jarDir)) return false;
 
 		// API LOADERS
 		if (!VLCManager.init(gameDir, true)) return false;

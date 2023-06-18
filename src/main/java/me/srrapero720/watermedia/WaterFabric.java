@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 public class WaterFabric implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMedia.class);
     private static void load() {
-        WaterMedia.load(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().isDevelopmentEnvironment());
+//        var allMods = FabricLoader.getInstance().getAllMods();
+//        var self = allMods.stream().filter(modContainer -> modContainer.getMetadata().getId().equals("watermedia")).findAny();
+        WaterMedia.load(FabricLoader.getInstance().getGameDir());
     }
 
     public WaterFabric() {
