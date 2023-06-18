@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
  * Doing things with FORGE classes/api is safe
  */
 @Mod("watermedia")
-public class WaterForge {
+public class MediaForge {
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMedia.class);
 
-    public WaterForge() {
+    public MediaForge() {
         if (FMLEnvironment.dist.isDedicatedServer()) {
             if (FMLLoader.isProduction()) throw new IllegalStateException("WATERMeDIA shouldn't be installed on server!!");
             else LOGGER.warn("WATERMeDIA shouldn't be installed on server. Ignoring crash because we are in DEV MODE.");

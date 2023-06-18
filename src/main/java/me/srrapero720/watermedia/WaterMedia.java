@@ -16,18 +16,12 @@ public class WaterMedia {
 	public static boolean load(Path gameDir) {
 		// PREPARE API
 		if (!AbstractURLPatch.init()) return false;
-		if (!ResourcesManager.init(gameDir)) return false;
-//		if (!ResourceManager.init(jarDir)) return false;
 
 		// API LOADERS
-		if (!VLCManager.init(gameDir, true)) return false;
+		if (!VLCManager.init(gameDir)) return false;
         if (!LavaManager.init()) return false;
 
 		// API VERIFY
 		return true;
-	}
-
-	public static boolean load(Path gameDir, WMConfig config, boolean inDev) {
-		throw new UnsupportedOperationException("This method isn't supported yet");
 	}
 }

@@ -20,16 +20,12 @@
 package me.lib720.caprica.vlcj.factory.discovery.provider;
 
 import me.lib720.caprica.vlcj.factory.discovery.strategy.BaseNativeDiscoveryStrategy;
-import me.srrapero720.watermedia.vlc.VLCManager;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
-
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
  * Implementation of a native discovery strategy that searches a list of well-known directories.
@@ -49,7 +45,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDiscoveryStrategy {
 
     private final List<DiscoveryDirectoryProvider> directoryProviders = Arrays.asList(
-            new LocalDirectoryProvider(), // Ohh yeah... I am the best
+            new CustomDirectoryProvider(), // Ohh yeah... I am the best
             new UserDirDirectoryProvider(),
             new ConfigDirConfigFileDiscoveryDirectoryProvider(),
             new JnaLibraryPathDirectoryProvider(),
@@ -90,11 +86,7 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
     }
 
     private List<DiscoveryDirectoryProvider> sort(List<DiscoveryDirectoryProvider> providers) {
-        if (VLCManager.forceFirstLocal()) providers.sort((a1, a2) -> a2.priority() - a1.priority());
-        else providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
-
-        LOGGER.info("Using {} priority to load VLC", VLCManager.forceFirstLocal() ? "LOCAL_MODE" : "SYSTEM_MODE");
+        providers.sort((a1, a2) -> a2.priority() - a1.priority());
         return providers;
     }
-
 }

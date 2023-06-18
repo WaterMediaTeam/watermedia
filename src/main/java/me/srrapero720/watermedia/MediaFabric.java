@@ -2,7 +2,6 @@ package me.srrapero720.watermedia;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * Loader for FABRIC
  * Doing things with FABRIC classes/api is safe
  */
-public class WaterFabric implements ClientModInitializer {
+public class MediaFabric implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMedia.class);
     private static void load() {
 //        var allMods = FabricLoader.getInstance().getAllMods();
@@ -19,7 +18,7 @@ public class WaterFabric implements ClientModInitializer {
         WaterMedia.load(FabricLoader.getInstance().getGameDir());
     }
 
-    public WaterFabric() {
+    public MediaFabric() {
         if (FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER)) {
             if (FabricLoader.getInstance().isDevelopmentEnvironment()) LOGGER.warn("WATERMeDIA shouldn't be installed on server. Ignoring crash because we are in DEV MODE.");
             else {

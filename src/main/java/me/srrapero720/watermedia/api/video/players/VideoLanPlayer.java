@@ -4,7 +4,7 @@ import me.lib720.caprica.vlcj.media.MediaRef;
 import me.lib720.caprica.vlcj.media.TrackType;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
-import me.srrapero720.watermedia.api.MediaApiCore;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.video.players.events.EventManager;
 import me.srrapero720.watermedia.api.video.players.events.common.*;
 import me.srrapero720.watermedia.vlc.VLCManager;
@@ -38,7 +38,7 @@ public class VideoLanPlayer extends Player {
     public VideoLanPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         if (factory == null) factory = VLCManager.getDefaultFactory();
 
-        if (VLCManager.isLoaded()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
+        if (WaterMediaAPI.isVLCReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
         else LOGGER.error("[VideoLanPlayer] Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
     }
 
@@ -108,7 +108,7 @@ public class VideoLanPlayer extends Player {
     @Override
     public void seekGameTicksTo(int ticks) {
         if (player == null) return;
-        var time = MediaApiCore.gameTicksToMs(ticks);
+        var time = WaterMediaAPI.gameTicksToMs(ticks);
         events.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
         player.mediaPlayer().controls().setTime(time);
     }
@@ -116,7 +116,7 @@ public class VideoLanPlayer extends Player {
     @Override
     public void seekGameTickFastTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(MediaApiCore.gameTicksToMs(ticks));
+        player.mediaPlayer().controls().setTime(WaterMediaAPI.gameTicksToMs(ticks));
     }
 
     @Override
@@ -186,7 +186,7 @@ public class VideoLanPlayer extends Player {
     @Override
     public int getGameTickDuration() {
         if (player == null) return 0;
-        return MediaApiCore.msToGameTicks(player.mediaPlayer().status().length());
+        return WaterMediaAPI.msToGameTicks(player.mediaPlayer().status().length());
     }
 
     /**
@@ -204,7 +204,7 @@ public class VideoLanPlayer extends Player {
     public int getGameTickStatusDuration() {
         if (player == null) return 0;
         var info = player.mediaPlayer().media().info();
-        if (info != null) return MediaApiCore.msToGameTicks(info.duration());
+        if (info != null) return WaterMediaAPI.msToGameTicks(info.duration());
         return 0;
     }
 
@@ -217,7 +217,7 @@ public class VideoLanPlayer extends Player {
     @Override
     public int getGameTickTime() {
         if (player == null) return 0;
-        return MediaApiCore.msToGameTicks(player.mediaPlayer().status().time());
+        return WaterMediaAPI.msToGameTicks(player.mediaPlayer().status().time());
     }
 
     @Override

@@ -1,8 +1,11 @@
 package me.srrapero720.watermedia.vlc;
 
-import me.srrapero720.watermedia.WMUtil;
+import me.srrapero720.watermedia.MediaUtil;
 
-public enum LuaManager {
+import java.nio.file.Path;
+
+@Deprecated()
+public enum LuaMappings {
     VLSub("extensions"),
 
     cli("intf"),
@@ -50,23 +53,23 @@ public enum LuaManager {
 
     private final String dir;
     private final String file;
-    LuaManager(String dir) {
+    LuaMappings(String dir) {
         this.dir = dir;
         this.file = null;
     }
-    LuaManager(String dir, String file) {
+    LuaMappings(String dir, String file) {
         this.dir = dir;
         this.file = file;
     }
 
     public String getName() { return name() + ".luac"; }
 
-    public void delete() {
-        WMUtil.deleteFrom("cache/vlc/" + "lua/" + dir + "/" + (file == null ? getName() : file + ".luac"));
+    public void delete(Path from) {
+        MediaUtil.deleteFrom(from.toAbsolutePath() + "lua/" + dir + "/" + (file == null ? getName() : file + ".luac"));
     }
 
-    public void extract() {
+    public void extract(Path to) {
         String relativePath = "lua/" + dir + "/" + (file == null ? getName() : file + ".luac");
-        WMUtil.extractFrom("/vlc/" + relativePath, "cache/vlc/" + relativePath);
+        MediaUtil.extractFrom("/vlc/" + relativePath, to.toAbsolutePath() + relativePath);
     }
 }

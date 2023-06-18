@@ -9,7 +9,7 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy
 import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
-import me.srrapero720.watermedia.WMUtil;
+import me.srrapero720.watermedia.MediaUtil;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
 
 import java.lang.ref.Reference;
@@ -78,9 +78,9 @@ public class NativeDiscovery {
     private String discoveredPath;
 
     private static final NativeDiscoveryStrategy[] DEFAULT_STRATEGIES = new NativeDiscoveryStrategy[] {
-        new LinuxNativeDiscoveryStrategy(),
-        new OsxNativeDiscoveryStrategy(),
-        new WindowsNativeDiscoveryStrategy()
+            new WindowsNativeDiscoveryStrategy(),
+            new OsxNativeDiscoveryStrategy(),
+            new LinuxNativeDiscoveryStrategy(),
     };
 
     /**
@@ -150,8 +150,8 @@ public class NativeDiscovery {
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         if (searchPaths == null) {
-            searchPaths = WMUtil.getClassField(NativeLibrary.class, "searchPaths");
-            libraries = WMUtil.getClassField(NativeLibrary.class, "libraries");
+            searchPaths = MediaUtil.getClassField(NativeLibrary.class, "searchPaths");
+            libraries = MediaUtil.getClassField(NativeLibrary.class, "libraries");
         }
         LOGGER.info("Failed to load VLC in '{}' using '{}'", path, discoveryStrategy.getClass().getSimpleName());
         try {

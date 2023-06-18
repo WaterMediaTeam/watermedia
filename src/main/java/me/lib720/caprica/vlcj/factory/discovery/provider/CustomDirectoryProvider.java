@@ -3,9 +3,7 @@ package me.lib720.caprica.vlcj.factory.discovery.provider;
 import java.io.File;
 import java.nio.file.Path;
 
-import me.lib720.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
-
-public class LocalDirectoryProvider implements DiscoveryDirectoryProvider {
+public class CustomDirectoryProvider implements DiscoveryDirectoryProvider {
     private static Path rootPath = null;
     public static void init(Path ph) { rootPath = ph; }
 

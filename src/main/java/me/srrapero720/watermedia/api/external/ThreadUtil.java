@@ -12,6 +12,10 @@ public class ThreadUtil {
 
     public static void printStackTrace(Exception e) { e.printStackTrace(); }
 
+    public static <T> T tryAndReturnNull(ReturnableRunnable<T> runnable, CatchRunnable catchRunnable) {
+        return tryAndReturn(defaultVar1 -> runnable.run(null), catchRunnable, null);
+    }
+
     public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, T defaultVar) {
         return tryAndReturn(runnable, null, defaultVar);
     }

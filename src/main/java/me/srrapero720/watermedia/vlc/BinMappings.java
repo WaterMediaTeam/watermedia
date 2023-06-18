@@ -1,8 +1,10 @@
 package me.srrapero720.watermedia.vlc;
 
-import me.srrapero720.watermedia.WMUtil;
+import me.srrapero720.watermedia.MediaUtil;
 
-public enum BinManager {
+import java.nio.file.Path;
+
+public enum BinMappings {
     // CORES
     libvlc(null),
     libvlccore(null),
@@ -177,30 +179,17 @@ public enum BinManager {
     libvdummy_plugin("video_output");
 
     public final String pluginFolder;
-
-    BinManager(String pluginDir) { this.pluginFolder = pluginDir; }
-
-    // Function to determine the architecture of the system
-    public String getSystemArchitecture() {
-        String arch = System.getProperty("os.arch");
-        if (arch.equals("amd64") || arch.equals("x86_64")) {
-            return "win-x64";
-//        } else if (arch.equals("arm64")) {
-//            return "win-arm64";
-        } else {
-            return "dummy";
-        }
-    }
+    BinMappings(String pluginDir) { this.pluginFolder = pluginDir; }
 
     public String getName() { return name() + ".dll"; }
 
-    public void delete() {
+    public void delete(Path from) {
         String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-        WMUtil.deleteFrom("cache/vlc/" + relativePath);
+        MediaUtil.deleteFrom(from.toAbsolutePath() + relativePath);
     }
 
-    public void extract() {
+    public void extract(Path to) {
         String relativePath = (pluginFolder == null ? getName() : "plugins/" + pluginFolder + "/" + getName());
-        WMUtil.extractFrom("/vlc/" + getSystemArchitecture() + "/" + relativePath, "cache/vlc/" + relativePath);
+        MediaUtil.extractFrom("/vlc/" + MediaUtil.getOsArch() + "/" + relativePath, to.toAbsolutePath() + relativePath);
     }
 }
