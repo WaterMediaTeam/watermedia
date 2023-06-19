@@ -17,7 +17,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VLCManager {
-    public static final String version = "20230608-0224b"; // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
+    public static final String version = "20230618-0226"; // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
     private static MediaPlayerFactory defaultFactory;
 
     public static MediaPlayerFactory getDefaultFactory() {
