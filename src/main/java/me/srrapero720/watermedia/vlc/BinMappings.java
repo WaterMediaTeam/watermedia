@@ -4,14 +4,15 @@ import me.srrapero720.watermedia.MediaUtil;
 
 import java.nio.file.Path;
 
+@Deprecated
 public enum BinMappings {
     // CORES
     libvlc(null),
     libvlccore(null),
 
-    // plugins/aarch64
-    libdeinterlace_aarch64_plugin("aarch64"),
-    libdeinterlace_sve_plugin("aarch64"),
+//    // plugins/aarch64
+//    libdeinterlace_aarch64_plugin("aarch64"),
+//    libdeinterlace_sve_plugin("aarch64"),
 
     // plugins/access
     libfilesystem_plugin("access"),
@@ -21,12 +22,16 @@ public enum BinMappings {
 
     // plugins/audio_filter
     libequalizer_plugin("audio_filter"),
+    libgain_plugin("audio_filter"),
+    libscaletempo_pitch_plugin("audio_filter"),
+    libscaletempo_plugin("audio_filter"),
 
     // plugins/audio_output
     libadummy_plugin("audio_output"),
     libamem_plugin("audio_output"),
-    libwaveout_plugin("audio_output"),
     libdirectsound_plugin("audio_output"),
+    libwasapi_plugin("audio_output"),
+    libwaveout_plugin("audio_output"),
 
     // plugins/codec
     liba52_plugin("codec"),
@@ -165,6 +170,17 @@ public enum BinMappings {
     liblogo_plugin("spu"),
     libmarq_plugin("spu"),
 
+    // plugins/stream_filter
+    libadf_plugin("stream_filter"),
+    libaribcam_plugin("stream_filter"),
+    libcache_block_plugin("stream_filter"),
+    libcache_read_plugin("stream_filter"),
+    libhds_plugin("stream_filter"),
+    libinflate_plugin("stream_filter"),
+    libprefetch_plugin("stream_filter"),
+    librecord_plugin("stream_filter"),
+    libskiptags_plugin("stream_filter"),
+
     // plugins/video_chroma
     libswscale_plugin("video_chroma"),
 
@@ -175,8 +191,8 @@ public enum BinMappings {
     libfps_plugin("video_filter"),
 
     // plugins/video_output
-    libvmem_plugin("video_output"),
-    libvdummy_plugin("video_output");
+    libvdummy_plugin("video_output"),
+    libvmem_plugin("video_output");
 
     public final String pluginFolder;
     BinMappings(String pluginDir) { this.pluginFolder = pluginDir; }

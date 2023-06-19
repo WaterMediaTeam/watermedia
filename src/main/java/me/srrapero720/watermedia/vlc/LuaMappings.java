@@ -37,19 +37,14 @@ public enum LuaMappings {
     bbc_co_uk("playlist"),
     cue("playlist"),
     dailymotion("playlist"),
-    jamendo("playlist"),
     koreus("playlist"),
     liveleak("playlist"),
     newgrounds("playlist"),
     rockbox_fm_presets("playlist"),
     soundcloud("playlist"),
-    twitch("playlist"),
     vimeo("playlist"),
     vocaroo("playlist"),
-    youtube("playlist"),
-
-    icecast("sd"),
-    jamendo_2("sd", "jamendo");
+    ;
 
     private final String dir;
     private final String file;
