@@ -6,7 +6,7 @@ import me.srrapero720.watermedia.api.external.ThreadUtil;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public enum VLCResources {
+public enum VLCArchives {
     // CORES
     libvlc(ResFileType.BIN, null),
     libvlccore(ResFileType.BIN, null),
@@ -235,7 +235,7 @@ public enum VLCResources {
     private final String filename;
 
     private static final String version = "20230618-0226"; // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
-    VLCResources(ResFileType resFileType, String fileDir) {
+    VLCArchives(ResFileType resFileType, String fileDir) {
         this.type = resFileType;
         this.relativeDir = fileDir;
         this.filename = name() + resFileType.getExtension();

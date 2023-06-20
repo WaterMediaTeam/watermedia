@@ -20,7 +20,7 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class VLCManager {
+public class VideoLAN {
     private static final Marker IT = MarkerFactory.getMarker("VLCManager");
     private static MediaPlayerFactory defaultFactory;
     public static MediaPlayerFactory getDefaultFactory() { return defaultFactory; }
@@ -36,23 +36,23 @@ public class VLCManager {
         //INIT
         var vlcPath = rootPath.resolve("cache/vlc/");
         var config = vlcPath.resolve("version.cfg");
-        var version = VLCResources.getVersion(config);
+        var version = VLCArchives.getVersion(config);
         CustomDirectoryProvider.init(vlcPath);
 
         // Check if we need to update binaries
-        if (version == null || !version.equals(VLCResources.getVersion())) {
+        if (version == null || !version.equals(VLCArchives.getVersion())) {
             // CLEAR
             LOGGER.warn(IT, "Running deletion for VLC Files");
-            for (var binary : VLCResources.values()) binary.clear(rootPath.resolve("cache/vlc"));
+            for (var binary : VLCArchives.values()) binary.clear(rootPath.resolve("cache/vlc"));
 
             // EXTRACT
             LOGGER.warn(IT, "Running extraction for VLC Files");
-            for (var binary : VLCResources.values()) binary.extract(rootPath.resolve("cache/vlc"));
+            for (var binary : VLCArchives.values()) binary.extract(rootPath.resolve("cache/vlc"));
 
             // SET LOCAL VERSION
             ThreadUtil.trySimple(() -> {
                 if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
-                Files.writeString(config, VLCResources.getVersion());
+                Files.writeString(config, VLCArchives.getVersion());
             }, e -> LOGGER.error(IT, "Could not write to configuration file", e));
         } else LOGGER.warn(IT, "VLC detected and match with the wrapped version");
 

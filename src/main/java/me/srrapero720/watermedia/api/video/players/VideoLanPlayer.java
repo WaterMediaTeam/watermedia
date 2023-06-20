@@ -12,7 +12,7 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.video.players.events.EventManager;
 import me.srrapero720.watermedia.api.video.players.events.common.*;
-import me.srrapero720.watermedia.core.videolan.VLCManager;
+import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -24,7 +24,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class VideoLanPlayer extends Player {
     private boolean buffering = false;
     private boolean prepared = false;
-    private static Thread THREAD = Thread.currentThread();
+    private static final Thread THREAD = Thread.currentThread();
     public final EventManager<VideoLanPlayer> events = new EventManager<>();
 
     private CallbackMediaPlayerComponent player;
@@ -32,12 +32,12 @@ public class VideoLanPlayer extends Player {
 
     @Deprecated(forRemoval = true)
     public VideoLanPlayer(@Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        this(VLCManager.getDefaultFactory(), renderCallback, bufferFormatCallback);
+        this(VideoLAN.getDefaultFactory(), renderCallback, bufferFormatCallback);
 
     }
 
     public VideoLanPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        if (factory == null) factory = VLCManager.getDefaultFactory();
+        if (factory == null) factory = VideoLAN.getDefaultFactory();
 
         if (WaterMediaAPI.isVLCReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
         else LOGGER.error("[VideoLanPlayer] Failed to create CallbackMediaPlayerComponent because VLC is not loaded");

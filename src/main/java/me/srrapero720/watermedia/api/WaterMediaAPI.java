@@ -5,7 +5,7 @@ import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
 import me.srrapero720.watermedia.api.video.players.VideoLanPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.core.videolan.VLCManager;
+import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -53,7 +53,7 @@ public final class WaterMediaAPI {
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
-    public static boolean isVLCReady() { return VLCManager.getDefaultFactory() != null; }
+    public static boolean isVLCReady() { return VideoLAN.getDefaultFactory() != null; }
 
     /**
      * Use it at your own risk

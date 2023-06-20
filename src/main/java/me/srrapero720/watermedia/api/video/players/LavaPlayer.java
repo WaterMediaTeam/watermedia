@@ -3,6 +3,9 @@ package me.srrapero720.watermedia.api.video.players;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class LavaPlayer extends Player {
+    public LavaPlayer() {
+//        AudioPlayerInputStream
+    }
 
     @Override
     public void play() {

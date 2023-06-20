@@ -6,6 +6,8 @@ import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.picture.cache.CachePicture;
 import me.srrapero720.watermedia.api.picture.cache.CacheStorage;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -19,6 +21,7 @@ import java.util.Date;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public abstract class FetchPicture extends Thread {
+    private static final Marker IT = MarkerFactory.getMarker("MediaUtil");
     private static final Object LOCK = new Object();
     private static final String USER_AGENT = MediaUtil.getUserAgentBasedOnOS();
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
@@ -56,7 +59,7 @@ public abstract class FetchPicture extends Thread {
                     if (status == GifDecoder.STATUS_OK) {
                         onSuccess(new CachePicture(gif));
                     } else {
-                        LOGGER.error("Failed to read gif: {}", status);
+                        LOGGER.error(IT, "Failed to read gif: {}", status);
                         throw new IOException("");
                     }
                 } else {
@@ -66,13 +69,13 @@ public abstract class FetchPicture extends Thread {
                             onSuccess(new CachePicture(image));
                         }
                     } catch (IOException e1) {
-                        LOGGER.error("Failed to parse BufferedImage from stream", e1);
+                        LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);
                         throw e1;
                     }
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("An exception occurred while loading Waterframes image", e);
+            LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
             onFailed(e);
             CacheStorage.deleteEntry(url);
         }
@@ -106,7 +109,7 @@ public abstract class FetchPicture extends Thread {
             }
 
             var tag = request.getHeaderField("ETag");
-            long lastTimestamp = -1, expTimestamp = -1;
+            long lastTimestamp, expTimestamp = -1;
             var maxAge = request.getHeaderField("max-age");
 
             // EXPIRATION GETTER FIRST
@@ -169,7 +172,7 @@ public abstract class FetchPicture extends Thread {
         try {
             reader.read(0, param);
         } catch (IOException e) {
-            LOGGER.error("Failed to parse input format", e);
+            LOGGER.error(IT, "Failed to parse input format", e);
         } finally {
             reader.dispose();
             IOUtils.closeQuietly(stream);
