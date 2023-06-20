@@ -181,6 +181,7 @@ public class VideoLanPlayer extends Player {
     @Override
     public long getDuration() {
         if (player == null) return 0L;
+        if (!player.mediaPlayer().status().isPlayable() && !player.mediaPlayer().media().isValid()) return 0L;
         return player.mediaPlayer().status().length();
     }
 
