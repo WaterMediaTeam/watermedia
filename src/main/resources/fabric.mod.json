@@ -1,10 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "watermedia",
+  "id": "${mod_id}",
   "version": "${mod_version}",
-
-  "name": "WATERMeDIA",
-  "description": "Library to expand Minecraft entertainment using multimedia content\nPowered by WATERCoRE",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
   "authors": [
     "SrRapero720",
     "nGoedix"
@@ -14,7 +13,7 @@
     "sources": "https://github.com/SrRapero720/watermedia"
   },
 
-  "license": "All rights reserved",
+  "license": "${mod_licence}",
   "icon": "pack.png",
 
   "environment": "client",
