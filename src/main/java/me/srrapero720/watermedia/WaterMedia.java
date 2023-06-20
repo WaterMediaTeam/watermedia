@@ -2,8 +2,8 @@ package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.picture.cache.CacheStorage;
 import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
-import me.srrapero720.watermedia.lavaplayer.LavaManager;
-import me.srrapero720.watermedia.vlc.VLCManager;
+import me.srrapero720.watermedia.core.lavaplayer.LavaManager;
+import me.srrapero720.watermedia.core.videolan.VLCManager;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -11,6 +11,8 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryS
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
 import me.srrapero720.watermedia.MediaUtil;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Field;
@@ -147,13 +149,14 @@ public class NativeDiscovery {
 
     private static Field searchPaths;
     private static Field libraries;
+    private static final Marker IT = MarkerFactory.getMarker("VLC-NativeDiscovery");
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         if (searchPaths == null) {
             searchPaths = MediaUtil.getClassField(NativeLibrary.class, "searchPaths");
             libraries = MediaUtil.getClassField(NativeLibrary.class, "libraries");
         }
-        LOGGER.info("Failed to load VLC in '{}' using '{}'", path, discoveryStrategy.getClass().getSimpleName());
+        LOGGER.info(IT, "Failed to load VLC in '{}' using '{}'", path, discoveryStrategy.getClass().getSimpleName());
         try {
             Map<String, Reference<NativeLibrary>> libs = (Map<String, Reference<NativeLibrary>>) libraries.get(null);
             Map<String, List<String>> paths = (Map<String, List<String>>) searchPaths.get(null);

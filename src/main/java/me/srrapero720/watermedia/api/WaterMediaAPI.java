@@ -5,7 +5,9 @@ import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
 import me.srrapero720.watermedia.api.video.players.VideoLanPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.vlc.VLCManager;
+import me.srrapero720.watermedia.core.videolan.VLCManager;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -13,6 +15,7 @@ import java.net.URL;
 import java.util.Arrays;
 
 public final class WaterMediaAPI {
+    private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
 
     /**
      * 1 seconds in Minecraft equals 20 ticks
@@ -42,7 +45,7 @@ public final class WaterMediaAPI {
         return ThreadUtil.tryAndReturn(defaultVar -> {
             for (var compat: AbstractURLPatch.URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
             return defaultVar;
-        }, e -> LOGGER.error("Exception occurred trying to run patchNonStaticUrl", e), url);
+        }, e -> LOGGER.error(IT, "Exception occurred trying to run patchNonStaticUrl", e), url);
     }
 
     /**
@@ -64,12 +67,12 @@ public final class WaterMediaAPI {
         var discovery = new NativeDiscovery();
         if (discovery.discover()) {
             var factory = new MediaPlayerFactory(discovery, vlcArgs);
-            LOGGER.info("New instance of VLC loaded from '{}' with the next args:\n{}", discovery.discoveredPath(), Arrays.toString(vlcArgs));
+            LOGGER.info(IT, "New instance of VLC loaded from '{}' with the next args:\n{}", discovery.discoveredPath(), Arrays.toString(vlcArgs));
             Runtime.getRuntime().addShutdownHook(new Thread(factory::release));
             return factory;
         }
 
-        LOGGER.error("VLC was not found on your system.");
+        LOGGER.error(IT, "VLC was not found on your system.");
         return null;
     }
 }

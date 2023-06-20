@@ -22,10 +22,7 @@ package me.lib720.caprica.vlcj.factory.discovery.provider;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.BaseNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * Implementation of a native discovery strategy that searches a list of well-known directories.
@@ -48,6 +45,7 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
             new CustomDirectoryProvider(), // Ohh yeah... I am the best
             new UserDirDirectoryProvider(),
             new ConfigDirConfigFileDiscoveryDirectoryProvider(),
+            new UserDirConfigFileDiscoveryDirectoryProvider(),
             new JnaLibraryPathDirectoryProvider(),
             new LinuxWellKnownDirectoryProvider(),
             new MacOsWellKnownDirectoryProvider(),
@@ -86,6 +84,7 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
     }
 
     private List<DiscoveryDirectoryProvider> sort(List<DiscoveryDirectoryProvider> providers) {
+//        providers.sort(Comparator.comparingInt(DiscoveryDirectoryProvider::priority));
         providers.sort((a1, a2) -> a2.priority() - a1.priority());
         return providers;
     }

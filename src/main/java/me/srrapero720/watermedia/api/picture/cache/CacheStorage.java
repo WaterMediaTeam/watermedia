@@ -2,6 +2,8 @@ package me.srrapero720.watermedia.api.picture.cache;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -14,6 +16,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class CacheStorage {
+    private static final Marker IT = MarkerFactory.getMarker("API-CacheStorage");
     private static final Map<String, Entry> entries = new HashMap<>();
 
     private static File dir;
@@ -39,7 +42,7 @@ public class CacheStorage {
 
                 return true;
             } catch (Exception e) {
-                LOGGER.error("Failed to load indexes", e);
+                LOGGER.error(IT, "Failed to load indexes", e);
                 return false;
             }
         }
@@ -60,7 +63,7 @@ public class CacheStorage {
             out = new FileOutputStream(file);
             out.write(data);
             saved = true;
-        } catch (Exception e) { LOGGER.error("Failed to save cache file {}", url, e);
+        } catch (Exception e) { LOGGER.error(IT, "Failed to save cache file {}", url, e);
         } finally { IOUtils.closeQuietly(out); }
 
         // SAVE INDEX FIST
@@ -84,7 +87,7 @@ public class CacheStorage {
 
             return true;
         } catch (IOException e) {
-            LOGGER.error("Failed to save cache index", e);
+            LOGGER.error(IT, "Failed to save cache index", e);
             return false;
         } finally { IOUtils.closeQuietly(out); }
     }

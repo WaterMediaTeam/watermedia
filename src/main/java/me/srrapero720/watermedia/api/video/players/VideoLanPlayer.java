@@ -12,7 +12,7 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.video.players.events.EventManager;
 import me.srrapero720.watermedia.api.video.players.events.common.*;
-import me.srrapero720.watermedia.vlc.VLCManager;
+import me.srrapero720.watermedia.core.videolan.VLCManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

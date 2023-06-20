@@ -3,6 +3,8 @@ package me.srrapero720.watermedia;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -15,6 +17,7 @@ import java.util.List;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class MediaUtil {
+    private static final Marker IT = MarkerFactory.getMarker("MediaUtil");
 
     public static <T> Field getClassField(Class<? super T> from, String name) {
         try {
@@ -52,8 +55,7 @@ public class MediaUtil {
             if (reader != null) result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
             else throw new IllegalArgumentException("File not found!");
 
-        } catch (Exception e) { LOGGER.error("Exception trying to read JSON from {}", path, e);
-        } finally { result.forEach(LOGGER::debug); }
+        } catch (Exception e) { LOGGER.error(IT, "Exception trying to read JSON from {}", path, e);}
 
         return result;
     }
@@ -65,14 +67,14 @@ public class MediaUtil {
                 Files.createDirectories(dllDestinationPath.getParent());
                 Files.copy(is, dllDestinationPath);
             } else {
-                LOGGER.error("Resource not found: {}", originPath);
+                LOGGER.error(IT, "Resource not found: {}", originPath);
             }
         } catch (FileNotFoundException fnfe) {
-            LOGGER.error("Failed to extract from {}, file not found: {}", originPath, fnfe);
+            LOGGER.error(IT, "Failed to extract from {}, file not found: {}", originPath, fnfe);
         } catch (IOException ioe) {
-            LOGGER.error("Failed to extract from {} to {} due to I/O error: {}", originPath, destinationPath, ioe);
+            LOGGER.error(IT, "Failed to extract from {} to {} due to I/O error: {}", originPath, destinationPath, ioe);
         } catch (Exception e) {
-            LOGGER.error("Failed to extract from {} to {} due to unexpected error: {}", originPath, destinationPath, e);
+            LOGGER.error(IT, "Failed to extract from {} to {} due to unexpected error: {}", originPath, destinationPath, e);
         }
     }
 
@@ -81,7 +83,7 @@ public class MediaUtil {
             Path path = Paths.get(destinationPath);
             if (Files.exists(path)) Files.delete(path);
         } catch (Exception e) {
-            LOGGER.error("Failed to delete from {} due to unexpected error", destinationPath, e);
+            LOGGER.error(IT, "Failed to delete from {} due to unexpected error", destinationPath, e);
         }
     }
 
@@ -101,6 +103,13 @@ public class MediaUtil {
             if (RuntimeUtil.isNix()) return "nix-arm64";
         }
         return "dummy";
+    }
+
+    public static String getOsBinExtension() {
+        if (RuntimeUtil.isWindows()) return ".dll";
+        if (RuntimeUtil.isMac()) return ".dylib";
+        if (RuntimeUtil.isNix()) return ".os";
+        return "";
     }
 
     public static String getUserAgentBasedOnOS() {

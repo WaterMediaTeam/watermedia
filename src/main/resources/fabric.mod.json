@@ -20,7 +20,7 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-      "me.srrapero720.watermedia.MediaFabric"
+      "me.srrapero720.watermedia.core.MediaFabric"
     ]
   },
   "depends": {
