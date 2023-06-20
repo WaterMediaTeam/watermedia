@@ -15,11 +15,11 @@ import org.slf4j.MarkerFactory;
  * Doing things with FORGE classes/api is safe
  */
 @Mod("watermedia")
-public class MediaForge {
+public class WaterForgeLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMedia.class);
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
 
-    public MediaForge() {
+    public WaterForgeLoader() {
         if (FMLEnvironment.dist.isDedicatedServer()) {
             if (FMLLoader.isProduction()) {
                 LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");

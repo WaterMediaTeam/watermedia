@@ -13,7 +13,7 @@ import org.slf4j.MarkerFactory;
  * Loader for FABRIC
  * Doing things with FABRIC classes/api is safe
  */
-public class MediaFabric implements ClientModInitializer {
+public class WaterFabricLoader implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMedia.class);
     private static final Marker IT = MarkerFactory.getMarker("FabricLoader");
     private static void load() {
@@ -22,7 +22,7 @@ public class MediaFabric implements ClientModInitializer {
         WaterMedia.load(FabricLoader.getInstance().getGameDir());
     }
 
-    public MediaFabric() {
+    public WaterFabricLoader() {
         if (FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER)) {
             if (FabricLoader.getInstance().isDevelopmentEnvironment()) LOGGER.warn("WATERMeDIA shouldn't be installed on server. Ignoring crash because we are in DEV MODE.");
             else {
