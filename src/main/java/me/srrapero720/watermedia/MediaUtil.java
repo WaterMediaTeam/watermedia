@@ -34,7 +34,14 @@ public class MediaUtil {
      * @param path where is located the specific file
      * @return a InputStream with the file.
      */
-    public static InputStream resourceAsStream(String path) { return MediaUtil.class.getClassLoader().getResourceAsStream(path); }
+    public static InputStream resourceAsStream(String path, ClassLoader from) { return from.getResourceAsStream(path); }
+
+    /**
+     * Gets a resource from WaterMedia jar
+     * @param path where is located the specific file
+     * @return a InputStream with the file.
+     */
+    public static InputStream resourceAsStream(String path) { return resourceAsStream(path, MediaUtil.class.getClassLoader()); }
 
 
     /**
@@ -52,6 +59,17 @@ public class MediaUtil {
     public static List<String> getJsonListFromRes(String path) {
         List<String> result = new ArrayList<>();
         try (InputStream stream = resourceAsStream(path); BufferedReader reader = (stream != null) ? new BufferedReader(new InputStreamReader(stream)) : null) {
+            if (reader != null) result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
+            else throw new IllegalArgumentException("File not found!");
+
+        } catch (Exception e) { LOGGER.error(IT, "Exception trying to read JSON from {}", path, e);}
+
+        return result;
+    }
+
+    public static List<String> getJsonListFromRes(String path, ClassLoader classLoader) {
+        List<String> result = new ArrayList<>();
+        try (InputStream stream = resourceAsStream(path, classLoader); BufferedReader reader = (stream != null) ? new BufferedReader(new InputStreamReader(stream)) : null) {
             if (reader != null) result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
             else throw new IllegalArgumentException("File not found!");
 
