@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.core.videolan;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
-import me.srrapero720.watermedia.MediaUtil;
+import me.srrapero720.watermedia.WaterMediaUtil;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import org.slf4j.Marker;
@@ -21,12 +21,12 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLAN {
-    private static final Marker IT = MarkerFactory.getMarker("VLCManager");
-    private static MediaPlayerFactory defaultFactory;
-    public static MediaPlayerFactory getDefaultFactory() { return defaultFactory; }
+    private static final Marker IT = MarkerFactory.getMarker("VideoLAN");
+    private static MediaPlayerFactory factory;
+    public static MediaPlayerFactory defaultFactory() { return factory; }
 
     public static boolean init(Path rootPath) {
-        if (defaultFactory != null) return true;
+        if (factory != null) return true;
 
         // LOGGER INIT
         var vlcLogs = rootPath.resolve("logs/vlc");
@@ -56,11 +56,11 @@ public class VideoLAN {
             }, e -> LOGGER.error(IT, "Could not write to configuration file", e));
         } else LOGGER.warn(IT, "VLC detected and match with the wrapped version");
 
-        defaultFactory = ThreadUtil.tryAndReturnNull(
-                defaultVar -> WaterMediaAPI.newVLCPlayerFactory(MediaUtil.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
+        factory = ThreadUtil.tryAndReturnNull(
+                defaultVar -> WaterMediaAPI.createVLCFactory(WaterMediaUtil.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
         );
 
-        return defaultFactory != null;
+        return factory != null;
     }
 
 

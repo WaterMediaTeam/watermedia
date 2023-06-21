@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.picture;
 
-import me.srrapero720.watermedia.MediaUtil;
+import me.srrapero720.watermedia.WaterMediaUtil;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.picture.cache.CachePicture;
@@ -23,7 +23,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public abstract class FetchPicture extends Thread {
     private static final Marker IT = MarkerFactory.getMarker("MediaUtil");
     private static final Object LOCK = new Object();
-    private static final String USER_AGENT = MediaUtil.getUserAgentBasedOnOS();
+    private static final String USER_AGENT = WaterMediaUtil.getUserAgentBasedOnOS();
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     // STATUS

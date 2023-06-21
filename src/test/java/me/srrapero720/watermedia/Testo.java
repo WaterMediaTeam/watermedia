@@ -1,8 +1,6 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.video.players.VideoLanPlayer;
-import me.srrapero720.watermedia.api.video.players.events.common.MediaTimeChangedEvent;
-import me.srrapero720.watermedia.api.video.players.events.common.PlayerReadyEvent;
+import me.srrapero720.watermedia.api.video.VideoLanPlayer;
 
 public class Testo {
     public static void t() {
