@@ -124,6 +124,7 @@ shadowJar {
     relocate 'com.fasterxml.jackson', 'me.lib720.jackson'
     relocate 'retrofit2', 'me.lib720.retrofit2'
 
+    mergeServiceFiles()
     archiveFileName = "${project.modid}-${project.modversion}.jar"
 }
 
