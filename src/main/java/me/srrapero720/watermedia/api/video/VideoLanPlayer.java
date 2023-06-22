@@ -12,7 +12,6 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallba
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.video.events.common.*;
-import me.srrapero720.watermedia.api.video.players.events.common.*;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Marker;
