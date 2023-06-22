@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.picture.cache.CacheStorage;
-import me.srrapero720.watermedia.api.url.URLPatch;
+import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
 import me.srrapero720.watermedia.core.lavaplayer.LavaCore;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.apache.commons.lang3.NotImplementedException;
@@ -21,7 +21,7 @@ public class WaterMedia {
 
 	public static boolean load(Path gameDir) {
 		// PREPARE API
-		if (!URLPatch.init()) return false;
+		if (!AbstractURLPatch.init()) return false;
 		if (!CacheStorage.init(gameDir)) return false;
 
 		// API LOADERS

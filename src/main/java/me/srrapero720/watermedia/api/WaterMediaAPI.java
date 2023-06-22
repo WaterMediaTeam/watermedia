@@ -2,8 +2,8 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
-import me.srrapero720.watermedia.api.url.URLPatch;
-import me.srrapero720.watermedia.api.video.VideoLanPlayer;
+import me.srrapero720.watermedia.api.video.patch.AbstractURLPatch;
+import me.srrapero720.watermedia.api.video.players.VideoLanPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.slf4j.Marker;
@@ -36,34 +36,34 @@ public final class WaterMediaAPI {
     public static int msToGameTicks(long ms) { return (int) (ms / 50L); }
 
     /**
-     * Check if any String is a valid URL
-     * @param url the URL in a string
-     * @return if is valid.
-     */
-    public static boolean isURLValid(String url) { return ThreadUtil.tryAndReturn(defaultVar -> { new URL(url); return true; }, false); }
-
-    /**
      * This method is used by default on {@link VideoLanPlayer#start(CharSequence, String[])}
-     * Is not recommended external usages
+     * Is not recommended to use on external methods
      * @param url Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
      */
-    public static String patchUrl(String url) {
+    public static String patchNonStaticUrl(String url) {
         return ThreadUtil.tryAndReturn(defaultVar -> {
-            for (var compat: URLPatch.URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
+            for (var compat: AbstractURLPatch.URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
             return defaultVar;
         }, e -> LOGGER.error(IT, "Exception occurred trying to run patchNonStaticUrl", e), url);
     }
 
     /**
-     * Use your own VLCArgs at your own risk
+     * Check if VLC is loaded and ready to be used on {@link VideoLanPlayer} or to make
+     * a new {@link MediaPlayerFactory} instance
+     * @return if is reddy or not
+     */
+    public static boolean isVLCReady() { return VideoLAN.getDefaultFactory() != null; }
+
+    /**
+     * Use it at your own risk
      * By default this method makes a ReleaseHook to release everything after close Minecraft
      * Suggestion: Use the same VLC arguments for logging but with other filename
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
      * @param vlcArgs arguments to make another VLC instance
      * @return a PlayerFactory to create custom VLC players. {@link VideoLanPlayer} can accept factory for new instances
      */
-    public static MediaPlayerFactory createVLCFactory(String[] vlcArgs) {
+    public static MediaPlayerFactory newVLCPlayerFactory(String[] vlcArgs) {
         var discovery = new NativeDiscovery();
         if (discovery.discover()) {
             var factory = new MediaPlayerFactory(discovery, vlcArgs);
@@ -75,11 +75,4 @@ public final class WaterMediaAPI {
         LOGGER.error(IT, "VLC was not found on your system.");
         return null;
     }
-
-    /**
-     * Check if VLC is loaded and ready to be used on {@link VideoLanPlayer} or to make
-     * a new {@link MediaPlayerFactory} instance
-     * @return if is reddy or not
-     */
-    public static boolean isVLCReady() { return VideoLAN.defaultFactory() != null; }
 }

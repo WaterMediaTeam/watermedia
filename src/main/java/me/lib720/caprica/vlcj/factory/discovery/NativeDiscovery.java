@@ -9,7 +9,7 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy
 import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
-import me.srrapero720.watermedia.WaterMediaUtil;
+import me.srrapero720.watermedia.MediaUtil;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -153,8 +153,8 @@ public class NativeDiscovery {
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         if (searchPaths == null) {
-            searchPaths = WaterMediaUtil.getClassField(NativeLibrary.class, "searchPaths");
-            libraries = WaterMediaUtil.getClassField(NativeLibrary.class, "libraries");
+            searchPaths = MediaUtil.getClassField(NativeLibrary.class, "searchPaths");
+            libraries = MediaUtil.getClassField(NativeLibrary.class, "libraries");
         }
         LOGGER.info(IT, "Failed to load VLC in '{}' using '{}'", path, discoveryStrategy.getClass().getSimpleName());
         try {
