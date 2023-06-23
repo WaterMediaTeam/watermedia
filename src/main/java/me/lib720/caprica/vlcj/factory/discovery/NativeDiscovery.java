@@ -152,11 +152,11 @@ public class NativeDiscovery {
     private static final Marker IT = MarkerFactory.getMarker("VLC-NativeDiscovery");
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
+        LOGGER.error(IT, "Failed loading VLC in '{}' attempting to clear JNA", path);
         if (searchPaths == null) {
             searchPaths = WaterMediaUtil.getClassField(NativeLibrary.class, "searchPaths");
             libraries = WaterMediaUtil.getClassField(NativeLibrary.class, "libraries");
         }
-        LOGGER.info(IT, "Failed to load VLC in '{}' using '{}'", path, discoveryStrategy.getClass().getSimpleName());
         try {
             Map<String, Reference<NativeLibrary>> libs = (Map<String, Reference<NativeLibrary>>) libraries.get(null);
             Map<String, List<String>> paths = (Map<String, List<String>>) searchPaths.get(null);
@@ -249,6 +249,7 @@ public class NativeDiscovery {
      * @param strategy discovery strategy that found the native libraries
      */
     protected void onFound(String path, NativeDiscoveryStrategy strategy) {
+        LOGGER.info(IT, "Located VLC in '{}' using '{}'", path, strategy.getClass().getSimpleName());
     }
 
     /**
@@ -260,12 +261,14 @@ public class NativeDiscovery {
      * @param strategy discovery strategy that found, but failed to load, the native library
      */
     protected void onFailed(String path, NativeDiscoveryStrategy strategy) {
+        LOGGER.info(IT, "Failed to load VLC in '{}' using '{}'", path, strategy.getClass().getSimpleName());
     }
 
     /**
      * Template method invoked if the native libraries could not be found by any known discovery strategy.
      */
     protected void onNotFound() {
+        LOGGER.info(IT, "VLC cannot be found");
     }
 
 }

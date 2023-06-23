@@ -1,9 +1,6 @@
 package me.srrapero720.watermedia.core.videolan;
 
 import me.srrapero720.watermedia.WaterMediaUtil;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
-
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public enum VLCArchives {
@@ -230,39 +227,32 @@ public enum VLCArchives {
     youtube(Type.LUAC, "playlist"),
     ;
 
+    private static Path rootVLC;
     private final Type type;
     private final String relativeDir;
     private final String filename;
 
-    private static final String version = "3.0.18"; // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
-    VLCArchives(Type type, String fileDir) {
-        this.type = type;
+    VLCArchives(Type resFileType, String fileDir) {
+        this.type = resFileType;
         this.relativeDir = fileDir;
-        this.filename = name() + type.getExtension();
+        this.filename = name() + resFileType.extension;
     }
 
-    static String getVersion() { return version; }
-    static String getVersion(Path from) { return ThreadUtil.tryAndReturn(defaultVar -> Files.exists(from) ? Files.readString(from) : defaultVar, null); }
-
-    public void extract(Path to) {
-        String relativePath = (relativeDir != null ? (type.equals(Type.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
-        WaterMediaUtil.extractFrom(type.getRootDir() + "/" + relativePath, to.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath);
+    void extract(Path to) {
+        String relativePath = (relativeDir != null ? (type.equals(ResFileType.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
+        MediaUtil.extractFrom(type.rootDir + "/" + relativePath, to.toAbsolutePath() + (type.equals(ResFileType.LUAC) ? "/lua/" : "/") + relativePath);
     }
 
-    public void clear(Path from) {
-        String relativePath = (relativeDir != null ? (type.equals(Type.BIN) ? "plugins/" : "lua/") + relativeDir + "/" : "") + filename;
-        WaterMediaUtil.deleteFrom(from.toAbsolutePath() + "/" + relativePath);
-    }
+    static void init(Path rootDir) { rootVLC = rootDir; }
+    static void clear() { WaterMediaUtil.deleteFrom(rootVLC.toAbsolutePath().toString()); }
+    static String getLocalVersion() { return WaterMediaUtil.readFrom(rootVLC.toAbsolutePath()); }
+    static String getVersion() { return "3.0.18"; }
 
     enum Type {
         LUAC("/vlc/lua", ".luac"),
         BIN("/vlc/" + WaterMediaUtil.getOsArch(), WaterMediaUtil.getOsBinExtension());
-
-        private final String rootDir;
-        private final String extension;
+        public final String rootDir;
+        public final String extension;
         Type(String rootDir, String ext) { this.rootDir = rootDir; this.extension = ext; }
-
-        public String getRootDir() { return rootDir; }
-        public String getExtension() { return extension; }
     }
 }

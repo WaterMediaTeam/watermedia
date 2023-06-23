@@ -28,33 +28,38 @@ public class VideoLAN {
     public static boolean init(Path rootPath) {
         if (factory != null) return true;
 
-        // LOGGER INIT
-        var vlcLogs = rootPath.resolve("logs/vlc");
-        if (!Files.exists(vlcLogs.toAbsolutePath())) vlcLogs.toFile().mkdirs();
-        else compressAndDeleteLogFile(vlcLogs.resolve("latest.log"));
+        // PATHS
+        var logs = rootPath.resolve("logs/vlc");
+        var path = rootPath.resolve("cache/vlc/");
 
-        //INIT
-        var vlcPath = rootPath.resolve("cache/vlc/");
-        var config = vlcPath.resolve("version.cfg");
-        var version = VLCArchives.getVersion(config);
-        CustomDirectoryProvider.init(vlcPath);
+        // LOGGER INIT
+        if (!Files.exists(logs.toAbsolutePath())) logs.toFile().mkdirs();
+        else compressAndDeleteLogFile(logs.resolve("latest.log"));
+
+        // INIT
+        CustomDirectoryProvider.init(path);
+        VLCArchives.init(path);
 
         // Check if we need to update binaries
+        var version = VLCArchives.getLocalVersion();
         if (version == null || !version.equals(VLCArchives.getVersion())) {
             // CLEAR
             LOGGER.warn(IT, "Running deletion for VLC Files");
-            for (var binary : VLCArchives.values()) binary.clear(rootPath.resolve("cache/vlc"));
+            VLCArchives.clear();
 
             // EXTRACT
             LOGGER.warn(IT, "Running extraction for VLC Files");
             for (var binary : VLCArchives.values()) binary.extract(rootPath.resolve("cache/vlc"));
 
             // SET LOCAL VERSION
-            ThreadUtil.trySimple(() -> {
+            try {
+                var config = path.resolve("version.cfg");
                 if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
                 Files.writeString(config, VLCArchives.getVersion());
-            }, e -> LOGGER.error(IT, "Could not write to configuration file", e));
-        } else LOGGER.warn(IT, "VLC detected and match with the wrapped version");
+            } catch (Exception e) {
+                LOGGER.error(IT, "Could not write to configuration file", e);
+            }
+        } else LOGGER.warn(IT, "Detected local VLC. skipping extract");
 
         factory = ThreadUtil.tryAndReturnNull(
                 defaultVar -> WaterMediaAPI.createVLCFactory(WaterMediaUtil.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
@@ -65,7 +70,7 @@ public class VideoLAN {
 
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void compressAndDeleteLogFile(Path logFilePath) {
+    private static void compressAndDeleteLogFile(Path logFilePath) {
         File logFile = logFilePath.toFile();
         if (!logFile.exists() || !logFile.isFile()) return;
 
@@ -81,7 +86,7 @@ public class VideoLAN {
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) gzipOutputStream.write(buffer, 0, bytesRead);
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed to compress vlc.log");
+            LOGGER.error(IT, "Failed to compress logs/vlc/latest.log");
         }
         logFile.delete();
     }

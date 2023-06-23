@@ -3,6 +3,7 @@ package me.srrapero720.watermedia;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
+import me.srrapero720.watermedia.api.external.ThreadUtil;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -103,6 +104,10 @@ public class WaterMediaUtil {
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to delete from {} due to unexpected error", destinationPath, e);
         }
+    }
+
+    public static String readFrom(Path path) {
+        return ThreadUtil.tryAndReturn(defaultVar -> Files.exists(path) ? Files.readString(path) : defaultVar, null);
     }
 
     /**
