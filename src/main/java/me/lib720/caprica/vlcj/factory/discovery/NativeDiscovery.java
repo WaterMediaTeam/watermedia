@@ -149,7 +149,7 @@ public class NativeDiscovery {
 
     private static Field searchPaths;
     private static Field libraries;
-    private static final Marker IT = MarkerFactory.getMarker("VLC-NativeDiscovery");
+    private static final Marker IT = MarkerFactory.getMarker("NativeDiscovery");
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         LOGGER.error(IT, "Failed loading VLC in '{}' attempting to clear JNA", path);
