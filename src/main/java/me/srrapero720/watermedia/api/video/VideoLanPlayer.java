@@ -6,6 +6,7 @@ import me.lib720.caprica.vlcj.media.MediaType;
 import me.lib720.caprica.vlcj.media.TrackType;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
+import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
@@ -203,7 +204,7 @@ public class VideoLanPlayer extends VideoPlayer {
     @Override
     public long getDuration() {
         if (player == null) return 0L;
-        if (!player.mediaPlayer().status().isPlayable() && !player.mediaPlayer().media().isValid()) return 0L;
+        if (player.mediaPlayer().status().state().equals(State.ERROR) || player.mediaPlayer().status().state().equals(State.OPENING)) return 0L;
         return player.mediaPlayer().status().length();
     }
 
