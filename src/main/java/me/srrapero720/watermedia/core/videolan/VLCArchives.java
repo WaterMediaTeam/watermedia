@@ -234,7 +234,7 @@ public enum VLCArchives {
     private final String relativeDir;
     private final String filename;
 
-    private static final String version = "20230618-0226"; // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
+    private static final String version = "3.0.18"; // Comes from: https://artifacts.videolan.org/vlc-3.0/nightly-win64/
     VLCArchives(Type type, String fileDir) {
         this.type = type;
         this.relativeDir = fileDir;
