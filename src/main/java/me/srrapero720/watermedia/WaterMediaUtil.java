@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -100,7 +101,7 @@ public class WaterMediaUtil {
     public static void deleteFrom(String destinationPath) {
         try {
             Path path = Paths.get(destinationPath);
-            if (Files.exists(path)) Files.delete(path);
+            if (Files.exists(path)) FileUtils.deleteDirectory(path.toFile());
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to delete from {} due to unexpected error", destinationPath, e);
         }
