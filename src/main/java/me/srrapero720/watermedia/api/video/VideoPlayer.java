@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.api.video;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.video.events.common.*;
-import me.srrapero720.watermedia.api.video.players.events.common.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;

@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api.url;
 
 import me.srrapero720.watermedia.api.url.patch.*;
-import me.srrapero720.watermedia.api.video.patch.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
