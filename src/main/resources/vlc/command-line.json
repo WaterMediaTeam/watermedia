@@ -5,6 +5,9 @@
   "--aout",
   "directsound",
 
+  "--vout",
+  "vmem",
+
   "--network-caching",
   "1500",
 
