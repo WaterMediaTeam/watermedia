@@ -239,13 +239,13 @@ public enum VLCArchives {
     }
 
     void extract(Path to) {
-        String relativePath = (relativeDir != null ? (type.equals(ResFileType.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
-        MediaUtil.extractFrom(type.rootDir + "/" + relativePath, to.toAbsolutePath() + (type.equals(ResFileType.LUAC) ? "/lua/" : "/") + relativePath);
+        String relativePath = (relativeDir != null ? (type.equals(Type.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
+        WaterMediaUtil.extractFrom(type.rootDir + "/" + relativePath, to.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath);
     }
 
     static void init(Path rootDir) { rootVLC = rootDir; }
     static void clear() { WaterMediaUtil.deleteFrom(rootVLC.toAbsolutePath().toString()); }
-    static String getLocalVersion() { return WaterMediaUtil.readFrom(rootVLC.toAbsolutePath()); }
+    static String getLocalVersion() { return WaterMediaUtil.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
     static String getVersion() { return "3.0.18"; }
 
     enum Type {
