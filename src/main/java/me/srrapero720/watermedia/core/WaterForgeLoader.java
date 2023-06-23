@@ -19,17 +19,17 @@ public class WaterForgeLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
 
     public WaterForgeLoader() {
+        LOGGER.info(IT, "Starting WaterMedia");
         if (FMLEnvironment.dist.isDedicatedServer()) {
             LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-            LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVER_SIDE. remove this mod from your server to stop crashing");
-            LOGGER.error(IT, "If dependant mods throws error trying to load WATERMeDIA classes report it to the creator.");
+            LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVERS. remove this mod from server to stop crashes");
+            LOGGER.error(IT, "If dependant mods throws error loading WATERMeDIA classes report it to the creator");
             LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
 
             if (FMLLoader.isProduction()) throw new IllegalStateException("REMOVE WATERMeDIA FROM SERVER_SIDE, THIS IS A CLIENT_SIDE MOD!!!");
-            else LOGGER.warn(IT, "WATERMeDIA should not be installed on server. discarding crash because we are running on dev-env");
-        } else load();
+            else LOGGER.warn(IT, "Developer environment detected, ignoring crashes");
+        } else WaterMedia.load(FMLPaths.GAMEDIR.get());
     }
 
     /* FMLLoader.getLoadingModList().getModFileById("watermedia").getFile().getFilePath(), */
-    public static void load() { WaterMedia.load(FMLPaths.GAMEDIR.get()); }
 }
