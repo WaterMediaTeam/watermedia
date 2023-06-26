@@ -164,6 +164,8 @@ public class VideoLanPlayer extends VideoPlayer {
     public void setVolume(int volume) {
         if (player == null) return;
         player.mediaPlayer().audio().setVolume(volume);
+        if (volume == 0 && !player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(true);
+        else if (volume > 0 && player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(false);
     }
 
     @Override
