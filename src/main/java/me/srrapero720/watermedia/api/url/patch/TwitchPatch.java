@@ -22,8 +22,8 @@ public class TwitchPatch extends URLPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws PatchingUrlException {
-        super.build(url);
+    public String patch(@NotNull URL url) throws PatchingUrlException {
+        super.patch(url);
         try {
             return TwitchUtil.getStream(url.getPath().substring(1)).get(0).getUrl();
         } catch (Exception e) {

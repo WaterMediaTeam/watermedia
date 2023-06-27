@@ -14,8 +14,8 @@ public class KickPatch extends URLPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws PatchingUrlException {
-        super.build(url);
+    public String patch(@NotNull URL url) throws PatchingUrlException {
+        super.patch(url);
 
         if (url.getPath().contains("/video/")) {
              var call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));

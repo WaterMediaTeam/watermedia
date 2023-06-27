@@ -12,9 +12,12 @@ import org.slf4j.MarkerFactory;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public final class WaterMediaAPI {
+    private static final List<URLPatch> URL_PATCHERS = new ArrayList<>();
     private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
 
     /**
@@ -42,15 +45,26 @@ public final class WaterMediaAPI {
      */
     public static boolean isURLValid(String url) { return ThreadUtil.tryAndReturn(defaultVar -> { new URL(url); return true; }, false); }
 
+
+    /**
+     * Creates your own URLPatch and register it to WaterMediaAPI
+     * @param patch All patches you want to Use
+     * @param <T> your instance of URLPatch
+     */
+    @SafeVarargs
+    public static <T extends URLPatch> void registerURLPatch(T ...patch) {
+        URL_PATCHERS.addAll(List.of(patch));
+    }
+
     /**
      * This method is used by default on {@link VideoLanPlayer#start(CharSequence, String[])}
      * Is not recommended external usages
      * @param url Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
      */
-    public static String patchUrl(String url) {
+    public static String urlPatch(String url) {
         return ThreadUtil.tryAndReturn(defaultVar -> {
-            for (var compat: URLPatch.URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.build(new URL(url));
+            for (var compat: URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.patch(new URL(url));
             return defaultVar;
         }, e -> LOGGER.error(IT, "Exception occurred trying to run patchNonStaticUrl", e), url);
     }

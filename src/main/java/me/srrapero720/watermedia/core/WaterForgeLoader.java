@@ -30,6 +30,4 @@ public class WaterForgeLoader {
             else LOGGER.warn(IT, "Developer environment detected, ignoring crashes");
         } else WaterMedia.load(FMLPaths.GAMEDIR.get());
     }
-
-    /* FMLLoader.getLoadingModList().getModFileById("watermedia").getFile().getFilePath(), */
 }

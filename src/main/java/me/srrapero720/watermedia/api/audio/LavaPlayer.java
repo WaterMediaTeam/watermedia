@@ -1,11 +1,11 @@
 package me.srrapero720.watermedia.api.audio;
 
-import me.srrapero720.watermedia.api.video.VideoPlayer;
+import me.srrapero720.watermedia.api.video.VPlayer;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.awt.*;
 
-public class LavaPlayer extends VideoPlayer {
+public class LavaPlayer extends VPlayer {
     public LavaPlayer() {
 //        AudioPlayerInputStream
     }

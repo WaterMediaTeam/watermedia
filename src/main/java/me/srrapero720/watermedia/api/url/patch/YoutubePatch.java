@@ -18,8 +18,8 @@ public class YoutubePatch extends URLPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws PatchingUrlException {
-        super.build(url);
+    public String patch(@NotNull URL url) throws PatchingUrlException {
+        super.patch(url);
 
         Matcher matcher = PATTERN.matcher(url.toString());
         if (matcher.find()) {

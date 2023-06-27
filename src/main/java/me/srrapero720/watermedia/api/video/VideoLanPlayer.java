@@ -24,7 +24,7 @@ import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class VideoLanPlayer extends VideoPlayer {
+public class VideoLanPlayer extends VPlayer {
     private boolean buffering = false;
     private boolean prepared = false;
     private static final Thread THREAD = Thread.currentThread();

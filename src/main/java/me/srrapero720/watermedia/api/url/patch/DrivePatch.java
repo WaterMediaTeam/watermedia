@@ -15,8 +15,8 @@ public class DrivePatch extends URLPatch {
     }
 
     @Override
-    public String build(@NotNull URL url) throws PatchingUrlException {
-        super.build(url);
+    public String patch(@NotNull URL url) throws PatchingUrlException {
+        super.patch(url);
 
         // PATH GETTER
         final var start = url.getPath().indexOf("/file/d/") + 8;

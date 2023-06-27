@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public abstract class VideoPlayer {
+public abstract class VPlayer {
     protected String url;
-    public VideoPlayer() {}
+    public VPlayer() {}
 
     protected void compat(String url) {
-        var compat = WaterMediaAPI.patchUrl(url);
+        var compat = WaterMediaAPI.urlPatch(url);
         if (compat != null) this.url = compat;
         else this.url = url;
     }
@@ -64,7 +64,7 @@ public abstract class VideoPlayer {
 
     public abstract void release();
 
-    public static class EventManager<P extends VideoPlayer> {
+    public static class EventManager<P extends VPlayer> {
         private MediaFinishEvent<P> mediaFinish = null;
         private MediaPauseEvent<P> mediaPause = null;
         private MediaResumeEvent<P> mediaResume = null;

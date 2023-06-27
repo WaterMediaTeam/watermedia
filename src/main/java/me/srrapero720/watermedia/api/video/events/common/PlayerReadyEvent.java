@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.video.events.common;
 
-import me.srrapero720.watermedia.api.video.VideoPlayer;
+import me.srrapero720.watermedia.api.video.VPlayer;
 
-public interface PlayerReadyEvent<P extends VideoPlayer> extends Event<PlayerReadyEvent.EventData, P> {
+public interface PlayerReadyEvent<P extends VPlayer> extends Event<PlayerReadyEvent.EventData, P> {
     record EventData() {}
 }
