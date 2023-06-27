@@ -1,22 +1,10 @@
 package me.srrapero720.watermedia.api.url;
 
-import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.patch.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
 public abstract class URLPatch {
-    public static boolean init() {
-        WaterMediaAPI.registerURLPatch(
-                new YoutubePatch(),
-                new TwitchPatch(),
-                new KickPatch(),
-                new DrivePatch(),
-                new TwitterPatch());
-        return true;
-    }
-
     /**
      * Validates if URL can be processed by this URLPatch instance
      * @param url Valid URL to check

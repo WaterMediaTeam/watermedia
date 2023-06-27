@@ -3,9 +3,11 @@ package me.srrapero720.watermedia.api;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.api.url.URLPatch;
+import me.srrapero720.watermedia.api.url.patch.*;
 import me.srrapero720.watermedia.api.video.VideoLanPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -17,7 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class WaterMediaAPI {
-    private static final List<URLPatch> URL_PATCHERS = new ArrayList<>();
+    private static final List<URLPatch> URL_PATCHERS = new ArrayList<>(List.of(
+            new YoutubePatch(),
+            new TwitchPatch(),
+            new KickPatch(),
+            new DrivePatch(),
+            new TwitterPatch())
+    );
     private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
 
     /**
@@ -49,11 +57,12 @@ public final class WaterMediaAPI {
     /**
      * Creates your own URLPatch and register it to WaterMediaAPI
      * @param patch All patches you want to Use
-     * @param <T> your instance of URLPatch
      */
-    @SafeVarargs
-    public static <T extends URLPatch> void registerURLPatch(T ...patch) {
-        URL_PATCHERS.addAll(List.of(patch));
+    public static void registerURLPatch(@NotNull URLPatch ...patch) {
+        for (final URLPatch p: patch) {
+            LOGGER.warn(IT, "Registered new URLPatch: {}", p.getClass().getSimpleName());
+            URL_PATCHERS.add(p);
+        }
     }
 
     /**
