@@ -1,9 +1,10 @@
 package me.srrapero720.watermedia;
 
+import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.picture.cache.CacheStorage;
 import me.srrapero720.watermedia.core.lavaplayer.LavaCore;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
-import org.apache.commons.lang3.NotImplementedException;
+import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +15,13 @@ public class WaterMedia {
 	public static final String ID = "watermedia";
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
+	@Experimental
 	public static boolean load(Path gameDir, boolean async) {
-		throw new NotImplementedException("Still in progress");
+		if (async) {
+			ThreadUtil.thread(() -> load(gameDir));
+			return true;
+		}
+		else return load(gameDir);
 	}
 
 	public static boolean load(Path gameDir) {
