@@ -22,6 +22,9 @@
       "me.srrapero720.watermedia.core.WaterFabricLoader"
     ]
   },
+  "conflicts": {
+    "fancyvideo_api": "*"
+  },
   "depends": {
     "fabricloader": ">=0.14.21",
     "java": ">=15"
