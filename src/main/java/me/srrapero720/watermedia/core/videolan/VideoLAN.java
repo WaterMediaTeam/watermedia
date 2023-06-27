@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.core.videolan;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
-import me.srrapero720.watermedia.WaterMediaUtil;
+import me.srrapero720.watermedia.Util;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import org.slf4j.Marker;
@@ -62,7 +62,7 @@ public class VideoLAN {
         } else LOGGER.warn(IT, "Detected local VLC. skipping extract");
 
         factory = ThreadUtil.tryAndReturnNull(
-                defaultVar -> WaterMediaAPI.createVLCFactory(WaterMediaUtil.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
+                defaultVar -> WaterMediaAPI.createVLCFactory(Util.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
         );
 
         return factory != null;

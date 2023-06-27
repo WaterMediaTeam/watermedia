@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.core.videolan;
 
-import me.srrapero720.watermedia.WaterMediaUtil;
+import me.srrapero720.watermedia.Util;
 import java.nio.file.Path;
 
 public enum VLCArchives {
@@ -240,17 +240,17 @@ public enum VLCArchives {
 
     void extract(Path to) {
         String relativePath = (relativeDir != null ? (type.equals(Type.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
-        WaterMediaUtil.extractFrom(type.rootDir + "/" + relativePath, to.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath);
+        Util.extractFrom(type.rootDir + "/" + relativePath, to.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath);
     }
 
     static void init(Path rootDir) { rootVLC = rootDir; }
-    static void clear() { WaterMediaUtil.deleteFrom(rootVLC.toAbsolutePath().toString()); }
-    static String getLocalVersion() { return WaterMediaUtil.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
+    static void clear() { Util.deleteFrom(rootVLC.toAbsolutePath().toString()); }
+    static String getLocalVersion() { return Util.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
     static String getVersion() { return "3.0.18"; }
 
     enum Type {
         LUAC("/vlc/lua", ".luac"),
-        BIN("/vlc/" + WaterMediaUtil.getOsArch(), WaterMediaUtil.getOsBinExtension());
+        BIN("/vlc/" + Util.getOsArch(), Util.getOsBinExtension());
         public final String rootDir;
         public final String extension;
         Type(String rootDir, String ext) { this.rootDir = rootDir; this.extension = ext; }

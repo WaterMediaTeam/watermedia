@@ -9,7 +9,7 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy
 import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
-import me.srrapero720.watermedia.WaterMediaUtil;
+import me.srrapero720.watermedia.Util;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -120,6 +120,7 @@ public class NativeDiscovery {
                 if (discoveryStrategy.supported()) {
                     String path = discoveryStrategy.discover();
                     if (path != null) {
+                        LOGGER.info("Attempt to load VLC on {}", path);
                         if (discoveryStrategy.onFound(path)) {
                             NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), path);
                         }
@@ -154,8 +155,8 @@ public class NativeDiscovery {
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         LOGGER.error(IT, "Failed loading VLC in '{}' attempting to clear JNA", path);
         if (searchPaths == null) {
-            searchPaths = WaterMediaUtil.getClassField(NativeLibrary.class, "searchPaths");
-            libraries = WaterMediaUtil.getClassField(NativeLibrary.class, "libraries");
+            searchPaths = Util.getClassField(NativeLibrary.class, "searchPaths");
+            libraries = Util.getClassField(NativeLibrary.class, "libraries");
         }
         try {
             Map<String, Reference<NativeLibrary>> libs = (Map<String, Reference<NativeLibrary>>) libraries.get(null);

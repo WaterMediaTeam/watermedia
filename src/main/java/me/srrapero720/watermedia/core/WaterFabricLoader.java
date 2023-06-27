@@ -18,13 +18,7 @@ public class WaterFabricLoader implements ClientModInitializer {
 
     public WaterFabricLoader() {
         LOGGER.info(IT, "Starting WaterMedia");
-        if (FabricLoader.getInstance().getEnvironmentType().equals(EnvType.SERVER)) {
-            LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-            LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVER_SIDE. this mod can cause a lot of crashes");
-            LOGGER.error(IT, "But fabric is a bullshit and dependant mods can't be loaded on server without WMedia");
-            LOGGER.error(IT, "if you experiment crashes with WATERMeDIA; please report it to dependant mod developer");
-            LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-        } else WaterMedia.load(FabricLoader.getInstance().getGameDir());
+        WaterMedia.load(FabricLoader.getInstance().getGameDir());
     }
 
     @Override

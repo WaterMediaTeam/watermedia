@@ -18,7 +18,7 @@ import java.util.List;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class WaterMediaUtil {
+public class Util {
     private static final Marker IT = MarkerFactory.getMarker("MediaUtil");
 
     public static <T> Field getClassField(Class<? super T> from, String name) {
@@ -43,7 +43,7 @@ public class WaterMediaUtil {
      * @param path where is located the specific file
      * @return a InputStream with the file.
      */
-    public static InputStream resourceAsStream(String path) { return resourceAsStream(path, WaterMediaUtil.class.getClassLoader()); }
+    public static InputStream resourceAsStream(String path) { return resourceAsStream(path, Util.class.getClassLoader()); }
 
 
     /**
