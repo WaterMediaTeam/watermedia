@@ -16,7 +16,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class CacheStorage {
-    private static final Marker IT = MarkerFactory.getMarker("API-CacheStorage");
+    private static final Marker IT = MarkerFactory.getMarker("CacheStorage");
     private static final Map<String, Entry> entries = new HashMap<>();
 
     private static File dir;
