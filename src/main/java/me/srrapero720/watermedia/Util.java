@@ -2,12 +2,21 @@ package me.srrapero720.watermedia;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
+import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.api.picture.cache.CachePicture;
 import org.apache.commons.io.FileUtils;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -127,6 +136,86 @@ public class Util {
             if (RuntimeUtil.isNix()) return "nix-arm64";
         }
         return "dummy";
+    }
+
+    public static BufferedImage getImageFromResources(String path) {
+        try (InputStream in = resourceAsStream(path)) {
+            var image = ImageIO.read(in);
+            if (image != null) return image;
+            else throw new NullPointerException("Image read from WaterMedia resources was NULL");
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed loading BufferedImage from WaterMedia resources", e);
+        }
+    }
+
+    public static GifDecoder getGifFromResources(String path) {
+        try (InputStream in = resourceAsStream(path)) {
+            GifDecoder gif = new GifDecoder();
+            int status = gif.read(in);
+
+            if (status == GifDecoder.STATUS_OK) {
+                return gif;
+            } else {
+                LOGGER.error(IT, "Exception reading Gif from {}", path);
+                throw new IOException("Failed to read/process gif, status code " + status);
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed loading gif from WaterMedia resources", e);
+        }
+    }
+
+    /**
+     * Created by CreativeMD
+     * @param image picture to process
+     * @param width picture width
+     * @param height picture height
+     * @return textureID
+     */
+    public static int preRender(BufferedImage image, int width, int height) {
+        int[] pixels = new int[width * height];
+        image.getRGB(0, 0, width, height, pixels, 0, width);
+        boolean alpha = false;
+
+        if (image.getColorModel().hasAlpha()) for (int pixel : pixels)
+            if ((pixel >> 24 & 0xFF) < 0xFF) {
+                alpha = true;
+                break;
+            }
+
+        int bytesPerPixel = alpha ? 4 : 3;
+        var buffer = BufferUtils.createByteBuffer(width * height * bytesPerPixel);
+        for (int pixel : pixels) {
+            buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red
+            buffer.put((byte) ((pixel >> 8) & 0xFF)); // Green
+            buffer.put((byte) (pixel & 0xFF)); // Blue
+            if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
+        }
+        buffer.flip();
+
+        int textureID = GL11.glGenTextures(); //Generate texture ID
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
+//        RenderSystem.bindTexture(textureID); // unsafe for other versions - Bind texture ID
+
+        //Setup wrap mode
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+
+        //Setup texture scaling filtering
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
+        if (!alpha) GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, GL11.GL_ONE);
+
+        // prevents random crash, when values are too high it causes a jvm crash, caused weird behavior when game is paused
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
+
+        //Send texel data to OpenGL
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, alpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0, alpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
+
+        //Return the texture ID so we can bind it later again
+        return textureID;
     }
 
     public static String getOsBinExtension() {
