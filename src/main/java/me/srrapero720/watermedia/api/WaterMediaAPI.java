@@ -2,6 +2,8 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.srrapero720.watermedia.Util;
+import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.api.url.patch.*;
 import me.srrapero720.watermedia.api.video.VideoLanPlayer;
@@ -19,6 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class WaterMediaAPI {
+    private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
+    public static final RenderablePicture LOADING_GIF = new RenderablePicture(Util.getGifFromResources("/images/loading.gif"));
+    public static final RenderablePicture VLC_FAILED = new RenderablePicture(Util.getGifFromResources("/images/vlc_win_failed.png"));
+    public static final RenderablePicture VLC_FAILED_INSTALL = new RenderablePicture(Util.getGifFromResources("/images/vlc_otheros_failed.png"));
+
     private static final List<URLPatch> URL_PATCHERS = new ArrayList<>(List.of(
             new YoutubePatch(),
             new TwitchPatch(),
@@ -26,7 +33,6 @@ public final class WaterMediaAPI {
             new DrivePatch(),
             new TwitterPatch())
     );
-    private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
 
     /**
      * 1 seconds in Minecraft equals 20 ticks
