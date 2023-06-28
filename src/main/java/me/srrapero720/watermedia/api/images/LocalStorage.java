@@ -23,7 +23,7 @@ public class LocalStorage {
     private static File index;
 
     public static boolean init(Path rootDir) {
-        dir = rootDir.toAbsolutePath().resolve("cache/watermedia/pictures").toFile();
+        dir = rootDir.toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "indexer");
 
         if (!dir.exists()) dir.mkdirs();

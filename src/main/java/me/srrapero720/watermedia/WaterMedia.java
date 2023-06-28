@@ -8,6 +8,7 @@ import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.nio.file.Path;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -25,13 +26,16 @@ public class WaterMedia {
 	}
 
 	public static boolean load(Path gameDir) {
-		LOGGER.info("Loading WaterMedia on directory {}", gameDir);
+		Path storageDirectory = new File(System.getProperty("java.io.tmpdir")).toPath().resolve("watermedia");
+		LOGGER.info("Loading WaterMedia");
+		LOGGER.info("Game directory '{}'", gameDir);
+		LOGGER.info("Storage directory '{}'", storageDirectory);
 
 		// PREPARE API
-		if (!LocalStorage.init(gameDir)) return false;
+		if (!LocalStorage.init(storageDirectory)) return false;
 
 		// API LOADERS
-		if (!VideoLAN.init(gameDir)) return false;
+		if (!VideoLAN.init(storageDirectory, gameDir)) return false;
         if (!LavaCore.init()) return false;
 
 		LOGGER.info("WaterMedia loaded successfully");

@@ -25,12 +25,12 @@ public class VideoLAN {
     private static MediaPlayerFactory factory;
     public static MediaPlayerFactory defaultFactory() { return factory; }
 
-    public static boolean init(Path rootPath) {
+    public static boolean init(Path workingDir, Path gameDir) {
         if (factory != null) return true;
 
         // PATHS
-        var logs = rootPath.resolve("logs/vlc/");
-        var path = rootPath.resolve("cache/vlc/");
+        var logs = gameDir.resolve("logs/vlc/");
+        var path = workingDir.resolve("vlc/");
 
         // LOGGER INIT
         if (!Files.exists(logs.toAbsolutePath())) logs.toFile().mkdirs();
