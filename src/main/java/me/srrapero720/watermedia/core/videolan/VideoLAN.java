@@ -64,7 +64,10 @@ public class VideoLAN {
         } else LOGGER.warn(IT, "Detected local VLC. skipping extract");
 
         // Integrity check
-        if (!fresh) for (var binary : VLCArchives.values()) binary.integrityCheck();
+        if (!fresh) {
+            LOGGER.info(IT, "Running integrity check");
+            for (var binary : VLCArchives.values()) binary.integrityCheck();
+        }
 
         factory = ThreadUtil.tryAndReturnNull(
                 defaultVar -> WaterMediaAPI.createVLCFactory(Util.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
