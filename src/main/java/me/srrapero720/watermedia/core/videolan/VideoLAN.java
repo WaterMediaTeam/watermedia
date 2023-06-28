@@ -29,7 +29,7 @@ public class VideoLAN {
         if (factory != null) return true;
 
         // PATHS
-        var logs = rootPath.resolve("logs/vlc");
+        var logs = rootPath.resolve("logs/vlc/");
         var path = rootPath.resolve("cache/vlc/");
 
         // LOGGER INIT
@@ -41,25 +41,28 @@ public class VideoLAN {
         VLCArchives.init(path);
 
         // Check if we need to update binaries
-        var version = VLCArchives.getLocalVersion();
-        if (version == null || !version.equals(VLCArchives.getVersion())) {
+        var version = VLCArchives.versionInstalled();
+        if (version == null || !version.equals(VLCArchives.version())) {
             // CLEAR
             LOGGER.warn(IT, "Running deletion for VLC Files");
-            VLCArchives.clear();
+            VLCArchives.deleteAll();
 
             // EXTRACT
             LOGGER.warn(IT, "Running extraction for VLC Files");
-            for (var binary : VLCArchives.values()) binary.extract(rootPath.resolve("cache/vlc"));
+            for (var binary : VLCArchives.values()) binary.extract();
 
             // SET LOCAL VERSION
             try {
                 var config = path.resolve("version.cfg");
                 if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
-                Files.writeString(config, VLCArchives.getVersion());
+                Files.writeString(config, VLCArchives.version());
             } catch (Exception e) {
                 LOGGER.error(IT, "Could not write to configuration file", e);
             }
         } else LOGGER.warn(IT, "Detected local VLC. skipping extract");
+
+        // Integrity check
+        for (var binary : VLCArchives.values()) binary.integrityCheck();
 
         factory = ThreadUtil.tryAndReturnNull(
                 defaultVar -> WaterMediaAPI.createVLCFactory(Util.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)

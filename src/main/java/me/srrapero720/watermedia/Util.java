@@ -19,13 +19,16 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class Util {
-    private static final Marker IT = MarkerFactory.getMarker("MediaUtil");
+    private static final Marker IT = MarkerFactory.getMarker("Util");
 
     public static <T> Field getClassField(Class<? super T> from, String name) {
         try {
@@ -213,6 +216,40 @@ public class Util {
 
         //Return the texture ID so we can bind it later again
         return textureID;
+    }
+
+    public static boolean integrityCheck(InputStream sourceStream, File targetFile) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            DigestInputStream dis = new DigestInputStream(sourceStream, md);
+
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = dis.read(buffer)) != -1) {
+                md.update(buffer, 0, bytesRead);
+            }
+
+            byte[] sourceDigest = md.digest();
+
+            FileInputStream fis = new FileInputStream(targetFile);
+            DigestInputStream targetDis = new DigestInputStream(fis, md);
+
+            while (targetDis.read(buffer) != -1);
+
+            byte[] targetDigest = md.digest();
+
+            dis.close();
+            targetDis.close();
+
+
+            boolean equal = MessageDigest.isEqual(sourceDigest, targetDigest);
+            if (!equal) LOGGER.error(IT, "Integrity check failed: File '{}' no match with the current", targetFile.toPath());
+
+            return equal;
+        } catch (Exception e) { LOGGER.error(IT, "Integrity check failed: Exception occurred on file '{}'", targetFile.toPath(), e); }
+
+        return false;
     }
 
     public static String getOsBinExtension() {

@@ -1,6 +1,8 @@
 package me.srrapero720.watermedia.core.videolan;
 
 import me.srrapero720.watermedia.Util;
+
+import java.io.File;
 import java.nio.file.Path;
 
 public enum VLCArchives {
@@ -238,15 +240,40 @@ public enum VLCArchives {
         this.filename = name() + resFileType.extension;
     }
 
-    void extract(Path to) {
+    void extract() {
         String relativePath = (relativeDir != null ? (type.equals(Type.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
-        Util.extractFrom(type.rootDir + "/" + relativePath, to.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath);
+
+        // MANAGE
+        String origin = type.rootDir + "/" + relativePath;
+        String destination = rootVLC.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath;
+
+        Util.extractFrom(origin, destination);
+    }
+
+    void delete() {
+        String relativePath = (relativeDir != null ? (type.equals(Type.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
+
+        String destination = rootVLC.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath;
+        new File(destination).delete();
+    }
+
+    void integrityCheck() {
+        String relativePath = (relativeDir != null ? (type.equals(Type.BIN) ? "plugins/" : "") + relativeDir + "/" : "") + filename;
+
+        // MANAGE
+        String origin = type.rootDir + "/" + relativePath;
+        String destination = rootVLC.toAbsolutePath() + (type.equals(Type.LUAC) ? "/lua/" : "/") + relativePath;
+
+        if (!Util.integrityCheck(Util.resourceAsStream(origin), new File(destination))) {
+            delete();
+            extract();
+        }
     }
 
     static void init(Path rootDir) { rootVLC = rootDir; }
-    static void clear() { Util.deleteFrom(rootVLC.toAbsolutePath().toString()); }
-    static String getLocalVersion() { return Util.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
-    static String getVersion() { return "3.0.18"; }
+    static void deleteAll() { Util.deleteFrom(rootVLC.toAbsolutePath().toString()); }
+    static String versionInstalled() { return Util.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
+    static String version() { return "3.0.18"; }
 
     enum Type {
         LUAC("/vlc/lua", ".luac"),
