@@ -61,7 +61,7 @@ public class VideoLAN {
                 LOGGER.error(IT, "Could not write to configuration file", e);
             }
             fresh = true;
-        } else LOGGER.warn(IT, "Detected local VLC. skipping extract");
+        } else LOGGER.warn(IT, "Detected WaterMedia's VLC installation");
 
         // Integrity check
         if (!fresh) {
