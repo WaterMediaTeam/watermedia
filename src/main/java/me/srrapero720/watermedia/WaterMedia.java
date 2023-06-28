@@ -25,6 +25,8 @@ public class WaterMedia {
 	}
 
 	public static boolean load(Path gameDir) {
+		LOGGER.info("Loading WaterMedia on directory {}", gameDir);
+
 		// PREPARE API
 		if (!LocalStorage.init(gameDir)) return false;
 
@@ -32,6 +34,7 @@ public class WaterMedia {
 		if (!VideoLAN.init(gameDir)) return false;
         if (!LavaCore.init()) return false;
 
+		LOGGER.info("WaterMedia loaded successfully");
 		// API VERIFY
 		return true;
 	}

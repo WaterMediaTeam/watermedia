@@ -120,7 +120,7 @@ public class NativeDiscovery {
                 if (discoveryStrategy.supported()) {
                     String path = discoveryStrategy.discover();
                     if (path != null) {
-                        LOGGER.info("Attempt to load VLC on {}", path);
+                        LOGGER.info("Attempt to load VLC on '{}'", path);
                         if (discoveryStrategy.onFound(path)) {
                             NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), path);
                         }
@@ -133,6 +133,7 @@ public class NativeDiscovery {
                             return true;
                         } else {
                             // Tries to fix searchpaths
+                            LOGGER.error(IT, "Failed loading VLC in '{}' using '{}' cleaning JNA", path, discoveryStrategy.getClass().getSimpleName());
                             if (attemptFix(path, discoveryStrategy)) continue;
                             // We have to stop here, because we already added a search path for the native library and
                             // any further search paths we add will be tried AFTER the one that already failed - the
@@ -150,10 +151,9 @@ public class NativeDiscovery {
 
     private static Field searchPaths;
     private static Field libraries;
-    private static final Marker IT = MarkerFactory.getMarker("NativeDiscovery");
+    private static final Marker IT = MarkerFactory.getMarker("VideoLAN");
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
-        LOGGER.error(IT, "Failed loading VLC in '{}' attempting to clear JNA", path);
         if (searchPaths == null) {
             searchPaths = Util.getClassField(NativeLibrary.class, "searchPaths");
             libraries = Util.getClassField(NativeLibrary.class, "libraries");
@@ -166,7 +166,9 @@ public class NativeDiscovery {
             libs.remove(RuntimeUtil.getLibVlcLibraryName());
             paths.remove(RuntimeUtil.getLibVlcLibraryName());
             return true;
-        } catch (IllegalArgumentException | IllegalAccessException ignored) {}
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            LOGGER.error(IT, "attemptFix failed", e);
+        }
         return false;
     }
 
@@ -269,7 +271,7 @@ public class NativeDiscovery {
      * Template method invoked if the native libraries could not be found by any known discovery strategy.
      */
     protected void onNotFound() {
-        LOGGER.info(IT, "VLC cannot be found");
+        LOGGER.info(IT, "VLC cannot be found/loaded");
     }
 
 }
