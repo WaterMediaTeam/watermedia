@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.picture.cache;
+package me.srrapero720.watermedia.api.images;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -15,7 +15,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class CacheStorage {
+public class LocalStorage {
     private static final Marker IT = MarkerFactory.getMarker("CacheStorage");
     private static final Map<String, Entry> entries = new HashMap<>();
 

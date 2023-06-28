@@ -2,12 +2,9 @@ package me.srrapero720.watermedia;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.api.picture.cache.CachePicture;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;

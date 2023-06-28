@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.api.picture.cache.CacheStorage;
+import me.srrapero720.watermedia.api.images.LocalStorage;
 import me.srrapero720.watermedia.core.lavaplayer.LavaCore;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -26,7 +26,7 @@ public class WaterMedia {
 
 	public static boolean load(Path gameDir) {
 		// PREPARE API
-		if (!CacheStorage.init(gameDir)) return false;
+		if (!LocalStorage.init(gameDir)) return false;
 
 		// API LOADERS
 		if (!VideoLAN.init(gameDir)) return false;
