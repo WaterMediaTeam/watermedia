@@ -20,7 +20,7 @@ public class RenderablePicture {
     public RenderablePicture(BufferedImage image) {
         this.width = image.getWidth();
         this.height = image.getHeight();
-        this.textures = new int[] { Util.preRender(image, width, height) };
+        this.textures = new int[] { -1 };
         this.delay = new long[] { 0 };
         this.duration = 0;
         this.decoder = null;
