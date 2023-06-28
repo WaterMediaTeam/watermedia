@@ -120,7 +120,7 @@ public class NativeDiscovery {
                 if (discoveryStrategy.supported()) {
                     String path = discoveryStrategy.discover();
                     if (path != null) {
-                        LOGGER.info("Attempt to load VLC on '{}'", path);
+                        LOGGER.info(IT, "Attempt to load VLC on '{}'", path);
                         if (discoveryStrategy.onFound(path)) {
                             NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), path);
                         }
