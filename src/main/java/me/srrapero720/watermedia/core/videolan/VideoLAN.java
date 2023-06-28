@@ -42,6 +42,7 @@ public class VideoLAN {
 
         // Check if we need to update binaries
         var version = VLCArchives.versionInstalled();
+        boolean fresh = false;
         if (version == null || !version.equals(VLCArchives.version())) {
             // CLEAR
             LOGGER.warn(IT, "Running deletion for VLC Files");
@@ -59,10 +60,11 @@ public class VideoLAN {
             } catch (Exception e) {
                 LOGGER.error(IT, "Could not write to configuration file", e);
             }
+            fresh = true;
         } else LOGGER.warn(IT, "Detected local VLC. skipping extract");
 
         // Integrity check
-        for (var binary : VLCArchives.values()) binary.integrityCheck();
+        if (!fresh) for (var binary : VLCArchives.values()) binary.integrityCheck();
 
         factory = ThreadUtil.tryAndReturnNull(
                 defaultVar -> WaterMediaAPI.createVLCFactory(Util.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
