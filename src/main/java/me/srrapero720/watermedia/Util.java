@@ -6,6 +6,7 @@ import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -149,7 +150,7 @@ public class Util {
     }
 
     public static GifDecoder getGifFromResources(String path) {
-        try (InputStream in = resourceAsStream(path)) {
+        try (ByteArrayInputStream in = new ByteArrayInputStream(IOUtils.toByteArray(resourceAsStream(path)))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
 
@@ -221,27 +222,9 @@ public class Util {
     public static boolean integrityCheck(InputStream sourceStream, File targetFile) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            DigestInputStream dis = new DigestInputStream(sourceStream, md);
 
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-
-            while ((bytesRead = dis.read(buffer)) != -1) {
-                md.update(buffer, 0, bytesRead);
-            }
-
-            byte[] sourceDigest = md.digest();
-
-            FileInputStream fis = new FileInputStream(targetFile);
-            DigestInputStream targetDis = new DigestInputStream(fis, md);
-
-            while (targetDis.read(buffer) != -1);
-
-            byte[] targetDigest = md.digest();
-
-            dis.close();
-            targetDis.close();
-
+            byte[] sourceDigest = calculateDigest(sourceStream, md);
+            byte[] targetDigest = calculateDigest(new FileInputStream(targetFile), md);
 
             boolean equal = MessageDigest.isEqual(sourceDigest, targetDigest);
             if (!equal) LOGGER.error(IT, "Integrity check failed: File '{}' no match with the current", targetFile.toPath());
@@ -250,6 +233,18 @@ public class Util {
         } catch (Exception e) { LOGGER.error(IT, "Integrity check failed: Exception occurred on file '{}'", targetFile.toPath(), e); }
 
         return false;
+    }
+
+    private static byte[] calculateDigest(InputStream inputStream, MessageDigest md) throws IOException {
+        try (DigestInputStream dis = new DigestInputStream(inputStream, md)) {
+            byte[] buffer = new byte[8192];
+            while (dis.read(buffer) != -1);
+
+            dis.close();
+            return md.digest();
+        } catch (Exception e) {
+            throw new IOException("Failed calculating digest", e);
+        }
     }
 
     public static String getOsBinExtension() {
