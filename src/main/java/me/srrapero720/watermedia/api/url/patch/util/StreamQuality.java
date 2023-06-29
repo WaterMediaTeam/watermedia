@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StreamQuality implements Comparable<StreamQuality> {
+public class StreamQuality {
     private static final Pattern M3U8_STREAM_INF_RE = Pattern.compile("^#EXT-X-STREAM-INF:(.*)");
     private static final Pattern M3U8_INF_VALUE_RE = Pattern.compile("([A-Z-]+)=(?:([^,]+)|\"([^\"]+?)\")");
     private static final Pattern HTTP_URL_RE = Pattern.compile("https?://.*");
@@ -77,13 +77,6 @@ public class StreamQuality implements Comparable<StreamQuality> {
     public String toString() {
         return String.format("Bandwidth: %d, Resolution: %dx%d, Framerate: %d, Codecs: %s, URL: %s",
                 bandwidth, width, height, framerate, codecs, url);
-    }
-
-    @Override
-    public int compareTo(@NotNull StreamQuality streamQuality) {
-        int res = streamQuality.width - width;
-        if (res == 0) res = streamQuality.framerate - framerate;
-        return res;
     }
 
     public static List<StreamQuality> parse(String playlistData) {
