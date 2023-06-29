@@ -2,7 +2,9 @@ package me.srrapero720.watermedia.api.url.patch.util.twitch;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import me.srrapero720.watermedia.Util;
 import me.srrapero720.watermedia.api.url.patch.util.StreamQuality;
 
 import java.io.IOException;
@@ -17,26 +19,35 @@ import java.util.Map;
 
 public class TwitchUtil {
     private static final Gson gson = new Gson();
+    private static final String USER_AGENT = Util.getUserAgentBasedOnOS();
 
     public static List<StreamQuality> getStream(String stream) throws IOException, StreamNotFound {
-        String apiUrl = buildApiUrl(stream);
+        String apiUrl = buildApiUrl(stream, false);
         return StreamQuality.parse(performGetRequest(apiUrl));
     }
 
-    private static String buildApiUrl(String stream) throws IOException {
-        JsonElement response = post(stream);
-        String signature = extractFromResponse(response, "signature");
-        String value = extractFromResponse(response, "value");
-        return String.format(TwitchApiConstants.TTV_API_URL_TEMPLATE, stream) + buildUrlParameters(signature, value);
+    public static List<StreamQuality> getVod(String video) throws IOException, StreamNotFound {
+        String apiUrl = buildApiUrl(video, true);
+        return StreamQuality.parse(performGetRequest(apiUrl));
     }
 
-    private static String extractFromResponse(JsonElement response, String key) {
-        return response.getAsJsonObject().get("data").getAsJsonObject().get("streamPlaybackAccessToken").getAsJsonObject().get(key).getAsString();
+    private static String buildApiUrl(String id, boolean isVOD) throws IOException {
+        JsonElement response = post(id, isVOD);
+        JsonObject accessTokenData = response
+                .getAsJsonObject().get("data")
+                .getAsJsonObject().get(isVOD ? "videoPlaybackAccessToken" : "streamPlaybackAccessToken")
+                .getAsJsonObject();
+
+        String signature = accessTokenData.get("signature").getAsString();
+        String value = accessTokenData.get("value").getAsString();
+
+        String url = String.format(isVOD ? TwitchApiConstants.TTV_PLAYLIST_API_URL_TEMPLATE : TwitchApiConstants.TTV_LIVE_API_URL_TEMPLATE, id);
+        return url + buildUrlParameters(signature, value);
     }
 
     private static String buildUrlParameters(String signature, String value) {
         value = URLEncoder.encode(value, StandardCharsets.UTF_8);
-        return String.format("%%3Fallow_source=true&acmb=e30%%3D&allow_audio_only=true&fast_bread=true&playlist_include_framerate=true&reassignments_supported=true&player_backend=mediaplayer&supported_codecs=vp09,avc1&p=1234567890&play_session_id=1b0c77f72af01d4db1f993803dacd90f&cdm=wm&player_version=1.18.0&player_type=embed&sig=%s&token=%s", signature, value);
+        return String.format("%%3Facmb=e30%%3D&allow_source=true&fast_bread=true&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&supported_codecs=vp09,avc1&transcode_mode=cbr_v1&cdm=wv&player_version=1.20.0&sig=%s&token=%s", signature, value);
     }
 
     private static String performGetRequest(String apiUrl) throws IOException, StreamNotFound {
@@ -50,16 +61,15 @@ public class TwitchUtil {
                 new String(conn.getErrorStream().readAllBytes());
     }
 
-
-    private static JsonElement post(String streamer) throws IOException {
+    private static JsonElement post(String id, boolean isVOD) throws IOException {
         HttpURLConnection conn = initializeConnection(TwitchApiConstants.GRAPH_QL_URL, "POST");
         conn.setDoOutput(true);
         conn.setRequestProperty("Client-ID", TwitchApiConstants.CLIENT_ID);
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0");
+        conn.setRequestProperty("User-Agent", USER_AGENT);
         conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
         try (OutputStream os = conn.getOutputStream()) {
-            os.write(buildJsonString(streamer).getBytes(StandardCharsets.UTF_8));
+            os.write(buildJsonString(id, isVOD).getBytes(StandardCharsets.UTF_8));
         }
 
         return JsonParser.parseString(new String(conn.getInputStream().readAllBytes()));
@@ -81,17 +91,18 @@ public class TwitchUtil {
 
     /**
      * Builds the JSON string to send to the Twitch API.
-     * @param streamer The streamer to get the stream from.
+     * @param id The id of the video stream to get.
+     * @param isVOD Whether the video is a VOD or not.
      * @return The built JSON string.
      */
-    private static String buildJsonString(String streamer) {
+    private static String buildJsonString(String id, boolean isVOD) {
         // Variables mapping
         Map<String, Object> variables = new HashMap<>();
-        variables.put("isLive", true);
-        variables.put("login", streamer);
+        variables.put("isLive", !isVOD);
+        variables.put("isVod", isVOD);
+        variables.put("login", !isVOD ? id : "");
+        variables.put("vodID", isVOD ? id : "");
         variables.put("playerType", "site");
-        variables.put("vodID", "");
-        variables.put("isVod", false);
 
         // Main JSON mapping
         Map<String, Object> jsonMap = new HashMap<>();

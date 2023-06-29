@@ -25,7 +25,12 @@ public class TwitchPatch extends URLPatch {
     public String patch(@NotNull URL url) throws PatchingUrlException {
         super.patch(url);
         try {
-            return TwitchUtil.getStream(url.getPath().substring(1)).get(0).getUrl();
+            String path = url.getPath();
+            if (path.startsWith("/videos/")) {
+                return TwitchUtil.getVod(path.substring(8)).get(0).getUrl();
+            }
+
+            return TwitchUtil.getStream(path.substring(1)).get(0).getUrl();
         } catch (Exception e) {
             throw new PatchingUrlException(url, e);
         }
