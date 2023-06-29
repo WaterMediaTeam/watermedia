@@ -13,11 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class YoutubePatch extends URLPatch {
-    private static final Pattern PATTERN = Pattern.compile("(?:https?://|//)?(?:www\\.|m\\.|.+\\.)?(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|shorts/|feeds/api/videos/|watch\\?v=|watch\\?.+&v=))([\\w-]{11})(?![\\w-])");
+    private static final Pattern PATTERN = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|shorts/|feeds/api/videos/|watch\\?v=|watch\\?.+&v=))([\\w-]{11})(?![\\w-])");
 
     @Override
     public boolean isValid(@NotNull URL url) {
-        return (url.getHost().contains("youtube.com") || url.getHost().contains("youtu.be"));
+        return (url.getHost().endsWith("youtube.com") || url.getHost().endsWith("youtu.be"));
     }
 
     @Override
