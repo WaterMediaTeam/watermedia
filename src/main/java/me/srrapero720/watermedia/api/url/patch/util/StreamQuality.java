@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,6 +85,18 @@ public class StreamQuality implements Comparable<StreamQuality> {
         int res = streamQuality.width - width;
         if (res == 0) res = streamQuality.framerate - framerate;
         return res;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StreamQuality that)) return false;
+        return bandwidth == that.bandwidth && width == that.width && height == that.height && framerate == that.framerate && Objects.equals(codecs, that.codecs) && Objects.equals(url, that.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bandwidth, width, height, framerate, codecs, url);
     }
 
     public static List<StreamQuality> parse(String playlistData) {
