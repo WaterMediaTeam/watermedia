@@ -103,8 +103,7 @@ public class Util {
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to extract from {} to {} due to unexpected error: {}", originPath, destinationPath, e);
             EXT_FAILED++;
-            int EXT_FAILED_MAX = 20;
-            if (EXT_FAILED > EXT_FAILED_MAX && getOsArch().equals("win-x64")) throw new IllegalStateException("WATERMeDIA can't extract VLC binaries");
+            if (EXT_FAILED > 20 && getOsArch().equals("win-x64")) throw new IllegalStateException("WATERMeDIA can't extract VLC binaries");
         }
     }
 
