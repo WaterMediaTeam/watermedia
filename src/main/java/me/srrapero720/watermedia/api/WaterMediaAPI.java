@@ -31,7 +31,9 @@ public final class WaterMediaAPI {
             new TwitchPatch(),
             new KickPatch(),
             new DrivePatch(),
-            new TwitterPatch())
+            new TwitterPatch(),
+            new OnedrivePatch(),
+            new DropboxPatch())
     );
 
     /**
