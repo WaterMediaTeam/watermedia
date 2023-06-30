@@ -29,7 +29,7 @@ public class VideoLAN {
         if (factory != null) return true;
 
         // PATHS
-        var logs = gameDir.resolve("logs/vlc/");
+        var logs = workingDir.resolve("logs/vlc/");
         var path = workingDir.resolve("vlc/");
 
         // LOGGER INIT

@@ -30,6 +30,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class Util {
     private static final Marker IT = MarkerFactory.getMarker("Util");
+    private static int EXT_FAILED = 0;
 
     public static <T> Field getClassField(Class<? super T> from, String name) {
         try {
@@ -97,14 +98,13 @@ public class Util {
                 Files.createDirectories(dllDestinationPath.getParent());
                 Files.copy(is, dllDestinationPath);
             } else {
-                LOGGER.error(IT, "Resource not found: {}", originPath);
+                throw new RuntimeException("Resource was not found in " + originPath);
             }
-        } catch (FileNotFoundException fnfe) {
-            LOGGER.error(IT, "Failed to extract from {}, file not found: {}", originPath, fnfe);
-        } catch (IOException ioe) {
-            LOGGER.error(IT, "Failed to extract from {} to {} due to I/O error: {}", originPath, destinationPath, ioe);
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to extract from {} to {} due to unexpected error: {}", originPath, destinationPath, e);
+            EXT_FAILED++;
+            int EXT_FAILED_MAX = 20;
+            if (EXT_FAILED > EXT_FAILED_MAX && getOsArch().equals("win-x64")) throw new IllegalStateException("WATERMeDIA can't extract VLC binaries");
         }
     }
 

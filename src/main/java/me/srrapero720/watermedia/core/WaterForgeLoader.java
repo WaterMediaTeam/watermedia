@@ -19,7 +19,7 @@ public class WaterForgeLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
 
     public WaterForgeLoader() {
-        LOGGER.info(IT, "Starting WaterMedia");
+        LOGGER.info(IT, "Running WaterMedia on Forge environment");
         if (FMLEnvironment.dist.isDedicatedServer()) {
             LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
             LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVERS. remove this mod from server to stop crashes");

@@ -7,6 +7,8 @@ import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -15,21 +17,13 @@ import java.nio.file.Path;
 public class WaterMedia {
 	public static final String ID = "watermedia";
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
-
-	@Experimental
-	public static boolean load(Path gameDir, boolean async) {
-		if (async) {
-			ThreadUtil.thread(() -> load(gameDir));
-			return true;
-		}
-		else return load(gameDir);
-	}
+	public static final Marker IT = MarkerFactory.getMarker("Bootstrap");
 
 	public static boolean load(Path gameDir) {
 		Path storageDirectory = new File(System.getProperty("java.io.tmpdir")).toPath().resolve("watermedia");
-		LOGGER.info("Loading WaterMedia");
-		LOGGER.info("Game directory '{}'", gameDir);
-		LOGGER.info("Storage directory '{}'", storageDirectory);
+		LOGGER.info(IT, "Loading WaterMedia");
+		LOGGER.info(IT, "Game directory '{}'", gameDir);
+		LOGGER.info(IT, "Storage directory '{}'", storageDirectory);
 
 		// PREPARE API
 		if (!LocalStorage.init(storageDirectory)) return false;
@@ -38,7 +32,7 @@ public class WaterMedia {
 		if (!VideoLAN.init(storageDirectory, gameDir)) return false;
         if (!LavaCore.init()) return false;
 
-		LOGGER.info("WaterMedia loaded successfully");
+		LOGGER.info(IT, "WaterMedia loaded successfully");
 		// API VERIFY
 		return true;
 	}
