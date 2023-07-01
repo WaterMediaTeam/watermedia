@@ -30,7 +30,6 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class Util {
     private static final Marker IT = MarkerFactory.getMarker("Util");
-    private static int EXT_FAILED = 0;
 
     public static <T> Field getClassField(Class<? super T> from, String name) {
         try {
@@ -102,8 +101,6 @@ public class Util {
             }
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to extract from {} to {} due to unexpected error: {}", originPath, destinationPath, e);
-            EXT_FAILED++;
-            if (EXT_FAILED > 20 && getOsArch().equals("win-x64")) throw new IllegalStateException("WATERMeDIA can't extract VLC binaries");
         }
     }
 
