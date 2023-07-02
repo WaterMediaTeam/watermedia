@@ -41,9 +41,8 @@ public class VideoLAN {
         VLCBinaries.init(path);
 
         // Check if we need to update binaries
-        var version = VLCBinaries.installedVersion();
         boolean fresh = false;
-        if (version == null || !version.equals(VLCBinaries.resVersion())) {
+        if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
             // CLEAR
             LOGGER.warn(IT, "Running deletion for VLC Files");
             VLCBinaries.cleanup();
