@@ -26,7 +26,7 @@ public class WaterForgeLoader {
         LOGGER.info(IT, "Running WaterMedia on Forge environment");
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::server);
 
-        if (!FMLEnvironment.dist.isDedicatedServer()) WaterMedia.load();
+        if (!FMLEnvironment.dist.isDedicatedServer()) WaterMedia.init();
 
         //Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));

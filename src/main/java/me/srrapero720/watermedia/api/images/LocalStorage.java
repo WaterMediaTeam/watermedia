@@ -16,13 +16,15 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class LocalStorage {
-    private static final Marker IT = MarkerFactory.getMarker("CacheStorage");
+    private static final Marker IT = MarkerFactory.getMarker(LocalStorage.class.getSimpleName());
     private static final Map<String, Entry> entries = new HashMap<>();
 
     private static File dir;
     private static File index;
 
     public static boolean init(Path rootDir) {
+        LOGGER.info(IT, "Storage path used for logs and binaries '{}'", rootDir);
+
         dir = rootDir.toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "indexer");
 

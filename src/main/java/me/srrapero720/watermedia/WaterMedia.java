@@ -17,20 +17,23 @@ public class WaterMedia {
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 	public static final Marker IT = MarkerFactory.getMarker("Bootstrap");
 
-	public static boolean load() {
+	public static boolean init() {
 		Path storageDirectory = new File(System.getProperty("java.io.tmpdir")).toPath().resolve("watermedia");
-		LOGGER.info(IT, "Loading WaterMedia");
-		LOGGER.info(IT, "Storage directory used for logs and binaries '{}'", storageDirectory);
+		LOGGER.info(IT, "Starting WaterMedia");
 
 		// PREPARE API
+		LOGGER.info(IT, "Loading {}", LocalStorage.class.getSimpleName());
 		if (!LocalStorage.init(storageDirectory)) return false;
 
-		// API LOADERS
+		// PREPARE VLC
+		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
 		if (!VideoLAN.init(storageDirectory)) return false;
+
+		// PREPARE LAVAPLAYER
+		LOGGER.info(IT, "Loading {}", LavaCore.class.getSimpleName());
         if (!LavaCore.init()) return false;
 
-		LOGGER.info(IT, "WaterMedia loaded successfully");
-		// API VERIFY
+		LOGGER.info(IT, "WaterMedia started successfully");
 		return true;
 	}
 }

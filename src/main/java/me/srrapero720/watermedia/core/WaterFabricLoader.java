@@ -25,6 +25,6 @@ public class WaterFabricLoader implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        WaterMedia.load();
+        WaterMedia.init();
     }
 }
