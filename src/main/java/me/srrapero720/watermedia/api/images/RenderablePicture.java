@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.images;
 
-import me.srrapero720.watermedia.Util;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 
 import java.awt.*;
@@ -60,7 +60,7 @@ public class RenderablePicture {
 
     public int genTexture(int index) {
         if (textures[index] == -1 && decoder != null) {
-            textures[index] = Util.preRender(decoder.getFrame(index), width, height);
+            textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
             remaining--;
             if (remaining <= 0) decoder = null;
         }
