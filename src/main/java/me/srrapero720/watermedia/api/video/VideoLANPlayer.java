@@ -199,6 +199,11 @@ public class VideoLANPlayer extends VideoPlayer {
         return mediaInfo != null && (mediaInfo.type().equals(MediaType.STREAM) || mediaInfo.mrl().contains(".m3u8"));
     }
 
+    public State getRawPlayerState() {
+        if (player == null) return State.NOTHING_SPECIAL;
+        return player.mediaPlayer().status().state();
+    }
+
     /**
      * Equals to <pre>player.mediaPlayer().status().length()</pre>
      * @return Player duration
@@ -206,7 +211,7 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public long getDuration() {
         if (player == null) return 0L;
-        if (player.mediaPlayer().status().state().equals(State.ERROR) || player.mediaPlayer().status().state().equals(State.OPENING)) return 0L;
+        if (getRawPlayerState().equals(State.ERROR) || getRawPlayerState().equals(State.OPENING) || getRawPlayerState().equals(State.ENDED)) return 0L;
         return player.mediaPlayer().status().length();
     }
 
