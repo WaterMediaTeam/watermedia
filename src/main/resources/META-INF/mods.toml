@@ -19,8 +19,3 @@ issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
     versionRange="${minecraft_version_range}"# ON FORGE ONLY SUPPORTS 1.17 (MIN JAVA IS 15 FEATURES)
     ordering="NONE"
     side="CLIENT"
-[[dependencies.${mod_id}]]
-    modId="fancyvideo_api"
-    mandatory=false
-    versionRange="[incompatible,)"
-    side="BOTH"

@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -25,6 +26,9 @@ public class WaterFabricLoader implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        FabricLoader.getInstance().getAllMods().forEach(modContainer -> {
+            if (modContainer.getMetadata().getId().equals("fancyvideo_api")) WaterMedia.crashByFVA();
+        });
         WaterMedia.init();
     }
 }

@@ -36,4 +36,8 @@ public class WaterMedia {
 		LOGGER.info(IT, "WaterMedia started successfully");
 		return true;
 	}
+
+	public static void crashByFVA() {
+		throw new IllegalStateException("FancyVideo-API is explicit incompatible with WATERMeDIA, please remove it");
+	}
 }

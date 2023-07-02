@@ -4,6 +4,7 @@ import me.srrapero720.watermedia.WaterMedia;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -25,11 +26,16 @@ public class WaterForgeLoader {
     public WaterForgeLoader() {
         LOGGER.info(IT, "Running WaterMedia on Forge environment");
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::server);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::common);
 
         if (!FMLEnvironment.dist.isDedicatedServer()) WaterMedia.init();
 
         //Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+    }
+
+    void common(FMLCommonSetupEvent event) {
+        if (FMLLoader.getLoadingModList().getModFileById("fancyvideo_api") != null) WaterMedia.crashByFVA();
     }
 
     void server(FMLDedicatedServerSetupEvent event) {
