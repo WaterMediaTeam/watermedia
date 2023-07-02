@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.video.events.common;
 
-import me.srrapero720.watermedia.api.video.VPlayer;
+import me.srrapero720.watermedia.api.video.VideoPlayer;
 
-public interface MediaStoppedEvent<P extends VPlayer> extends Event<MediaStoppedEvent.EventData, P> {
+public interface MediaStoppedEvent<P extends VideoPlayer> extends Event<MediaStoppedEvent.EventData, P> {
     record EventData(long time) {}
 }

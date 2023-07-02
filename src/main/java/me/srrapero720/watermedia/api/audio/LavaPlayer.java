@@ -1,11 +1,10 @@
 package me.srrapero720.watermedia.api.audio;
 
-import me.srrapero720.watermedia.api.video.VPlayer;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.awt.*;
 
-public class LavaPlayer extends VPlayer {
+public class LavaPlayer extends AudioPlayer {
     public LavaPlayer() {
 //        AudioPlayerInputStream
     }
@@ -141,7 +140,7 @@ public class LavaPlayer extends VPlayer {
     }
 
     @Override
-    public boolean isStream() {
+    public boolean isPodcast() {
         return false;
     }
 

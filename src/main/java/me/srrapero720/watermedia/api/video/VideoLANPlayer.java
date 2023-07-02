@@ -24,17 +24,17 @@ import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class VideoLanPlayer extends VPlayer {
+public class VideoLANPlayer extends VideoPlayer {
     private boolean buffering = false;
     private boolean prepared = false;
     private static final Thread THREAD = Thread.currentThread();
     private static final Marker IT = MarkerFactory.getMarker("VideoLanPlayer");
-    public final EventManager<VideoLanPlayer> events = new EventManager<>();
+    public final EventManager<VideoLANPlayer> events = new EventManager<>();
 
     private CallbackMediaPlayerComponent player;
     public CallbackMediaPlayerComponent getRaw() { return player; }
 
-    public VideoLanPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+    public VideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         if (factory == null) factory = VideoLAN.defaultFactory();
 
         if (WaterMediaAPI.isVLCReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);

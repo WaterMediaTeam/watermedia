@@ -1,10 +1,10 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.video.VideoLanPlayer;
+import me.srrapero720.watermedia.api.video.VideoLANPlayer;
 
 public class Testo {
     public static void t() {
-        var player = new VideoLanPlayer(null, null, null);
+        var player = new VideoLANPlayer(null, null, null);
 
         player.start("urk");
 

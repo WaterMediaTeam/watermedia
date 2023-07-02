@@ -6,7 +6,7 @@ import me.srrapero720.watermedia.Util;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.api.url.patch.*;
-import me.srrapero720.watermedia.api.video.VideoLanPlayer;
+import me.srrapero720.watermedia.api.video.VideoLANPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * This method is used by default on {@link VideoLanPlayer#start(CharSequence, String[])}
+     * This method is used by default on {@link VideoLANPlayer#start(CharSequence, String[])}
      * Is not recommended external usages
      * @param url Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
@@ -92,7 +92,7 @@ public final class WaterMediaAPI {
      * Suggestion: Use the same VLC arguments for logging but with other filename
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
      * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link VideoLanPlayer} can accept factory for new instances
+     * @return a PlayerFactory to create custom VLC players. {@link VideoLANPlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory createVLCFactory(String[] vlcArgs) {
         var discovery = new NativeDiscovery();
@@ -108,7 +108,7 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * Check if VLC is loaded and ready to be used on {@link VideoLanPlayer} or to make
+     * Check if VLC is loaded and ready to be used on {@link VideoLANPlayer} or to make
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
