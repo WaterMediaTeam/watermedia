@@ -221,12 +221,10 @@ public class Util {
 
             byte[] sourceDigest = calculateDigest(sourceStream, md);
             byte[] targetDigest = calculateDigest(new FileInputStream(targetFile), md);
+            if (!MessageDigest.isEqual(sourceDigest, targetDigest)) throw new RuntimeException("File no match with the stored one");
 
-            boolean equal = MessageDigest.isEqual(sourceDigest, targetDigest);
-            if (!equal) LOGGER.error(IT, "Integrity check failed: File '{}' no match with the current", targetFile.toPath());
-
-            return equal;
-        } catch (Exception e) { LOGGER.error(IT, "Integrity check failed: Exception occurred on file '{}'", targetFile.toPath(), e); }
+            return true;
+        } catch (Exception e) { LOGGER.error(IT, "Integrity check failed, exception occurred on file '{}'", targetFile.toPath(), e); }
 
         return false;
     }
