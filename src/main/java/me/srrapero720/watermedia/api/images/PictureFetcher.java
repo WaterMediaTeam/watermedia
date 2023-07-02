@@ -1,6 +1,7 @@
 package me.srrapero720.watermedia.api.images;
 
 import me.srrapero720.watermedia.Util;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import org.apache.commons.io.IOUtils;
@@ -30,7 +31,7 @@ public abstract class PictureFetcher extends Thread {
 
     private final String url;
     public PictureFetcher(String url) {
-        this.url = url;
+        this.url = WaterMediaAPI.urlPatch(url);
         this.setName("WaterMedia-Picture");
         this.setDaemon(true);
         this.start();
