@@ -245,7 +245,7 @@ public enum VLCBinaries {
     }
 
     void extract() {
-        Util.extractFrom(intendedDestination, rootVLC.toAbsolutePath() + intendedDestination);
+        Util.extractFrom(resourceOrigin, rootVLC.toAbsolutePath() + intendedDestination);
     }
 
     void delete() {
