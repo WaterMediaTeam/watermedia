@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -22,9 +21,10 @@ public class WaterFabricLoader implements ClientModInitializer {
         LOGGER.error(IT, "WATERMeDIA not longer provides support for Fabric environments, breaks basic Java");
         LOGGER.error(IT, "If you encounter issues loading VLC try install VLC3, if not then report to Fabric");
         LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-        WaterMedia.load(FabricLoader.getInstance().getGameDir());
     }
 
     @Override
-    public void onInitializeClient() {}
+    public void onInitializeClient() {
+        WaterMedia.load();
+    }
 }

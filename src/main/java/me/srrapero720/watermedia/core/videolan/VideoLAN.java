@@ -25,7 +25,7 @@ public class VideoLAN {
     private static MediaPlayerFactory factory;
     public static MediaPlayerFactory defaultFactory() { return factory; }
 
-    public static boolean init(Path workingDir, Path gameDir) {
+    public static boolean init(Path workingDir) {
         if (factory != null) return true;
 
         // PATHS
