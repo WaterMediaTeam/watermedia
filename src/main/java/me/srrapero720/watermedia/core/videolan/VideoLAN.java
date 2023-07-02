@@ -21,7 +21,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLAN {
-    private static final Marker IT = MarkerFactory.getMarker("VideoLAN");
+    protected static final Marker IT = MarkerFactory.getMarker("VideoLAN");
     private static MediaPlayerFactory factory;
     public static MediaPlayerFactory defaultFactory() { return factory; }
 
@@ -38,25 +38,25 @@ public class VideoLAN {
 
         // INIT
         CustomDirectoryProvider.init(path);
-        VLCArchives.init(path);
+        VLCBinaries.init(path);
 
         // Check if we need to update binaries
-        var version = VLCArchives.versionInstalled();
+        var version = VLCBinaries.installedVersion();
         boolean fresh = false;
-        if (version == null || !version.equals(VLCArchives.version())) {
+        if (version == null || !version.equals(VLCBinaries.resVersion())) {
             // CLEAR
             LOGGER.warn(IT, "Running deletion for VLC Files");
-            VLCArchives.deleteAll();
+            VLCBinaries.cleanup();
 
             // EXTRACT
             LOGGER.warn(IT, "Running extraction for VLC Files");
-            for (var binary : VLCArchives.values()) binary.extract();
+            for (var binary : VLCBinaries.values()) binary.extract();
 
             // SET LOCAL VERSION
             try {
                 var config = path.resolve("version.cfg");
                 if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
-                Files.writeString(config, VLCArchives.version());
+                Files.writeString(config, VLCBinaries.resVersion());
             } catch (Exception e) {
                 LOGGER.error(IT, "Could not write to configuration file", e);
             }
@@ -66,7 +66,7 @@ public class VideoLAN {
         // Integrity check
         if (!fresh) {
             LOGGER.info(IT, "Running integrity check");
-            for (var binary : VLCArchives.values()) binary.integrityCheck();
+            for (var binary : VLCBinaries.values()) binary.checkIntegrity();
         }
 
         factory = ThreadUtil.tryAndReturnNull(
