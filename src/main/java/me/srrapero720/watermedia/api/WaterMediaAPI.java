@@ -125,7 +125,7 @@ public final class WaterMediaAPI {
      * @param height picture height
      * @return textureID
      */
-    public static int preRender(BufferedImage image, int width, int height) {
+    public static int genGLTexture(BufferedImage image, int width, int height) {
         int[] pixels = new int[width * height];
         image.getRGB(0, 0, width, height, pixels, 0, width);
         boolean alpha = false;

@@ -60,7 +60,7 @@ public class RenderablePicture {
 
     public int genTexture(int index) {
         if (textures[index] == -1 && decoder != null) {
-            textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
+            textures[index] = WaterMediaAPI.genGLTexture(decoder.getFrame(index), width, height);
             remaining--;
             if (remaining <= 0) decoder = null;
         }
