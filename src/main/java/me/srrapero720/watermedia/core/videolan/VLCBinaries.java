@@ -260,14 +260,17 @@ public enum VLCBinaries {
         }
     }
 
-    static void init(Path rootDir) { rootVLC = rootDir; }
+    static void init(Path rootDir) {
+        LOGGER.info("Running on {} reading path {}", Util.ARCH, rootDir);
+        rootVLC = rootDir;
+    }
     static void cleanup() { Util.deleteFrom(rootVLC.toAbsolutePath().toString()); }
     static String installedVersion() { return Util.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
     static String resVersion() { return "3.0.18"; }
 
     enum Type {
         LUAC("/vlc/lua", ".luac"),
-        BIN("/vlc/" + Util.getOsArch(), Util.getOsBinExtension());
+        BIN("/vlc/" + Util.ARCH, Util.ARCH.EXT);
         public final String rootDir;
         public final String extension;
         Type(String rootDir, String ext) { this.rootDir = rootDir; this.extension = ext; }
