@@ -9,9 +9,7 @@ plugins {
 
 version = modversion
 group = modgroup
-base {
-    archivesName = modid
-}
+archivesBaseName = modid
 
 apply plugin: 'net.minecraftforge.gradle'
 
