@@ -21,7 +21,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLAN {
-    protected static final Marker IT = MarkerFactory.getMarker("VideoLAN");
+    public static final Marker IT = MarkerFactory.getMarker("VideoLAN");
     private static MediaPlayerFactory factory;
     public static MediaPlayerFactory defaultFactory() { return factory; }
 
@@ -40,32 +40,34 @@ public class VideoLAN {
         CustomDirectoryProvider.init(path);
         VLCBinaries.init(path);
 
-        // Check if we need to update binaries
-        boolean fresh = false;
-        if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
-            // CLEAR
-            LOGGER.warn(IT, "Running deletion for VLC Files");
-            VLCBinaries.cleanup();
+        if (Util.ARCH.wrapped) {
+            // Check if we need to update binaries
+            boolean fresh = false;
+            if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
+                // CLEAR
+                LOGGER.warn(IT, "Running deletion for VLC Files");
+                VLCBinaries.cleanup();
 
-            // EXTRACT
-            LOGGER.warn(IT, "Running extraction for VLC Files");
-            for (var binary : VLCBinaries.values()) binary.extract();
+                // EXTRACT
+                LOGGER.warn(IT, "Running extraction for VLC Files");
+                for (var binary : VLCBinaries.values()) binary.extract();
 
-            // SET LOCAL VERSION
-            try {
-                var config = path.resolve("version.cfg");
-                if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
-                Files.writeString(config, VLCBinaries.resVersion());
-            } catch (Exception e) {
-                LOGGER.error(IT, "Could not write to configuration file", e);
+                // SET LOCAL VERSION
+                try {
+                    var config = path.resolve("version.cfg");
+                    if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
+                    Files.writeString(config, VLCBinaries.resVersion());
+                } catch (Exception e) {
+                    LOGGER.error(IT, "Could not write to configuration file", e);
+                }
+                fresh = true;
+            } else LOGGER.warn(IT, "Detected WaterMedia's VLC installation");
+
+            // Integrity check
+            if (!fresh) {
+                LOGGER.info(IT, "Running integrity check");
+                for (var binary : VLCBinaries.values()) binary.checkIntegrity();
             }
-            fresh = true;
-        } else LOGGER.warn(IT, "Detected WaterMedia's VLC installation");
-
-        // Integrity check
-        if (!fresh) {
-            LOGGER.info(IT, "Running integrity check");
-            for (var binary : VLCBinaries.values()) binary.checkIntegrity();
         }
 
         factory = ThreadUtil.tryAndReturnNull(

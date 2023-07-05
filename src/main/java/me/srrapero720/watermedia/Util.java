@@ -26,6 +26,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class Util {
     private static final Marker IT = MarkerFactory.getMarker("Util");
+    public static final OsArch ARCH = getOsArch();
 
     public static <T> Field getClassField(Class<? super T> from, String name) {
         try {
@@ -117,18 +118,18 @@ public class Util {
      * Figure out current architecture and OS
      * @return os-arch simplified
      */
-    public static String getOsArch() {
+    private static OsArch getOsArch() {
         String arch = System.getProperty("os.arch");
         if ((arch.equals("amd64") || arch.equals("x86_64"))) {
-            if (RuntimeUtil.isWindows()) return "win-x64";
-            if (RuntimeUtil.isMac()) return "mac-x64";
-            if (RuntimeUtil.isNix()) return "nix-x64";
+            if (RuntimeUtil.isWindows()) return OsArch.WIN_X64;
+            if (RuntimeUtil.isMac()) return OsArch.MAC_X64;
+            if (RuntimeUtil.isNix()) return OsArch.NIX_X64;
         } else if (arch.equals("arm64")) {
-            if (RuntimeUtil.isWindows()) return "win-arm64";
-            if (RuntimeUtil.isMac()) return "mac-arm64";
-            if (RuntimeUtil.isNix()) return "nix-arm64";
+            if (RuntimeUtil.isWindows()) return OsArch.WIN_ARM64;
+            if (RuntimeUtil.isMac()) return OsArch.MAC_ARM64;
+            if (RuntimeUtil.isNix()) return OsArch.NIX_ARM64;
         }
-        return "dummy";
+        throw new RuntimeException("You are running Java on a unknown operative system");
     }
 
     public static BufferedImage getImageFromResources(String path) {
@@ -183,17 +184,33 @@ public class Util {
         }
     }
 
-    public static String getOsBinExtension() {
-        if (RuntimeUtil.isWindows()) return ".dll";
-        if (RuntimeUtil.isMac()) return ".dylib";
-        if (RuntimeUtil.isNix()) return ".os";
-        return "";
+    public enum OsArch {
+        WIN_X64("win", "x64", ".dll", true),
+        WIN_ARM64("win", "arm64", ".dll", false),
+        MAC_X64("mac", "x64", ".dylib", false),
+        MAC_ARM64("mac", "arm64", ".dylib", false),
+        NIX_X64("nix", "x64", ".os", false),
+        NIX_ARM64("nix", "arm64", ".os", false)
+        ;
+
+        public final String OS;
+        public final String ARCH;
+        public final String EXT;
+        public final boolean wrapped;
+        OsArch(String os, String arch, String ext, boolean isWrapped) {
+            OS = os;
+            ARCH = arch;
+            EXT = ext;
+            wrapped = isWrapped;
+        }
+
+        @Override
+        public String toString() {
+            return OS + "-" + ARCH;
+        }
     }
 
     public static String getUserAgentBasedOnOS() {
-//        var winLegacy = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0";
-        //        var macEdge = "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/112.0.1722.71";
-//        var linuxFirefox = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/113.0.0.0 Chrome/113.0.0.0 Safari/537.36";
         return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
     }
 }
