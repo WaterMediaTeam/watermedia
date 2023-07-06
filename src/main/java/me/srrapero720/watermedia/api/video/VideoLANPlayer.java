@@ -35,7 +35,7 @@ public class VideoLANPlayer extends VideoPlayer {
     public CallbackMediaPlayerComponent getRaw() { return player; }
 
     public VideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        if (factory == null) factory = VideoLAN.defaultFactory();
+        if (factory == null) factory = VideoLAN.factory();
 
         if (WaterMediaAPI.isVLCReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
         else LOGGER.error(IT, "Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
