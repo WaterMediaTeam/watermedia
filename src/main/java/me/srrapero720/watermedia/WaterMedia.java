@@ -37,7 +37,7 @@ public class WaterMedia {
 		return true;
 	}
 
-	public static void crashByFVA() {
+	public static void onFVADetected() {
 		throw new IllegalStateException("FancyVideo-API is explicit incompatible with WATERMeDIA, please remove it");
 	}
 }

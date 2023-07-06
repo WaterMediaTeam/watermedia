@@ -26,7 +26,10 @@ public class VideoLAN {
     public static MediaPlayerFactory factory() { return FACTORY; }
 
     public static boolean init(Path workingDir) {
-        if (FACTORY != null) return true;
+        if (FACTORY != null) {
+            LOGGER.error(IT, "Rejected attempt to reload VideoLAN");
+            return true;
+        };
 
         // PATHS
         var logs = workingDir.resolve("logs/latest.log");

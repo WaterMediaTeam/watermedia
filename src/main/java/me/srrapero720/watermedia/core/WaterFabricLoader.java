@@ -18,17 +18,19 @@ public class WaterFabricLoader implements ClientModInitializer {
 
     public WaterFabricLoader() {
         LOGGER.info(IT, "Running WaterMedia on Fabric environment");
+
         LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
         LOGGER.error(IT, "WATERMeDIA not longer provides support for Fabric environments, breaks basic Java");
         LOGGER.error(IT, "If you encounter issues loading VLC try install VLC3, if not then report to Fabric");
         LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
+
+        WaterMedia.init();
     }
 
     @Override
     public void onInitializeClient() {
         FabricLoader.getInstance().getAllMods().forEach(modContainer -> {
-            if (modContainer.getMetadata().getId().equals("fancyvideo_api")) WaterMedia.crashByFVA();
+            if (modContainer.getMetadata().getId().equals("fancyvideo_api")) WaterMedia.onFVADetected();
         });
-        WaterMedia.init();
     }
 }
