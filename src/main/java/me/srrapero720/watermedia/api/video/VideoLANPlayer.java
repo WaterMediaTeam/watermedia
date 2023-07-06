@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.video;
 
+import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.media.MediaRef;
 import me.lib720.caprica.vlcj.media.MediaType;
@@ -122,7 +123,7 @@ public class VideoLANPlayer extends VideoPlayer {
     public boolean isValid() {
         if (player == null) return false;
         if (!getRawPlayerState().equals(State.ENDED) && !getRawPlayerState().equals(State.ERROR) && !getRawPlayerState().equals(State.OPENING) && !getRawPlayerState().equals(State.NOTHING_SPECIAL)) {
-            return getRawPlayerState().equals(State.STOPPED) ? getDimensions() != null : player.mediaPlayer().media().isValid();
+            return getRawPlayerState().equals(State.STOPPED) ? (!RuntimeUtil.isNix() && getDimensions() != null) : player.mediaPlayer().media().isValid();
         }
         return false;
     }
@@ -214,7 +215,7 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public long getDuration() {
         if (player == null) return 0L;
-        if (!isValid() || getRawPlayerState().equals(State.STOPPED)) return 0L;
+        if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
         return player.mediaPlayer().status().length();
     }
 
