@@ -265,6 +265,7 @@ public enum VLCBinaries {
         rootVLC = rootDir;
     }
     static void cleanup() { Util.deleteFrom(rootVLC.toAbsolutePath().toString()); }
+    static void extractAll() { for (VLCBinaries bin: VLCBinaries.values()) bin.extract(); }
     static String installedVersion() { return Util.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
     static String resVersion() { return "3.0.18"; }
 

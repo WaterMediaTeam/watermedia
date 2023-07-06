@@ -22,19 +22,19 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLAN {
     public static final Marker IT = MarkerFactory.getMarker("VideoLAN");
-    private static MediaPlayerFactory factory;
-    public static MediaPlayerFactory defaultFactory() { return factory; }
+    private static MediaPlayerFactory FACTORY;
+    public static MediaPlayerFactory factory() { return FACTORY; }
 
     public static boolean init(Path workingDir) {
-        if (factory != null) return true;
+        if (FACTORY != null) return true;
 
         // PATHS
-        var logs = workingDir.resolve("logs/vlc/");
+        var logs = workingDir.resolve("logs/latest.log");
         var path = workingDir.resolve("vlc/");
 
         // LOGGER INIT
-        if (!Files.exists(logs.toAbsolutePath())) logs.toFile().mkdirs();
-        else compressAndDeleteLogFile(logs.resolve("latest.log"));
+        if (!Files.exists(logs.toAbsolutePath())) if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
+        else compressAndDeleteLogFile(logs);
 
         // INIT
         CustomDirectoryProvider.init(path);
@@ -45,12 +45,12 @@ public class VideoLAN {
             boolean fresh = false;
             if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
                 // CLEAR
-                LOGGER.warn(IT, "Running deletion for VLC Files");
+                LOGGER.warn(IT, "Running VLC installation cleanup");
                 VLCBinaries.cleanup();
 
                 // EXTRACT
-                LOGGER.warn(IT, "Running extraction for VLC Files");
-                for (var binary : VLCBinaries.values()) binary.extract();
+                LOGGER.warn(IT, "Running VLC extraction");
+                VLCBinaries.extractAll();
 
                 // SET LOCAL VERSION
                 try {
@@ -58,23 +58,33 @@ public class VideoLAN {
                     if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
                     Files.writeString(config, VLCBinaries.resVersion());
                 } catch (Exception e) {
-                    LOGGER.error(IT, "Could not write to configuration file", e);
+                    LOGGER.error(IT, "Could not write configuration file", e);
                 }
                 fresh = true;
-            } else LOGGER.warn(IT, "Detected WaterMedia's VLC installation");
+            } else LOGGER.warn(IT, "Detected WaterMedia's VLC installation, skipping extract");
 
             // Integrity check
             if (!fresh) {
                 LOGGER.info(IT, "Running integrity check");
                 for (var binary : VLCBinaries.values()) binary.checkIntegrity();
             }
+        } else {
+            LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
+            LOGGER.error(IT, "WATERMeDIA doesn't include VLC binaries for your operative system / system architecture");
+            LOGGER.error(IT, "You had to install VLC manually on https://www.videolan.org/ - More info to SrRapero720");
+            LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
         }
 
-        factory = ThreadUtil.tryAndReturnNull(
-                defaultVar -> WaterMediaAPI.createVLCFactory(Util.getArrayStringFromRes("vlc/command-line.json")), e -> LOGGER.error(IT, "Failed to load VLC", e)
-        );
+        FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
+            String[] args = Util.getArrayStringFromRes("vlc/command-line.json");
+            for (int i = 0; i < args.length; i++) {
+                args[i] = args[i].replace("%logfile%", logs.toAbsolutePath().toString());
+            }
 
-        return factory != null;
+            return WaterMediaAPI.createVLCFactory(args);
+        }, e -> LOGGER.error(IT, "Failed to load VLC", e));
+
+        return FACTORY != null;
     }
 
 
@@ -88,14 +98,14 @@ public class VideoLAN {
         String compressedFilePath = logFile.getParent() + "/" + date + ".log.gz";
 
         int count = 0;
-        while (new File(compressedFilePath).exists()) compressedFilePath = logFile.getParent() + "/" + date + "-" + (count++) + ".log.gz";
+        while (new File(compressedFilePath).exists()) compressedFilePath = logFile.getParent() + "/" + date + "-" + (++count) + ".log.gz";
 
         try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(new FileOutputStream(compressedFilePath)); InputStream inputStream = new FileInputStream(logFile)) {
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) gzipOutputStream.write(buffer, 0, bytesRead);
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed to compress logs/vlc/latest.log");
+            LOGGER.error(IT, "Failed to compress {}", logFilePath, e);
         }
         logFile.delete();
     }

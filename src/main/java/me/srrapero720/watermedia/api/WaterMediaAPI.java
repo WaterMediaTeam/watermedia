@@ -116,7 +116,7 @@ public final class WaterMediaAPI {
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
-    public static boolean isVLCReady() { return VideoLAN.defaultFactory() != null; }
+    public static boolean isVLCReady() { return VideoLAN.factory() != null; }
 
     /**
      * Created by CreativeMD

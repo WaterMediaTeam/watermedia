@@ -12,7 +12,7 @@
 
   "--file-logging",
   "--logfile",
-  "logs/vlc/latest.log",
+  "%logfile%",
   "--logmode", "text",
   "--verbose", "2",
 
