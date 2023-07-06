@@ -121,7 +121,10 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public boolean isValid() {
         if (player == null) return false;
-        return player.mediaPlayer().media().isValid();
+        if (!getRawPlayerState().equals(State.ENDED) && !getRawPlayerState().equals(State.ERROR) && !getRawPlayerState().equals(State.OPENING) && !getRawPlayerState().equals(State.NOTHING_SPECIAL)) {
+            return getRawPlayerState().equals(State.STOPPED) ? getDimensions() != null : player.mediaPlayer().media().isValid();
+        }
+        return false;
     }
 
     @Override
@@ -133,7 +136,7 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public boolean isPlaying() {
         if (player == null) return false;
-        return player.mediaPlayer().status().isPlaying();
+        return getRawPlayerState().equals(State.PLAYING);
     }
 
     @Override
@@ -211,7 +214,7 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public long getDuration() {
         if (player == null) return 0L;
-        if (getRawPlayerState().equals(State.ERROR) || getRawPlayerState().equals(State.OPENING) || getRawPlayerState().equals(State.ENDED)) return 0L;
+        if (!isValid() || getRawPlayerState().equals(State.STOPPED)) return 0L;
         return player.mediaPlayer().status().length();
     }
 
