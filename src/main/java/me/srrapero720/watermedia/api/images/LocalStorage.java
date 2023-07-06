@@ -23,6 +23,10 @@ public class LocalStorage {
     private static File index;
 
     public static boolean init(Path rootDir) {
+        if (dir != null && index != null) {
+            LOGGER.error(IT, "Rejected attempt to reload LocalStorage" + (rootDir.toAbsolutePath().resolve("cache/pictures").equals(dir.toPath()) ? "with a different path" : ""));
+            return true;
+        }
         LOGGER.info(IT, "Storage path used for logs and binaries '{}'", rootDir);
 
         dir = rootDir.toAbsolutePath().resolve("cache/pictures").toFile();

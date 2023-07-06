@@ -19,7 +19,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * Loader for FORGE
  * Doing things with FORGE classes/api is safe
  */
-@Mod("watermedia")
+@Mod(WaterMedia.ID)
 public class WaterForgeLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
 
@@ -35,7 +35,7 @@ public class WaterForgeLoader {
     }
 
     void common(FMLCommonSetupEvent event) {
-        if (FMLLoader.getLoadingModList().getModFileById("fancyvideo_api") != null) WaterMedia.crashByFVA();
+        if (FMLLoader.getLoadingModList().getModFileById("fancyvideo_api") != null) WaterMedia.onFVADetected();
     }
 
     void server(FMLDedicatedServerSetupEvent event) {
