@@ -166,7 +166,7 @@ public class VideoLANPlayer extends VideoPlayer {
 
     @Override
     public void setVolume(int volume) {
-        if (player == null) return;
+        if (!isValid()) return;
         player.mediaPlayer().audio().setVolume(volume);
         if (volume == 0 && !player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(true);
         else if (volume > 0 && player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(false);
@@ -174,7 +174,7 @@ public class VideoLANPlayer extends VideoPlayer {
 
     @Override
     public int getVolume() {
-        if (player == null) return 0;
+        if (isValid()) return 0;
         return player.mediaPlayer().audio().volume();
     }
 
