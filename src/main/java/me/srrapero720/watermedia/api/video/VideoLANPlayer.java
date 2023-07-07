@@ -174,7 +174,7 @@ public class VideoLANPlayer extends VideoPlayer {
 
     @Override
     public int getVolume() {
-        if (isValid()) return 0;
+        if (!isValid()) return 0;
         return player.mediaPlayer().audio().volume();
     }
 
