@@ -29,7 +29,7 @@ public class VideoLAN {
         if (FACTORY != null) {
             LOGGER.error(IT, "Rejected attempt to reload VideoLAN");
             return true;
-        };
+        }
 
         // PATHS
         var logs = workingDir.resolve("logs/latest.log");
@@ -74,7 +74,7 @@ public class VideoLAN {
         } else {
             LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
             LOGGER.error(IT, "WATERMeDIA doesn't include VLC binaries for your operative system / system architecture");
-            LOGGER.error(IT, "You had to install VLC manually on https://www.videolan.org/ - More info to SrRapero720");
+            LOGGER.error(IT, "You had to install VLC manually on https://www.videolan.org/ - More info ask to SrRapero720");
             LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
         }
 
