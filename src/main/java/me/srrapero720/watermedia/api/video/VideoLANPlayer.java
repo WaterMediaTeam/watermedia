@@ -28,14 +28,24 @@ import java.net.URL;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLANPlayer extends VideoPlayer {
-    private boolean buffering = false;
-    private boolean prepared = false;
     private static final Thread THREAD = Thread.currentThread();
     private static final Marker IT = MarkerFactory.getMarker("VideoLanPlayer");
+    private boolean buffering = false;
+    private boolean prepared = false;
+    private CallbackMediaPlayerComponent player;
     public final EventManager<VideoLANPlayer> events = new EventManager<>();
 
-    private CallbackMediaPlayerComponent player;
+    /**
+     * Get raw VLC player
+     * @deprecated use {@link VideoLANPlayer#raw()}
+     */
+    @Deprecated(forRemoval = true)
     public CallbackMediaPlayerComponent getRaw() { return player; }
+
+    /**
+     * Get raw VLC player
+     */
+    public CallbackMediaPlayerComponent raw() { return player; }
 
     public VideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         if (factory == null) factory = VideoLAN.factory();
@@ -202,7 +212,7 @@ public class VideoLANPlayer extends VideoPlayer {
     public boolean isStream() {
         if (player == null) return false;
         var mediaInfo = player.mediaPlayer().media().info();
-        return mediaInfo != null && (mediaInfo.type().equals(MediaType.STREAM) || mediaInfo.mrl().contains(".m3u8"));
+        return mediaInfo != null && (mediaInfo.type().equals(MediaType.STREAM) || mediaInfo.mrl().endsWith(".m3u") || mediaInfo.mrl().endsWith(".m3u8"));
     }
 
     public State getRawPlayerState() {
