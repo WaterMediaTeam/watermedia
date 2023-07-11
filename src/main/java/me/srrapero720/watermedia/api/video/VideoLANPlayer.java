@@ -269,22 +269,19 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public void release() {
         if (player == null) return;
-        player.mediaPlayer().events().removeMediaPlayerEventListener(eventListeners.get());
+        player.mediaPlayer().events().removeMediaPlayerEventListener(eventListeners);
         player.mediaPlayer().release();
         player = null;
-
-        // Safe to clear
-        eventListeners.clear();
     }
 
 
     private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback) {
         final var component = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
-        component.mediaPlayer().events().addMediaPlayerEventListener(eventListeners.get());
+        component.mediaPlayer().events().addMediaPlayerEventListener(eventListeners);
         return component;
     }
 
-    private final SoftReference<MediaPlayerEventListener> eventListeners = new SoftReference<>( new MediaPlayerEventListener() {
+    private final MediaPlayerEventListener eventListeners = new MediaPlayerEventListener() {
         @Override
         public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
@@ -440,6 +437,6 @@ public class VideoLANPlayer extends VideoPlayer {
             prepared = true;
             events.callPlayerReadyEvent(VideoLANPlayer.this, new PlayerReadyEvent.EventData());
         }
-    });
+    };
 }
 
