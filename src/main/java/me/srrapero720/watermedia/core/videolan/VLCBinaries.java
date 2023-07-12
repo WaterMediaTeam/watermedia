@@ -254,7 +254,7 @@ public enum VLCBinaries {
     }
 
     void checkIntegrity() {
-        if (!Util.integrityCheck(Util.resourceAsStream(resourceOrigin), new File(rootVLC.toAbsolutePath() + intendedDestination))) {
+        if (!Util.integrityCheck(resourceOrigin, new File(rootVLC.toAbsolutePath() + intendedDestination))) {
             delete();
             extract();
         }

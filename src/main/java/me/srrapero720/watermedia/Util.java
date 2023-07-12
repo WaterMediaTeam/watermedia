@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +22,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.CheckedOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -39,11 +41,23 @@ public class Util {
     }
 
     /**
-     * Gets a resource from WaterMedia jar
+     * Gets a resource classLoader WaterMedia jar
      * @param path where is located the specific file
      * @return a InputStream with the file.
      */
-    public static InputStream resourceAsStream(String path, ClassLoader from) { return from.getResourceAsStream(path); }
+    public static InputStream resourceAsStream(String path, ClassLoader classLoader) {
+        try {
+            URLConnection connection = classLoader.getResource(path).openConnection();
+            return connection.getInputStream();
+        } catch (Exception e) {
+            LOGGER.error(IT, "### WARNING");
+            LOGGER.error(IT, "### CANNOT GET INPUT STREAM FROM OUR JAR RESOURCES, CHECK DEBUG.LOG FOR BETTER INFO");
+            if (LOGGER.isDebugEnabled()) LOGGER.debug(IT, "Exception trying to get InputStream", e);
+            else LOGGER.error(IT, "Exception trying to get InputStream", e);
+        }
+
+        return classLoader.getResourceAsStream(path);
+    }
 
     /**
      * Gets a resource from WaterMedia jar
@@ -71,7 +85,11 @@ public class Util {
             if (reader != null) result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
             else throw new IllegalArgumentException("File not found!");
 
-        } catch (Exception e) { LOGGER.error(IT, "Exception trying to read JSON from {}", path, e);}
+        } catch (Exception e) {
+            LOGGER.error(IT, "### Exception trying to read JSON from {}", path);
+            if (LOGGER.isDebugEnabled()) LOGGER.debug(IT, "### Information", e);
+            else LOGGER.error("### Information", e);
+        }
 
         return result;
     }
@@ -97,7 +115,9 @@ public class Util {
                 throw new RuntimeException("Resource was not found in " + originPath);
             }
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed to extract from {} to {} due to unexpected error: {}", originPath, destinationPath, e);
+            LOGGER.error(IT, "### Failed to extract from {} to {} due to unexpected error", originPath, destinationPath);
+            if (LOGGER.isDebugEnabled()) LOGGER.debug(IT, "### Information", e);
+            else LOGGER.error("### Information", e);
         }
     }
 
@@ -158,8 +178,8 @@ public class Util {
         }
     }
 
-    public static boolean integrityCheck(InputStream sourceStream, File targetFile) {
-        try {
+    public static boolean integrityCheck(String source, File targetFile) {
+        try (InputStream sourceStream = Util.resourceAsStream(source)) {
             MessageDigest md = MessageDigest.getInstance("MD5");
 
             byte[] sourceDigest = calculateDigest(sourceStream, md);
