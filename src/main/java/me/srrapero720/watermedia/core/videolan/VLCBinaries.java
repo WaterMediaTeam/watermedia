@@ -262,8 +262,8 @@ public enum VLCBinaries {
     }
 
     static void init(Path rootDir) {
-        LOGGER.info(IT, "Running on {}", Tools.getArch());
-        LOGGER.info(IT, "Working on path {}", rootDir);
+        LOGGER.info(IT, "System detected: {}", Tools.getArch());
+        LOGGER.info(IT, "Mounted on path {}", rootDir);
         binPath = rootDir;
     }
     static void cleanup() { Tools.deleteFrom(binPath.toAbsolutePath().toString()); }

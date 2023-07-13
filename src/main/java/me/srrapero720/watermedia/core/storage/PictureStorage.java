@@ -32,7 +32,7 @@ public class PictureStorage {
         index = new File(dir, "indexer");
 
         // LOGGER
-        LOGGER.info(IT, "Starting PictureStorage in '{}'", dir.toString());
+        LOGGER.info(IT, "Mounted PictureStorage on path '{}'", dir.toString());
 
         if (!dir.exists()) dir.mkdirs();
         if (index.exists()) {

@@ -50,11 +50,11 @@ public class VideoLAN {
             boolean fresh = false;
             if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
                 // CLEAR
-                LOGGER.info(IT, "Running VLC installation cleanup");
+                LOGGER.info(IT, "Running VLC cleanup");
                 VLCBinaries.cleanup();
 
                 // EXTRACT
-                LOGGER.info(IT, "Running VLC extraction");
+                LOGGER.info(IT, "Running VLC binary installation");
                 VLCBinaries.extractAll(modLoader);
 
                 // SET LOCAL VERSION
