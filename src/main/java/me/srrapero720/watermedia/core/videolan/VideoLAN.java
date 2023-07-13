@@ -3,7 +3,9 @@ package me.srrapero720.watermedia.core.videolan;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
-import me.srrapero720.watermedia.Util;
+import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.core.util.IModLoader;
+import me.srrapero720.watermedia.core.util.Tools;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import org.slf4j.Marker;
@@ -25,7 +27,8 @@ public class VideoLAN {
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory factory() { return FACTORY; }
 
-    public static boolean init(Path workingDir) {
+    public static boolean init(IModLoader modLoader) {
+        Path workingDir = modLoader.getTempDir();
         if (FACTORY != null) {
             LOGGER.error(IT, "Rejected attempt to reload VideoLAN");
             return true;
@@ -36,14 +39,16 @@ public class VideoLAN {
         var path = workingDir.resolve("vlc/");
 
         // LOGGER INIT
-        if (!Files.exists(logs.toAbsolutePath())) if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
-        else compressAndDeleteLogFile(logs);
+        if (!Files.exists(logs.toAbsolutePath())) {
+            if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
+            else compressAndDeleteLogFile(logs);
+        }
 
         // INIT
         CustomDirectoryProvider.init(path);
         VLCBinaries.init(path);
 
-        if (Util.ARCH.wrapped) {
+        if (Tools.getArch().wrapped) {
             // Check if we need to update binaries
             boolean fresh = false;
             if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
@@ -74,12 +79,12 @@ public class VideoLAN {
         } else {
             LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
             LOGGER.error(IT, "WATERMeDIA doesn't include VLC binaries for your operative system / system architecture");
-            LOGGER.error(IT, "You had to install VLC manually on https://www.videolan.org/ - More info ask to SrRapero720");
+            LOGGER.error(IT, "You had to install VLC manually in https://www.videolan.org/ - More info ask to SrRapero720");
             LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
         }
 
         FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = Util.getArrayStringFromRes("vlc/command-line.json");
+            String[] args = Tools.getJsonListFromRes("vlc/args.json").toArray(new String[0]);
             for (int i = 0; i < args.length; i++) {
                 args[i] = args[i].replace("%logfile%", logs.toAbsolutePath().toString());
             }

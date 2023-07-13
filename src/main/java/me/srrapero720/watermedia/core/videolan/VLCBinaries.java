@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.core.videolan;
 
-import me.srrapero720.watermedia.Util;
+import me.srrapero720.watermedia.core.util.Tools;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -231,47 +231,47 @@ public enum VLCBinaries {
     youtube(Type.LUAC, "playlist"),
     ;
 
-    private static Path rootVLC;
-    private final String resourceOrigin;
-    private final String intendedDestination;
+    private static Path binPath;
+    private final String origin;
+    private final String destination;
 
     VLCBinaries(Type type, String dir) {
         String relativeDir = (dir != null
                 ? (type.equals(Type.BIN) ? "plugins/" : "") + dir + "/"
                 : "") + name() + type.extension;
         
-        this.resourceOrigin = type.rootDir + "/" + relativeDir;
-        this.intendedDestination = (type.equals(Type.LUAC) ? "/lua/" : "/") + relativeDir;
+        this.origin = type.rootDir + "/" + relativeDir;
+        this.destination = (type.equals(Type.LUAC) ? "/lua/" : "/") + relativeDir;
     }
 
     void extract() {
-        Util.extractFrom(resourceOrigin, rootVLC.toAbsolutePath() + intendedDestination);
+        Tools.extractFrom(origin, binPath.toAbsolutePath() + destination);
     }
 
     void delete() {
-        String destination = rootVLC.toAbsolutePath() + intendedDestination;
+        String destination = binPath.toAbsolutePath() + this.destination;
         if (new File(destination).delete()) LOGGER.warn(IT, "File '{}' cannot be deleted", name());
     }
 
     void checkIntegrity() {
-        if (!Util.integrityCheck(resourceOrigin, new File(rootVLC.toAbsolutePath() + intendedDestination))) {
+        if (!Tools.integrityFrom(origin, new File(binPath.toAbsolutePath() + destination))) {
             delete();
             extract();
         }
     }
 
     static void init(Path rootDir) {
-        LOGGER.info("Running on {} reading path {}", Util.ARCH, rootDir);
-        rootVLC = rootDir;
+        LOGGER.info("Running on {} reading path {}", Tools.getArch(), rootDir);
+        binPath = rootDir;
     }
-    static void cleanup() { Util.deleteFrom(rootVLC.toAbsolutePath().toString()); }
+    static void cleanup() { Tools.deleteFrom(binPath.toAbsolutePath().toString()); }
     static void extractAll() { for (VLCBinaries bin: VLCBinaries.values()) bin.extract(); }
-    static String installedVersion() { return Util.readFrom(rootVLC.resolve("version.cfg").toAbsolutePath()); }
+    static String installedVersion() { return Tools.readFrom(binPath.resolve("version.cfg").toAbsolutePath()); }
     static String resVersion() { return "3.0.18"; }
 
     enum Type {
         LUAC("/vlc/lua", ".luac"),
-        BIN("/vlc/" + Util.ARCH, Util.ARCH.EXT);
+        BIN("/vlc/" + Tools.getArch(), Tools.getArch().EXT);
         public final String rootDir;
         public final String extension;
         Type(String rootDir, String ext) { this.rootDir = rootDir; this.extension = ext; }

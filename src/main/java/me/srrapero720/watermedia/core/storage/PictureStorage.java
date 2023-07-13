@@ -1,5 +1,7 @@
-package me.srrapero720.watermedia.api.images;
+package me.srrapero720.watermedia.core.storage;
 
+import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.core.util.IModLoader;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
@@ -15,21 +17,22 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class LocalStorage {
-    private static final Marker IT = MarkerFactory.getMarker(LocalStorage.class.getSimpleName());
-    private static final Map<String, Entry> entries = new HashMap<>();
+public class PictureStorage {
+    private static final Marker IT = MarkerFactory.getMarker("PictureStorage");
+    private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;
     private static File index;
 
-    public static boolean init(Path rootDir) {
-        if (dir != null && index != null) {
-            LOGGER.error(IT, "Rejected attempt to reload LocalStorage" + (rootDir.toAbsolutePath().resolve("cache/pictures").equals(dir.toPath()) ? "with a different path" : ""));
+    public static boolean init(IModLoader modLoader) {
+        Path workingDir = modLoader.getTempDir();
+        if (dir != null || index != null) {
+            LOGGER.error(IT, "Rejected attempt to reload LocalStorage" + (workingDir.toAbsolutePath().resolve("cache/pictures").equals(dir.toPath()) ? "with a different path" : ""));
             return true;
         }
-        LOGGER.info(IT, "Storage path used for logs and binaries '{}'", rootDir);
+        LOGGER.info(IT, "Storage path used for logs and binaries '{}'", workingDir);
 
-        dir = rootDir.toAbsolutePath().resolve("cache/pictures").toFile();
+        dir = workingDir.toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "indexer");
 
         if (!dir.exists()) dir.mkdirs();
@@ -43,7 +46,7 @@ public class LocalStorage {
                     var time = stream.readLong();
                     var expireTime = stream.readLong();
                     var entry = new Entry(url, tag.length() > 0 ? tag : null, time, expireTime);
-                    entries.put(entry.getUrl(), entry);
+                    ENTRIES.put(entry.getUrl(), entry);
                 }
 
                 return true;
@@ -55,7 +58,7 @@ public class LocalStorage {
         return true;
     }
 
-    public static File getFile(String url) {
+    private static File getFile(String url) {
         return new File(dir, Base64.encodeBase64String(url.getBytes()));
     }
 
@@ -73,7 +76,7 @@ public class LocalStorage {
         } finally { IOUtils.closeQuietly(out); }
 
         // SAVE INDEX FIST
-        if (saved && refreshAllIndexOnFile()) entries.put(url, entry);
+        if (saved && refreshAllIndexOnFile()) ENTRIES.put(url, entry);
         else if (file.exists()) file.delete();
     }
 
@@ -81,9 +84,9 @@ public class LocalStorage {
         var out = (DataOutputStream) null;
         try {
             out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)));
-            out.writeInt(entries.size());
+            out.writeInt(ENTRIES.size());
 
-            for (var mapEntry : entries.entrySet()) {
+            for (var mapEntry : ENTRIES.entrySet()) {
                 var entry = mapEntry.getValue();
                 out.writeUTF(entry.getUrl());
                 out.writeUTF(entry.getTag() == null ? "" : entry.getTag());
@@ -98,12 +101,12 @@ public class LocalStorage {
         } finally { IOUtils.closeQuietly(out); }
     }
 
-    public static Entry getEntry(String url) { return entries.get(url); }
+    public static Entry getEntry(String url) { return ENTRIES.get(url); }
     public static void updateEntry(Entry fresh) {
-        entries.put(fresh.url, fresh);
+        ENTRIES.put(fresh.url, fresh);
     }
     public static void deleteEntry(String url) {
-        entries.remove(url);
+        ENTRIES.remove(url);
         var file = getFile(url);
         if (file.exists()) file.delete();
     }
@@ -128,5 +131,6 @@ public class LocalStorage {
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
+        public File getFile() { return PictureStorage.getFile(url); }
     }
 }

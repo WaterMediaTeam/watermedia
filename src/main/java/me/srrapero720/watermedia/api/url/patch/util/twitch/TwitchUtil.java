@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.srrapero720.watermedia.Util;
 import me.srrapero720.watermedia.api.url.patch.util.StreamQuality;
 
 import java.io.IOException;
@@ -17,9 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.srrapero720.watermedia.core.util.Tools.USER_AGENT;
+
 public class TwitchUtil {
     private static final Gson gson = new Gson();
-    private static final String USER_AGENT = Util.getUserAgentBasedOnOS();
 
     public static List<StreamQuality> getStream(String stream) throws IOException, StreamNotFound {
         String apiUrl = buildApiUrl(stream, false);

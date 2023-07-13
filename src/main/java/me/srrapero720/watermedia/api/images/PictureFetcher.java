@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia.api.images;
 
-import me.srrapero720.watermedia.Util;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.core.storage.PictureStorage;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -18,11 +18,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static me.srrapero720.watermedia.core.util.Tools.USER_AGENT;
 
 public abstract class PictureFetcher extends Thread {
     private static final Marker IT = MarkerFactory.getMarker("FetchPicture");
     private static final Object LOCK = new Object();
-    private static final String USER_AGENT = Util.getUserAgentBasedOnOS();
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     // STATUS
@@ -76,7 +76,7 @@ public abstract class PictureFetcher extends Thread {
         } catch (Exception e) {
             LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
             onFailed(e);
-            LocalStorage.deleteEntry(url);
+            PictureStorage.deleteEntry(url);
         }
 
         synchronized (LOCK) {
@@ -85,7 +85,7 @@ public abstract class PictureFetcher extends Thread {
     }
 
     public static byte[] load(String url) throws IOException, VideoContentException {
-        var entry = LocalStorage.getEntry(url);
+        var entry = PictureStorage.getEntry(url);
         var requestTime = System.currentTimeMillis();
         var request = new URL(url).openConnection();
 
@@ -93,7 +93,7 @@ public abstract class PictureFetcher extends Thread {
 
         request.addRequestProperty("User-Agent", USER_AGENT);
         if (request instanceof HttpURLConnection conn) {
-            if (entry != null && LocalStorage.getFile(entry.getUrl()).exists()) {
+            if (entry != null && entry.getFile().exists()) {
                 if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
                 else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
             }
@@ -132,19 +132,19 @@ public abstract class PictureFetcher extends Thread {
                 if (tag != null && !tag.isEmpty()) freshTag = tag;
 
                 if (code == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                    File file = LocalStorage.getFile(entry.getUrl());
+                    File file = entry.getFile();
 
                     if (file.exists()) try (var fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        LocalStorage.updateEntry(new LocalStorage.Entry(url, freshTag, lastTimestamp, expTimestamp));
+                        PictureStorage.updateEntry(new PictureStorage.Entry(url, freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
             if (readType(data) == null) throw new VideoContentException();
-            LocalStorage.saveFile(url, tag, lastTimestamp, expTimestamp, data);
+            PictureStorage.saveFile(url, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection http) http.disconnect();

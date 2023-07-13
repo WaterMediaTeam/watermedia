@@ -1,50 +1,83 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.core.util.IModLoader;
+import net.minecraftforge.eventbus.EventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkConstants;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Loader for FORGE
  * Doing things with FORGE classes/api is safe
  */
 @Mod(WaterMedia.ID)
-public class WaterForgeLoader {
+public class WaterForgeLoader implements IModLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
+    private final WaterMedia INSTANCE;
 
     public WaterForgeLoader() {
-        LOGGER.info(IT, "Running WaterMedia on Forge environment");
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::server);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::common);
+        // DEFINE
+        INSTANCE = new WaterMedia(this);
+        IEventBus BUS = FMLJavaModLoadingContext.get().getModEventBus();
 
-        if (!FMLEnvironment.dist.isDedicatedServer()) WaterMedia.init();
+        // SETUP
+        BUS.addListener((FMLClientSetupEvent event) -> INSTANCE.throwClientException());
+        BUS.addListener((FMLDedicatedServerSetupEvent event) -> INSTANCE.throwServerException());
+
+        // INIT
+        INSTANCE.init();
 
         //Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
     }
 
-    void common(FMLCommonSetupEvent event) {
-        if (FMLLoader.getLoadingModList().getModFileById("fancyvideo_api") != null) WaterMedia.onFVADetected();
+    @Override
+    public boolean isDevEnv() {
+        return !FMLLoader.isProduction();
     }
 
-    void server(FMLDedicatedServerSetupEvent event) {
-        LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-        LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVERS. remove this mod from server to stop crashes");
-        LOGGER.error(IT, "If dependant mods throws error loading WATERMeDIA classes report it to the creator");
-        LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
+    @Override
+    public boolean isClient() {
+        return FMLLoader.getDist().isClient();
+    }
 
-        if (FMLLoader.isProduction()) throw new IllegalStateException("REMOVE WATERMeDIA FROM SERVER_SIDE, THIS IS A CLIENT_SIDE MOD!!!");
-        else LOGGER.warn(IT, "Developer environment detected, ignoring crashes");
+    @Override
+    public boolean isThisModPresent(String modid) {
+        if (ModList.get() != null) return ModList.get().isLoaded(modid);
+        else return FMLLoader.getLoadingModList().getModFileById(modid) != null;
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader(); // This will be problematic
+    }
+
+    @Override
+    public String getLoaderName() {
+        return "FORGE";
+    }
+
+    @Override
+    public Path getGameDir() {
+        return FMLLoader.getGamePath();
+    }
+
+    @Override
+    public Path getTempDir() {
+        return new File(System.getProperty("java.io.tmpdir")).toPath().resolve("watermedia");
     }
 }
