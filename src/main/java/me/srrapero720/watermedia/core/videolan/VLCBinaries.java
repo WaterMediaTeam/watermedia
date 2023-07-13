@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.core.videolan;
 
+import me.srrapero720.watermedia.core.util.IModLoader;
 import me.srrapero720.watermedia.core.util.Tools;
 
 import java.io.File;
@@ -244,8 +245,8 @@ public enum VLCBinaries {
         this.destination = (type.equals(Type.LUAC) ? "/lua/" : "/") + relativeDir;
     }
 
-    void extract() {
-        Tools.extractFrom(origin, binPath.toAbsolutePath() + destination);
+    void extract(IModLoader modLoader) {
+        Tools.extractFrom(modLoader.getClassLoader(), origin, binPath.toAbsolutePath() + destination);
     }
 
     void delete() {
@@ -253,19 +254,20 @@ public enum VLCBinaries {
         if (new File(destination).delete()) LOGGER.warn(IT, "File '{}' cannot be deleted", name());
     }
 
-    void checkIntegrity() {
-        if (!Tools.integrityFrom(origin, new File(binPath.toAbsolutePath() + destination))) {
+    void checkIntegrity(IModLoader modLoader) {
+        if (!Tools.integrityFrom(modLoader.getClassLoader(), origin, new File(binPath.toAbsolutePath() + destination))) {
             delete();
-            extract();
+            extract(modLoader);
         }
     }
 
     static void init(Path rootDir) {
-        LOGGER.info("Running on {} reading path {}", Tools.getArch(), rootDir);
+        LOGGER.info(IT, "Running on {}", Tools.getArch());
+        LOGGER.info(IT, "Working on path {}", rootDir);
         binPath = rootDir;
     }
     static void cleanup() { Tools.deleteFrom(binPath.toAbsolutePath().toString()); }
-    static void extractAll() { for (VLCBinaries bin: VLCBinaries.values()) bin.extract(); }
+    static void extractAll(IModLoader modLoader) { for (VLCBinaries bin: VLCBinaries.values()) bin.extract(modLoader); }
     static String installedVersion() { return Tools.readFrom(binPath.resolve("version.cfg").toAbsolutePath()); }
     static String resVersion() { return "3.0.18"; }
 

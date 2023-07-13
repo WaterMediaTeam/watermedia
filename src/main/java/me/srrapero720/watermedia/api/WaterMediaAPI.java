@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.srrapero720.watermedia.core.util.IModLoader;
 import me.srrapero720.watermedia.core.util.Tools;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
@@ -23,28 +24,50 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
-    public static final RenderablePicture LOADING_GIF = new RenderablePicture(Tools.getGifFromResources("/images/loading.gif"));
-    public static final RenderablePicture VLC_FAILED = new RenderablePicture(Tools.getImageFromResources("/images/vlc_win_failed.png"));
-    public static final RenderablePicture VLC_FAILED_INSTALL = new RenderablePicture(Tools.getImageFromResources("/images/vlc_otheros_failed.png"));
+    private static final List<URLPatch> URL_PATCHERS = new ArrayList<>();
 
-    private static final List<URLPatch> URL_PATCHERS = new ArrayList<>(List.of(
-            new YoutubePatch(),
-            new TwitchPatch(),
-            new KickPatch(),
-            new DrivePatch(),
-            new TwitterPatch(),
-            new OnedrivePatch(),
-            new DropboxPatch())
-    );
+    // RESOURCES
+    public static RenderablePicture LOADING_GIF;
+    public static RenderablePicture VLC_FAILED;
+    public static RenderablePicture VLC_FAILED_INSTALL;
+
+    public static void init(IModLoader modLoader) {
+        LOGGER.warn(IT, (URL_PATCHERS.size() > 0 ? "Rel" : "L") + "oading URLPatches");
+        URL_PATCHERS.clear();
+        URL_PATCHERS.addAll(List.of(new URLPatch[]{
+                new YoutubePatch(),
+                new TwitchPatch(),
+                new KickPatch(),
+                new DrivePatch(),
+                new TwitterPatch(),
+                new OnedrivePatch(),
+                new DropboxPatch()})
+        );
+
+        LOGGER.info(IT, "Loading internal RenderablePicture's");
+
+        if (LOADING_GIF == null) {
+            LOADING_GIF = new RenderablePicture(Objects.requireNonNull(Tools.getGifFromResources(modLoader.getClassLoader(), "/images/loading.gif")));
+        } else LOGGER.warn(IT, "Skipping LOADING_GIF");
+
+        if (VLC_FAILED == null) {
+            VLC_FAILED = new RenderablePicture(Tools.getImageFromResources(modLoader.getClassLoader(), "/images/vlc_win_failed.png"));
+        } else LOGGER.warn(IT, "Skipping VLC_FAILED");
+
+        if (VLC_FAILED_INSTALL == null) {
+            VLC_FAILED_INSTALL = new RenderablePicture(Tools.getImageFromResources(modLoader.getClassLoader(), "/images/vlc_otheros_failed.png"));
+        } else LOGGER.warn(IT, "Skipping VLC_FAILED_INSTALL");
+    }
 
     /**
      * 1 seconds in Minecraft equals 20 ticks
      * 20x50 equals 1000ms (1 sec)
      *
-     * @param ticks Minecraft Ticks
+     * @param ticks Minecraft Tick count
      * @return ticks converted to MS
      */
     public static long gameTicksToMs(int ticks) { return ticks * 50L; }

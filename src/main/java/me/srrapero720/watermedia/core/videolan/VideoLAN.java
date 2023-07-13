@@ -27,14 +27,11 @@ public class VideoLAN {
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory factory() { return FACTORY; }
 
-    public static boolean init(IModLoader modLoader) {
+    public static void init(IModLoader modLoader) {
         Path workingDir = modLoader.getTempDir();
-        if (FACTORY != null) {
-            LOGGER.error(IT, "Rejected attempt to reload VideoLAN");
-            return true;
-        }
+        if (FACTORY != null) throw new IllegalStateException("Rejected attempt to reload VideoLAN");
 
-        // PATHS
+        // SETUP PATHS
         var logs = workingDir.resolve("logs/latest.log");
         var path = workingDir.resolve("vlc/");
 
@@ -53,12 +50,12 @@ public class VideoLAN {
             boolean fresh = false;
             if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
                 // CLEAR
-                LOGGER.warn(IT, "Running VLC installation cleanup");
+                LOGGER.info(IT, "Running VLC installation cleanup");
                 VLCBinaries.cleanup();
 
                 // EXTRACT
-                LOGGER.warn(IT, "Running VLC extraction");
-                VLCBinaries.extractAll();
+                LOGGER.info(IT, "Running VLC extraction");
+                VLCBinaries.extractAll(modLoader);
 
                 // SET LOCAL VERSION
                 try {
@@ -66,7 +63,7 @@ public class VideoLAN {
                     if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
                     Files.writeString(config, VLCBinaries.resVersion());
                 } catch (Exception e) {
-                    LOGGER.error(IT, "Could not write configuration file", e);
+                    LOGGER.error(IT, "Exception writing configuration file", e);
                 }
                 fresh = true;
             } else LOGGER.warn(IT, "Detected WaterMedia's VLC installation, skipping extract");
@@ -74,7 +71,7 @@ public class VideoLAN {
             // Integrity check
             if (!fresh) {
                 LOGGER.info(IT, "Running integrity check");
-                for (var binary : VLCBinaries.values()) binary.checkIntegrity();
+                for (var binary : VLCBinaries.values()) binary.checkIntegrity(modLoader);
             }
         } else {
             LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
@@ -84,15 +81,13 @@ public class VideoLAN {
         }
 
         FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = Tools.getJsonListFromRes("vlc/args.json").toArray(new String[0]);
+            String[] args = Tools.getJsonListFromRes(modLoader.getClassLoader(), "vlc/args.json").toArray(new String[0]);
             for (int i = 0; i < args.length; i++) {
                 args[i] = args[i].replace("%logfile%", logs.toAbsolutePath().toString());
             }
 
             return WaterMediaAPI.createVLCFactory(args);
         }, e -> LOGGER.error(IT, "Failed to load VLC", e));
-
-        return FACTORY != null;
     }
 
 

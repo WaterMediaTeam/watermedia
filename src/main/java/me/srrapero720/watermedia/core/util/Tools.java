@@ -35,7 +35,7 @@ public class Tools {
      * @param path where is located the specific JSON
      * @return a List[String] with the JSON content
      */
-    public static List<String> getJsonListFromRes(String path) {
+    public static List<String> getJsonListFromRes(ClassLoader loader, String path) {
         List<String> result = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(LOADER.getResourceAsStream(path))))) {
             result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
@@ -48,7 +48,7 @@ public class Tools {
         return result;
     }
 
-    public static void extractFrom(String originPath, String destinationPath) {
+    public static void extractFrom(ClassLoader loader, String originPath, String destinationPath) {
         try (InputStream is = LOADER.getResourceAsStream(originPath)) {
             Path dllDestinationPath = Paths.get(destinationPath);
             if (is != null) {
@@ -77,7 +77,7 @@ public class Tools {
         return ThreadUtil.tryAndReturn(defaultVar -> Files.exists(path) ? Files.readString(path) : defaultVar, null);
     }
 
-    public static BufferedImage getImageFromResources(String path) {
+    public static BufferedImage getImageFromResources(ClassLoader loader, String path) {
         try (InputStream in = LOADER.getResourceAsStream(path)) {
             var image = ImageIO.read(Objects.requireNonNull(in));
             if (image != null) return image;
@@ -87,7 +87,7 @@ public class Tools {
         }
     }
 
-    public static GifDecoder getGifFromResources(String path) {
+    public static GifDecoder getGifFromResources(ClassLoader loader, String path) {
         try (InputStream inputStream = LOADER.getResourceAsStream(path); ByteArrayInputStream in = (inputStream != null) ? new ByteArrayInputStream(IOUtils.toByteArray(inputStream)) : null) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
@@ -104,7 +104,7 @@ public class Tools {
         }
     }
 
-    public static boolean integrityFrom(String source, File targetFile) {
+    public static boolean integrityFrom(ClassLoader loader, String source, File targetFile) {
         try (InputStream sourceStream = LOADER.getResourceAsStream(source)) {
             MessageDigest md = MessageDigest.getInstance("MD5");
 

@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia;
 
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.lavaplayer.LavaCore;
 import me.srrapero720.watermedia.core.storage.PictureStorage;
@@ -48,25 +49,24 @@ public class WaterMedia {
 		}
 
 		// PREPARE API
+		LOGGER.info(IT, "Loading WaterMediaAPI");
+		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> LOGGER.error("Exception loading WaterMediaAPI"));
+
+		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading PictureStorage");
-		ThreadUtil.trySimple(() -> PictureStorage.init(LOADER), (e) -> LOGGER.error("Exception loading PictureStorage", e));
+		ThreadUtil.trySimple(() -> PictureStorage.init(LOADER), e -> LOGGER.error("Exception loading PictureStorage", e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading VideoLAN");
-		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), (e) -> LOGGER.error("Exception loading VideoLAN", e));
+		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> LOGGER.error("Exception loading VideoLAN", e));
 
 		// PREPARE LAVAPLAYER
 		LOGGER.info(IT, "Loading LavaPlayer");
-		ThreadUtil.trySimple(() -> LavaCore.init(LOADER), (e) -> LOGGER.error("Exception loading LavaPlayer", e));
+		ThreadUtil.trySimple(() -> LavaCore.init(LOADER), e -> LOGGER.error("Exception loading LavaPlayer", e));
 
-		LOGGER.info(IT, "WaterMedia started successfully");
+		LOGGER.info(IT, "Finished WaterMedia startup");
 	}
 
-	public void throwClientException() {
-		if (CLIENT_EXCEPTION != null) throw CLIENT_EXCEPTION;
-	}
-
-	public void throwServerException() {
-		if (SERVER_EXCEPTION != null) throw SERVER_EXCEPTION;
-	}
+	public void throwClientException() { if (CLIENT_EXCEPTION != null) throw CLIENT_EXCEPTION; }
+	public void throwServerException() { if (SERVER_EXCEPTION != null) throw SERVER_EXCEPTION; }
 }

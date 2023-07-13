@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.core.storage;
 
-import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.util.IModLoader;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -23,17 +22,17 @@ public class PictureStorage {
 
     private static File dir;
     private static File index;
+    private static boolean inited = false;
 
-    public static boolean init(IModLoader modLoader) {
-        Path workingDir = modLoader.getTempDir();
-        if (dir != null || index != null) {
-            LOGGER.error(IT, "Rejected attempt to reload LocalStorage" + (workingDir.toAbsolutePath().resolve("cache/pictures").equals(dir.toPath()) ? "with a different path" : ""));
-            return true;
-        }
-        LOGGER.info(IT, "Storage path used for logs and binaries '{}'", workingDir);
+    public static void init(IModLoader modLoader) {
+        if (inited) throw new IllegalStateException("Rejected attempt to reload LocalStorage");
 
-        dir = workingDir.toAbsolutePath().resolve("cache/pictures").toFile();
+        // SETUP
+        dir = modLoader.getTempDir().toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "indexer");
+
+        // LOGGER
+        LOGGER.info(IT, "Starting PictureStorage in '{}'", dir.toString());
 
         if (!dir.exists()) dir.mkdirs();
         if (index.exists()) {
@@ -48,14 +47,12 @@ public class PictureStorage {
                     var entry = new Entry(url, tag.length() > 0 ? tag : null, time, expireTime);
                     ENTRIES.put(entry.getUrl(), entry);
                 }
-
-                return true;
             } catch (Exception e) {
                 LOGGER.error(IT, "Failed to load indexes", e);
-                return false;
             }
         }
-        return true;
+
+        inited = true;
     }
 
     private static File getFile(String url) {
