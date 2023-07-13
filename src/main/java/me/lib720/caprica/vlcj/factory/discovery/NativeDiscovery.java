@@ -9,7 +9,6 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy
 import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
-import me.srrapero720.watermedia.Util;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -154,11 +153,15 @@ public class NativeDiscovery {
     private static final Marker IT = MarkerFactory.getMarker("VideoLAN");
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
-        if (searchPaths == null) {
-            searchPaths = Util.getClassField(NativeLibrary.class, "searchPaths");
-            libraries = Util.getClassField(NativeLibrary.class, "libraries");
-        }
         try {
+            if (searchPaths == null) {
+                searchPaths = NativeLibrary.class.getDeclaredField("searchPaths");
+                searchPaths.setAccessible(true);
+
+                libraries = NativeLibrary.class.getDeclaredField("libraries");
+                libraries.setAccessible(true);
+            }
+
             Map<String, Reference<NativeLibrary>> libs = (Map<String, Reference<NativeLibrary>>) libraries.get(null);
             Map<String, List<String>> paths = (Map<String, List<String>>) searchPaths.get(null);
             libs.remove(RuntimeUtil.getLibVlcCoreLibraryName());
@@ -166,7 +169,7 @@ public class NativeDiscovery {
             libs.remove(RuntimeUtil.getLibVlcLibraryName());
             paths.remove(RuntimeUtil.getLibVlcLibraryName());
             return true;
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
             LOGGER.error(IT, "attemptFix failed", e);
         }
         return false;
