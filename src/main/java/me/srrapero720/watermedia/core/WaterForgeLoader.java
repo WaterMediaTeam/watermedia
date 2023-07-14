@@ -76,6 +76,6 @@ public class WaterForgeLoader implements IWaterMediaLoader {
 
     @Override
     public Path getTempDir() {
-        return new File(System.getProperty("java.io.tmpdir")).toPath().resolve("watermedia");
+        return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
 }

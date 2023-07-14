@@ -62,6 +62,6 @@ public class WaterFabricLoader implements ModInitializer, IWaterMediaLoader {
 
     @Override
     public Path getTempDir() {
-        return new File(System.getProperty("java.io.tmpdir")).toPath();
+        return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
 }
