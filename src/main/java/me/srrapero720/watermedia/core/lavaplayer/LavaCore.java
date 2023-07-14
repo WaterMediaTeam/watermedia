@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.core.lavaplayer;
 
-import me.srrapero720.watermedia.core.util.IModLoader;
+import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
 
 public class LavaCore {
-    public static void init(IModLoader modLoader) {
+    public static void init(IWaterMediaLoader modLoader) {
     }
 }

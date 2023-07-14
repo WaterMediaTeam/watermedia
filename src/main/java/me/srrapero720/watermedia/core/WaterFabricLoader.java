@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.core.util.IModLoader;
+import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -15,7 +15,7 @@ import java.nio.file.Path;
  * Loader for FABRIC
  * Doing things with FABRIC classes/api is safe
  */
-public class WaterFabricLoader implements ModInitializer, IModLoader {
+public class WaterFabricLoader implements ModInitializer, IWaterMediaLoader {
     private static final Marker IT = MarkerFactory.getMarker("FabricLoader");
     private final WaterMedia INSTANCE;
 
@@ -47,7 +47,7 @@ public class WaterFabricLoader implements ModInitializer, IModLoader {
 
     @Override
     public ClassLoader getClassLoader() {
-        return Thread.currentThread().getContextClassLoader(); // This is not working
+        return this.getClass().getClassLoader(); // This is not working
     }
 
     @Override

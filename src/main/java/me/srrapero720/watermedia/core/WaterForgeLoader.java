@@ -1,8 +1,7 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.core.util.IModLoader;
-import net.minecraftforge.eventbus.EventBus;
+import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
@@ -11,7 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkConstants;
 import org.slf4j.Marker;
@@ -25,7 +23,7 @@ import java.nio.file.Path;
  * Doing things with FORGE classes/api is safe
  */
 @Mod(WaterMedia.ID)
-public class WaterForgeLoader implements IModLoader {
+public class WaterForgeLoader implements IWaterMediaLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
     private final WaterMedia INSTANCE;
 

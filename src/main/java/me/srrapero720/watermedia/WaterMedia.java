@@ -4,7 +4,7 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.lavaplayer.LavaCore;
 import me.srrapero720.watermedia.core.storage.PictureStorage;
-import me.srrapero720.watermedia.core.util.IModLoader;
+import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ public class WaterMedia {
 	private RuntimeException CLIENT_EXCEPTION;
 	private RuntimeException SERVER_EXCEPTION;
 
-	private final IModLoader LOADER;
-	public WaterMedia(IModLoader modLoader) {
+	private final IWaterMediaLoader LOADER;
+	public WaterMedia(IWaterMediaLoader modLoader) {
 		LOADER = modLoader;
 		LOGGER.info(IT, "Running WATERMeDIA on {}", LOADER.getLoaderName());
 
@@ -50,23 +50,30 @@ public class WaterMedia {
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading WaterMediaAPI");
-		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> LOGGER.error("Exception loading WaterMediaAPI"));
+		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> registerException("WaterMediaAPI", (RuntimeException) e));
 
 		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading PictureStorage");
-		ThreadUtil.trySimple(() -> PictureStorage.init(LOADER), e -> LOGGER.error("Exception loading PictureStorage", e));
+		ThreadUtil.trySimple(() -> PictureStorage.init(LOADER), e -> registerException("PictureStorage", (RuntimeException) e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading VideoLAN");
-		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> LOGGER.error("Exception loading VideoLAN", e));
+		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> registerException("VideoLAN", (RuntimeException) e));
 
 		// PREPARE LAVAPLAYER
 		LOGGER.info(IT, "Loading LavaPlayer");
-		ThreadUtil.trySimple(() -> LavaCore.init(LOADER), e -> LOGGER.error("Exception loading LavaPlayer", e));
+		ThreadUtil.trySimple(() -> LavaCore.init(LOADER), e -> registerException("LavaPlayer", (RuntimeException) e));
 
 		LOGGER.info(IT, "Finished WaterMedia startup");
+		if (existsExceptions()) LOGGER.warn(IT, "Detected some critical exceptions after startup");
 	}
 
+	private void registerException(String module, RuntimeException e) {
+		LOGGER.error(IT, "Exception loading {}", module, e);
+		if (CLIENT_EXCEPTION != null) CLIENT_EXCEPTION = e;
+	}
+
+	public boolean existsExceptions() { return CLIENT_EXCEPTION != null || SERVER_EXCEPTION != null; }
 	public void throwClientException() { if (CLIENT_EXCEPTION != null) throw CLIENT_EXCEPTION; }
 	public void throwServerException() { if (SERVER_EXCEPTION != null) throw SERVER_EXCEPTION; }
 }

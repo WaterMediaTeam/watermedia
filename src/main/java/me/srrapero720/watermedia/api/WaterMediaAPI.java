@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
-import me.srrapero720.watermedia.core.util.IModLoader;
+import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
 import me.srrapero720.watermedia.core.util.Tools;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
@@ -35,7 +35,7 @@ public final class WaterMediaAPI {
     public static RenderablePicture VLC_FAILED;
     public static RenderablePicture VLC_FAILED_INSTALL;
 
-    public static void init(IModLoader modLoader) {
+    public static void init(IWaterMediaLoader modLoader) {
         LOGGER.warn(IT, (URL_PATCHERS.size() > 0 ? "Rel" : "L") + "oading URLPatches");
         URL_PATCHERS.clear();
         URL_PATCHERS.addAll(List.of(new URLPatch[]{
@@ -45,8 +45,8 @@ public final class WaterMediaAPI {
                 new DrivePatch(),
                 new TwitterPatch(),
                 new OnedrivePatch(),
-                new DropboxPatch()})
-        );
+                new DropboxPatch()
+        }));
 
         LOGGER.info(IT, "Loading internal RenderablePicture's");
 

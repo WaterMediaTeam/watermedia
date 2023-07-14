@@ -1,13 +1,12 @@
 package me.srrapero720.watermedia.core.storage;
 
-import me.srrapero720.watermedia.core.util.IModLoader;
+import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -24,7 +23,7 @@ public class PictureStorage {
     private static File index;
     private static boolean inited = false;
 
-    public static void init(IModLoader modLoader) {
+    public static void init(IWaterMediaLoader modLoader) {
         if (inited) throw new IllegalStateException("Rejected attempt to reload LocalStorage");
 
         // SETUP
