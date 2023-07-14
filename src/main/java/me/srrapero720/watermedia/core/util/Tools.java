@@ -16,8 +16,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,8 +23,7 @@ import java.util.Objects;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class Tools {
-    private static final Marker IT = MarkerFactory.getMarker("Util");
-    private static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
+    static final Marker IT = MarkerFactory.getMarker("Util");
     private static final WaterOs ARCH = getArch();
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
 
@@ -37,7 +34,7 @@ public class Tools {
      */
     public static List<String> getJsonListFromRes(ClassLoader loader, String path) {
         List<String> result = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(LOADER.getResourceAsStream(path))))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(loader.getResourceAsStream(path))))) {
             result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
         } catch (Exception e) {
             LOGGER.error(IT, "### Exception trying to read JSON from {}", path);
@@ -49,7 +46,7 @@ public class Tools {
     }
 
     public static void extractFrom(ClassLoader loader, String originPath, String destinationPath) {
-        try (InputStream is = LOADER.getResourceAsStream(originPath)) {
+        try (InputStream is = loader.getResourceAsStream(originPath)) {
             Path dllDestinationPath = Paths.get(destinationPath);
             if (is != null) {
                 Files.createDirectories(dllDestinationPath.getParent());
@@ -78,7 +75,7 @@ public class Tools {
     }
 
     public static BufferedImage getImageFromResources(ClassLoader loader, String path) {
-        try (InputStream in = LOADER.getResourceAsStream(path)) {
+        try (InputStream in = loader.getResourceAsStream(path)) {
             var image = ImageIO.read(Objects.requireNonNull(in));
             if (image != null) return image;
             else throw new NullPointerException("Image read from WaterMedia resources was NULL");
@@ -88,7 +85,7 @@ public class Tools {
     }
 
     public static GifDecoder getGifFromResources(ClassLoader loader, String path) {
-        try (InputStream inputStream = LOADER.getResourceAsStream(path); ByteArrayInputStream in = (inputStream != null) ? new ByteArrayInputStream(IOUtils.toByteArray(inputStream)) : null) {
+        try (InputStream inputStream = loader.getResourceAsStream(path); ByteArrayInputStream in = (inputStream != null) ? new ByteArrayInputStream(IOUtils.toByteArray(inputStream)) : null) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
 
@@ -101,35 +98,6 @@ public class Tools {
         } catch (Exception e) {
             LOGGER.error("Failed loading GIF from WaterMedia resources", e);
             return null;
-        }
-    }
-
-    public static boolean integrityFrom(ClassLoader loader, String source, File targetFile) {
-        try (InputStream sourceStream = LOADER.getResourceAsStream(source)) {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-
-            byte[] sourceDigest = digest(sourceStream, md);
-            byte[] targetDigest = digest(new FileInputStream(targetFile), md);
-            if (!MessageDigest.isEqual(sourceDigest, targetDigest)) throw new RuntimeException("File no match with the stored one");
-
-            return true;
-        } catch (Exception e) {
-            LOGGER.error(IT, "Integrity check failed, exception occurred on file '{}'", targetFile.toPath());
-            LOGGER.debug(IT, "DETECTED ERROR", e);
-        }
-
-        return false;
-    }
-
-    private static byte[] digest(InputStream inputStream, MessageDigest md) {
-        try (DigestInputStream dis = new DigestInputStream(inputStream, md)) {
-            byte[] buffer = new byte[8192];
-            while (dis.read(buffer) != -1);
-
-            dis.close();
-            return md.digest();
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed calculating digest", e);
         }
     }
 

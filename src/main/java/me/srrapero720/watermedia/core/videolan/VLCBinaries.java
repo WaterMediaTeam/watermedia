@@ -1,6 +1,7 @@
 package me.srrapero720.watermedia.core.videolan;
 
 import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
+import me.srrapero720.watermedia.core.util.Stomach;
 import me.srrapero720.watermedia.core.util.Tools;
 
 import java.io.File;
@@ -255,7 +256,7 @@ public enum VLCBinaries {
     }
 
     void checkIntegrity(IWaterMediaLoader modLoader) {
-        if (!Tools.integrityFrom(modLoader.getClassLoader(), origin, new File(binPath.toAbsolutePath() + destination))) {
+        if (!Stomach.integrityFrom(modLoader.getClassLoader(), origin, new File(binPath.toAbsolutePath() + destination))) {
             delete();
             extract(modLoader);
         }
