@@ -10,7 +10,7 @@ public class ThreadUtil {
     private static int workers = 0;
     private static Thread THREADLG = null;
     private static final Logger LOGGER = LoggerFactory.getLogger("ThreadUtil");
-    private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> System.out.println("Fatal exception on ThreadUtils - " + e);
+    private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> e.printStackTrace();
 
     public static void printStackTrace(Exception e) { e.printStackTrace(); }
 
@@ -57,7 +57,7 @@ public class ThreadUtil {
 
     public static Thread thread(Runnable runnable) {
         var thread = new Thread(runnable);
-        thread.setName("WCoRE-worker-" + (++workers));
+        thread.setName("WATERCoRE-worker-" + (++workers));
         thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
         thread.setDaemon(true);
         thread.setUncaughtExceptionHandler(EXCEPTION_HANDLER);

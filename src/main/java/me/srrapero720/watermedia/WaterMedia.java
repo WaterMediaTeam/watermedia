@@ -44,6 +44,7 @@ public class WaterMedia {
 	public void init() {
 		LOGGER.info(IT, "Starting WaterMedia");
 		if (!LOADER.isClient()) {
+
 			LOGGER.info(IT, "WATERMeDIA is refusing cowardly to start in a illegal environment");
 			return;
 		}
@@ -58,7 +59,7 @@ public class WaterMedia {
 
 		// PREPARE VLC BINARIES
 		LOGGER.info(IT, "Loading VideoLANBinaries");
-		ThreadUtil.trySimple(() -> VideoLANBinaries.init(LOADER), e -> registerException("VideoLAN", (RuntimeException) e));
+		ThreadUtil.trySimple(() -> VideoLANBinaries.init(LOADER), e -> registerException("VideoLANBinaries", (RuntimeException) e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading VideoLAN");

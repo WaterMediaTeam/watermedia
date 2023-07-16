@@ -255,7 +255,6 @@ public enum VideoLANBinaries {
     }
 
     private static Path binPath;
-    private static final String V_LOCAL = ResourceUtil.readTextFile(binPath.resolve("version.cfg").toAbsolutePath());
     private static final String V_JAR = "3.0.18a";
 
     public static void init(IMediaLoader loader) throws SafeException, UnsafeException {
@@ -265,7 +264,7 @@ public enum VideoLANBinaries {
         LOGGER.info(IT, "Mounted bin extraction on {}", binPath.toAbsolutePath());
 
         if (WaterOs.getArch().wrapped) {
-            if (!V_JAR.equals(V_LOCAL)) {
+            if (!V_JAR.equals(ResourceUtil.readTextFile(binPath.resolve("version.cfg").toAbsolutePath()))) {
                 for(VideoLANBinaries bin: VideoLANBinaries.values()) bin.checkIntegrityNorExtract(loader);
 
                 try {
