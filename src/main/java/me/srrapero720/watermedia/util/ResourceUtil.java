@@ -64,7 +64,7 @@ public class ResourceUtil {
         try (InputStream in = loader.getResourceAsStream(path)) {
             var image = ImageIO.read(Objects.requireNonNull(in));
             if (image != null) return image;
-            else throw new NullPointerException("Image read from WaterMedia resources was NULL");
+            else throw new FileNotFoundException("Image read from WaterMedia resources was NULL");
         } catch (Exception e) {
             throw new IllegalStateException("Failed loading BufferedImage from WaterMedia resources", e);
         }
