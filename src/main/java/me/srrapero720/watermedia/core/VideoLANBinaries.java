@@ -16,235 +16,199 @@ import static me.srrapero720.watermedia.core.VideoLANCore.IT;
 
 public enum VideoLANBinaries {
     // CORES
-    libvlc(Type.BIN, null),
-    libvlccore(Type.BIN, null),
+    libvlc(null),
+    libvlccore(null),
 
 //    // plugins/aarch64
 //    libdeinterlace_aarch64_plugin("aarch64"),
 //    libdeinterlace_sve_plugin("aarch64"),
 
     // plugins/access
-    libfilesystem_plugin(Type.BIN, "access"),
-    libhttp_plugin(Type.BIN, "access"),
-    libhttps_plugin(Type.BIN, "access"),
-    libimem_plugin(Type.BIN, "access"),
+    libfilesystem_plugin("access"),
+    libhttp_plugin("access"),
+    libhttps_plugin("access"),
+    libimem_plugin("access"),
 
     // plugins/audio_filter
-    libequalizer_plugin(Type.BIN, "audio_filter"),
-    libgain_plugin(Type.BIN, "audio_filter"),
-    libscaletempo_pitch_plugin(Type.BIN, "audio_filter"),
-    libscaletempo_plugin(Type.BIN, "audio_filter"),
+    libequalizer_plugin("audio_filter"),
+    libgain_plugin("audio_filter"),
+    libscaletempo_pitch_plugin("audio_filter"),
+    libscaletempo_plugin("audio_filter"),
 
     // plugins/audio_output
-    libadummy_plugin(Type.BIN, "audio_output"),
-    libamem_plugin(Type.BIN, "audio_output"),
-    libdirectsound_plugin(Type.BIN, "audio_output"),
-    libwasapi_plugin(Type.BIN, "audio_output"),
-    libwaveout_plugin(Type.BIN, "audio_output"),
+    libadummy_plugin("audio_output"),
+    libamem_plugin("audio_output"),
+    libdirectsound_plugin("audio_output"),
+    libwasapi_plugin("audio_output"),
+    libwaveout_plugin("audio_output"),
 
     // plugins/codec
-    liba52_plugin(Type.BIN, "codec"),
-    libadpcm_plugin(Type.BIN, "codec"),
-    libaes3_plugin(Type.BIN, "codec"),
-    libaom_plugin(Type.BIN, "codec"),
-    libaraw_plugin(Type.BIN, "codec"),
-    libaribsub_plugin(Type.BIN, "codec"),
-    libavcodec_plugin(Type.BIN, "codec"),
-    libcc_plugin(Type.BIN, "codec"),
-    libcdg_plugin(Type.BIN, "codec"),
-    libcrystalhd_plugin(Type.BIN, "codec"),
-    libcvdsub_plugin(Type.BIN, "codec"),
-    libd3d11va_plugin(Type.BIN, "codec"),
-    libdav1d_plugin(Type.BIN, "codec"),
-    libdca_plugin(Type.BIN, "codec"),
-    libddummy_plugin(Type.BIN, "codec"),
-    libdmo_plugin(Type.BIN, "codec"),
-    libdvbsub_plugin(Type.BIN, "codec"),
-    libdxva2_plugin(Type.BIN, "codec"),
-    libedummy_plugin(Type.BIN, "codec"),
-    libfaad_plugin(Type.BIN, "codec"),
-    libflac_plugin(Type.BIN, "codec"),
-    libfluidsynth_plugin(Type.BIN, "codec"),
-    libg711_plugin(Type.BIN, "codec"),
-    libjpeg_plugin(Type.BIN, "codec"),
-    libkate_plugin(Type.BIN, "codec"),
-    liblibass_plugin(Type.BIN, "codec"),
-    liblibmpeg2_plugin(Type.BIN, "codec"),
-    liblpcm_plugin(Type.BIN, "codec"),
-    libmft_plugin(Type.BIN, "codec"),
-    libmpg123_plugin(Type.BIN, "codec"),
-    liboggspots_plugin(Type.BIN, "codec"),
-    libopus_plugin(Type.BIN, "codec"),
-    libpng_plugin(Type.BIN, "codec"),
-    libqsv_plugin(Type.BIN, "codec"),
-    librawvideo_plugin(Type.BIN, "codec"),
-    librtpvideo_plugin(Type.BIN, "codec"),
-    libschroedinger_plugin(Type.BIN, "codec"),
-    libscte18_plugin(Type.BIN, "codec"),
-    libscte27_plugin(Type.BIN, "codec"),
-    libsdl_image_plugin(Type.BIN, "codec"),
-    libspdif_plugin(Type.BIN, "codec"),
-    libspeex_plugin(Type.BIN, "codec"),
-    libspudec_plugin(Type.BIN, "codec"),
-    libstl_plugin(Type.BIN, "codec"),
-    libsubsdec_plugin(Type.BIN, "codec"),
-    libsubstx3g_plugin(Type.BIN, "codec"),
-    libsubsusf_plugin(Type.BIN, "codec"),
-    libsvcdsub_plugin(Type.BIN, "codec"),
-    libt140_plugin(Type.BIN, "codec"),
-    libtextst_plugin(Type.BIN, "codec"),
-    libtheora_plugin(Type.BIN, "codec"),
-    libttml_plugin(Type.BIN, "codec"),
-    libtwolame_plugin(Type.BIN, "codec"),
-    libuleaddvaudio_plugin(Type.BIN, "codec"),
-    libvorbis_plugin(Type.BIN, "codec"),
-    libvpx_plugin(Type.BIN, "codec"),
-    libwebvtt_plugin(Type.BIN, "codec"),
-    libx264_plugin(Type.BIN, "codec"),
-    libx265_plugin(Type.BIN, "codec"),
-    libx26410b_plugin(Type.BIN, "codec"),
-    libzvbi_plugin(Type.BIN, "codec"),
+    liba52_plugin("codec"),
+    libadpcm_plugin("codec"),
+    libaes3_plugin("codec"),
+    libaom_plugin("codec"),
+    libaraw_plugin("codec"),
+    libaribsub_plugin("codec"),
+    libavcodec_plugin("codec"),
+    libcc_plugin("codec"),
+    libcdg_plugin("codec"),
+    libcrystalhd_plugin("codec"),
+    libcvdsub_plugin("codec"),
+    libd3d11va_plugin("codec"),
+    libdav1d_plugin("codec"),
+    libdca_plugin("codec"),
+    libddummy_plugin("codec"),
+    libdmo_plugin("codec"),
+    libdvbsub_plugin("codec"),
+    libdxva2_plugin("codec"),
+    libedummy_plugin("codec"),
+    libfaad_plugin("codec"),
+    libflac_plugin("codec"),
+    libfluidsynth_plugin("codec"),
+    libg711_plugin("codec"),
+    libjpeg_plugin("codec"),
+    libkate_plugin("codec"),
+    liblibass_plugin("codec"),
+    liblibmpeg2_plugin("codec"),
+    liblpcm_plugin("codec"),
+    libmft_plugin("codec"),
+    libmpg123_plugin("codec"),
+    liboggspots_plugin("codec"),
+    libopus_plugin("codec"),
+    libpng_plugin("codec"),
+    libqsv_plugin("codec"),
+    librawvideo_plugin("codec"),
+    librtpvideo_plugin("codec"),
+    libschroedinger_plugin("codec"),
+    libscte18_plugin("codec"),
+    libscte27_plugin("codec"),
+    libsdl_image_plugin("codec"),
+    libspdif_plugin("codec"),
+    libspeex_plugin("codec"),
+    libspudec_plugin("codec"),
+    libstl_plugin("codec"),
+    libsubsdec_plugin("codec"),
+    libsubstx3g_plugin("codec"),
+    libsubsusf_plugin("codec"),
+    libsvcdsub_plugin("codec"),
+    libt140_plugin("codec"),
+    libtextst_plugin("codec"),
+    libtheora_plugin("codec"),
+    libttml_plugin("codec"),
+    libtwolame_plugin("codec"),
+    libuleaddvaudio_plugin("codec"),
+    libvorbis_plugin("codec"),
+    libvpx_plugin("codec"),
+    libwebvtt_plugin("codec"),
+    libx264_plugin("codec"),
+    libx265_plugin("codec"),
+    libx26410b_plugin("codec"),
+    libzvbi_plugin("codec"),
 
     // plugins/demux
-    libadaptive_plugin(Type.BIN, "demux"),
-    libaiff_plugin(Type.BIN, "demux"),
-    libasf_plugin(Type.BIN, "demux"),
-    libau_plugin(Type.BIN, "demux"),
-    libavi_plugin(Type.BIN, "demux"),
-    libcaf_plugin(Type.BIN, "demux"),
-    libdemux_cdg_plugin(Type.BIN, "demux"),
-    libdemux_chromecast_plugin(Type.BIN, "demux"),
-    libdemux_stl_plugin(Type.BIN, "demux"),
-    libdemuxdump_plugin(Type.BIN, "demux"),
-    libdiracsys_plugin(Type.BIN, "demux"),
-    libdirectory_demux_plugin(Type.BIN, "demux"),
-    libes_plugin(Type.BIN, "demux"),
-    libflacsys_plugin(Type.BIN, "demux"),
-    libgme_plugin(Type.BIN, "demux"),
-    libh26x_plugin(Type.BIN, "demux"),
-    libimage_plugin(Type.BIN, "demux"),
-    libmjpeg_plugin(Type.BIN, "demux"),
-    libmkv_plugin(Type.BIN, "demux"),
-    libmod_plugin(Type.BIN, "demux"),
-    libmp4_plugin(Type.BIN, "demux"),
-    libmpc_plugin(Type.BIN, "demux"),
-    libmpgv_plugin(Type.BIN, "demux"),
-    libnoseek_plugin(Type.BIN, "demux"),
-    libnsc_plugin(Type.BIN, "demux"),
-    libnsv_plugin(Type.BIN, "demux"),
-    libnuv_plugin(Type.BIN, "demux"),
-    libogg_plugin(Type.BIN, "demux"),
-    libplaylist_plugin(Type.BIN, "demux"),
-    libps_plugin(Type.BIN, "demux"),
-    libpva_plugin(Type.BIN, "demux"),
-    librawaud_plugin(Type.BIN, "demux"),
-    librawdv_plugin(Type.BIN, "demux"),
-    librawvid_plugin(Type.BIN, "demux"),
-    libreal_plugin(Type.BIN, "demux"),
-    libsid_plugin(Type.BIN, "demux"),
-    libsmf_plugin(Type.BIN, "demux"),
-    libsubtitle_plugin(Type.BIN, "demux"),
-    libts_plugin(Type.BIN, "demux"),
-    libtta_plugin(Type.BIN, "demux"),
-    libty_plugin(Type.BIN, "demux"),
-    libvc1_plugin(Type.BIN, "demux"),
-    libvobsub_plugin(Type.BIN, "demux"),
-    libvoc_plugin(Type.BIN, "demux"),
-    libwav_plugin(Type.BIN, "demux"),
-    libxa_plugin(Type.BIN, "demux"),
+    libadaptive_plugin("demux"),
+    libaiff_plugin("demux"),
+    libasf_plugin("demux"),
+    libau_plugin("demux"),
+    libavi_plugin("demux"),
+    libcaf_plugin("demux"),
+    libdemux_cdg_plugin("demux"),
+    libdemux_chromecast_plugin("demux"),
+    libdemux_stl_plugin("demux"),
+    libdemuxdump_plugin("demux"),
+    libdiracsys_plugin("demux"),
+    libdirectory_demux_plugin("demux"),
+    libes_plugin("demux"),
+    libflacsys_plugin("demux"),
+    libgme_plugin("demux"),
+    libh26x_plugin("demux"),
+    libimage_plugin("demux"),
+    libmjpeg_plugin("demux"),
+    libmkv_plugin("demux"),
+    libmod_plugin("demux"),
+    libmp4_plugin("demux"),
+    libmpc_plugin("demux"),
+    libmpgv_plugin("demux"),
+    libnoseek_plugin("demux"),
+    libnsc_plugin("demux"),
+    libnsv_plugin("demux"),
+    libnuv_plugin("demux"),
+    libogg_plugin("demux"),
+    libplaylist_plugin("demux"),
+    libps_plugin("demux"),
+    libpva_plugin("demux"),
+    librawaud_plugin("demux"),
+    librawdv_plugin("demux"),
+    librawvid_plugin("demux"),
+    libreal_plugin("demux"),
+    libsid_plugin("demux"),
+    libsmf_plugin("demux"),
+    libsubtitle_plugin("demux"),
+    libts_plugin("demux"),
+    libtta_plugin("demux"),
+    libty_plugin("demux"),
+    libvc1_plugin("demux"),
+    libvobsub_plugin("demux"),
+    libvoc_plugin("demux"),
+    libwav_plugin("demux"),
+    libxa_plugin("demux"),
 
     // plugins/logger
-    libconsole_logger_plugin(Type.BIN, "logger"),
-    libfile_logger_plugin(Type.BIN, "logger"),
+    libconsole_logger_plugin("logger"),
+    libfile_logger_plugin("logger"),
 
     // plugins/lua
-    liblua_plugin(Type.BIN,"lua"),
+    liblua_plugin("lua"),
 
     // plugins/misc
-    libgnutls_plugin(Type.BIN, "misc"),
+    libgnutls_plugin("misc"),
 
     // plugins/mux
-    libmux_asf_plugin(Type.BIN, "mux"),
-    libmux_avi_plugin(Type.BIN, "mux"),
-    libmux_dummy_plugin(Type.BIN, "mux"),
-    libmux_mp4_plugin(Type.BIN, "mux"),
-    libmux_mpjpeg_plugin(Type.BIN, "mux"),
-    libmux_ogg_plugin(Type.BIN, "mux"),
-    libmux_ps_plugin(Type.BIN, "mux"),
-    libmux_ts_plugin(Type.BIN, "mux"),
-    libmux_wav_plugin(Type.BIN, "mux"),
+    libmux_asf_plugin("mux"),
+    libmux_avi_plugin("mux"),
+    libmux_dummy_plugin("mux"),
+    libmux_mp4_plugin("mux"),
+    libmux_mpjpeg_plugin("mux"),
+    libmux_ogg_plugin("mux"),
+    libmux_ps_plugin("mux"),
+    libmux_ts_plugin("mux"),
+    libmux_wav_plugin("mux"),
 
     // plugins/spu
-    liblogo_plugin(Type.BIN,"spu"),
-    libmarq_plugin(Type.BIN,"spu"),
+    liblogo_plugin("spu"),
+    libmarq_plugin("spu"),
 
     // plugins/stream_filter
-    libadf_plugin(Type.BIN, "stream_filter"),
-    libaribcam_plugin(Type.BIN, "stream_filter"),
-    libcache_block_plugin(Type.BIN, "stream_filter"),
-    libcache_read_plugin(Type.BIN, "stream_filter"),
-    libhds_plugin(Type.BIN, "stream_filter"),
-    libinflate_plugin(Type.BIN, "stream_filter"),
-    libprefetch_plugin(Type.BIN, "stream_filter"),
-    librecord_plugin(Type.BIN, "stream_filter"),
-    libskiptags_plugin(Type.BIN, "stream_filter"),
+    libadf_plugin("stream_filter"),
+    libaribcam_plugin("stream_filter"),
+    libcache_block_plugin("stream_filter"),
+    libcache_read_plugin("stream_filter"),
+    libhds_plugin("stream_filter"),
+    libinflate_plugin("stream_filter"),
+    libprefetch_plugin("stream_filter"),
+    librecord_plugin("stream_filter"),
+    libskiptags_plugin("stream_filter"),
 
     // plugins/video_chroma
-    libswscale_plugin(Type.BIN, "video_chroma"),
+    libswscale_plugin("video_chroma"),
 
     // plugins/video_filter
-    libadjust_plugin(Type.BIN, "video_filter"),
-    libalphamask_plugin(Type.BIN, "video_filter"),
-    libdeinterlace_plugin(Type.BIN, "video_filter"),
-    libfps_plugin(Type.BIN, "video_filter"),
+    libadjust_plugin("video_filter"),
+    libalphamask_plugin("video_filter"),
+    libdeinterlace_plugin("video_filter"),
+    libfps_plugin("video_filter"),
 
     // plugins/video_output
-    libvdummy_plugin(Type.BIN, "video_output"),
-    libvmem_plugin(Type.BIN, "video_output"),
-
-    /*
-        #####################
-        #### LUA SCRIPTS ####
-        #####################
-    */
-
-    // extensions
-    VLSub(Type.LUAC, "extensions"),
-
-    // intf
-    cli(Type.LUAC, "intf"),
-    dummy(Type.LUAC, "intf"),
-    dumpmeta(Type.LUAC, "intf"),
-    http(Type.LUAC, "intf"),
-    luac(Type.LUAC, "intf"),
-    telnet(Type.LUAC, "intf"),
-
-    // intf/modules
-    host(Type.LUAC, "intf/modules"),
-    httprequests(Type.LUAC, "intf/modules"),
-
-    // modules
-    common(Type.LUAC, "modules"),
-    dkjson(Type.LUAC, "modules"),
-    sandbox(Type.LUAC, "modules"),
-
-    // playlist
-    soundcloud(Type.LUAC, "playlist"),
-    vimeo(Type.LUAC, "playlist"),
-    vocaroo(Type.LUAC, "playlist"),
-    youtube(Type.LUAC, "playlist"),
+    libvdummy_plugin("video_output"),
+    libvmem_plugin("video_output"),
     ;
-
 
     private final String origin;
     private final String destination;
-    VideoLANBinaries(Type type, String dir) {
-        String relativeDir = (dir != null
-                ? (type.equals(Type.BIN) ? "plugins/" : "") + dir + "/"
-                : "") + name() + type.extension;
-        
-        this.origin = type.rootDir + "/" + relativeDir;
-        this.destination = (type.equals(Type.LUAC) ? "/lua/" : "/") + relativeDir;
+    VideoLANBinaries(String dir) {
+        String relativeDir = (dir != null ? ("plugins/") + dir + "/" : "") + name() + WaterOs.getArch().ext;
+        this.origin = "vlc/" + WaterOs.getArch() + "/" + relativeDir;
+        this.destination = "/" + relativeDir;
     }
 
     void checkIntegrityNorExtract(IMediaLoader modLoader) {
@@ -256,7 +220,6 @@ public enum VideoLANBinaries {
 
     private static Path binPath;
     private static final String V_JAR = "3.0.18a";
-
     public static void init(IMediaLoader loader) throws SafeException, UnsafeException {
         binPath = loader.getTempDir().resolve("vlc/").toAbsolutePath();
 
@@ -281,14 +244,5 @@ public enum VideoLANBinaries {
             LOGGER.error(IT, "You had to install VLC manually in https://www.videolan.org/ - More info ask to SrRapero720");
             LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
         }
-    }
-
-
-    enum Type {
-        LUAC("/vlc/lua", ".luac"),
-        BIN("/vlc/" + WaterOs.getArch(), WaterOs.getArch().ext);
-        public final String rootDir;
-        public final String extension;
-        Type(String rootDir, String ext) { this.rootDir = rootDir; this.extension = ext; }
     }
 }
