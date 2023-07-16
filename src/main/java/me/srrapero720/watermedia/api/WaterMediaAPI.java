@@ -86,7 +86,7 @@ public final class WaterMediaAPI {
      * @param url the URL in a string
      * @return if is valid.
      */
-    public static boolean isURLValid(String url) { return ThreadUtil.tryAndReturn(defaultVar -> { new URL(url); return true; }, false); }
+    public static boolean urlIsValid(String url) { return ThreadUtil.tryAndReturn(defaultVar -> { new URL(url); return true; }, false); }
 
 
     /**
@@ -121,7 +121,7 @@ public final class WaterMediaAPI {
      * @param vlcArgs arguments to make another VLC instance
      * @return a PlayerFactory to create custom VLC players. {@link VideoLANPlayer} can accept factory for new instances
      */
-    public static MediaPlayerFactory createVLCFactory(String[] vlcArgs) {
+    public static MediaPlayerFactory videoLANCreateFactory(String[] vlcArgs) {
         NativeDiscovery discovery = new NativeDiscovery();
         if (discovery.discover()) {
             var factory = new MediaPlayerFactory(discovery, vlcArgs);
@@ -148,7 +148,7 @@ public final class WaterMediaAPI {
      * @param height picture height
      * @return textureID
      */
-    public static int genGLTexture(BufferedImage image, int width, int height) {
+    public static int genGLTexture(@NotNull BufferedImage image, int width, int height) {
         int[] pixels = new int[width * height];
         image.getRGB(0, 0, width, height, pixels, 0, width);
         boolean alpha = false;
@@ -191,7 +191,7 @@ public final class WaterMediaAPI {
         //Send texel data to OpenGL
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, alpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0, alpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
 
-        //Return the texture ID so we can bind it later again
+        //Return the texture ID, so we can bind it later again
         return textureID;
     }
 }
