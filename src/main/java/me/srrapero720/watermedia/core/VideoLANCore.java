@@ -6,7 +6,7 @@ import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.util.Tools;
+import me.srrapero720.watermedia.util.ResourceUtil;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -44,7 +44,7 @@ public class VideoLANCore {
         CustomDirectoryProvider.init(path);
 
         FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = Tools.getJsonListFromRes(loader.getClassLoader(), "vlc/args.json").toArray(new String[0]);
+            String[] args = ResourceUtil.getJsonListFromRes(loader.getClassLoader(), "vlc/args.json").toArray(new String[0]);
             for (int i = 0; i < args.length; i++) {
                 args[i] = args[i].replace("%logfile%", logs.toAbsolutePath().toString());
             }

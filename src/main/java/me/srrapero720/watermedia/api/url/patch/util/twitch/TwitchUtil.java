@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.srrapero720.watermedia.util.Tools.USER_AGENT;
+import static me.srrapero720.watermedia.util.ResourceUtil.USER_AGENT;
 
 public class TwitchUtil {
     private static final Gson gson = new Gson();

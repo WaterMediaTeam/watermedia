@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.util.Tools.USER_AGENT;
+import static me.srrapero720.watermedia.util.ResourceUtil.USER_AGENT;
 
 public abstract class PictureFetcher extends Thread {
     private static final Marker IT = MarkerFactory.getMarker("FetchPicture");

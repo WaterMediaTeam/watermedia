@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.api;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.IMediaLoader;
-import me.srrapero720.watermedia.util.Tools;
+import me.srrapero720.watermedia.util.ResourceUtil;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.api.url.patch.*;
@@ -51,15 +51,15 @@ public final class WaterMediaAPI {
         LOGGER.info(IT, "Loading internal RenderablePicture's");
 
         if (LOADING_GIF == null) {
-            LOADING_GIF = new RenderablePicture(Objects.requireNonNull(Tools.readGifResource(modLoader.getClassLoader(), "/images/loading.gif")));
+            LOADING_GIF = new RenderablePicture(Objects.requireNonNull(ResourceUtil.readGifResource(modLoader.getClassLoader(), "/images/loading.gif")));
         } else LOGGER.warn(IT, "Skipping LOADING_GIF");
 
         if (VLC_FAILED == null) {
-            VLC_FAILED = new RenderablePicture(Tools.readImageResource(modLoader.getClassLoader(), "/images/vlc_win_failed.png"));
+            VLC_FAILED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc_win_failed.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED");
 
         if (VLC_FAILED_INSTALL == null) {
-            VLC_FAILED_INSTALL = new RenderablePicture(Tools.readImageResource(modLoader.getClassLoader(), "/images/vlc_otheros_failed.png"));
+            VLC_FAILED_INSTALL = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc_otheros_failed.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED_INSTALL");
     }
 

@@ -3,8 +3,8 @@ package me.srrapero720.watermedia.core;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.core.exceptions.SafeException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
-import me.srrapero720.watermedia.util.Stomach;
-import me.srrapero720.watermedia.util.Tools;
+import me.srrapero720.watermedia.util.StomachUtil;
+import me.srrapero720.watermedia.util.ResourceUtil;
 import me.srrapero720.watermedia.util.WaterOs;
 
 import java.io.File;
@@ -249,13 +249,13 @@ public enum VideoLANBinaries {
 
     void checkIntegrityNorExtract(IMediaLoader modLoader) {
         File destFile = binPath.toAbsolutePath().resolve(this.destination.substring(1)).toFile();
-        if (!destFile.exists() || !Stomach.integrityFrom(modLoader.getClassLoader(), origin, destFile)) {
-            Tools.extractResource(modLoader.getClassLoader(), origin, destFile.toPath());
+        if (!destFile.exists() || !StomachUtil.integrityFrom(modLoader.getClassLoader(), origin, destFile)) {
+            ResourceUtil.extractResource(modLoader.getClassLoader(), origin, destFile.toPath());
         }
     }
 
     private static Path binPath;
-    private static final String V_LOCAL = Tools.readTextFile(binPath.resolve("version.cfg").toAbsolutePath());
+    private static final String V_LOCAL = ResourceUtil.readTextFile(binPath.resolve("version.cfg").toAbsolutePath());
     private static final String V_JAR = "3.0.18a";
 
     public static void init(IMediaLoader loader) throws SafeException, UnsafeException {
