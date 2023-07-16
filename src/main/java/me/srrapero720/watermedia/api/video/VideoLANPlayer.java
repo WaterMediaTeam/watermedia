@@ -11,6 +11,7 @@ import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.video.events.common.*;
@@ -30,19 +31,11 @@ public class VideoLANPlayer extends VideoPlayer {
     private static final Marker IT = MarkerFactory.getMarker("VideoLanPlayer");
     private boolean buffering = false;
     private boolean prepared = false;
+    private int volume = 100;
     private CallbackMediaPlayerComponent player;
     public final EventManager<VideoLANPlayer> events = new EventManager<>();
 
-    /**
-     * Get raw VLC player
-     * @deprecated use {@link VideoLANPlayer#raw()}
-     */
-    @Deprecated(forRemoval = true)
-    public CallbackMediaPlayerComponent getRaw() { return player; }
 
-    /**
-     * Get raw VLC player
-     */
     public CallbackMediaPlayerComponent raw() { return player; }
 
     public VideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
@@ -176,15 +169,16 @@ public class VideoLANPlayer extends VideoPlayer {
 
     @Override
     public void setVolume(int volume) {
+        this.volume = volume;
         if (!isValid()) return;
-        player.mediaPlayer().audio().setVolume(volume);
-        if (volume == 0 && !player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(true);
-        else if (volume > 0 && player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(false);
+        player.mediaPlayer().audio().setVolume(this.volume);
+        if (this.volume == 0 && !player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(true);
+        else if (this.volume > 0 && player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(false);
     }
 
     @Override
     public int getVolume() {
-        if (!isValid()) return 0;
+        if (!isValid()) return volume;
         return player.mediaPlayer().audio().volume();
     }
 
@@ -312,8 +306,13 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void playing(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            if (buffering) events.callPlayerBufferEndEvent(VideoLANPlayer.this, new PlayerBuffer.EventEndData());
-            buffering = false;
+            if (buffering) {
+                events.callPlayerBufferEndEvent(VideoLANPlayer.this, new PlayerBuffer.EventEndData());
+                buffering = false;
+            }
+
+            if (volume == 0) player.mediaPlayer().audio().setMute(true);
+            else player.mediaPlayer().audio().setVolume(volume);
 
             if (!prepared) events.callPlayerStartedEvent(VideoLANPlayer.this, new PlayerStartedEvent.EventData());
             else events.callMediaResumeEvent(VideoLANPlayer.this, new MediaResumeEvent.EventData(player.mediaPlayer().status().length()));
@@ -444,6 +443,9 @@ public class VideoLANPlayer extends VideoPlayer {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             prepared = true;
             events.callPlayerReadyEvent(VideoLANPlayer.this, new PlayerReadyEvent.EventData());
+
+            if (volume == 0) player.mediaPlayer().audio().setMute(true);
+            else player.mediaPlayer().audio().setVolume(volume);
         }
     };
 }
