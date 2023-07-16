@@ -2,7 +2,7 @@ package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.core.LavaCore;
+import me.srrapero720.watermedia.core.LavaPlayerCore;
 import me.srrapero720.watermedia.core.MediaCacheCore;
 import me.srrapero720.watermedia.core.VideoLANBinaries;
 import me.srrapero720.watermedia.core.VideoLANCore;
@@ -66,7 +66,7 @@ public class WaterMedia {
 
 		// PREPARE LAVAPLAYER
 		LOGGER.info(IT, "Loading LavaPlayer");
-		ThreadUtil.trySimple(() -> LavaCore.init(LOADER), e -> registerException("LavaPlayer", (RuntimeException) e));
+		ThreadUtil.trySimple(() -> LavaPlayerCore.init(LOADER), e -> registerException("LavaPlayer", (RuntimeException) e));
 
 		LOGGER.info(IT, "Finished WaterMedia startup");
 		if (existsExceptions()) LOGGER.warn(IT, "Detected some critical exceptions after startup");
