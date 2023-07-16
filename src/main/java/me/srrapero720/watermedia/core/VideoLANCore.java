@@ -1,10 +1,10 @@
-package me.srrapero720.watermedia.core.videolan;
+package me.srrapero720.watermedia.core;
 
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
-import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
-import me.srrapero720.watermedia.core.util.Tools;
+import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.util.Tools;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import org.slf4j.Marker;
@@ -21,12 +21,12 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class VideoLAN {
+public class VideoLANCore {
     public static final Marker IT = MarkerFactory.getMarker("VideoLAN");
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory factory() { return FACTORY; }
 
-    public static void init(IWaterMediaLoader modLoader) {
+    public static void init(IMediaLoader modLoader) {
         Path workingDir = modLoader.getTempDir();
         if (FACTORY != null) throw new IllegalStateException("Rejected attempt to reload VideoLAN");
 

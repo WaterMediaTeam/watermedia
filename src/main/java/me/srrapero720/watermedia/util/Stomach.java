@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.core.util;
+package me.srrapero720.watermedia.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,15 +9,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.util.Tools.IT;
 
 public class Stomach {
     public static boolean integrityFrom(ClassLoader loader, String source, File targetFile) {
         try (InputStream is = loader.getResourceAsStream(source)) {
             return integrityFrom(is, targetFile);
         } catch (Exception e) {
-            LOGGER.error(IT, "Integrity check failed, exception occurred on file '{}'", targetFile.toPath());
-            LOGGER.debug(IT, "DETECTED ERROR", e);
+            LOGGER.error(Tools.IT, "Integrity check failed, exception occurred on file '{}'", targetFile.toPath());
+            LOGGER.debug(Tools.IT, "DETECTED ERROR", e);
         }
         return false;
     }

@@ -2,14 +2,14 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
-import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
-import me.srrapero720.watermedia.core.util.Tools;
+import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.util.Tools;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.api.url.patch.*;
 import me.srrapero720.watermedia.api.video.VideoLANPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.core.videolan.VideoLAN;
+import me.srrapero720.watermedia.core.VideoLANCore;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -35,7 +35,7 @@ public final class WaterMediaAPI {
     public static RenderablePicture VLC_FAILED;
     public static RenderablePicture VLC_FAILED_INSTALL;
 
-    public static void init(IWaterMediaLoader modLoader) {
+    public static void init(IMediaLoader modLoader) {
         LOGGER.warn(IT, (URL_PATCHERS.size() > 0 ? "Rel" : "L") + "oading URLPatches");
         URL_PATCHERS.clear();
         URL_PATCHERS.addAll(List.of(new URLPatch[]{
@@ -139,7 +139,7 @@ public final class WaterMediaAPI {
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
-    public static boolean isVLCReady() { return VideoLAN.factory() != null; }
+    public static boolean isVLCReady() { return VideoLANCore.factory() != null; }
 
     /**
      * Created by CreativeMD

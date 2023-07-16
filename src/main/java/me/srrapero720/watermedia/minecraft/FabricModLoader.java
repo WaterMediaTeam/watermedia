@@ -1,9 +1,8 @@
-package me.srrapero720.watermedia.core.minecraft;
+package me.srrapero720.watermedia.minecraft;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
+import me.srrapero720.watermedia.IMediaLoader;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import org.apache.commons.io.IOUtils;
@@ -20,7 +19,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * Loader for FABRIC
  * Doing things with FABRIC classes/api is safe
  */
-public class FabricModLoader implements PreLaunchEntrypoint, IWaterMediaLoader {
+public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     private static final Marker IT = MarkerFactory.getMarker("FabricLoader");
     private final WaterMedia INSTANCE;
     private ClassLoader CL;

@@ -1,6 +1,6 @@
-package me.srrapero720.watermedia.core.storage;
+package me.srrapero720.watermedia.core;
 
-import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
+import me.srrapero720.watermedia.IMediaLoader;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
@@ -15,7 +15,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class PictureStorage {
+public class MediaCacheCore {
     private static final Marker IT = MarkerFactory.getMarker("PictureStorage");
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
@@ -23,7 +23,7 @@ public class PictureStorage {
     private static File index;
     private static boolean inited = false;
 
-    public static void init(IWaterMediaLoader modLoader) {
+    public static void init(IMediaLoader modLoader) {
         if (inited) throw new IllegalStateException("Rejected attempt to reload LocalStorage");
 
         // SETUP
@@ -127,6 +127,6 @@ public class PictureStorage {
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
-        public File getFile() { return PictureStorage.getFile(url); }
+        public File getFile() { return MediaCacheCore.getFile(url); }
     }
 }

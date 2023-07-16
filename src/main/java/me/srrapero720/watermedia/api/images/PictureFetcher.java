@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.api.images;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.core.storage.PictureStorage;
+import me.srrapero720.watermedia.core.MediaCacheCore;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.util.Tools.USER_AGENT;
+import static me.srrapero720.watermedia.util.Tools.USER_AGENT;
 
 public abstract class PictureFetcher extends Thread {
     private static final Marker IT = MarkerFactory.getMarker("FetchPicture");
@@ -76,7 +76,7 @@ public abstract class PictureFetcher extends Thread {
         } catch (Exception e) {
             LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
             onFailed(e);
-            PictureStorage.deleteEntry(url);
+            MediaCacheCore.deleteEntry(url);
         }
 
         synchronized (LOCK) {
@@ -85,7 +85,7 @@ public abstract class PictureFetcher extends Thread {
     }
 
     public static byte[] load(String url) throws IOException, VideoContentException {
-        var entry = PictureStorage.getEntry(url);
+        var entry = MediaCacheCore.getEntry(url);
         var requestTime = System.currentTimeMillis();
         var request = new URL(url).openConnection();
 
@@ -137,14 +137,14 @@ public abstract class PictureFetcher extends Thread {
                     if (file.exists()) try (var fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        PictureStorage.updateEntry(new PictureStorage.Entry(url, freshTag, lastTimestamp, expTimestamp));
+                        MediaCacheCore.updateEntry(new MediaCacheCore.Entry(url, freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
             if (readType(data) == null) throw new VideoContentException();
-            PictureStorage.saveFile(url, tag, lastTimestamp, expTimestamp, data);
+            MediaCacheCore.saveFile(url, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection http) http.disconnect();

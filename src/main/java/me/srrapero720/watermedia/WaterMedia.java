@@ -2,10 +2,9 @@ package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.core.lavaplayer.LavaCore;
-import me.srrapero720.watermedia.core.storage.PictureStorage;
-import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
-import me.srrapero720.watermedia.core.videolan.VideoLAN;
+import me.srrapero720.watermedia.core.LavaCore;
+import me.srrapero720.watermedia.core.MediaCacheCore;
+import me.srrapero720.watermedia.core.VideoLANCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -21,8 +20,8 @@ public class WaterMedia {
 	private RuntimeException CLIENT_EXCEPTION;
 	private RuntimeException SERVER_EXCEPTION;
 
-	private final IWaterMediaLoader LOADER;
-	public WaterMedia(IWaterMediaLoader modLoader) {
+	private final IMediaLoader LOADER;
+	public WaterMedia(IMediaLoader modLoader) {
 		LOADER = modLoader;
 		LOGGER.info(IT, "Running WATERMeDIA on {}", LOADER.getLoaderName());
 
@@ -54,11 +53,11 @@ public class WaterMedia {
 
 		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading PictureStorage");
-		ThreadUtil.trySimple(() -> PictureStorage.init(LOADER), e -> registerException("PictureStorage", (RuntimeException) e));
+		ThreadUtil.trySimple(() -> MediaCacheCore.init(LOADER), e -> registerException("PictureStorage", (RuntimeException) e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading VideoLAN");
-		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> registerException("VideoLAN", (RuntimeException) e));
+		ThreadUtil.trySimple(() -> VideoLANCore.init(LOADER), e -> registerException("VideoLAN", (RuntimeException) e));
 
 		// PREPARE LAVAPLAYER
 		LOGGER.info(IT, "Loading LavaPlayer");

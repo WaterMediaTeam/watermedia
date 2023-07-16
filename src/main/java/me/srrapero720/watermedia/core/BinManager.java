@@ -1,14 +1,14 @@
-package me.srrapero720.watermedia.core.videolan;
+package me.srrapero720.watermedia.core;
 
-import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
-import me.srrapero720.watermedia.core.util.Stomach;
-import me.srrapero720.watermedia.core.util.Tools;
+import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.util.Stomach;
+import me.srrapero720.watermedia.util.Tools;
 
 import java.io.File;
 import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.videolan.VideoLAN.IT;
+import static me.srrapero720.watermedia.core.VideoLANCore.IT;
 
 public enum BinManager {
     // CORES
@@ -246,7 +246,7 @@ public enum BinManager {
         this.destination = (type.equals(Type.LUAC) ? "/lua/" : "/") + relativeDir;
     }
 
-    void extract(IWaterMediaLoader modLoader) {
+    void extract(IMediaLoader modLoader) {
         Tools.extractFrom(modLoader.getClassLoader(), origin, binPath.toAbsolutePath() + destination);
     }
 
@@ -255,7 +255,7 @@ public enum BinManager {
         if (new File(destination).delete()) LOGGER.warn(IT, "File '{}' cannot be deleted", name());
     }
 
-    void checkIntegrity(IWaterMediaLoader modLoader) {
+    void checkIntegrity(IMediaLoader modLoader) {
         if (!Stomach.integrityFrom(modLoader.getClassLoader(), origin, new File(binPath.toAbsolutePath() + destination))) {
             delete();
             extract(modLoader);
@@ -268,7 +268,7 @@ public enum BinManager {
         binPath = rootDir;
     }
     static void cleanup() { Tools.deleteFrom(binPath.toAbsolutePath().toString()); }
-    static void extractAll(IWaterMediaLoader modLoader) { for (BinManager bin: BinManager.values()) bin.extract(modLoader); }
+    static void extractAll(IMediaLoader modLoader) { for (BinManager bin: BinManager.values()) bin.extract(modLoader); }
     static String installedVersion() { return Tools.readFrom(binPath.resolve("version.cfg").toAbsolutePath()); }
     static String resVersion() { return "3.0.18"; }
 

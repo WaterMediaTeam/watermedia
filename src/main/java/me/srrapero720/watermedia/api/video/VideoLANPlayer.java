@@ -14,15 +14,13 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallba
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.video.events.common.*;
-import me.srrapero720.watermedia.core.videolan.VideoLAN;
+import me.srrapero720.watermedia.core.VideoLANCore;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -48,7 +46,7 @@ public class VideoLANPlayer extends VideoPlayer {
     public CallbackMediaPlayerComponent raw() { return player; }
 
     public VideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        if (factory == null) factory = VideoLAN.factory();
+        if (factory == null) factory = VideoLANCore.factory();
 
         if (WaterMediaAPI.isVLCReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
         else LOGGER.error(IT, "Failed to create CallbackMediaPlayerComponent because VLC is not loaded");

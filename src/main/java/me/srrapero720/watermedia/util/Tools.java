@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.core.util;
+package me.srrapero720.watermedia.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

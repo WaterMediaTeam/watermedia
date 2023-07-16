@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.videolan.VideoLAN.IT;
+import static me.srrapero720.watermedia.core.VideoLANCore.IT;
 
 /**
  * Base implementation of a native discovery strategy that searches a list of directories for a list of files.

@@ -1,10 +1,8 @@
-package me.srrapero720.watermedia.core.util;
+package me.srrapero720.watermedia;
 
-import java.net.URL;
 import java.nio.file.Path;
-import java.util.Enumeration;
 
-public interface IWaterMediaLoader {
+public interface IMediaLoader {
     boolean isDevEnv();
     boolean isClient();
     boolean isThisModPresent(String modId);
