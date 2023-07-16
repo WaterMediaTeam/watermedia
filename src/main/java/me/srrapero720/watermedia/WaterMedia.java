@@ -4,6 +4,7 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.LavaCore;
 import me.srrapero720.watermedia.core.MediaCacheCore;
+import me.srrapero720.watermedia.core.VideoLANBinaries;
 import me.srrapero720.watermedia.core.VideoLANCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,10 @@ public class WaterMedia {
 		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading PictureStorage");
 		ThreadUtil.trySimple(() -> MediaCacheCore.init(LOADER), e -> registerException("PictureStorage", (RuntimeException) e));
+
+		// PREPARE VLC BINARIES
+		LOGGER.info(IT, "Loading VideoLANBinaries");
+		ThreadUtil.trySimple(() -> VideoLANBinaries.init(LOADER), e -> registerException("VideoLAN", (RuntimeException) e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading VideoLAN");

@@ -51,15 +51,15 @@ public final class WaterMediaAPI {
         LOGGER.info(IT, "Loading internal RenderablePicture's");
 
         if (LOADING_GIF == null) {
-            LOADING_GIF = new RenderablePicture(Objects.requireNonNull(Tools.getGifFromResources(modLoader.getClassLoader(), "/images/loading.gif")));
+            LOADING_GIF = new RenderablePicture(Objects.requireNonNull(Tools.readGifResource(modLoader.getClassLoader(), "/images/loading.gif")));
         } else LOGGER.warn(IT, "Skipping LOADING_GIF");
 
         if (VLC_FAILED == null) {
-            VLC_FAILED = new RenderablePicture(Tools.getImageFromResources(modLoader.getClassLoader(), "/images/vlc_win_failed.png"));
+            VLC_FAILED = new RenderablePicture(Tools.readImageResource(modLoader.getClassLoader(), "/images/vlc_win_failed.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED");
 
         if (VLC_FAILED_INSTALL == null) {
-            VLC_FAILED_INSTALL = new RenderablePicture(Tools.getImageFromResources(modLoader.getClassLoader(), "/images/vlc_otheros_failed.png"));
+            VLC_FAILED_INSTALL = new RenderablePicture(Tools.readImageResource(modLoader.getClassLoader(), "/images/vlc_otheros_failed.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED_INSTALL");
     }
 

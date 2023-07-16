@@ -1,6 +1,9 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.core.exceptions.AttemptToReloadException;
+import me.srrapero720.watermedia.core.exceptions.SafeException;
+import me.srrapero720.watermedia.core.exceptions.UnsafeException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
@@ -23,8 +26,8 @@ public class MediaCacheCore {
     private static File index;
     private static boolean inited = false;
 
-    public static void init(IMediaLoader modLoader) {
-        if (inited) throw new IllegalStateException("Rejected attempt to reload LocalStorage");
+    public static void init(IMediaLoader modLoader) throws SafeException, UnsafeException {
+        if (inited) throw new AttemptToReloadException("Rejected attempt to reload LocalStorage");
 
         // SETUP
         dir = modLoader.getTempDir().toAbsolutePath().resolve("cache/pictures").toFile();

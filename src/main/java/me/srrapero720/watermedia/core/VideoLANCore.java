@@ -4,9 +4,9 @@ package me.srrapero720.watermedia.core;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
 import me.srrapero720.watermedia.IMediaLoader;
-import me.srrapero720.watermedia.util.Tools;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.util.Tools;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -26,8 +26,8 @@ public class VideoLANCore {
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory factory() { return FACTORY; }
 
-    public static void init(IMediaLoader modLoader) {
-        Path workingDir = modLoader.getTempDir();
+    public static void init(IMediaLoader loader) {
+        Path workingDir = loader.getTempDir();
         if (FACTORY != null) throw new IllegalStateException("Rejected attempt to reload VideoLAN");
 
         // SETUP PATHS
@@ -42,45 +42,9 @@ public class VideoLANCore {
 
         // INIT
         CustomDirectoryProvider.init(path);
-        BinManager.init(path);
-
-        if (Tools.getArch().wrapped) {
-            // Check if we need to update binaries
-            boolean fresh = false;
-            if (!BinManager.resVersion().equals(BinManager.installedVersion())) {
-                // CLEAR
-                LOGGER.info(IT, "Running VLC cleanup");
-                BinManager.cleanup();
-
-                // EXTRACT
-                LOGGER.info(IT, "Running VLC binary installation");
-                BinManager.extractAll(modLoader);
-
-                // SET LOCAL VERSION
-                try {
-                    var config = path.resolve("version.cfg");
-                    if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
-                    Files.writeString(config, BinManager.resVersion());
-                } catch (Exception e) {
-                    LOGGER.error(IT, "Exception writing configuration file", e);
-                }
-                fresh = true;
-            } else LOGGER.warn(IT, "Detected WaterMedia's VLC installation, skipping extract");
-
-            // Integrity check
-            if (!fresh) {
-                LOGGER.info(IT, "Running integrity check");
-                for (var binary : BinManager.values()) binary.checkIntegrity(modLoader);
-            }
-        } else {
-            LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
-            LOGGER.error(IT, "WATERMeDIA doesn't include VLC binaries for your operative system / system architecture");
-            LOGGER.error(IT, "You had to install VLC manually in https://www.videolan.org/ - More info ask to SrRapero720");
-            LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
-        }
 
         FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = Tools.getJsonListFromRes(modLoader.getClassLoader(), "vlc/args.json").toArray(new String[0]);
+            String[] args = Tools.getJsonListFromRes(loader.getClassLoader(), "vlc/args.json").toArray(new String[0]);
             for (int i = 0; i < args.length; i++) {
                 args[i] = args[i].replace("%logfile%", logs.toAbsolutePath().toString());
             }

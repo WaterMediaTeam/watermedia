@@ -1,5 +1,9 @@
 package me.srrapero720.watermedia.core;
 
+import me.srrapero720.watermedia.core.exceptions.AttemptToReloadException;
+import me.srrapero720.watermedia.core.exceptions.SafeException;
+import me.srrapero720.watermedia.core.exceptions.UnsafeException;
+
 /**
  * Doing development of this class is kinda hard
  * Explanation: This class/core was intended to replace "ResourcesCore" using a lazy method
@@ -16,4 +20,7 @@ package me.srrapero720.watermedia.core;
  *
  */
 public class LazyResourcesCore {
+    public static void init()  throws SafeException, UnsafeException {
+
+    }
 }

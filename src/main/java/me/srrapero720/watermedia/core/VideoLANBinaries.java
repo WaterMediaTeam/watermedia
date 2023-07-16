@@ -1,16 +1,20 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.core.exceptions.SafeException;
+import me.srrapero720.watermedia.core.exceptions.UnsafeException;
 import me.srrapero720.watermedia.util.Stomach;
 import me.srrapero720.watermedia.util.Tools;
+import me.srrapero720.watermedia.util.WaterOs;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.core.VideoLANCore.IT;
 
-public enum BinManager {
+public enum VideoLANBinaries {
     // CORES
     libvlc(Type.BIN, null),
     libvlccore(Type.BIN, null),
@@ -223,21 +227,18 @@ public enum BinManager {
     common(Type.LUAC, "modules"),
     dkjson(Type.LUAC, "modules"),
     sandbox(Type.LUAC, "modules"),
-    simplexml(Type.LUAC, "modules"),
 
     // playlist
-    newgrounds(Type.LUAC, "playlist"),
     soundcloud(Type.LUAC, "playlist"),
     vimeo(Type.LUAC, "playlist"),
     vocaroo(Type.LUAC, "playlist"),
     youtube(Type.LUAC, "playlist"),
     ;
 
-    private static Path binPath;
+
     private final String origin;
     private final String destination;
-
-    BinManager(Type type, String dir) {
+    VideoLANBinaries(Type type, String dir) {
         String relativeDir = (dir != null
                 ? (type.equals(Type.BIN) ? "plugins/" : "") + dir + "/"
                 : "") + name() + type.extension;
@@ -246,35 +247,47 @@ public enum BinManager {
         this.destination = (type.equals(Type.LUAC) ? "/lua/" : "/") + relativeDir;
     }
 
-    void extract(IMediaLoader modLoader) {
-        Tools.extractFrom(modLoader.getClassLoader(), origin, binPath.toAbsolutePath() + destination);
-    }
-
-    void delete() {
-        String destination = binPath.toAbsolutePath() + this.destination;
-        if (new File(destination).delete()) LOGGER.warn(IT, "File '{}' cannot be deleted", name());
-    }
-
-    void checkIntegrity(IMediaLoader modLoader) {
-        if (!Stomach.integrityFrom(modLoader.getClassLoader(), origin, new File(binPath.toAbsolutePath() + destination))) {
-            delete();
-            extract(modLoader);
+    void checkIntegrityNorExtract(IMediaLoader modLoader) {
+        File destFile = binPath.toAbsolutePath().resolve(this.destination.substring(1)).toFile();
+        if (!destFile.exists() || !Stomach.integrityFrom(modLoader.getClassLoader(), origin, destFile)) {
+            Tools.extractResource(modLoader.getClassLoader(), origin, destFile.toPath());
         }
     }
 
-    static void init(Path rootDir) {
-        LOGGER.info(IT, "System detected: {}", Tools.getArch());
-        LOGGER.info(IT, "Mounted on path {}", rootDir);
-        binPath = rootDir;
+    private static Path binPath;
+    private static final String V_LOCAL = Tools.readTextFile(binPath.resolve("version.cfg").toAbsolutePath());
+    private static final String V_JAR = "3.0.18a";
+
+    public static void init(IMediaLoader loader) throws SafeException, UnsafeException {
+        binPath = loader.getTempDir().resolve("vlc/").toAbsolutePath();
+
+        LOGGER.info(IT, "Running on OS-ARCH: {}", WaterOs.getArch());
+        LOGGER.info(IT, "Mounted bin extraction on {}", binPath.toAbsolutePath());
+
+        if (WaterOs.getArch().wrapped) {
+            if (!V_JAR.equals(V_LOCAL)) {
+                for(VideoLANBinaries bin: VideoLANBinaries.values()) bin.checkIntegrityNorExtract(loader);
+
+                try {
+                    Path config = binPath.resolve("version.cfg");
+                    if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
+                    Files.writeString(config, V_JAR);
+                } catch (Exception e) {
+                    LOGGER.error(IT, "Exception writing configuration file", e);
+                }
+            }
+        } else {
+            LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
+            LOGGER.error(IT, "WATERMeDIA doesn't include VLC binaries for your operative system / system architecture");
+            LOGGER.error(IT, "You had to install VLC manually in https://www.videolan.org/ - More info ask to SrRapero720");
+            LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
+        }
     }
-    static void cleanup() { Tools.deleteFrom(binPath.toAbsolutePath().toString()); }
-    static void extractAll(IMediaLoader modLoader) { for (BinManager bin: BinManager.values()) bin.extract(modLoader); }
-    static String installedVersion() { return Tools.readFrom(binPath.resolve("version.cfg").toAbsolutePath()); }
-    static String resVersion() { return "3.0.18"; }
+
 
     enum Type {
         LUAC("/vlc/lua", ".luac"),
-        BIN("/vlc/" + Tools.getArch(), Tools.getArch().EXT);
+        BIN("/vlc/" + WaterOs.getArch(), WaterOs.getArch().ext);
         public final String rootDir;
         public final String extension;
         Type(String rootDir, String ext) { this.rootDir = rootDir; this.extension = ext; }
