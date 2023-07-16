@@ -18,8 +18,8 @@
 
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "me.srrapero720.watermedia.core.WaterFabricLoader"
+    "preLaunch": [
+      "me.srrapero720.watermedia.core.minecraft.FabricModLoader"
     ]
   },
   "conflicts": {

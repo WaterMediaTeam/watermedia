@@ -27,7 +27,7 @@ public class WaterMedia {
 		LOGGER.info(IT, "Running WATERMeDIA on {}", LOADER.getLoaderName());
 
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)
-		if (!LOADER.isClient() && !LOADER.getLoaderName().equalsIgnoreCase("fabric") && !LOADER.isDevEnv()) {
+		if (!LOADER.isClient() && !LOADER.isDevEnv()) {
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
 			LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVERS. remove this mod from server to stop crashes");
 			LOGGER.error(IT, "If dependant mods throws error loading WATERMeDIA classes report it to the creator");

@@ -45,6 +45,10 @@ public class Tools {
         return result;
     }
 
+    public static void extractFrom(ClassLoader loader, String originPath, Path destinationPath) {
+        extractFrom(loader, originPath, destinationPath.toString());
+    }
+
     public static void extractFrom(ClassLoader loader, String originPath, String destinationPath) {
         try (InputStream is = loader.getResourceAsStream(originPath)) {
             Path dllDestinationPath = Paths.get(destinationPath);

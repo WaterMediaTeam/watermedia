@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.core;
+package me.srrapero720.watermedia.core.minecraft;
 
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.util.IWaterMediaLoader;
@@ -23,11 +23,11 @@ import java.nio.file.Path;
  * Doing things with FORGE classes/api is safe
  */
 @Mod(WaterMedia.ID)
-public class WaterForgeLoader implements IWaterMediaLoader {
+public class ForgeModLoader implements IWaterMediaLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
     private final WaterMedia INSTANCE;
 
-    public WaterForgeLoader() {
+    public ForgeModLoader() {
         // DEFINE
         INSTANCE = new WaterMedia(this);
         IEventBus BUS = FMLJavaModLoadingContext.get().getModEventBus();

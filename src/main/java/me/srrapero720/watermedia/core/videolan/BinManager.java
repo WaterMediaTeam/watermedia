@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.core.videolan.VideoLAN.IT;
 
-public enum VLCBinaries {
+public enum BinManager {
     // CORES
     libvlc(Type.BIN, null),
     libvlccore(Type.BIN, null),
@@ -237,7 +237,7 @@ public enum VLCBinaries {
     private final String origin;
     private final String destination;
 
-    VLCBinaries(Type type, String dir) {
+    BinManager(Type type, String dir) {
         String relativeDir = (dir != null
                 ? (type.equals(Type.BIN) ? "plugins/" : "") + dir + "/"
                 : "") + name() + type.extension;
@@ -268,7 +268,7 @@ public enum VLCBinaries {
         binPath = rootDir;
     }
     static void cleanup() { Tools.deleteFrom(binPath.toAbsolutePath().toString()); }
-    static void extractAll(IWaterMediaLoader modLoader) { for (VLCBinaries bin: VLCBinaries.values()) bin.extract(modLoader); }
+    static void extractAll(IWaterMediaLoader modLoader) { for (BinManager bin: BinManager.values()) bin.extract(modLoader); }
     static String installedVersion() { return Tools.readFrom(binPath.resolve("version.cfg").toAbsolutePath()); }
     static String resVersion() { return "3.0.18"; }
 

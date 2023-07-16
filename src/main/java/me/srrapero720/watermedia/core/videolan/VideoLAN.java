@@ -42,25 +42,25 @@ public class VideoLAN {
 
         // INIT
         CustomDirectoryProvider.init(path);
-        VLCBinaries.init(path);
+        BinManager.init(path);
 
         if (Tools.getArch().wrapped) {
             // Check if we need to update binaries
             boolean fresh = false;
-            if (!VLCBinaries.resVersion().equals(VLCBinaries.installedVersion())) {
+            if (!BinManager.resVersion().equals(BinManager.installedVersion())) {
                 // CLEAR
                 LOGGER.info(IT, "Running VLC cleanup");
-                VLCBinaries.cleanup();
+                BinManager.cleanup();
 
                 // EXTRACT
                 LOGGER.info(IT, "Running VLC binary installation");
-                VLCBinaries.extractAll(modLoader);
+                BinManager.extractAll(modLoader);
 
                 // SET LOCAL VERSION
                 try {
                     var config = path.resolve("version.cfg");
                     if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
-                    Files.writeString(config, VLCBinaries.resVersion());
+                    Files.writeString(config, BinManager.resVersion());
                 } catch (Exception e) {
                     LOGGER.error(IT, "Exception writing configuration file", e);
                 }
@@ -70,7 +70,7 @@ public class VideoLAN {
             // Integrity check
             if (!fresh) {
                 LOGGER.info(IT, "Running integrity check");
-                for (var binary : VLCBinaries.values()) binary.checkIntegrity(modLoader);
+                for (var binary : BinManager.values()) binary.checkIntegrity(modLoader);
             }
         } else {
             LOGGER.error(IT, "###########################  VLC NOT PRE-INSTALLED  ###################################");
