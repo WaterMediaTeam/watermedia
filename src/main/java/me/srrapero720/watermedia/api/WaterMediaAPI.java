@@ -33,7 +33,9 @@ public final class WaterMediaAPI {
     // RESOURCES
     public static RenderablePicture LOADING_GIF;
     public static RenderablePicture VLC_FAILED;
+    public static RenderablePicture VLC_FAILED_EXTENDED;
     public static RenderablePicture VLC_FAILED_INSTALL;
+    public static RenderablePicture VLC_FAILED_INSTALL_EXTENDED;
 
     public static void init(IMediaLoader modLoader) {
         LOGGER.warn(IT, (URL_PATCHERS.size() > 0 ? "Rel" : "L") + "oading URLPatches");
@@ -55,11 +57,19 @@ public final class WaterMediaAPI {
         } else LOGGER.warn(IT, "Skipping LOADING_GIF");
 
         if (VLC_FAILED == null) {
-            VLC_FAILED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc_win_failed.png"));
+            VLC_FAILED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed.png"));
+        } else LOGGER.warn(IT, "Skipping VLC_FAILED");
+
+        if (VLC_FAILED_EXTENDED == null) {
+            VLC_FAILED_EXTENDED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_extended.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED");
 
         if (VLC_FAILED_INSTALL == null) {
-            VLC_FAILED_INSTALL = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc_otheros_failed.png"));
+            VLC_FAILED_INSTALL = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_install.png"));
+        } else LOGGER.warn(IT, "Skipping VLC_FAILED_INSTALL");
+
+        if (VLC_FAILED_INSTALL_EXTENDED == null) {
+            VLC_FAILED_INSTALL_EXTENDED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_install_extended.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED_INSTALL");
     }
 
