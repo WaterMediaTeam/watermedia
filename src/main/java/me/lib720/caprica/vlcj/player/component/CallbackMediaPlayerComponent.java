@@ -24,19 +24,16 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.component.callback.CallbackImagePainter;
 import me.lib720.caprica.vlcj.player.component.callback.ScaledCallbackImagePainter;
 import me.lib720.caprica.vlcj.player.embedded.fullscreen.FullScreenStrategy;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.*;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.format.RV32BufferFormat;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallbackAdapter;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallbackAdapter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.nio.ByteBuffer;
 
 /**
  * Implementation of a callback "direct-rendering" media player.
@@ -150,6 +147,18 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         initInputEvents(inputEvents);
 
         onAfterConstruct();
+    }
+
+    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, boolean lockBuffers, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+        this(mediaPlayerFactory, null, null, lockBuffers, null, renderCallback, new BufferFormatCallback() {
+            @Override
+            public void allocatedBuffers(ByteBuffer[] buffers) {}
+
+            @Override
+            public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
+                return bufferFormatCallback.getBufferFormat(sourceWidth, sourceHeight);
+            }
+        }, null);
     }
 
     /**

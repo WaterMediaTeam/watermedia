@@ -283,8 +283,8 @@ public class VideoLANPlayer extends VideoPlayer {
     }
 
 
-    private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback) {
-        final var component = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
+    private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+        final var component = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
         component.mediaPlayer().events().addMediaPlayerEventListener(eventListeners);
         return component;
     }
