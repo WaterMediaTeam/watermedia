@@ -11,7 +11,6 @@ import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.api.video.events.common.*;
@@ -22,8 +21,6 @@ import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
