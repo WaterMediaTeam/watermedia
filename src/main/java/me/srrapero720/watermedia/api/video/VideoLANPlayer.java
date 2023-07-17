@@ -34,7 +34,12 @@ public class VideoLANPlayer extends VideoPlayer {
     private CallbackMediaPlayerComponent player;
     public final EventManager<VideoLANPlayer> events = new EventManager<>();
 
-
+    /**
+     * Get raw VLC player
+     * @deprecated use {@link VideoLANPlayer#raw()}
+     */
+    @Deprecated(forRemoval = true)
+    public CallbackMediaPlayerComponent getRaw() { return player; }
     public CallbackMediaPlayerComponent raw() { return player; }
 
     public VideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
