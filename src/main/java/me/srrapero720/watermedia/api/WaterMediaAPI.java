@@ -27,8 +27,8 @@ import java.util.List;
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
     public static final RenderablePicture LOADING_GIF = new RenderablePicture(Util.getGifFromResources("/images/loading.gif"));
-    public static final RenderablePicture VLC_FAILED = new RenderablePicture(Util.getImageFromResources("/images/vlc_win_failed.png"));
-    public static final RenderablePicture VLC_FAILED_INSTALL = new RenderablePicture(Util.getImageFromResources("/images/vlc_otheros_failed.png"));
+    public static final RenderablePicture VLC_FAILED = new RenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed.png"));
+    public static final RenderablePicture VLC_FAILED_INSTALL = new RenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed_install.png"));
 
     private static final List<URLPatch> URL_PATCHERS = new ArrayList<>(List.of(
             new YoutubePatch(),
