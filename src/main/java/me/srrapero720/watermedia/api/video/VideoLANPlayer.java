@@ -28,10 +28,10 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class VideoLANPlayer extends VideoPlayer {
     private static final Thread THREAD = Thread.currentThread();
     private static final Marker IT = MarkerFactory.getMarker("VideoLanPlayer");
-    private boolean buffering = false;
-    private boolean prepared = false;
+    private volatile boolean buffering = false;
+    private volatile boolean prepared = false;
     private volatile int volume = 100;
-    private CallbackMediaPlayerComponent player;
+    private volatile CallbackMediaPlayerComponent player;
     public final EventManager<VideoLANPlayer> events = new EventManager<>();
 
     /**
