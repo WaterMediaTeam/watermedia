@@ -30,7 +30,7 @@ public class VideoLANPlayer extends VideoPlayer {
     private static final Marker IT = MarkerFactory.getMarker("VideoLanPlayer");
     private boolean buffering = false;
     private boolean prepared = false;
-    private int volume = 100;
+    private volatile int volume = 100;
     private CallbackMediaPlayerComponent player;
     public final EventManager<VideoLANPlayer> events = new EventManager<>();
 
@@ -129,9 +129,12 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public boolean isValid() {
         if (player == null) return false;
-        if (!getRawPlayerState().equals(State.ENDED) && !getRawPlayerState().equals(State.ERROR) && !getRawPlayerState().equals(State.OPENING) && !getRawPlayerState().equals(State.NOTHING_SPECIAL)) {
-            return getRawPlayerState().equals(State.STOPPED) ? (!RuntimeUtil.isNix() && getDimensions() != null) : player.mediaPlayer().media().isValid();
-        }
+        if (RuntimeUtil.isNix()) {
+            if (!getRawPlayerState().equals(State.ENDED) && !getRawPlayerState().equals(State.ERROR) && !getRawPlayerState().equals(State.OPENING) && !getRawPlayerState().equals(State.NOTHING_SPECIAL)) {
+                return player.mediaPlayer().media().isValid();
+            }
+        } else return player.mediaPlayer().media().isValid();
+
         return false;
     }
 
@@ -172,8 +175,8 @@ public class VideoLANPlayer extends VideoPlayer {
     }
 
     @Override
-    public void setVolume(int volume) {
-        this.volume = volume;
+    public synchronized void setVolume(int volume) {
+        synchronized (THREAD) { this.volume = volume; }
         if (!isValid()) return;
         player.mediaPlayer().audio().setVolume(this.volume);
         if (this.volume == 0 && !player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(true);
@@ -315,11 +318,10 @@ public class VideoLANPlayer extends VideoPlayer {
                 buffering = false;
             }
 
-            if (volume == 0) player.mediaPlayer().audio().setMute(true);
-            else player.mediaPlayer().audio().setVolume(volume);
-
             if (!prepared) events.callPlayerStartedEvent(VideoLANPlayer.this, new PlayerStartedEvent.EventData());
             else events.callMediaResumeEvent(VideoLANPlayer.this, new MediaResumeEvent.EventData(player.mediaPlayer().status().length()));
+
+            synchronized (THREAD) { setVolume(volume); }
         }
 
         @Override
@@ -448,8 +450,7 @@ public class VideoLANPlayer extends VideoPlayer {
             prepared = true;
             events.callPlayerReadyEvent(VideoLANPlayer.this, new PlayerReadyEvent.EventData());
 
-            if (volume == 0) player.mediaPlayer().audio().setMute(true);
-            else player.mediaPlayer().audio().setVolume(volume);
+            synchronized (THREAD) { setVolume(volume); }
         }
     };
 }
