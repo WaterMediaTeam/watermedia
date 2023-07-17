@@ -91,6 +91,8 @@ dependencies {
     library ('com.squareup.retrofit2:converter-gson:2.9.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
+    library 'org.twitter4j:twitter4j-core:4.1.1'
+
     library 'com.mpatric:mp3agic:0.9.1'
 }
 
