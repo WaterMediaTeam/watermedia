@@ -41,7 +41,7 @@ public interface LibX11 extends Library {
      * <p>
      * Conceivably Xlib could be present on Windows.
      */
-    LibX11 INSTANCE = Native.load("X11", LibX11.class);
+    LibX11 INSTANCE = Native.loadLibrary("X11", LibX11.class);
 
     /**
      * Initialise Xlib support for concurrent threads.

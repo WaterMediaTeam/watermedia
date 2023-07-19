@@ -27,7 +27,7 @@ import me.lib720.caprica.vlcj.binding.support.types.size_t;
 
 public interface Kernel32 extends StdCallLibrary {
 
-    Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
+    Kernel32 INSTANCE = Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     int VirtualLock(Pointer lpAddress, size_t dwSize);
 
