@@ -13,13 +13,13 @@ group = modgroup
 archivesBaseName = modid
 
 /* SOURCE AND TARGET JAVA VERSION */
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 println "Gradle Java: ${JavaVersion.current()}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: "${mappingsch}", version: "${mappings_version}-${mcversion}"
+    mappings channel: "${mappingsch}", version: "${mappings_version}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
     runs {
@@ -48,6 +48,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 /* PROJECT REPOSITORIES */
 repositories {
+    jcenter()
     mavenCentral()
     maven { url "https://repo.spongepowered.org/maven" }
     maven { url "https://maven.tterrag.com/" }
@@ -72,8 +73,8 @@ minecraft.runs.all {
 }
 
 dependencies {
-    // MinecraftForge version
-    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
+//    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     // FabricLoader (just to give loading support on FABRIC)
     implementation "net.fabricmc:fabric-loader:${project.fabricv}"
