@@ -13,13 +13,13 @@ archivesBaseName = modid
 
 apply plugin: 'net.minecraftforge.gradle'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 println "Gradle Java: ${JavaVersion.current()}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: "${mappingsch}", version: "${mappings_version}"
+    mappings channel: "${mappingsch}", version: "${mappings_version}-${mcversion}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
     runs {
@@ -69,8 +69,7 @@ configurations {
 }
 
 dependencies {
-//    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
 
     // FABRIC LOADER (just to get classes info, NEVER USE IT outside WMForFabric)
     implementation "net.fabricmc:fabric-loader:${project.fabricv}"
