@@ -2,6 +2,8 @@ package me.srrapero720.watermedia.api.images;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.GifDecoder;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,7 +19,7 @@ public class RenderablePicture {
 
     public int remaining;
 
-    public RenderablePicture(BufferedImage image) {
+    public RenderablePicture(@NotNull BufferedImage image) {
         this.width = image.getWidth();
         this.height = image.getHeight();
         this.textures = new int[] { -1 };
@@ -27,7 +29,7 @@ public class RenderablePicture {
         this.image = image;
     }
 
-    public RenderablePicture(GifDecoder decoder) {
+    public RenderablePicture(@NotNull GifDecoder decoder) {
         Dimension frameSize = decoder.getFrameSize();
         width = (int) frameSize.getWidth();
         height = (int) frameSize.getHeight();
@@ -58,6 +60,11 @@ public class RenderablePicture {
         return last;
     }
 
+    /**
+     *
+     * @param index
+     * @return
+     */
     public int genTexture(int index) {
         if (textures[index] == -1 && decoder != null) {
             textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
@@ -65,5 +72,25 @@ public class RenderablePicture {
             if (remaining <= 0) decoder = null;
         }
         return textures[index];
+    }
+
+    /**
+     * This method just drain buffers but not releases OpenGL texture
+     */
+    public synchronized void flush() {
+        if (image != null) image.flush();
+        if (decoder != null) {
+            for (int i = 0; i < decoder.getFrameCount(); i++) {
+                decoder.getFrame(i).flush();
+            }
+        }
+    }
+
+    /**
+     * This method drain buffers and releases OpenGL textures
+     */
+    public synchronized void release() {
+        GL11.glDeleteTextures(textures);
+        flush();
     }
 }
