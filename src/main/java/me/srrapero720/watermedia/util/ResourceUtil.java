@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.srrapero720.watermedia.api.external.GifDecoder;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -62,7 +61,7 @@ public class ResourceUtil {
 
     public static BufferedImage readImageResource(ClassLoader loader, String path) {
         try (InputStream in = loader.getResourceAsStream(path)) {
-            var image = ImageIO.read(Objects.requireNonNull(in));
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(in));
             if (image != null) return image;
             else throw new FileNotFoundException("Image read from WaterMedia resources was NULL");
         } catch (Exception e) {

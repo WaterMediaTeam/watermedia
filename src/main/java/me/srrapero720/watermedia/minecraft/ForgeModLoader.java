@@ -15,6 +15,8 @@ import net.minecraftforge.network.NetworkConstants;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.nio.file.Path;
 
@@ -28,6 +30,7 @@ public class ForgeModLoader implements IMediaLoader {
     private final WaterMedia INSTANCE;
 
     public ForgeModLoader() {
+
         // DEFINE
         INSTANCE = new WaterMedia(this);
         IEventBus BUS = FMLJavaModLoadingContext.get().getModEventBus();
