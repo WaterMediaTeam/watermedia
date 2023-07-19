@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api.url.patch.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -81,7 +79,7 @@ public class StreamQuality implements Comparable<StreamQuality> {
     }
 
     @Override
-    public int compareTo(@NotNull StreamQuality streamQuality) {
+    public int compareTo(StreamQuality streamQuality) {
         int res = streamQuality.width - width;
         if (res == 0) res = streamQuality.framerate - framerate;
         return res;
@@ -90,7 +88,8 @@ public class StreamQuality implements Comparable<StreamQuality> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof StreamQuality that)) return false;
+        if (!(o instanceof StreamQuality)) return false;
+        StreamQuality that = (StreamQuality) o;
         return bandwidth == that.bandwidth && width == that.width && height == that.height && framerate == that.framerate && Objects.equals(codecs, that.codecs) && Objects.equals(url, that.url);
     }
 
@@ -119,10 +118,10 @@ public class StreamQuality implements Comparable<StreamQuality> {
                     // Note: using `parseFloat` to have a more lax parser which does not panic on "60.000".
                     // Twitch sends framerate using this notation which causes parseInt to throw.
                     switch (key) {
-                        case "BANDWIDTH" -> currentQuality.setBandwidth((int) Float.parseFloat(value));
-                        case "RESOLUTION" -> currentQuality.setResolution(value);
-                        case "CODECS" -> currentQuality.setCodecs(value);
-                        case "FRAME-RATE" -> currentQuality.setFramerate((int) Float.parseFloat(value));
+                        case "BANDWIDTH": currentQuality.setBandwidth((int) Float.parseFloat(value));
+                        case "RESOLUTION": currentQuality.setResolution(value);
+                        case "CODECS": currentQuality.setCodecs(value);
+                        case "FRAME-RATE": currentQuality.setFramerate((int) Float.parseFloat(value));
                     }
                 }
             } else if (HTTP_URL_RE.matcher(line).matches()) {

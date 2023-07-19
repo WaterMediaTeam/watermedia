@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api.url;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URL;
 
 public abstract class URLPatch {
@@ -10,7 +8,7 @@ public abstract class URLPatch {
      * @param url Valid URL to check
      * @return Can be built a static url
      */
-    public abstract boolean isValid(@NotNull URL url);
+    public abstract boolean isValid(URL url);
 
     /**
      * Patch the URL
@@ -18,7 +16,7 @@ public abstract class URLPatch {
      * @return static URL
      * @throws PatchingUrlException if URL is null or invalid in this patch
      */
-    public String patch(@NotNull URL url) throws PatchingUrlException {
+    public String patch(URL url) throws PatchingUrlException {
         if (!isValid(url)) throw new PatchingUrlException(url, new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat"));
         return null;
     }

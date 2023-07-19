@@ -9,13 +9,19 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.util.ResourceUtil.USER_AGENT;
@@ -47,13 +53,13 @@ public abstract class PictureFetcher extends Thread {
         synchronized (LOCK) { ACTIVE_FETCH++; }
 
         try {
-            var data = load(url);
-            var type = readType(data);
+            byte[] data = load(url);
+            String type = readType(data);
 
-            try (var in = new ByteArrayInputStream(data)) {
+            try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
                 if (type != null && type.equalsIgnoreCase("gif")) {
-                    var gif = new GifDecoder();
-                    var status = gif.read(in);
+                    GifDecoder gif = new GifDecoder();
+                    int status = gif.read(in);
 
                     if (status == GifDecoder.STATUS_OK) {
                         onSuccess(new RenderablePicture(gif));
@@ -63,7 +69,7 @@ public abstract class PictureFetcher extends Thread {
                     }
                 } else {
                     try {
-                        var image = ImageIO.read(in);
+                        BufferedImage image = ImageIO.read(in);
                         if (image != null) {
                             onSuccess(new RenderablePicture(image));
                         }
@@ -85,14 +91,15 @@ public abstract class PictureFetcher extends Thread {
     }
 
     public static byte[] load(String url) throws IOException, VideoContentException {
-        var entry = MediaCacheCore.getEntry(url);
-        var requestTime = System.currentTimeMillis();
-        var request = new URL(url).openConnection();
+        MediaCacheCore.Entry entry = MediaCacheCore.getEntry(url);
+        long requestTime = System.currentTimeMillis();
+        URLConnection request = new URL(url).openConnection();
 
-        var code = -1;
+        int code = -1;
 
         request.addRequestProperty("User-Agent", USER_AGENT);
-        if (request instanceof HttpURLConnection conn) {
+        if (request instanceof HttpURLConnection) {
+            HttpURLConnection conn = (HttpURLConnection) request;
             if (entry != null && entry.getFile().exists()) {
                 if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
                 else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
@@ -103,38 +110,38 @@ public abstract class PictureFetcher extends Thread {
         try (InputStream in = request.getInputStream()) {
             if (code == 400 || code == 403) throw new VideoContentException();
             if (code != HttpURLConnection.HTTP_NOT_MODIFIED) {
-                var type = request.getContentType();
+                String type = request.getContentType();
                 if (type == null) throw new ConnectException();
                 if (!type.startsWith("image")) throw new VideoContentException();
             }
 
-            var tag = request.getHeaderField("ETag");
+            String tag = request.getHeaderField("ETag");
             long lastTimestamp, expTimestamp = -1;
-            var maxAge = request.getHeaderField("max-age");
+            String maxAge = request.getHeaderField("max-age");
 
             // EXPIRATION GETTER FIRST
             if (maxAge != null && !maxAge.isEmpty())
                 expTimestamp = ThreadUtil.tryAndReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
 
             // EXPIRATION GETTER SECOND WAY
-            var expires = request.getHeaderField("Expires");
+            String expires = request.getHeaderField("Expires");
             if (expires != null && !expires.isEmpty())
                 expTimestamp = ThreadUtil.tryAndReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
 
             // LAST TIMESTAMP
-            var lastMod = request.getHeaderField("Last-Modified");
+            String lastMod = request.getHeaderField("Last-Modified");
             if (lastMod != null && !lastMod.isEmpty()) {
                 lastTimestamp = ThreadUtil.tryAndReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
             } else lastTimestamp = requestTime;
 
             if (entry != null) {
-                var freshTag = entry.getTag();
+                String freshTag = entry.getTag();
                 if (tag != null && !tag.isEmpty()) freshTag = tag;
 
                 if (code == HttpURLConnection.HTTP_NOT_MODIFIED) {
                     File file = entry.getFile();
 
-                    if (file.exists()) try (var fileStream = new FileInputStream(file)) {
+                    if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
                         MediaCacheCore.updateEntry(new MediaCacheCore.Entry(url, freshTag, lastTimestamp, expTimestamp));
@@ -147,26 +154,26 @@ public abstract class PictureFetcher extends Thread {
             MediaCacheCore.saveFile(url, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
-            if (request instanceof HttpURLConnection http) http.disconnect();
+            if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();
         }
     }
 
     private static String readType(byte[] input) throws IOException {
-        try (var in = new ByteArrayInputStream(input)) {
+        try (InputStream in = new ByteArrayInputStream(input)) {
             return readType(in);
         }
     }
 
     private static String readType(InputStream input) throws IOException {
-        var stream = ImageIO.createImageInputStream(input);
-        var iterator = ImageIO.getImageReaders(stream);
+        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        Iterator<ImageReader> iterator = ImageIO.getImageReaders(stream);
 
         if (!iterator.hasNext()) return null;
 
-        var reader = iterator.next();
+        ImageReader reader = iterator.next();
         if (reader.getFormatName().equalsIgnoreCase("gif")) return "gif";
 
-        var param = reader.getDefaultReadParam();
+        ImageReadParam param = reader.getDefaultReadParam();
         reader.setInput(stream, true, true);
 
         try {

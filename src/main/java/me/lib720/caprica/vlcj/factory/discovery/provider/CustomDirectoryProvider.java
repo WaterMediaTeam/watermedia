@@ -15,7 +15,7 @@ public class CustomDirectoryProvider implements DiscoveryDirectoryProvider {
 
     @Override
     public String[] directories() {
-        var vlc = rootPath != null ? rootPath : new File("").toPath();
+        Path vlc = rootPath != null ? rootPath : new File("").toPath();
         return new String[]{vlc.toAbsolutePath().toString()};
     }
 }

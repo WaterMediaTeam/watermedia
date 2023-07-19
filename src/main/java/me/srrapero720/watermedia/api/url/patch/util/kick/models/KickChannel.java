@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.api.url.patch.util.kick.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 
@@ -25,7 +24,6 @@ public class KickChannel implements Serializable {
 
     @SerializedName("livestream")
     @Expose
-    @Nullable
     public isLive isStreaming;
 
     public static class isLive implements Serializable {

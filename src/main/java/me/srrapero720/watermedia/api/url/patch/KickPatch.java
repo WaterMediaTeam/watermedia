@@ -2,33 +2,36 @@ package me.srrapero720.watermedia.api.url.patch;
 
 import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.api.url.patch.util.kick.KickAPI;
-import org.jetbrains.annotations.NotNull;
+import me.srrapero720.watermedia.api.url.patch.util.kick.models.KickChannel;
+import me.srrapero720.watermedia.api.url.patch.util.kick.models.KickVideo;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import java.net.URL;
 
 public class KickPatch extends URLPatch {
 
     @Override
-    public boolean isValid(@NotNull URL url) {
+    public boolean isValid(URL url) {
         return url.getHost().contains("kick.com");
     }
 
     @Override
-    public String patch(@NotNull URL url) throws PatchingUrlException {
+    public String patch(URL url) throws PatchingUrlException {
         super.patch(url);
 
         if (url.getPath().contains("/video/")) {
-             var call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));
+             Call<KickVideo> call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));
              try {
-                 var res = call.execute();
+                 Response<KickVideo> res = call.execute();
                  if (res.isSuccessful() && res.body() != null) return res.body().url;
              } catch (Exception e) {
                  throw new PatchingUrlException(url.toString(), e);
              }
         } else {
-            var call = KickAPI.NET.getChannelInfo(url.getPath().replace("/", ""));
+            Call<KickChannel> call = KickAPI.NET.getChannelInfo(url.getPath().replace("/", ""));
             try {
-                var res = call.execute();
+                Response<KickChannel> res = call.execute();
                 if (res.isSuccessful() && res.body() != null) return res.body().url;
             } catch (Exception e) {
                 throw new PatchingUrlException(url.toString(), e);

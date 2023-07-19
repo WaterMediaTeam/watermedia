@@ -2,11 +2,16 @@ package me.srrapero720.watermedia.api.url.patch;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
 import com.github.kiulian.downloader.downloader.request.RequestVideoInfo;
+import com.github.kiulian.downloader.model.videos.VideoDetails;
+import com.github.kiulian.downloader.model.videos.VideoInfo;
+import com.github.kiulian.downloader.model.videos.formats.AudioFormat;
+import com.github.kiulian.downloader.model.videos.formats.VideoFormat;
 import me.srrapero720.watermedia.api.url.patch.util.StreamQuality;
 import me.srrapero720.watermedia.api.url.URLPatch;
-import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -16,20 +21,20 @@ public class YoutubePatch extends URLPatch {
     private static final Pattern PATTERN = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|shorts/|feeds/api/videos/|watch\\?v=|watch\\?.+&v=))([^/?&#]+)");
 
     @Override
-    public boolean isValid(@NotNull URL url) {
+    public boolean isValid(URL url) {
         return (url.getHost().endsWith("youtube.com") || url.getHost().endsWith("youtu.be"));
     }
 
     @Override
-    public String patch(@NotNull URL url) throws PatchingUrlException {
+    public String patch(URL url) throws PatchingUrlException {
         super.patch(url);
 
         Matcher matcher = PATTERN.matcher(url.toString());
         if (matcher.find()) {
             try {
                 String videoId = matcher.group(1);
-                var videoInfo = new YoutubeDownloader().getVideoInfo(new RequestVideoInfo(videoId)).data();
-                var videoDetails = videoInfo.details();
+                VideoInfo videoInfo = new YoutubeDownloader().getVideoInfo(new RequestVideoInfo(videoId)).data();
+                VideoDetails videoDetails = videoInfo.details();
 
                 if (videoDetails.isLive()) {
                     // LIVE STREAM
@@ -37,15 +42,15 @@ public class YoutubePatch extends URLPatch {
                     if (ytLivePlaylist != null) return StreamQuality.parse(ytLivePlaylist).get(0).getUrl();
                 } else {
                     // BEST WITH AUDIO
-                    var bestWithAudio = videoInfo.bestVideoWithAudioFormat();
+                    VideoFormat bestWithAudio = videoInfo.bestVideoWithAudioFormat();
                     if (bestWithAudio != null) return bestWithAudio.url();
 
                     // WITHOUT AUDIO
-                    var bestWithoutAudio = videoInfo.bestVideoFormat();
+                    VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
                     if (bestWithoutAudio != null) return bestWithoutAudio.url();
 
                     // WITHOUT VIDEO
-                    var bestWithoutVideo = videoInfo.bestAudioFormat();
+                    AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
                     if (bestWithoutVideo != null) return bestWithoutVideo.url();
                 }
 
@@ -66,6 +71,15 @@ public class YoutubePatch extends URLPatch {
 
         int responseCode = conn.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) return null;
-        return new String(conn.getInputStream().readAllBytes());
+
+        InputStream inputStream = conn.getInputStream();
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
+        }
+        String response = result.toString("UTF-8");
+        return response;
     }
 }

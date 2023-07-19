@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api.external;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +20,12 @@ public class ThreadUtil {
         return tryAndReturn(runnable, null, defaultVar);
     }
 
-    public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, @Nullable CatchRunnable catchRunnable, T defaultVar) {
+    public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, CatchRunnable catchRunnable, T defaultVar) {
         return tryAndReturn(runnable, catchRunnable, null, defaultVar);
     }
 
-    public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, @Nullable CatchRunnable catchRunnable, @Nullable ReturnableFinallyRunnable<T> finallyRunnable, T defaultVar) {
-        var returned = defaultVar;
+    public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, CatchRunnable catchRunnable, ReturnableFinallyRunnable<T> finallyRunnable, T defaultVar) {
+        T returned = defaultVar;
         try { return returned = runnable.run(defaultVar);
         } catch (Exception exception) {
             if (catchRunnable != null) catchRunnable.run(exception);
@@ -47,16 +45,16 @@ public class ThreadUtil {
         }
     }
 
-    public static void threadTry(@NotNull TryRunnable toTry, @Nullable CatchRunnable toCatch, @Nullable FinallyRunnable toFinally) {
+    public static void threadTry(TryRunnable toTry, CatchRunnable toCatch, FinallyRunnable toFinally) {
         threadTryArgument(null, (object -> toTry.run()), toCatch, (object -> { if (toFinally != null) toFinally.run(); }));
     }
 
-    public static void threadNonDaeomTry(@NotNull TryRunnable toTry, @Nullable CatchRunnable toCatch, @Nullable FinallyRunnable toFinally) {
+    public static void threadNonDaeomTry(TryRunnable toTry, CatchRunnable toCatch, FinallyRunnable toFinally) {
         threadTryArgument(null, (object -> toTry.run()), toCatch, (object -> { if (toFinally != null) toFinally.run(); }));
     }
 
     public static Thread thread(Runnable runnable) {
-        var thread = new Thread(runnable);
+        Thread thread = new Thread(runnable);
         thread.setName("WATERCoRE-worker-" + (++workers));
         thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
         thread.setDaemon(true);
@@ -66,7 +64,7 @@ public class ThreadUtil {
     }
 
     public static Thread threadNonDaemon(Runnable runnable) {
-        var thread = new Thread(runnable);
+        Thread thread = new Thread(runnable);
         thread.setName("WATERCoRE-" + (++workers));
         thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
         thread.setDaemon(false);
@@ -75,7 +73,7 @@ public class ThreadUtil {
         return thread;
     }
 
-    public static <T> void threadTryArgument(T object, TryRunnableWithArgument<T> toTry, @Nullable CatchRunnable toCatch, @Nullable FinallyRunnableWithArgument<T> toFinally) {
+    public static <T> void threadTryArgument(T object, TryRunnableWithArgument<T> toTry, CatchRunnable toCatch, FinallyRunnableWithArgument<T> toFinally) {
         thread(() -> {
             try { toTry.run(object);
             } catch (Exception e) { if (toCatch != null) toCatch.run(e);
@@ -83,7 +81,7 @@ public class ThreadUtil {
         });
     }
 
-    public static <T> void threadNonDaemonTryArgument(T object, TryRunnableWithArgument<T> toTry, @Nullable CatchRunnable toCatch, @Nullable FinallyRunnableWithArgument<T> toFinally) {
+    public static <T> void threadNonDaemonTryArgument(T object, TryRunnableWithArgument<T> toTry, CatchRunnable toCatch, FinallyRunnableWithArgument<T> toFinally) {
         threadNonDaemon(() -> {
             try { toTry.run(object);
             } catch (Exception e) { if (toCatch != null) toCatch.run(e);
@@ -115,12 +113,12 @@ public class ThreadUtil {
 
     public static void showThreads() {
         LOGGER.info("{}\t{}\t{}\t{}\n", "Name", "State", "Priority", "isDaemon");
-        for (var t: Thread.getAllStackTraces().keySet())
+        for (Thread t: Thread.getAllStackTraces().keySet())
             LOGGER.info("{}\t{}\t{}\t{}\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
     }
 
     public interface ReturnableRunnable<T> { T run(T defaultVar) throws Exception; }
-    public interface ReturnableFinallyRunnable<T> { void run(@NotNull T returnedVar); }
+    public interface ReturnableFinallyRunnable<T> { void run(T returnedVar); }
     public interface SimpleTryRunnable { void run() throws Exception; }
 
     public interface TryRunnableWithArgument<T> {  void run(T object) throws Exception; }

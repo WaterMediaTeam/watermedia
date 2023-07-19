@@ -1,5 +1,7 @@
 package me.srrapero720.watermedia.util;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -29,13 +31,15 @@ public class StomachUtil {
     }
 
     private static byte[] digest(InputStream inputStream, MessageDigest md) {
-        try (inputStream; DigestInputStream dis = new DigestInputStream(inputStream, md)) {
+        try (DigestInputStream dis = new DigestInputStream(inputStream, md)) {
             byte[] buffer = new byte[8192];
             while (dis.read(buffer) != -1);
 
             return md.digest();
         } catch (Exception e) {
             throw new IllegalStateException("Failed calculating digest", e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
     }
 }

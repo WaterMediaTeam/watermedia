@@ -96,42 +96,41 @@ public class TwitterAPI {
         // Load request details (features and variables) from file
         RequestDetails requestDetails;
 
-        String t = """
-                {
-                  "features":{
-                    "responsive_web_graphql_exclude_directive_enabled":true,
-                    "verified_phone_label_enabled":false,
-                    "responsive_web_graphql_timeline_navigation_enabled":true,
-                    "responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,
-                    "tweetypie_unmention_optimization_enabled": true,
-                    "vibe_api_enabled": false,
-                    "responsive_web_edit_tweet_api_enabled": false,
-                    "graphql_is_translatable_rweb_tweet_is_translatable_enabled": false,
-                    "view_counts_everywhere_api_enabled": true,
-                    "longform_notetweets_consumption_enabled":true,
-                    "tweet_awards_web_tipping_enabled":false,
-                    "freedom_of_speech_not_reach_fetch_enabled":false,
-                    "standardized_nudges_misinfo": false,
-                    "tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":false,
-                    "interactive_text_enabled": false,   "responsive_web_twitter_blue_verified_badge_is_enabled":true,
-                    "responsive_web_text_conversations_enabled":false,
-                    "longform_notetweets_richtext_consumption_enabled":false,
-                    "responsive_web_enhance_cards_enabled":false
-                  },
-                  "variables": {
-                    "with_rux_injections":false,
-                    "includePromotedContent":true,
-                    "withCommunity":true,
-                    "withQuickPromoteEligibilityTweetFields":true,
-                    "withBirdwatchNotes":true,
-                    "withDownvotePerspective":false,
-                    "withReactionsMetadata":false,
-                    "withReactionsPerspective":false,
-                    "withVoice":true,
-                    "withV2Timeline":true
-                  }
-                }
-                """;
+        String t = "{\n" +
+                "  \"features\":{\n" +
+                "    \"responsive_web_graphql_exclude_directive_enabled\":true,\n" +
+                "    \"verified_phone_label_enabled\":false,\n" +
+                "    \"responsive_web_graphql_timeline_navigation_enabled\":true,\n" +
+                "    \"responsive_web_graphql_skip_user_profile_image_extensions_enabled\":false,\n" +
+                "    \"tweetypie_unmention_optimization_enabled\": true,\n" +
+                "    \"vibe_api_enabled\": false,\n" +
+                "    \"responsive_web_edit_tweet_api_enabled\": false,\n" +
+                "    \"graphql_is_translatable_rweb_tweet_is_translatable_enabled\": false,\n" +
+                "    \"view_counts_everywhere_api_enabled\": true,\n" +
+                "    \"longform_notetweets_consumption_enabled\":true,\n" +
+                "    \"tweet_awards_web_tipping_enabled\":false,\n" +
+                "    \"freedom_of_speech_not_reach_fetch_enabled\":false,\n" +
+                "    \"standardized_nudges_misinfo\": false,\n" +
+                "    \"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled\":false,\n" +
+                "    \"interactive_text_enabled\": false,\n" +
+                "    \"responsive_web_twitter_blue_verified_badge_is_enabled\":true,\n" +
+                "    \"responsive_web_text_conversations_enabled\":false,\n" +
+                "    \"longform_notetweets_richtext_consumption_enabled\":false,\n" +
+                "    \"responsive_web_enhance_cards_enabled\":false\n" +
+                "  },\n" +
+                "  \"variables\": {\n" +
+                "    \"with_rux_injections\":false,\n" +
+                "    \"includePromotedContent\":true,\n" +
+                "    \"withCommunity\":true,\n" +
+                "    \"withQuickPromoteEligibilityTweetFields\":true,\n" +
+                "    \"withBirdwatchNotes\":true,\n" +
+                "    \"withDownvotePerspective\":false,\n" +
+                "    \"withReactionsMetadata\":false,\n" +
+                "    \"withReactionsPerspective\":false,\n" +
+                "    \"withVoice\":true,\n" +
+                "    \"withV2Timeline\":true\n" +
+                "  }\n" +
+                "}";
         requestDetails = gson.fromJson(t, RequestDetails.class);
 
         String url = getDetailsUrl(tweetId, requestDetails.features, requestDetails.variables);
@@ -143,7 +142,8 @@ public class TwitterAPI {
         while (conn.getResponseCode() == 400 && curRetry < maxRetries) {
             // Parse JSON response
             String response = readResponse(conn);
-            JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
+
+            JsonObject jsonResponse = new JsonParser().parse(response).getAsJsonObject();
 
             if (!jsonResponse.has("errors")) {
                 throw new Exception("Failed to find errors in details error json. Tweet url: " + tweetUrl);
@@ -190,10 +190,14 @@ public class TwitterAPI {
         String variablesJson = gson.toJson(newVariables);
         String featuresJson = gson.toJson(features);
 
-        String encodedVariables = URLEncoder.encode(variablesJson, StandardCharsets.UTF_8);
-        String encodedFeatures = URLEncoder.encode(featuresJson, StandardCharsets.UTF_8);
+        try {
+            String encodedVariables = URLEncoder.encode(variablesJson, StandardCharsets.UTF_8.toString());
+            String encodedFeatures = URLEncoder.encode(featuresJson, StandardCharsets.UTF_8.toString());
+            return "https://twitter.com/i/api/graphql/wTXkouwCKcMNQtY-NcDgAA/TweetDetail?variables=" + encodedVariables + "&features=" + encodedFeatures;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        return "https://twitter.com/i/api/graphql/wTXkouwCKcMNQtY-NcDgAA/TweetDetail?variables=" + encodedVariables + "&features=" + encodedFeatures;
     }
 
     private static HttpURLConnection makeGetRequest(String url, String bearerToken, String guestToken) throws IOException {

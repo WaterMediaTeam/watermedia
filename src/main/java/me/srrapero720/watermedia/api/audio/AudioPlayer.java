@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api.audio;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -10,13 +9,13 @@ public abstract class AudioPlayer {
     public AudioPlayer() {}
 
     protected void compat(String url) {
-        var compat = WaterMediaAPI.urlPatch(url);
+        String compat = WaterMediaAPI.urlPatch(url);
         if (compat != null) this.url = compat;
         else this.url = url;
     }
 
-    public void start(@NotNull CharSequence url) { compat(url.toString()); }
-    public void prepare(@NotNull CharSequence url) { compat(url.toString()); }
+    public void start(CharSequence url) { compat(url.toString()); }
+    public void prepare(CharSequence url) { compat(url.toString()); }
     public abstract void play();
     public abstract void pause();
     public abstract void setPauseMode(boolean isPaused);
