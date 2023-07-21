@@ -22,7 +22,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.CheckedOutputStream;
+import com.sun.jna.Platform;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -139,17 +139,33 @@ public class Util {
      * @return os-arch simplified
      */
     private static OsArch getOsArch() {
-        String arch = System.getProperty("os.arch");
-        if ((arch.equals("amd64") || arch.equals("x86_64"))) {
-            if (RuntimeUtil.isWindows()) return OsArch.WIN_X64;
-            if (RuntimeUtil.isMac()) return OsArch.MAC_X64;
-            if (RuntimeUtil.isNix()) return OsArch.NIX_X64;
-        } else if (arch.equals("arm64")) {
-            if (RuntimeUtil.isWindows()) return OsArch.WIN_ARM64;
-            if (RuntimeUtil.isMac()) return OsArch.MAC_ARM64;
-            if (RuntimeUtil.isNix()) return OsArch.NIX_ARM64;
+        String arch = Platform.ARCH;
+        switch (arch) {
+            case "amd64", "x86-64" -> {
+                if (RuntimeUtil.isWindows()) return OsArch.WIN_X64;
+                if (RuntimeUtil.isMac()) return OsArch.MAC_X64;
+                if (RuntimeUtil.isNix()) return OsArch.NIX_X64;
+            }
+            case "arm64" -> {
+                if (RuntimeUtil.isWindows()) return OsArch.WIN_ARM64;
+                if (RuntimeUtil.isMac()) return OsArch.MAC_ARM64;
+                if (RuntimeUtil.isNix()) return OsArch.NIX_ARM64;
+            }
+            case "arm", "armel" -> {
+                if (RuntimeUtil.isWindows()) return OsArch.WIN_ARM;
+                if (RuntimeUtil.isMac()) return OsArch.MAC_ARM;
+                if (RuntimeUtil.isNix()) return OsArch.NIX_ARM;
+            }
+            case "x86" -> {
+                if (RuntimeUtil.isWindows()) return OsArch.WIN_X32;
+            }
+
+            default -> {
+                return OsArch.DUMMY;
+            }
         }
-        throw new RuntimeException("You are running Java on a unknown operative system");
+
+        throw new RuntimeException("¿How did you get here?");
     }
 
     public static BufferedImage getImageFromResources(String path) {
@@ -205,12 +221,20 @@ public class Util {
     }
 
     public enum OsArch {
+        WIN_X32("win", "x32", ".dll", false),
         WIN_X64("win", "x64", ".dll", true),
-        WIN_ARM64("win", "arm64", ".dll", false),
         MAC_X64("mac", "x64", ".dylib", false),
-        MAC_ARM64("mac", "arm64", ".dylib", false),
         NIX_X64("nix", "x64", ".os", false),
-        NIX_ARM64("nix", "arm64", ".os", false)
+
+        WIN_ARM64("win", "arm64", ".dll", false),
+        MAC_ARM64("mac", "arm64", ".dylib", false),
+        NIX_ARM64("nix", "arm64", ".os", false),
+
+        WIN_ARM("win", "arm", ".dll", false),
+        MAC_ARM("mac", "arm", ".dylib", false),
+        NIX_ARM("nix", "arm", ".os", false),
+
+        DUMMY("dummy", "dummy", ".dummy", false)
         ;
 
         public final String OS;
