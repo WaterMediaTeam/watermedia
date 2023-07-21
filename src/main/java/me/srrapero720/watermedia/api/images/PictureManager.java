@@ -72,6 +72,15 @@ public class PictureManager {
         }
     }
 
+
+    /**
+     * Reloads EVERY SINGLE PICTURE stored on this manager, ignoring if is used or not
+     * CAREFUL: Unexpected reloading can cause a broken state in other mods. ensure you can handle possible crashes
+     */
+    public synchronized static void reload() {
+
+    }
+
     /**
      * Releases EVERY SINGLE PICTURE stored on this manager ignoring if is used or not
      * CAREFUL: in case you are using WATERMeDIA with more dependants PLEASE make you sure all are calling when doesn't require pictures

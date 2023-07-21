@@ -48,6 +48,7 @@ public class RenderablePicture {
         this.textures = new int[] { -1 };
         this.delay = new long[] { 0 };
         this.duration = 0;
+        this.remaining = 1;
         this.decoder = null;
         this.image = image;
         this.error = null;
@@ -91,10 +92,13 @@ public class RenderablePicture {
      * @return OpenGL texture
      */
     public int genTexture(int index) {
-        if (textures[index] == -1 && decoder != null) {
-            textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
-            remaining--;
-            if (remaining <= 0) decoder = null;
+        if (this.textures[index] == -1) {
+            if (decoder != null) {
+                this.textures[index] = WaterMediaAPI.preRender(this.decoder.getFrame(index), width, height);
+                if (--this.remaining <= 0) decoder = null;
+            } else if (image != null) {
+                this.textures[index] = WaterMediaAPI.preRender(this.image, width, height);
+            }
         }
         return textures[index];
     }
