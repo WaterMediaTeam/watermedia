@@ -5,10 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * This was intended to be used with local resources (no url) and dummy for videos (url)
+ */
 public class StrongRenderablePicture extends RenderablePicture {
-    public StrongRenderablePicture(@NotNull BufferedImage image) { super(image); }
-    public StrongRenderablePicture(@NotNull GifDecoder decoder) { super(decoder); }
-    public StrongRenderablePicture() { super(); }
+    public StrongRenderablePicture(@NotNull BufferedImage image) { super("", image); }
+    public StrongRenderablePicture(@NotNull GifDecoder decoder) { super("", decoder); }
+    public StrongRenderablePicture(String url) { super(url); }
 
 
     @Override

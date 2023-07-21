@@ -15,6 +15,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class RenderablePicture {
     public static final Marker IT = MarkerFactory.getMarker(RenderablePicture.class.getSimpleName());
 
+    public final String url;
     public final int width;
     public final int height;
     public final int[] textures;
@@ -27,11 +28,12 @@ public class RenderablePicture {
 
     public int remaining;
 
-    public RenderablePicture() {
-        this("Invalid picture");
+    public RenderablePicture(String url) {
+        this(url, "Invalid picture");
     }
 
-    public RenderablePicture(String error) {
+    public RenderablePicture(String url, String error) {
+        this.url = url;
         this.width = this.height = -1;
         this.textures = new int[0];
         this.delay = new long[0];
@@ -42,7 +44,8 @@ public class RenderablePicture {
         this.error = error;
     }
 
-    public RenderablePicture(@NotNull BufferedImage image) {
+    public RenderablePicture(String url, @NotNull BufferedImage image) {
+        this.url = url;
         this.width = image.getWidth();
         this.height = image.getHeight();
         this.textures = new int[] { -1 };
@@ -54,7 +57,8 @@ public class RenderablePicture {
         this.error = null;
     }
 
-    public RenderablePicture(@NotNull GifDecoder decoder) {
+    public RenderablePicture(String url, @NotNull GifDecoder decoder) {
+        this.url = url;
         Dimension frameSize = decoder.getFrameSize();
         this.width = (int) frameSize.getWidth();
         this.height = (int) frameSize.getHeight();
