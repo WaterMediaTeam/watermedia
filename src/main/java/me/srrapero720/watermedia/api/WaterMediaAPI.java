@@ -4,6 +4,7 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.Util;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
+import me.srrapero720.watermedia.api.images.StrongRenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.api.url.patch.*;
 import me.srrapero720.watermedia.api.video.VideoLANPlayer;
@@ -26,9 +27,9 @@ import java.util.List;
 
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
-    public static final RenderablePicture LOADING_GIF = new RenderablePicture(Util.getGifFromResources("/images/loading.gif"));
-    public static final RenderablePicture VLC_FAILED = new RenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed.png"));
-    public static final RenderablePicture VLC_FAILED_INSTALL = new RenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed_install.png"));
+    public static final RenderablePicture LOADING_GIF = new StrongRenderablePicture(Util.getGifFromResources("/images/loading.gif"));
+    public static final RenderablePicture VLC_FAILED = new StrongRenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed.png"));
+    public static final RenderablePicture VLC_FAILED_INSTALL = new StrongRenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed_install.png"));
 
     private static final List<URLPatch> URL_PATCHERS = new ArrayList<>(List.of(
             new YoutubePatch(),

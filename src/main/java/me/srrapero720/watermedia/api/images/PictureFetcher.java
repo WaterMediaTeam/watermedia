@@ -26,10 +26,21 @@ public abstract class PictureFetcher extends Thread {
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     // STATUS
-    public static final int MAX_FETCH = 6;
+    public static final Integer MAX_FETCH = 6;
     public static int ACTIVE_FETCH = 0;
 
     private final String url;
+
+    /**
+     * Creates a new thread instance to fetch pictures.
+     * If fetcher founds any picture like gif or images then fires {@link PictureFetcher#onSuccess(RenderablePicture)}
+     * otherwise If finds any multimedia content or handles http errors then fires {@link PictureFetcher#onFailed(Exception)}
+     * when Exception instance is {@link VideoContentException} fetcher creates a {@link StrongRenderablePicture} referencing a
+     * invalid dummy picture for videos (you can check if is a video using {@link RenderablePicture#isVideo()}
+     * <br><br>
+     * <strong>IMPORTANT:</strong> All {@link RenderablePicture} returned has by default 1 usage, so you don't need to reuse it.
+     * @param url URL to fetch if was a picture or any other thing
+     */
     public PictureFetcher(String url) {
         this.url = WaterMediaAPI.urlPatch(url);
         this.setName("WaterMedia-Picture");
@@ -52,20 +63,20 @@ public abstract class PictureFetcher extends Thread {
 
             try (var in = new ByteArrayInputStream(data)) {
                 if (type != null && type.equalsIgnoreCase("gif")) {
-                    var gif = new GifDecoder();
-                    var status = gif.read(in);
+                    var pic = new GifDecoder();
+                    var status = pic.read(in);
 
                     if (status == GifDecoder.STATUS_OK) {
-                        onSuccess(new RenderablePicture(gif));
+                        fireOnSuccess(this, url, new RenderablePicture(pic).use());
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
                         throw new IOException("");
                     }
                 } else {
                     try {
-                        var image = ImageIO.read(in);
-                        if (image != null) {
-                            onSuccess(new RenderablePicture(image));
+                        var pic = ImageIO.read(in);
+                        if (pic != null) {
+                            fireOnSuccess(this, url, new RenderablePicture(pic).use());
                         }
                     } catch (IOException e1) {
                         LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);
@@ -74,13 +85,24 @@ public abstract class PictureFetcher extends Thread {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
-            onFailed(e);
+            LOGGER.error(IT, "An exception occurred while loading image", e);
             LocalStorage.deleteEntry(url);
+            if (e instanceof VideoContentException) PictureManager.addEntry(url, new StrongRenderablePicture());
+            onFailed(e);
         }
 
         synchronized (LOCK) {
             ACTIVE_FETCH--;
+        }
+    }
+
+    private static synchronized void fireOnSuccess(PictureFetcher fetcher, String url, RenderablePicture picture) {
+        RenderablePicture cached = PictureManager.findAndUse(url);
+        if (cached == null) {
+            PictureManager.addEntry(url, picture);
+            fetcher.onSuccess(picture);
+        } else {
+            picture.release();
         }
     }
 
@@ -93,7 +115,7 @@ public abstract class PictureFetcher extends Thread {
 
         request.addRequestProperty("User-Agent", USER_AGENT);
         if (request instanceof HttpURLConnection conn) {
-            if (entry != null && LocalStorage.getFile(entry.getUrl()).exists()) {
+            if (entry != null && entry.getFile().exists()) {
                 if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
                 else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
             }
@@ -101,7 +123,7 @@ public abstract class PictureFetcher extends Thread {
         }
 
         try (InputStream in = request.getInputStream()) {
-            if (code == 400 || code == 403) throw new VideoContentException();
+            if (code == 400 || code == 401 || code == 403) throw new VideoContentException();
             if (code != HttpURLConnection.HTTP_NOT_MODIFIED) {
                 var type = request.getContentType();
                 if (type == null) throw new ConnectException();
@@ -132,7 +154,7 @@ public abstract class PictureFetcher extends Thread {
                 if (tag != null && !tag.isEmpty()) freshTag = tag;
 
                 if (code == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                    File file = LocalStorage.getFile(entry.getUrl());
+                    File file = entry.getFile();
 
                     if (file.exists()) try (var fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);

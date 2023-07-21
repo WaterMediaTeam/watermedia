@@ -55,7 +55,7 @@ public class LocalStorage {
         return true;
     }
 
-    public static File getFile(String url) {
+    private static File getFile(String url) {
         return new File(dir, Base64.encodeBase64String(url.getBytes()));
     }
 
@@ -128,5 +128,6 @@ public class LocalStorage {
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
+        public File getFile() { return LocalStorage.getFile(getUrl()); }
     }
 }
