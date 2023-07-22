@@ -29,9 +29,9 @@ public abstract class PictureFetcher extends Thread {
     public static final int MAX_FETCH = 6;
     public static int ACTIVE_FETCH = 0;
 
-    private final String url;
-    public PictureFetcher(String url) {
-        this.url = WaterMediaAPI.urlPatch(url);
+    private final String originalURL;
+    public PictureFetcher(String originalURL) {
+        this.originalURL = originalURL;
         this.setName("WaterMedia-Picture");
         this.setDaemon(true);
         this.start();
@@ -47,6 +47,7 @@ public abstract class PictureFetcher extends Thread {
         synchronized (LOCK) { ACTIVE_FETCH++; }
 
         try {
+            String url = WaterMediaAPI.urlPatch(this.originalURL);
             var data = load(url);
             var type = readType(data);
 
@@ -59,7 +60,7 @@ public abstract class PictureFetcher extends Thread {
                         onSuccess(new RenderablePicture(gif));
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
-                        throw new IOException("");
+                        throw new GifDecodingException();
                     }
                 } else {
                     try {
@@ -74,9 +75,9 @@ public abstract class PictureFetcher extends Thread {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
+            if (!(e instanceof VideoContentException)) LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
             onFailed(e);
-            LocalStorage.deleteEntry(url);
+            LocalStorage.deleteEntry(originalURL);
         }
 
         synchronized (LOCK) {
@@ -182,4 +183,5 @@ public abstract class PictureFetcher extends Thread {
     }
 
     public static final class VideoContentException extends Exception {}
+    public static final class GifDecodingException extends IOException {}
 }
