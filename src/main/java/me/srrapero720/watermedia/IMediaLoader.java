@@ -10,4 +10,5 @@ public interface IMediaLoader {
     String getLoaderName();
     Path getGameDir();
     Path getTempDir();
+    boolean isTLauncher();
 }

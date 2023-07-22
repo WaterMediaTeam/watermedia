@@ -39,6 +39,10 @@ public class WaterMedia {
 		// ENSURE FANCYVIDEO_API IS NOT INSTALLED (to prevent more bugreports about it)
 		if (LOADER.isThisModPresent("fancyvideo_api"))
 			CLIENT_EXCEPTION = new IllegalStateException("FancyVideo-API is explicit incompatible with WATERMeDIA, please remove it");
+
+		// ENSURE IS NOT RUNNING BY TLAUNCHER
+		if (LOADER.isTLauncher())
+			CLIENT_EXCEPTION = new IllegalStateException("[CRITICAL] TLauncher (is a virus launcher) and is not supported by WATERMeDIA - Suggested: SKLauncher, MultiMC");
 	}
 
 	public void init() {

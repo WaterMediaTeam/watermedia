@@ -95,6 +95,11 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
         return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
 
+    @Override
+    public boolean isTLauncher() {
+        return false;
+    }
+
     private ClassLoader getWorkingClassLoader() {
         ClassLoader cl;
         InputStream dummy;

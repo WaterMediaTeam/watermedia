@@ -81,4 +81,9 @@ public class ForgeModLoader implements IMediaLoader {
     public Path getTempDir() {
         return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
+
+    @Override
+    public boolean isTLauncher() {
+        return getGameDir().toAbsolutePath().toString().contains("tlauncher");
+    }
 }
