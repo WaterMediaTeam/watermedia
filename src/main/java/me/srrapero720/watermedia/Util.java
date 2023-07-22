@@ -21,10 +21,7 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import com.sun.jna.Platform;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -135,20 +132,6 @@ public class Util {
 
     public static String readFrom(Path path) {
         return ThreadUtil.tryAndReturn(defaultVar -> Files.exists(path) ? Files.readString(path) : defaultVar, null);
-    }
-
-    public static Map<String, String> parseQuery(String query) {
-        Map<String, String> queryParams = new HashMap<>();
-        String[] params = query.split("&");
-        for (String param : params) {
-            String[] keyValue = param.split("=");
-            if (keyValue.length == 2) {
-                String key = keyValue[0];
-                String value = keyValue[1];
-                queryParams.put(key, value);
-            }
-        }
-        return queryParams;
     }
 
     /**
