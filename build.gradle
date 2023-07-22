@@ -49,7 +49,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 /* PROJECT REPOSITORIES */
 repositories {
-    jcenter()
     mavenCentral()
     maven { url "https://repo.spongepowered.org/maven" }
     maven { url "https://maven.tterrag.com/" }
@@ -74,8 +73,8 @@ minecraft.runs.all {
 }
 
 dependencies {
-//    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
+//    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     // FabricLoader (just to give loading support on FABRIC)
     implementation "net.fabricmc:fabric-loader:${project.fabricv}"
@@ -93,6 +92,7 @@ dependencies {
     library ('com.squareup.retrofit2:converter-gson:2.9.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
+    library 'org.slf4j:slf4j-api:2.0.7'
     library 'org.twitter4j:twitter4j-core:4.1.1'
 
     library 'com.mpatric:mp3agic:0.9.1'
@@ -130,8 +130,9 @@ shadowJar {
     relocate 'org.mozilla', 'me.lib720.mozilla'
     relocate 'okhttp3', 'me.lib720.okhttp3'
     relocate 'okio', 'me.lib720.okio'
-    relocate 'com.fasterxml.jackson', 'me.lib720.jackson'
+    relocate 'com.fasterxml', 'me.lib720'
     relocate 'retrofit2', 'me.lib720.retrofit2'
+    relocate 'org.slf4j', 'me.lib720'
 
     mergeServiceFiles()
     archiveFileName = "${project.modid}-${project.modversion}.jar"
