@@ -103,7 +103,6 @@ public abstract class PictureFetcher extends Thread {
             fetcher.onSuccess(picture);
         } else {
             picture.release();
-            fetcher.onSuccess(cached);
         }
     }
 
