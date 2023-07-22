@@ -67,16 +67,16 @@ public abstract class PictureFetcher extends Thread {
                     var status = pic.read(in);
 
                     if (status == GifDecoder.STATUS_OK) {
-                        fireOnSuccess(this, url, new RenderablePicture(url, pic).use());
+                        fireOnSuccess(this, url, new RenderablePicture(pic).use());
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
-                        throw new GifLoadingException();
+                        throw new IOException("");
                     }
                 } else {
                     try {
                         var pic = ImageIO.read(in);
                         if (pic != null) {
-                            fireOnSuccess(this, url, new RenderablePicture(url, pic).use());
+                            fireOnSuccess(this, url, new RenderablePicture(pic).use());
                         }
                     } catch (IOException e1) {
                         LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);
@@ -87,7 +87,7 @@ public abstract class PictureFetcher extends Thread {
         } catch (Exception e) {
             LOGGER.error(IT, "An exception occurred while loading image", e);
             LocalStorage.deleteEntry(url);
-            if (e instanceof VideoContentException) PictureManager.addEntry(url, new StrongRenderablePicture(url));
+            if (e instanceof VideoContentException) PictureManager.addEntry(url, new StrongRenderablePicture());
             onFailed(e);
         }
 
@@ -204,5 +204,4 @@ public abstract class PictureFetcher extends Thread {
     }
 
     public static final class VideoContentException extends Exception {}
-    public static final class GifLoadingException extends Exception {}
 }
