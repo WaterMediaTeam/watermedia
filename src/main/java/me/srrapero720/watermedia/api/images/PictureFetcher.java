@@ -55,12 +55,6 @@ public abstract class PictureFetcher extends Thread {
 
     @Override
     public void run() {
-        RenderablePicture cached = PictureManager.findAndUse(url);
-        if (cached != null) {
-            onSuccess(cached);
-            return;
-        }
-
         synchronized (LOCK) { ACTIVE_FETCH++; }
 
         try {
@@ -73,9 +67,7 @@ public abstract class PictureFetcher extends Thread {
                     var status = pic.read(in);
 
                     if (status == GifDecoder.STATUS_OK) {
-                        RenderablePicture renderablePicture = new RenderablePicture(url, pic).use();
-                        PictureManager.addEntry(url, renderablePicture);
-                        onSuccess(renderablePicture);
+                        fireOnSuccess(this, url, new RenderablePicture(url, pic).use());
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
                         throw new GifLoadingException();
@@ -84,9 +76,7 @@ public abstract class PictureFetcher extends Thread {
                     try {
                         var pic = ImageIO.read(in);
                         if (pic != null) {
-                            RenderablePicture renderablePicture = new RenderablePicture(url, pic).use();
-                            PictureManager.addEntry(url, renderablePicture);
-                            onSuccess(renderablePicture);
+                            fireOnSuccess(this, url, new RenderablePicture(url, pic).use());
                         }
                     } catch (IOException e1) {
                         LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);
@@ -103,6 +93,17 @@ public abstract class PictureFetcher extends Thread {
 
         synchronized (LOCK) {
             ACTIVE_FETCH--;
+        }
+    }
+
+    private static synchronized void fireOnSuccess(PictureFetcher fetcher, String url, RenderablePicture picture) {
+        RenderablePicture cached = PictureManager.findAndUse(url);
+        if (cached == null) {
+            PictureManager.addEntry(url, picture);
+            fetcher.onSuccess(picture);
+        } else {
+            picture.release();
+            fetcher.onSuccess(cached);
         }
     }
 
