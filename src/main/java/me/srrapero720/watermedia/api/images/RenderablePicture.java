@@ -24,6 +24,7 @@ public class RenderablePicture {
         this.height = image.getHeight();
         this.textures = new int[] { -1 };
         this.delay = new long[] { 0 };
+        this.remaining = 1;
         this.duration = 0;
         this.decoder = null;
         this.image = image;
@@ -61,12 +62,12 @@ public class RenderablePicture {
     }
 
     /**
-     *
-     * @param index
-     * @return
+     * Generate texture based on index
+     * @param index texture index
+     * @return gl texture id
      */
     public int genTexture(int index) {
-        if (textures[index] == -1 && decoder != null) {
+        if (textures[index] == -1) {
             textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
             remaining--;
             if (remaining <= 0) decoder = null;
