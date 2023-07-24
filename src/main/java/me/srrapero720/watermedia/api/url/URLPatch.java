@@ -16,7 +16,7 @@ public abstract class URLPatch {
      * @return static URL
      * @throws PatchingUrlException if URL is null or invalid in this patch
      */
-    public String patch(URL url) throws PatchingUrlException {
+    public URL patch(URL url) throws PatchingUrlException {
         if (!isValid(url)) throw new PatchingUrlException(url, new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat"));
         return null;
     }

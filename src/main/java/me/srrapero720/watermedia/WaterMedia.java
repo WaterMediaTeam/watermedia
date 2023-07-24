@@ -42,7 +42,7 @@ public class WaterMedia {
 
 		// ENSURE IS NOT RUNNING BY TLAUNCHER
 		if (LOADER.isTLauncher())
-			CLIENT_EXCEPTION = new IllegalStateException("[CRITICAL] TLauncher (is a virus launcher) and is not supported by WATERMeDIA - Suggested: SKLauncher, MultiMC");
+			CLIENT_EXCEPTION = new IllegalStateException("[CRITICAL] TLauncher is a virus launcher and not supported by WATERMeDIA - Suggested: SKLauncher, MultiMC");
 	}
 
 	public void init() {

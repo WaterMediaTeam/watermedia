@@ -74,10 +74,10 @@ minecraft.runs.all {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
-//    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+//    compileOnly 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     // FabricLoader (just to give loading support on FABRIC)
-    implementation "net.fabricmc:fabric-loader:${project.fabricv}"
+    compileOnly "net.fabricmc:fabric-loader:${project.fabricv}"
 
     // TODO: Implement LavaPlayer and all dependencies
     // library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'

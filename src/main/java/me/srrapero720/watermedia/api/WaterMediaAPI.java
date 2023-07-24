@@ -2,14 +2,13 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
-import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.util.DataUtil;
 import me.srrapero720.watermedia.util.ResourceUtil;
-import me.srrapero720.watermedia.api.images.RenderablePicture;
-import me.srrapero720.watermedia.api.url.URLPatch;
-import me.srrapero720.watermedia.api.url.patch.*;
-import me.srrapero720.watermedia.api.video.VideoLANPlayer;
+import me.srrapero720.watermedia.api.images.ImageRenderer;
+import me.srrapero720.watermedia.api.url.patches.*;
+import me.srrapero720.watermedia.api.players.VideoPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.VideoLANCore;
 import org.lwjgl.BufferUtils;
@@ -21,6 +20,7 @@ import org.slf4j.MarkerFactory;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -33,11 +33,11 @@ public final class WaterMediaAPI {
     private static final List<URLPatch> URL_PATCHERS = new ArrayList<>();
 
     // RESOURCES
-    public static RenderablePicture LOADING_GIF;
-    public static RenderablePicture VLC_FAILED;
-    public static RenderablePicture VLC_FAILED_EXTENDED;
-    public static RenderablePicture VLC_FAILED_INSTALL;
-    public static RenderablePicture VLC_FAILED_INSTALL_EXTENDED;
+    public static ImageRenderer LOADING_GIF;
+    public static ImageRenderer VLC_FAILED;
+    public static ImageRenderer VLC_FAILED_EXTENDED;
+    public static ImageRenderer VLC_FAILED_INSTALL;
+    public static ImageRenderer VLC_FAILED_INSTALL_EXTENDED;
 
     public static void init(IMediaLoader modLoader) {
         LOGGER.warn(IT, (URL_PATCHERS.size() > 0 ? "Rel" : "L") + "oading URLPatches");
@@ -54,23 +54,23 @@ public final class WaterMediaAPI {
         LOGGER.info(IT, "Loading internal RenderablePicture's");
 
         if (LOADING_GIF == null) {
-            LOADING_GIF = new RenderablePicture(Objects.requireNonNull(ResourceUtil.readGifResource(modLoader.getClassLoader(), "/images/loading.gif")));
+            LOADING_GIF = new ImageRenderer(Objects.requireNonNull(ResourceUtil.readGifResource(modLoader.getClassLoader(), "/images/loading.gif")));
         } else LOGGER.warn(IT, "Skipping LOADING_GIF");
 
         if (VLC_FAILED == null) {
-            VLC_FAILED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed.png"));
+            VLC_FAILED = new ImageRenderer(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED");
 
         if (VLC_FAILED_EXTENDED == null) {
-            VLC_FAILED_EXTENDED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_extended.png"));
+            VLC_FAILED_EXTENDED = new ImageRenderer(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_extended.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED");
 
         if (VLC_FAILED_INSTALL == null) {
-            VLC_FAILED_INSTALL = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_install.png"));
+            VLC_FAILED_INSTALL = new ImageRenderer(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_install.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED_INSTALL");
 
         if (VLC_FAILED_INSTALL_EXTENDED == null) {
-            VLC_FAILED_INSTALL_EXTENDED = new RenderablePicture(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_install_extended.png"));
+            VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(ResourceUtil.readImageResource(modLoader.getClassLoader(), "/images/vlc/vlc_failed_install_extended.png"));
         } else LOGGER.warn(IT, "Skipping VLC_FAILED_INSTALL");
     }
 
@@ -104,7 +104,7 @@ public final class WaterMediaAPI {
      * Creates your own URLPatch and register it to WaterMediaAPI
      * @param patch All patches you want to Use
      */
-    public static void registerURLPatch(URLPatch ...patch) {
+    public static void registerURLPatch(URLPatch...patch) {
         for (final URLPatch p: patch) {
             LOGGER.warn(IT, "Registered new URLPatch: {}", p.getClass().getSimpleName());
             URL_PATCHERS.add(p);
@@ -112,16 +112,23 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * This method is used by default on {@link VideoLANPlayer#start(CharSequence, String[])}
+     * This method is used by default on {@link VideoPlayer#start(CharSequence, String[])}
      * Is not recommended external usages
-     * @param url Media URL to patch
+     * @param uri Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
      */
-    public static String urlPatch(String url) {
-        return ThreadUtil.tryAndReturn(defaultVar -> {
-            for (URLPatch compat: URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.patch(new URL(url));
-            return defaultVar;
-        }, e -> LOGGER.error(IT, "Exception occurred trying to run patchNonStaticUrl", e), url);
+    public static URL urlBuildAndPatch(String uri) {
+        try {
+            URL url = new URL(uri);
+
+            return ThreadUtil.tryAndReturn(defaultVar -> {
+                for (URLPatch compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
+                return defaultVar;
+            }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
+        } catch (Exception e) {
+            LOGGER.error(IT, "Exception occurred trying to build URL", e);
+        }
+        return null;
     }
 
     /**
@@ -130,7 +137,7 @@ public final class WaterMediaAPI {
      * Suggestion: Use the same VLC arguments for logging but with other filename
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
      * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link VideoLANPlayer} can accept factory for new instances
+     * @return a PlayerFactory to create custom VLC players. {@link VideoPlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory videoLANCreateFactory(String[] vlcArgs) {
         NativeDiscovery discovery = new NativeDiscovery();
@@ -146,7 +153,7 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * Check if VLC is loaded and ready to be used on {@link VideoLANPlayer} or to make
+     * Check if VLC is loaded and ready to be used on {@link VideoPlayer} or to make
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
@@ -182,7 +189,6 @@ public final class WaterMediaAPI {
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
-//        RenderSystem.bindTexture(textureID); // unsafe for other versions - Bind texture ID
 
         //Setup wrap mode
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
