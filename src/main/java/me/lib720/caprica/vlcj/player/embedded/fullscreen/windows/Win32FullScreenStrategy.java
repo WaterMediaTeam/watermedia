@@ -30,8 +30,9 @@ public class Win32FullScreenStrategy implements FullScreenStrategy {
 
     /**
      * Native full-screen implementation.
+     * Deleted by @SrRapero720
      */
-    private final Win32FullScreenHandler handler;
+    private final Object handler;
 
     /**
      * Is the window currently in full-screen mode?
@@ -44,19 +45,14 @@ public class Win32FullScreenStrategy implements FullScreenStrategy {
      * @param window component that will be made full-screen
      */
     public Win32FullScreenStrategy(Window window) {
-        if (window != null) {
-            this.handler = new Win32FullScreenHandler(window);
-        }
-        else {
-            throw new IllegalArgumentException("Window must not be null");
-        }
+        throw new IllegalArgumentException("FullScreenStrategy is removed from WATERMeDIA");
     }
 
     @Override
     public final void enterFullScreenMode() {
         if (!isFullScreenMode) {
             onBeforeEnterFullScreenMode();
-            handler.setFullScreen(true);
+//            handler.setFullScreen(true);
             isFullScreenMode = true;
         }
     }
@@ -64,7 +60,7 @@ public class Win32FullScreenStrategy implements FullScreenStrategy {
     @Override
     public final void exitFullScreenMode() {
         if (isFullScreenMode) {
-            handler.setFullScreen(false);
+//            handler.setFullScreen(false);
             isFullScreenMode = false;
             onAfterExitFullScreenMode();
         }
