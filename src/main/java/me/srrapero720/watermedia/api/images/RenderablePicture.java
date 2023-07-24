@@ -67,10 +67,13 @@ public class RenderablePicture {
      * @return gl texture id
      */
     public int genTexture(int index) {
-        if (textures[index] == -1) {
+        if (textures[index] == -1 && decoder != null) {
             textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
             remaining--;
             if (remaining <= 0) decoder = null;
+        } else if (textures[index] == -1 && image != null) {
+            textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
+            remaining --;
         }
         return textures[index];
     }
