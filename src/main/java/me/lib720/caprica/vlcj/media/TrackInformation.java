@@ -80,7 +80,7 @@ final class TrackInformation {
 
     private static TrackInfo getTrackInfo(Pointer pointer, Set<TrackType> types) {
         TrackInfo result = null;
-        libvlc_media_track_t track = Structure.newInstance(libvlc_media_track_t.class, pointer);
+        libvlc_media_track_t track = (libvlc_media_track_t) Structure.newInstance(libvlc_media_track_t.class, pointer);
         track.read();
         switch (TrackType.trackType(track.i_type)) {
             case UNKNOWN:

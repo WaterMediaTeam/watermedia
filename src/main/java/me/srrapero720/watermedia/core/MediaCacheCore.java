@@ -38,15 +38,15 @@ public class MediaCacheCore {
 
         if (!dir.exists()) dir.mkdirs();
         if (index.exists()) {
-            try (var stream = new DataInputStream(new GZIPInputStream(new FileInputStream(index)))) {
+            try (DataInputStream stream = new DataInputStream(new GZIPInputStream(new FileInputStream(index)))) {
                 int length = stream.readInt();
 
                 for (int i = 0; i < length; i++) {
-                    var url = stream.readUTF();
-                    var tag = stream.readUTF();
-                    var time = stream.readLong();
-                    var expireTime = stream.readLong();
-                    var entry = new Entry(url, tag.length() > 0 ? tag : null, time, expireTime);
+                    String url = stream.readUTF();
+                    String tag = stream.readUTF();
+                    long time = stream.readLong();
+                    long expireTime = stream.readLong();
+                    Entry entry = new Entry(url, tag.length() > 0 ? tag : null, time, expireTime);
                     ENTRIES.put(entry.getUrl(), entry);
                 }
             } catch (Exception e) {
@@ -62,10 +62,10 @@ public class MediaCacheCore {
     }
 
     public static void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
-        var entry = new Entry(url, tag, time, expireTime);
-        var saved = false;
-        var out = (OutputStream) null;
-        var file = getFile(entry.url);
+        Entry entry = new Entry(url, tag, time, expireTime);
+        boolean saved = false;
+        OutputStream out = null;
+        File file = getFile(entry.url);
 
         try {
             out = new FileOutputStream(file);
@@ -80,13 +80,13 @@ public class MediaCacheCore {
     }
 
     private static boolean refreshAllIndexOnFile() {
-        var out = (DataOutputStream) null;
+        DataOutputStream out = null;
         try {
             out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)));
             out.writeInt(ENTRIES.size());
 
-            for (var mapEntry : ENTRIES.entrySet()) {
-                var entry = mapEntry.getValue();
+            for (Map.Entry<String, Entry> mapEntry : ENTRIES.entrySet()) {
+                Entry entry = mapEntry.getValue();
                 out.writeUTF(entry.getUrl());
                 out.writeUTF(entry.getTag() == null ? "" : entry.getTag());
                 out.writeLong(entry.getTime());
@@ -106,7 +106,7 @@ public class MediaCacheCore {
     }
     public static void deleteEntry(String url) {
         ENTRIES.remove(url);
-        var file = getFile(url);
+        File file = getFile(url);
         if (file.exists()) file.delete();
     }
 

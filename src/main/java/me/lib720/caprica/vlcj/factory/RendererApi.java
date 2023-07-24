@@ -58,7 +58,7 @@ public final class RendererApi extends BaseApi {
             if (count > 0) {
                 Pointer[] pointers = ref.getValue().getPointerArray(0, count);
                 for (Pointer pointer : pointers) {
-                    libvlc_rd_description_t description = Structure.newInstance(libvlc_rd_description_t.class, pointer);
+                    libvlc_rd_description_t description = (libvlc_rd_description_t) Structure.newInstance(libvlc_rd_description_t.class, pointer);
                     description.read();
                     result.add(new RendererDiscovererDescription(description.psz_name, description.psz_longname));
                 }

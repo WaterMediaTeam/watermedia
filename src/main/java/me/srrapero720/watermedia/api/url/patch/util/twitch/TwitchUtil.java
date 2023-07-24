@@ -5,8 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.srrapero720.watermedia.api.url.patch.util.StreamQuality;
+import me.srrapero720.watermedia.util.StreamUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -57,8 +59,8 @@ public class TwitchUtil {
         int responseCode = conn.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) throw new StreamNotFound("Stream not found");
         return (responseCode == HttpURLConnection.HTTP_OK) ?
-                new String(conn.getInputStream().readAllBytes()) :
-                new String(conn.getErrorStream().readAllBytes());
+                new String(StreamUtil.readAllBytes(conn.getInputStream())) :
+                new String(StreamUtil.readAllBytes(conn.getErrorStream()));
     }
 
     private static JsonElement post(String id, boolean isVOD) throws IOException {
@@ -72,7 +74,7 @@ public class TwitchUtil {
             os.write(buildJsonString(id, isVOD).getBytes(StandardCharsets.UTF_8));
         }
 
-        return JsonParser.parseString(new String(conn.getInputStream().readAllBytes()));
+        return new JsonParser().parse(new String(StreamUtil.readAllBytes(conn.getInputStream())));
     }
 
     /**

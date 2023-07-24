@@ -31,8 +31,8 @@ public class VideoLANCore {
         if (FACTORY != null) throw new IllegalStateException("Rejected attempt to reload VideoLAN");
 
         // SETUP PATHS
-        var logs = workingDir.resolve("logs/latest.log");
-        var path = workingDir.resolve("vlc/");
+        Path logs = workingDir.resolve("logs/latest.log");
+        Path path = workingDir.resolve("vlc/");
 
         // LOGGER INIT
         if (!Files.exists(logs.toAbsolutePath())) {
@@ -60,7 +60,7 @@ public class VideoLANCore {
         if (!logFile.exists() || !logFile.isFile()) return;
 
         // Output for new gZIP
-        var date = new Date(System.currentTimeMillis()).toLocalDate().toString();
+        String date = new Date(System.currentTimeMillis()).toLocalDate().toString();
         String compressedFilePath = logFile.getParent() + "/" + date + ".log.gz";
 
         int count = 0;

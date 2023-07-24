@@ -10,7 +10,7 @@ public class Checker {
     private static final Logger LOGGER = LoggerFactory.getLogger("Checker");
     private static final Marker IT = MarkerFactory.getMarker("TEST");
     public static void main(String ...args) throws Exception {
-        var url = WaterMediaAPI.urlPatch("https://1drv.ms/i/s!AoHO9f0CSCtxozX0Y6Noqo7Dg8CR?e=zPU5Ba");
+        String url = WaterMediaAPI.urlPatch("https://1drv.ms/i/s!AoHO9f0CSCtxozX0Y6Noqo7Dg8CR?e=zPU5Ba");
         LOGGER.info(IT, "Url from OneDrive {}", url);
 
         url = WaterMediaAPI.urlPatch("https://www.youtube.com/watch?v=hsXeFqj5p7Q&list=RDYIC1aK6CleE&index=6&ab_channel=Diversity");
