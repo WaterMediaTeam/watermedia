@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.images;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.external.GifDecoder;
+import me.lib720.madgag.gif.fmsware.GifDecoder;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

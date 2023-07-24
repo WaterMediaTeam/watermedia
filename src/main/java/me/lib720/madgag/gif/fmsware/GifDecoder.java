@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.external;
+package me.lib720.madgag.gif.fmsware;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
