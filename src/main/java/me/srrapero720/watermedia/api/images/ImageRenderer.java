@@ -18,23 +18,26 @@ public class ImageRenderer {
     public int remaining;
 
     public ImageRenderer(BufferedImage image) {
+        this.image = image;
+        if (image == null) throw new NullPointerException();
         this.width = image.getWidth();
         this.height = image.getHeight();
         this.textures = new int[] { -1 };
         this.delay = new long[] { 0 };
         this.duration = 0;
         this.decoder = null;
-        this.image = image;
     }
 
     public ImageRenderer(GifDecoder decoder) {
+        this.decoder = decoder;
+        if (decoder == null) throw new NullPointerException();
+
         Dimension frameSize = decoder.getFrameSize();
         width = (int) frameSize.getWidth();
         height = (int) frameSize.getHeight();
         textures = new int[decoder.getFrameCount()];
         delay = new long[decoder.getFrameCount()];
 
-        this.decoder = decoder;
         this.image = null;
         this.remaining = decoder.getFrameCount();
         long time = 0;
@@ -60,7 +63,7 @@ public class ImageRenderer {
 
     public int genTexture(int index) {
         if (textures[index] == -1 && decoder != null) {
-            textures[index] = WaterMediaAPI.genGLTexture(decoder.getFrame(index), width, height);
+            textures[index] = WaterMediaAPI.gl_genTexture(decoder.getFrame(index), width, height);
             remaining--;
             if (remaining <= 0) decoder = null;
         }

@@ -50,7 +50,7 @@ public class VideoPlayer extends Player {
     public VideoPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         if (factory == null) factory = VideoLANCore.factory();
 
-        if (WaterMediaAPI.isVLCReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
+        if (WaterMediaAPI.vlc_isReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
         else LOGGER.error(IT, "Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
     }
 
@@ -116,7 +116,7 @@ public class VideoPlayer extends Player {
     @Override
     public void seekGameTicksTo(int ticks) {
         if (player == null) return;
-        long time = WaterMediaAPI.gameTicksToMs(ticks);
+        long time = WaterMediaAPI.math_ticksToMillis(ticks);
         eventManager.fireEvent(new MediaTimeChangedEvent(this, getTime(), time));
         player.mediaPlayer().controls().setTime(time);
     }
@@ -124,7 +124,7 @@ public class VideoPlayer extends Player {
     @Override
     public void seekGameTickFastTo(int ticks) {
         if (player == null) return;
-        player.mediaPlayer().controls().setTime(WaterMediaAPI.gameTicksToMs(ticks));
+        player.mediaPlayer().controls().setTime(WaterMediaAPI.math_ticksToMillis(ticks));
     }
 
     @Override
@@ -237,7 +237,7 @@ public class VideoPlayer extends Player {
     @Override
     public int getGameTickDuration() {
         if (player == null) return 0;
-        return WaterMediaAPI.msToGameTicks(player.mediaPlayer().status().length());
+        return WaterMediaAPI.math_millisToTicks(player.mediaPlayer().status().length());
     }
 
     /**
@@ -257,7 +257,7 @@ public class VideoPlayer extends Player {
     public int getGameTickMediaInfoDuration() {
         if (player == null) return 0;
         InfoApi info = player.mediaPlayer().media().info();
-        if (info != null) return WaterMediaAPI.msToGameTicks(info.duration());
+        if (info != null) return WaterMediaAPI.math_millisToTicks(info.duration());
         return 0;
     }
 
@@ -270,7 +270,7 @@ public class VideoPlayer extends Player {
     @Override
     public int getGameTickTime() {
         if (player == null) return 0;
-        return WaterMediaAPI.msToGameTicks(player.mediaPlayer().status().time());
+        return WaterMediaAPI.math_millisToTicks(player.mediaPlayer().status().time());
     }
 
     @Override

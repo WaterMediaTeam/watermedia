@@ -37,7 +37,7 @@ public abstract class ImageFetcher extends Thread {
 
     private final URL url;
     public ImageFetcher(String url) {
-        this.url = WaterMediaAPI.urlBuildAndPatch(url);
+        this.url = WaterMediaAPI.url_convertToURL(url);
         this.setName("WaterMedia-Picture");
         this.setDaemon(true);
         this.start();

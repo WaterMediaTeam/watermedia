@@ -49,7 +49,7 @@ public class VideoLANCore {
                 args[i] = args[i].replace("%logfile%", logs.toAbsolutePath().toString());
             }
 
-            return WaterMediaAPI.videoLANCreateFactory(args);
+            return WaterMediaAPI.vlc_createFactory(args);
         }, e -> LOGGER.error(IT, "Failed to load VLC", e));
     }
 
