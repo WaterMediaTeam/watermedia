@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.external;
+package me.srrapero720.watermedia.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

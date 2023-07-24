@@ -9,7 +9,7 @@ import me.srrapero720.watermedia.util.ResourceUtil;
 import me.srrapero720.watermedia.api.images.ImageRenderer;
 import me.srrapero720.watermedia.api.url.patches.*;
 import me.srrapero720.watermedia.api.players.VideoPlayer;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.util.ThreadUtil;
 import me.srrapero720.watermedia.core.VideoLANCore;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -20,7 +20,6 @@ import org.slf4j.MarkerFactory;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

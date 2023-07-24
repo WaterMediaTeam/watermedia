@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.util.ThreadUtil;
 import me.srrapero720.watermedia.core.LavaPlayerCore;
 import me.srrapero720.watermedia.core.MediaCacheCore;
 import me.srrapero720.watermedia.core.VideoLANBinaries;

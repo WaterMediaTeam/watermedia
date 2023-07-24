@@ -14,7 +14,7 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.util.ThreadUtil;
 import me.srrapero720.watermedia.api.players.event.data.*;
 import me.srrapero720.watermedia.api.players.event.data.Event;
 import me.srrapero720.watermedia.api.players.event.EventListener;

@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.images;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.GifDecoder;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.util.ThreadUtil;
 import me.srrapero720.watermedia.core.MediaCacheCore;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;

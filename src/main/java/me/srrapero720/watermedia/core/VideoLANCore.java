@@ -5,7 +5,7 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
+import me.srrapero720.watermedia.util.ThreadUtil;
 import me.srrapero720.watermedia.util.ResourceUtil;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
