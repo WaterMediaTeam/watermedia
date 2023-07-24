@@ -10,7 +10,7 @@ import java.security.MessageDigest;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class StomachUtil {
+public class StreamUtil {
     public static boolean integrityFrom(ClassLoader loader, String source, File targetFile) {
         try (InputStream is = loader.getResourceAsStream(source)) {
             return integrityFrom(is, targetFile);

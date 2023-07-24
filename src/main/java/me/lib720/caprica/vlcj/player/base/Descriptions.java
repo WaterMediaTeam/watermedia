@@ -39,10 +39,10 @@ final class Descriptions {
         PointerByReference titles = new PointerByReference();
         int titleCount = LibVlc.libvlc_media_player_get_full_title_descriptions(mediaPlayerInstance, titles);
         if (titleCount != -1) {
-            result = new ArrayList<TitleDescription>(titleCount);
+            result = new ArrayList<>(titleCount);
             Pointer[] pointers = titles.getValue().getPointerArray(0, titleCount);
             for (Pointer pointer : pointers) {
-                libvlc_title_description_t titleDescription = Structure.newInstance(libvlc_title_description_t.class, pointer);
+                libvlc_title_description_t titleDescription = (libvlc_title_description_t) Structure.newInstance(libvlc_title_description_t.class, pointer);
                 titleDescription.read();
                 result.add(new TitleDescription(titleDescription.i_duration, NativeString.copyNativeString(titleDescription.psz_name), titleDescription.b_menu != 0));
             }
@@ -62,7 +62,7 @@ final class Descriptions {
             result = new ArrayList<ChapterDescription>(chapterCount);
             Pointer[] pointers = chapters.getValue().getPointerArray(0, chapterCount);
             for (Pointer pointer : pointers) {
-                libvlc_chapter_description_t chapterDescription = Structure.newInstance(libvlc_chapter_description_t.class, pointer);
+                libvlc_chapter_description_t chapterDescription = (libvlc_chapter_description_t) Structure.newInstance(libvlc_chapter_description_t.class, pointer);
                 chapterDescription.read();
                 result.add(new ChapterDescription(chapterDescription.i_time_offset, chapterDescription.i_duration, NativeString.copyNativeString(chapterDescription.psz_name)));
             }

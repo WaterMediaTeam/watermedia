@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.core;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.core.exceptions.SafeException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
-import me.srrapero720.watermedia.util.StomachUtil;
+import me.srrapero720.watermedia.util.StreamUtil;
 import me.srrapero720.watermedia.util.ResourceUtil;
 import me.srrapero720.watermedia.util.WaterOs;
 
@@ -213,7 +213,7 @@ public enum VideoLANBinaries {
 
     void checkIntegrityNorExtract(IMediaLoader modLoader) {
         File destFile = binPath.toAbsolutePath().resolve(this.destination.substring(1)).toFile();
-        if (!destFile.exists() || !StomachUtil.integrityFrom(modLoader.getClassLoader(), origin, destFile)) {
+        if (!destFile.exists() || !StreamUtil.integrityFrom(modLoader.getClassLoader(), origin, destFile)) {
             ResourceUtil.extractResource(modLoader.getClassLoader(), origin, destFile.toPath());
         }
     }

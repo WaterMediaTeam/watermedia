@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.minecraft;
 
+import jdk.internal.loader.ClassLoaders;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.IMediaLoader;
 import net.fabricmc.api.EnvType;
@@ -129,7 +130,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
         }
 
         // ATTEMPT #4 - PLATFORM CLASSLOADER
-        cl = ClassLoader.getPlatformClassLoader();
+        cl = ClassLoaders.platformClassLoader();
         if ((dummy = cl.getResourceAsStream("/vlc/args.json")) != null) {
             LOGGER.info(IT, "Found working ClassLoader (PlatformClassLoader)");
             IOUtils.closeQuietly(dummy);

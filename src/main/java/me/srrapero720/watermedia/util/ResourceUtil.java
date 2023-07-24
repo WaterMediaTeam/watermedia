@@ -3,14 +3,18 @@ package me.srrapero720.watermedia.util;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.srrapero720.watermedia.api.external.GifDecoder;
-import me.srrapero720.watermedia.api.external.ThreadUtil;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +60,12 @@ public class ResourceUtil {
     }
 
     public static String readTextFile(Path from) {
-        return ThreadUtil.tryAndReturn(defaultVar -> Files.exists(from) ? Files.readString(from) : defaultVar, null);
+        try {
+            byte[] bytes = Files.readAllBytes(from);
+            return new String(bytes, Charset.defaultCharset());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static BufferedImage readImageResource(ClassLoader loader, String path) {

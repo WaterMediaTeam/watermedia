@@ -2,7 +2,9 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.util.DataUtil;
 import me.srrapero720.watermedia.util.ResourceUtil;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
@@ -10,7 +12,6 @@ import me.srrapero720.watermedia.api.url.patch.*;
 import me.srrapero720.watermedia.api.video.VideoLANPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.VideoLANCore;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -21,6 +22,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,15 +42,14 @@ public final class WaterMediaAPI {
     public static void init(IMediaLoader modLoader) {
         LOGGER.warn(IT, (URL_PATCHERS.size() > 0 ? "Rel" : "L") + "oading URLPatches");
         URL_PATCHERS.clear();
-        URL_PATCHERS.addAll(List.of(new URLPatch[]{
+        URL_PATCHERS.addAll(DataUtil.listOf(
                 new YoutubePatch(),
                 new TwitchPatch(),
                 new KickPatch(),
                 new DrivePatch(),
-                new TwitterPatch(),
                 new OnedrivePatch(),
-                new DropboxPatch()
-        }));
+                new DropboxPatch())
+        );
 
         LOGGER.info(IT, "Loading internal RenderablePicture's");
 
@@ -103,7 +104,7 @@ public final class WaterMediaAPI {
      * Creates your own URLPatch and register it to WaterMediaAPI
      * @param patch All patches you want to Use
      */
-    public static void registerURLPatch(@NotNull URLPatch ...patch) {
+    public static void registerURLPatch(URLPatch ...patch) {
         for (final URLPatch p: patch) {
             LOGGER.warn(IT, "Registered new URLPatch: {}", p.getClass().getSimpleName());
             URL_PATCHERS.add(p);
@@ -118,7 +119,7 @@ public final class WaterMediaAPI {
      */
     public static String urlPatch(String url) {
         return ThreadUtil.tryAndReturn(defaultVar -> {
-            for (var compat: URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.patch(new URL(url));
+            for (URLPatch compat: URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.patch(new URL(url));
             return defaultVar;
         }, e -> LOGGER.error(IT, "Exception occurred trying to run patchNonStaticUrl", e), url);
     }
@@ -134,7 +135,7 @@ public final class WaterMediaAPI {
     public static MediaPlayerFactory videoLANCreateFactory(String[] vlcArgs) {
         NativeDiscovery discovery = new NativeDiscovery();
         if (discovery.discover()) {
-            var factory = new MediaPlayerFactory(discovery, vlcArgs);
+            MediaPlayerFactory factory = new MediaPlayerFactory(discovery, vlcArgs);
             LOGGER.info(IT, "New instance of VLC loaded from '{}' with the next args:\n{}", discovery.discoveredPath(), Arrays.toString(vlcArgs));
             Runtime.getRuntime().addShutdownHook(new Thread(factory::release));
             return factory;
@@ -158,7 +159,7 @@ public final class WaterMediaAPI {
      * @param height picture height
      * @return textureID
      */
-    public static int genGLTexture(@NotNull BufferedImage image, int width, int height) {
+    public static int genGLTexture(BufferedImage image, int width, int height) {
         int[] pixels = new int[width * height];
         image.getRGB(0, 0, width, height, pixels, 0, width);
         boolean alpha = false;
@@ -170,7 +171,7 @@ public final class WaterMediaAPI {
             }
 
         int bytesPerPixel = alpha ? 4 : 3;
-        var buffer = BufferUtils.createByteBuffer(width * height * bytesPerPixel);
+        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bytesPerPixel);
         for (int pixel : pixels) {
             buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red
             buffer.put((byte) ((pixel >> 8) & 0xFF)); // Green

@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.api.video;
 
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.media.InfoApi;
 import me.lib720.caprica.vlcj.media.MediaRef;
 import me.lib720.caprica.vlcj.media.MediaType;
 import me.lib720.caprica.vlcj.media.TrackType;
@@ -14,29 +15,37 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallba
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
-import me.srrapero720.watermedia.api.video.events.common.*;
+import me.srrapero720.watermedia.api.video.event.data.*;
+import me.srrapero720.watermedia.api.video.event.EventListener;
+import me.srrapero720.watermedia.api.video.event.EventManager;
+import me.srrapero720.watermedia.api.video.event.data.Event;
 import me.srrapero720.watermedia.core.VideoLANCore;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLANPlayer extends VideoPlayer {
     private static final Thread THREAD = Thread.currentThread();
     private static final Marker IT = MarkerFactory.getMarker("VideoLanPlayer");
+
+    // RAW
+    private CallbackMediaPlayerComponent player;
+    public CallbackMediaPlayerComponent raw() { return player; }
+
+    // PLAYER STATE AND INFO
     private boolean buffering = false;
     private boolean prepared = false;
     private int volume = 100;
-    private CallbackMediaPlayerComponent player;
-    public final EventManager<VideoLANPlayer> events = new EventManager<>();
 
+    // EVENT MANAGERS
+    public final EventManager eventManager =  new EventManager();
+    public <T extends Event> void addEventListener(EventListener<T> listener) { eventManager.addEventListener(listener); }
+    public <T extends Event> void removeEventListener(EventListener<T> listener) { eventManager.removeEventListener(listener); }
 
-    public CallbackMediaPlayerComponent raw() { return player; }
 
     public VideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         if (factory == null) factory = VideoLANCore.factory();
@@ -46,7 +55,7 @@ public class VideoLANPlayer extends VideoPlayer {
     }
 
     @Override
-    public void start(@NotNull CharSequence url) { this.start(url, new String[0]); }
+    public void start(CharSequence url) { this.start(url, new String[0]); }
     public synchronized void start(CharSequence url, String[] vlcArgs) {
         if (player == null) return;
         ThreadUtil.threadTry(() -> {
@@ -56,8 +65,8 @@ public class VideoLANPlayer extends VideoPlayer {
     }
 
     @Override
-    public void prepare(@NotNull CharSequence url) { this.prepare(url, new String[0]); }
-    public void prepare(@NotNull CharSequence url, String[] vlcArgs) {
+    public void prepare(CharSequence url) { this.prepare(url, new String[0]); }
+    public void prepare(CharSequence url, String[] vlcArgs) {
         if (player == null) return;
         ThreadUtil.threadTry(() -> {
             super.start(url.toString());
@@ -92,7 +101,7 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public void seekTo(long time) {
         if (player == null) return;
-        events.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
+        eventManager.fireEvent(new MediaTimeChangedEvent(this, getTime(), time));
         player.mediaPlayer().controls().setTime(time);
     }
 
@@ -105,8 +114,8 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public void seekGameTicksTo(int ticks) {
         if (player == null) return;
-        var time = WaterMediaAPI.gameTicksToMs(ticks);
-        events.callMediaTimeChangedEvent(this, new MediaTimeChangedEvent.EventData(getTime(), time));
+        long time = WaterMediaAPI.gameTicksToMs(ticks);
+        eventManager.fireEvent(new MediaTimeChangedEvent(this, getTime(), time));
         player.mediaPlayer().controls().setTime(time);
     }
 
@@ -203,7 +212,7 @@ public class VideoLANPlayer extends VideoPlayer {
     @Override
     public boolean isStream() {
         if (player == null) return false;
-        var mediaInfo = player.mediaPlayer().media().info();
+        InfoApi mediaInfo = player.mediaPlayer().media().info();
         return mediaInfo != null && (mediaInfo.type().equals(MediaType.STREAM) || mediaInfo.mrl().endsWith(".m3u") || mediaInfo.mrl().endsWith(".m3u8"));
     }
 
@@ -237,7 +246,7 @@ public class VideoLANPlayer extends VideoPlayer {
     public long getMediaInfoDuration() {
         if (player == null) return 0L;
 
-        var info = player.mediaPlayer().media().info();
+        InfoApi info = player.mediaPlayer().media().info();
         if (info != null) return info.duration();
         return 0L;
     }
@@ -245,7 +254,7 @@ public class VideoLANPlayer extends VideoPlayer {
     @Deprecated
     public int getGameTickMediaInfoDuration() {
         if (player == null) return 0;
-        var info = player.mediaPlayer().media().info();
+        InfoApi info = player.mediaPlayer().media().info();
         if (info != null) return WaterMediaAPI.msToGameTicks(info.duration());
         return 0;
     }
@@ -278,7 +287,7 @@ public class VideoLANPlayer extends VideoPlayer {
 
 
     private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        final var component = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
+        final CallbackMediaPlayerComponent component = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
         component.mediaPlayer().events().addMediaPlayerEventListener(eventListeners);
         return component;
     }
@@ -293,13 +302,13 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void opening(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            events.callPlayerPreparingEvent(VideoLANPlayer.this, new PlayerPreparingEvent.EventData());
+            eventManager.fireEvent(new PlayerStateEvent.Prepare(VideoLANPlayer.this));
         }
 
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            events.callPlayerBufferProgressEvent(VideoLANPlayer.this, new PlayerBuffer.EventProgressData(newCache));
+            eventManager.fireEvent(new MediaBufferingEvent.Progress(VideoLANPlayer.this, newCache));
             buffering = true;
         }
 
@@ -307,27 +316,27 @@ public class VideoLANPlayer extends VideoPlayer {
         public void playing(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             if (buffering) {
-                events.callPlayerBufferEndEvent(VideoLANPlayer.this, new PlayerBuffer.EventEndData());
+                eventManager.fireEvent(new MediaBufferingEvent.End(VideoLANPlayer.this));
                 buffering = false;
             }
 
             if (volume == 0) player.mediaPlayer().audio().setMute(true);
             else player.mediaPlayer().audio().setVolume(volume);
 
-            if (!prepared) events.callPlayerStartedEvent(VideoLANPlayer.this, new PlayerStartedEvent.EventData());
-            else events.callMediaResumeEvent(VideoLANPlayer.this, new MediaResumeEvent.EventData(player.mediaPlayer().status().length()));
+            if (!prepared) eventManager.fireEvent(new PlayerStateEvent.Started());
+            else eventManager.fireEvent(new MediaResumeEvent(VideoLANPlayer.this, player.mediaPlayer().status().length()));
         }
 
         @Override
         public void paused(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            events.callMediaPauseEvent(VideoLANPlayer.this, new MediaPauseEvent.EventData(player.mediaPlayer().status().length()));
+            eventManager.fireEvent(new MediaPauseEvent(VideoLANPlayer.this, player.mediaPlayer().status().length()));
         }
 
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            events.callMediaStoppedEvent(VideoLANPlayer.this, new MediaStoppedEvent.EventData(player.mediaPlayer().status().length()));
+            eventManager.fireEvent(new MediaStoppedEvent(VideoLANPlayer.this, player.mediaPlayer().status().length()));
         }
 
         @Override
@@ -343,7 +352,7 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void finished(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            ThreadUtil.trySimple(() -> events.callMediaFinishEvent(VideoLANPlayer.this, new MediaFinishEvent.EventData(new URL(url))));
+            eventManager.fireEvent(new MediaFinishedEvent(VideoLANPlayer.this, url));
         }
 
         @Override
@@ -419,7 +428,7 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            events.callMediaVolumeUpdate(VideoLANPlayer.this, new MediaVolumeUpdateEvent.EventData(VideoLANPlayer.this.getVolume(), (int) volume));
+            eventManager.fireEvent(new PlayerVolumeUpdateEvent(VideoLANPlayer.this, VideoLANPlayer.this.getVolume(), (int) volume));
         }
 
         @Override
@@ -435,14 +444,14 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void error(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            events.callPlayerExceptionEvent(VideoLANPlayer.this, new PlayerExceptionEvent.EventData(new RuntimeException("Something is wrong on VideoLanPlayer instance")));
+            eventManager.fireEvent(new PlayerStateEvent.Error(VideoLANPlayer.this, new RuntimeException()));
         }
 
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
             prepared = true;
-            events.callPlayerReadyEvent(VideoLANPlayer.this, new PlayerReadyEvent.EventData());
+            eventManager.fireEvent(new PlayerStateEvent.Ready(VideoLANPlayer.this));
 
             if (volume == 0) player.mediaPlayer().audio().setMute(true);
             else player.mediaPlayer().audio().setVolume(volume);
