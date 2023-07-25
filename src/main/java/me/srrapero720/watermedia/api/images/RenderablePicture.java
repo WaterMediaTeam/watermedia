@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 public class RenderablePicture {
     public final int width;
@@ -88,6 +89,7 @@ public class RenderablePicture {
                 decoder.getFrame(i).flush();
             }
         }
+        Arrays.fill(textures, -1);
     }
 
     /**
