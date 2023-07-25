@@ -31,6 +31,7 @@ public class VideoLANPlayer extends VideoPlayer {
     private volatile boolean buffering = false;
     private volatile boolean prepared = false;
     private volatile int volume = 100;
+    private volatile long duration = -1;
     private volatile CallbackMediaPlayerComponent player;
     public final EventManager<VideoLANPlayer> EV = new EventManager<>();
 
@@ -319,6 +320,7 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void playing(MediaPlayer mediaPlayer) {
             checkIfCurrentThreadHaveClassLoader();
+            duration = mediaPlayer.status().length();
             if (buffering) {
                 EV.callPlayerBufferEndEvent(VideoLANPlayer.this, new PlayerBuffer.EventEndData());
                 buffering = false;
@@ -340,7 +342,8 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             checkIfCurrentThreadHaveClassLoader();
-            EV.callMediaStoppedEvent(VideoLANPlayer.this, new MediaStoppedEvent.EventData(player.mediaPlayer().status().length()));
+            long current = RuntimeUtil.isWindows() ? player.mediaPlayer().status().length() : duration;
+            EV.callMediaStoppedEvent(VideoLANPlayer.this, new MediaStoppedEvent.EventData(current));
         }
 
         @Override
