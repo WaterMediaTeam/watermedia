@@ -72,7 +72,7 @@ public class RenderablePicture {
             remaining--;
             if (remaining <= 0) decoder = null;
         } else if (textures[index] == -1 && image != null) {
-            textures[index] = WaterMediaAPI.preRender(decoder.getFrame(index), width, height);
+            textures[index] = WaterMediaAPI.preRender(image, width, height);
             remaining --;
         }
         return textures[index];
