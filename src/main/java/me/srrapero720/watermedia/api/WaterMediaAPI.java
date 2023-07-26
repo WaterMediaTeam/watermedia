@@ -21,10 +21,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
@@ -135,6 +132,26 @@ public final class WaterMediaAPI {
             LOGGER.error(IT, "Exception occurred trying to build URL", e);
         }
         return null;
+    }
+
+    /**
+     * Gets all query params from a query
+     * Only supports queries from {@link URL#getQuery()}
+     * @param query query string
+     * @return map with all values
+     */
+    public static Map<String, String> url_parseQuery(String query) {
+        Map<String, String> queryParams = new HashMap<>();
+        String[] params = query.split("&");
+        for (String param : params) {
+            String[] keyValue = param.split("=");
+            if (keyValue.length == 2) {
+                String key = keyValue[0];
+                String value = keyValue[1];
+                queryParams.put(key, value);
+            }
+        }
+        return queryParams;
     }
 
     /**
