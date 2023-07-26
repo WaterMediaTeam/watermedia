@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.api.images;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -71,5 +72,23 @@ public class ImageRenderer {
             }
         }
         return textures[index];
+    }
+
+    /**
+     * This method just drain buffers but not releases OpenGL texture
+     */
+    public synchronized void flush() {
+        if (image != null) image.flush();
+        if (decoder != null) {
+            for (int i = 0; i < decoder.getFrameCount(); i++) decoder.getFrame(i).flush();
+            decoder = null;
+        }
+    }
+    /**
+     * This method drain buffers and releases OpenGL textures
+     */
+    public synchronized void release() {
+        GL11.glDeleteTextures(textures);
+        flush();
     }
 }
