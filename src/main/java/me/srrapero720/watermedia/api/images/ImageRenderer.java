@@ -24,7 +24,7 @@ public class ImageRenderer {
         this.height = image.getHeight();
         this.textures = new int[] { -1 };
         this.delay = new long[] { 0 };
-        this.duration = 0;
+        this.duration = 1;
         this.decoder = null;
     }
 
