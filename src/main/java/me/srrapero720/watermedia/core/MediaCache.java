@@ -19,7 +19,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class MediaCache {
-    private static final Marker IT = MarkerFactory.getMarker("PictureStorage");
+    private static final Marker IT = MarkerFactory.getMarker(MediaCache.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;

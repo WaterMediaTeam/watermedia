@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public final class WaterMediaAPI {
-    private static final Marker IT = MarkerFactory.getMarker("WaterMediaAPI");
+    private static final Marker IT = MarkerFactory.getMarker(WaterMediaAPI.class.getSimpleName());
     private static final List<URLPatch> URL_PATCHERS = new ArrayList<>();
 
     // RESOURCES

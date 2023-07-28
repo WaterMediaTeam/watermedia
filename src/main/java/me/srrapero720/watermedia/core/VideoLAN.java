@@ -25,7 +25,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLAN {
-    public static final Marker IT = MarkerFactory.getMarker("VideoLAN");
+    public static final Marker IT = MarkerFactory.getMarker(VideoLAN.class.getSimpleName());
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory getFactory() { return FACTORY; }
 

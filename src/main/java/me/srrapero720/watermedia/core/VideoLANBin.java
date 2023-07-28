@@ -6,15 +6,18 @@ import me.srrapero720.watermedia.core.exceptions.UnsafeException;
 import me.srrapero720.watermedia.util.AssetsUtil;
 import me.srrapero720.watermedia.util.StreamUtil;
 import me.srrapero720.watermedia.util.WaterOs;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.VideoLAN.IT;
 
 public enum VideoLANBin {
+
     // CORES
     libvlc(null),
     libvlccore(null),
@@ -210,7 +213,6 @@ public enum VideoLANBin {
         this.origin = "vlc/" + WaterOs.getArch() + "/" + relativeDir;
         this.destination = "/" + relativeDir;
     }
-
     void checkIntegrityNorExtract(IMediaLoader modLoader) {
         File destFile = binPath.toAbsolutePath().resolve(this.destination.substring(1)).toFile();
         if (!destFile.exists() || !StreamUtil.integrityFrom(modLoader.getJarClassLoader(), origin, destFile)) {
@@ -218,8 +220,10 @@ public enum VideoLANBin {
         }
     }
 
+
     private static Path binPath;
     private static final String V_JAR = "3.0.18a";
+    private static final Marker IT = MarkerFactory.getMarker(VideoLAN.class.getSimpleName());
     public static void init(IMediaLoader loader) throws SafeException, UnsafeException {
         binPath = loader.getTempDir().resolve("vlc/").toAbsolutePath();
 

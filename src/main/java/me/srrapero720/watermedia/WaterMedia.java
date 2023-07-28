@@ -37,7 +37,7 @@ public class WaterMedia {
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
 
 			SERVER_EXCEPTION = new IllegalStateException("WATERMeDIA is running on a invalid DIST (dedicated_server)");
-		} else LOGGER.info("Special environment detected, avoiding forced server crash");
+		} else LOGGER.info(IT, "Special environment detected, avoiding forced server crash");
 
 		// ENSURE FANCYVIDEO_API IS NOT INSTALLED (to prevent more bugreports about it)
 		if (LOADER.isInstalled("fancyvideo_api"))
@@ -57,24 +57,24 @@ public class WaterMedia {
 		}
 
 		// PREPARE API
-		LOGGER.info(IT, "Loading WaterMediaAPI");
-		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> registerException("WaterMediaAPI", (RuntimeException) e));
+		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
+		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> registerException(WaterMediaAPI.class.getSimpleName(), (RuntimeException) e));
 
 		// PREPARE STORAGES
-		LOGGER.info(IT, "Loading PictureStorage");
-		ThreadUtil.trySimple(() -> MediaCache.init(LOADER), e -> registerException("PictureStorage", (RuntimeException) e));
+		LOGGER.info(IT, "Loading {}", MediaCache.class.getSimpleName());
+		ThreadUtil.trySimple(() -> MediaCache.init(LOADER), e -> registerException(MediaCache.class.getSimpleName(), (RuntimeException) e));
 
 		// PREPARE VLC BINARIES
-		LOGGER.info(IT, "Loading VideoLANBinaries");
-		ThreadUtil.trySimple(() -> VideoLANBin.init(LOADER), e -> registerException("VideoLANBinaries", (RuntimeException) e));
+		LOGGER.info(IT, "Loading {}", VideoLANBin.class.getSimpleName());
+		ThreadUtil.trySimple(() -> VideoLANBin.init(LOADER), e -> registerException(VideoLANBin.class.getSimpleName(), (RuntimeException) e));
 
 		// PREPARE VLC
-		LOGGER.info(IT, "Loading VideoLAN");
-		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> registerException("VideoLAN", (RuntimeException) e));
+		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
+		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> registerException(VideoLAN.class.getSimpleName(), (RuntimeException) e));
 
 		// PREPARE LAVAPLAYER
-		LOGGER.info(IT, "Loading LavaPlayer");
-		ThreadUtil.trySimple(() -> LavaPlayer.init(LOADER), e -> registerException("LavaPlayer", (RuntimeException) e));
+		LOGGER.info(IT, "Loading {}", LavaPlayer.class.getSimpleName());
+		ThreadUtil.trySimple(() -> LavaPlayer.init(LOADER), e -> registerException(LavaPlayer.class.getSimpleName(), (RuntimeException) e));
 
 		LOGGER.info(IT, "Finished WaterMedia startup");
 		if (existsExceptions()) LOGGER.warn(IT, "Detected some critical exceptions after startup");
