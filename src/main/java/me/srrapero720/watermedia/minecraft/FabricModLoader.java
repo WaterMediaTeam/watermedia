@@ -1,17 +1,15 @@
 package me.srrapero720.watermedia.minecraft;
 
 import jdk.internal.loader.ClassLoaders;
-import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -22,11 +20,11 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  */
 public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     private static final Marker IT = MarkerFactory.getMarker("FabricLoader");
-    private final WaterMedia INSTANCE;
+    private final WaterMedia WM;
     private ClassLoader CL;
 
     public FabricModLoader() {
-        INSTANCE = new WaterMedia(this);
+        WM = new WaterMedia(this);
     }
 
     @Override
@@ -44,9 +42,9 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
 
     public void launchWaterMedia() {
         assert getWorkingClassLoader() != null;
-        INSTANCE.init();
-        INSTANCE.throwClientException();
-        INSTANCE.throwServerException();
+        WM.init();
+        WM.throwClientException();
+        WM.throwServerException();
     }
 
     public static FabricModLoader getInstance() {
@@ -54,19 +52,13 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     }
 
     @Override
-    public boolean isDevEnv() {
-        return FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
+    public boolean isDevEnv() { return FabricLoader.getInstance().isDevelopmentEnvironment(); }
 
     @Override
-    public boolean isClient() {
-        return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT);
-    }
+    public boolean isClient() { return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT); }
 
     @Override
-    public boolean isThisModPresent(String modid) {
-        return FabricLoader.getInstance().isModLoaded(modid);
-    }
+    public boolean isThisModPresent(String modid) { return FabricLoader.getInstance().isModLoaded(modid); }
 
     @Override
     public ClassLoader getClassLoader() {
@@ -97,54 +89,24 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     }
 
     @Override
-    public boolean isTLauncher() {
-        return false;
-    }
+    public boolean isTLauncher() { return false; }
 
     private ClassLoader getWorkingClassLoader() {
-        ClassLoader cl;
-        InputStream dummy;
+        ClassLoader[] attempts = new ClassLoader[] {
+                FabricModLoader.class.getClassLoader(),
+                this.getClass().getClassLoader(),
+                Thread.currentThread().getContextClassLoader(),
+                ClassLoaders.platformClassLoader(),
+                ClassLoader.getSystemClassLoader(),
+                ClassLoaders.appClassLoader(),
+                FabricLoader.getInstance().getClass().getClassLoader()
+        };
 
-        // ATTEMPT #1 - SELF CLASS CLASSLOADER
-        cl = ForgeModLoader.class.getClassLoader();
-        if ((dummy = cl.getResourceAsStream("/vlc/args.json")) != null) {
-            LOGGER.info(IT, "Found working ClassLoader (SELF)");
-            IOUtils.closeQuietly(dummy);
-            return cl;
-        }
-
-        // ATTEMPT #2 - SELF INSTANCE CLASSLOADER
-        cl = this.getClass().getClassLoader();
-        if ((dummy = cl.getResourceAsStream("/vlc/args.json")) != null) {
-            LOGGER.info(IT, "Found working ClassLoader (SELF)");
-            IOUtils.closeQuietly(dummy);
-            return cl;
-        }
-
-        // ATTEMPT #3 - CURRENT THREAD CLASSLOADER
-        cl = Thread.currentThread().getContextClassLoader();
-        if ((dummy = cl.getResourceAsStream("/vlc/args.json")) != null) {
-            LOGGER.info(IT, "Found working ClassLoader (CurrentThread)");
-            IOUtils.closeQuietly(dummy);
-            return cl;
-        }
-
-        // ATTEMPT #4 - PLATFORM CLASSLOADER
-        cl = ClassLoaders.platformClassLoader();
-        if ((dummy = cl.getResourceAsStream("/vlc/args.json")) != null) {
-            LOGGER.info(IT, "Found working ClassLoader (PlatformClassLoader)");
-            IOUtils.closeQuietly(dummy);
-            return cl;
-        }
-
-        // ATTEMPT #5 - SYSTEM CLASSLOADER
-        cl = ClassLoader.getSystemClassLoader();
-        if ((dummy = cl.getResourceAsStream("/vlc/args.json")) != null) {
-            LOGGER.info(IT, "Found working ClassLoader (SystemClassLoader)");
-            IOUtils.closeQuietly(dummy);
-            return cl;
-        }
-
+        for (int i = 0; i < attempts.length; i++)
+            if (WM.workingClassLoader(attempts[i])) {
+                LOGGER.info(IT, "Founded a working classloader, index {}", i);
+                return attempts[i];
+            }
         return null;
     }
 }

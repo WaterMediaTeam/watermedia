@@ -6,10 +6,13 @@ import me.srrapero720.watermedia.core.LavaPlayerCore;
 import me.srrapero720.watermedia.core.MediaCacheCore;
 import me.srrapero720.watermedia.core.VideoLANBinaries;
 import me.srrapero720.watermedia.core.VideoLANCore;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+
+import java.io.InputStream;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WaterMedia {
@@ -85,4 +88,9 @@ public class WaterMedia {
 	public boolean existsExceptions() { return CLIENT_EXCEPTION != null || SERVER_EXCEPTION != null; }
 	public void throwClientException() { if (CLIENT_EXCEPTION != null) throw CLIENT_EXCEPTION; }
 	public void throwServerException() { if (SERVER_EXCEPTION != null) throw SERVER_EXCEPTION; }
+	public boolean workingClassLoader(ClassLoader loader) {
+		InputStream dummy = loader.getResourceAsStream("/vlc/args.json");
+		IOUtils.closeQuietly(dummy);
+		return dummy != null;
+	}
 }
