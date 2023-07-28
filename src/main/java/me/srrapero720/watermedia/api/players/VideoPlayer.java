@@ -62,7 +62,7 @@ public class VideoPlayer extends Player {
             super.start(url.toString());
 
             if (this.url != null) player.mediaPlayer().media().start(this.url.toString(), vlcArgs);
-            else LOGGER.error(IT, "Failed to start VideoPlayer. URL is invalid or null");
+            else LOGGER.error(IT, "Playback start failed. URL is invalid or null");
         }, null, null);
     }
 
