@@ -22,11 +22,11 @@
       "me.srrapero720.watermedia.minecraft.FabricModLoader"
     ]
   },
-  "conflicts": {
+  "breaks": {
     "fancyvideo_api": "*"
   },
   "depends": {
     "fabricloader": ">=0.14.21",
-    "java": ">=15"
+    "java": ">=8"
   }
 }
