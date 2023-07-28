@@ -52,16 +52,16 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     }
 
     @Override
-    public boolean isDevEnv() { return FabricLoader.getInstance().isDevelopmentEnvironment(); }
+    public boolean isDev() { return FabricLoader.getInstance().isDevelopmentEnvironment(); }
 
     @Override
     public boolean isClient() { return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT); }
 
     @Override
-    public boolean isThisModPresent(String modid) { return FabricLoader.getInstance().isModLoaded(modid); }
+    public boolean isInstalled(String modid) { return FabricLoader.getInstance().isModLoaded(modid); }
 
     @Override
-    public ClassLoader getClassLoader() {
+    public ClassLoader getJarClassLoader() {
         if (CL != null) return CL;
 
         ClassLoader cl = getWorkingClassLoader();
@@ -79,7 +79,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     }
 
     @Override
-    public Path getGameDir() {
+    public Path getWorkingDir() {
         return FabricLoader.getInstance().getGameDir();
     }
 
@@ -88,6 +88,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
         return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
 
+    // TODO: DECIDE DO IT OR NOT, DEPENDS OF FABRIC BEHAVIOR
     @Override
     public boolean isTLauncher() { return false; }
 

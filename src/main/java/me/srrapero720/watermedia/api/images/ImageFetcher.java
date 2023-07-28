@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.api.images;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.util.ThreadUtil;
-import me.srrapero720.watermedia.core.MediaCacheCore;
+import me.srrapero720.watermedia.core.MediaCache;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.util.ResourceUtil.USER_AGENT;
+import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
 
 public abstract class ImageFetcher extends Thread {
     private static final Marker IT = MarkerFactory.getMarker("FetchPicture");
@@ -37,7 +37,7 @@ public abstract class ImageFetcher extends Thread {
 
     private final URL url;
     public ImageFetcher(String url) {
-        this.url = WaterMediaAPI.url_convertToURL(url);
+        this.url = WaterMediaAPI.url_toURL(url);
         this.setName("WaterMedia-Picture");
         this.setDaemon(true);
         this.start();
@@ -82,7 +82,7 @@ public abstract class ImageFetcher extends Thread {
         } catch (Exception e) {
             LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
             onFailed(e);
-            MediaCacheCore.deleteEntry(url.toString());
+            MediaCache.deleteEntry(url.toString());
         }
 
         synchronized (LOCK) {
@@ -91,7 +91,7 @@ public abstract class ImageFetcher extends Thread {
     }
 
     public static byte[] load(URL url) throws IOException, VideoContentException {
-        MediaCacheCore.Entry entry = MediaCacheCore.getEntry(url.toString());
+        MediaCache.Entry entry = MediaCache.getEntry(url.toString());
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
 
@@ -144,14 +144,14 @@ public abstract class ImageFetcher extends Thread {
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        MediaCacheCore.updateEntry(new MediaCacheCore.Entry(url.toString(), freshTag, lastTimestamp, expTimestamp));
+                        MediaCache.updateEntry(new MediaCache.Entry(url.toString(), freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
             if (readType(data) == null) throw new VideoContentException();
-            MediaCacheCore.saveFile(url.toString(), tag, lastTimestamp, expTimestamp, data);
+            MediaCache.saveFile(url.toString(), tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();

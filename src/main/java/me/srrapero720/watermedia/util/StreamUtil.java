@@ -11,7 +11,6 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -25,7 +24,7 @@ public class StreamUtil {
         try (InputStream is = loader.getResourceAsStream(source)) {
             return integrityFrom(is, targetFile);
         } catch (Exception e) {
-            LOGGER.error(ResourceUtil.IT, "Failed to check file integrity of '{}'", targetFile.toPath(), e);
+            LOGGER.error(AssetsUtil.IT, "Failed to check file integrity of '{}'", targetFile.toPath(), e);
         }
         return false;
     }

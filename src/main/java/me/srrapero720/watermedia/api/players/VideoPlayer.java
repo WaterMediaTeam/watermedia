@@ -19,7 +19,7 @@ import me.srrapero720.watermedia.api.players.event.data.*;
 import me.srrapero720.watermedia.api.players.event.data.Event;
 import me.srrapero720.watermedia.api.players.event.EventListener;
 import me.srrapero720.watermedia.api.players.event.EventManager;
-import me.srrapero720.watermedia.core.VideoLANCore;
+import me.srrapero720.watermedia.core.VideoLAN;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -48,7 +48,7 @@ public class VideoPlayer extends Player {
 
 
     public VideoPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
-        if (factory == null) factory = VideoLANCore.factory();
+        if (factory == null) factory = VideoLAN.getFactory();
 
         if (WaterMediaAPI.vlc_isReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
         else LOGGER.error(IT, "Failed to create CallbackMediaPlayerComponent because VLC is not loaded");

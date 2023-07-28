@@ -18,7 +18,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class MediaCacheCore {
+public class MediaCache {
     private static final Marker IT = MarkerFactory.getMarker("PictureStorage");
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
@@ -130,6 +130,6 @@ public class MediaCacheCore {
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
-        public File getFile() { return MediaCacheCore.getFile(url); }
+        public File getFile() { return MediaCache.getFile(url); }
     }
 }

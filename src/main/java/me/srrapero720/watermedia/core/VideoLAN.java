@@ -5,10 +5,11 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.core.exceptions.AttemptToReloadException;
 import me.srrapero720.watermedia.core.exceptions.SafeException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
+import me.srrapero720.watermedia.util.AssetsUtil;
 import me.srrapero720.watermedia.util.ThreadUtil;
-import me.srrapero720.watermedia.util.ResourceUtil;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -23,18 +24,18 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class VideoLANCore {
+public class VideoLAN {
     public static final Marker IT = MarkerFactory.getMarker("VideoLAN");
     private static MediaPlayerFactory FACTORY;
-    public static MediaPlayerFactory factory() { return FACTORY; }
+    public static MediaPlayerFactory getFactory() { return FACTORY; }
 
     public static void init(IMediaLoader loader) throws SafeException, UnsafeException {
-        Path workingDir = loader.getTempDir();
-        if (FACTORY != null) throw new IllegalStateException("Rejected attempt to reload VideoLAN");
+        Path dir = loader.getTempDir();
+        if (FACTORY != null) throw new AttemptToReloadException(VideoLAN.class.getSimpleName());
 
         // SETUP PATHS
-        Path logs = workingDir.toAbsolutePath().resolve("logs/latest.log");
-        Path path = workingDir.toAbsolutePath().resolve("vlc/");
+        Path logs = dir.toAbsolutePath().resolve("logs/videolan.log");
+        Path path = dir.toAbsolutePath().resolve("vlc/");
 
         // LOGGER INIT
         if (!Files.exists(logs.toAbsolutePath())) {
@@ -42,14 +43,12 @@ public class VideoLANCore {
             else compressAndDeleteLogFile(logs);
         }
 
-        // INIT
+        // VLCJ INIT
         CustomDirectoryProvider.init(path);
 
         FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = ResourceUtil.getJsonListFromRes(loader.getClassLoader(), "vlc/args.json").toArray(new String[0]);
-            for (int i = 0; i < args.length; i++) {
-                args[i] = args[i].replace("%logfile%", logs.toAbsolutePath().toString());
-            }
+            String[] args = AssetsUtil.getStringList(loader.getJarClassLoader(), "/vlc/args.json").toArray(new String[0]);
+            args[2] = logs.toAbsolutePath().toString();
 
             return WaterMediaAPI.vlc_createFactory(args);
         }, e -> LOGGER.error(IT, "Failed to load VLC", e));

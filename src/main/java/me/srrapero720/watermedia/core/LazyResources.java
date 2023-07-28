@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.core;
 
-import me.srrapero720.watermedia.core.exceptions.AttemptToReloadException;
 import me.srrapero720.watermedia.core.exceptions.SafeException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
 
@@ -19,7 +18,7 @@ import me.srrapero720.watermedia.core.exceptions.UnsafeException;
  * <a href="https://stackoverflow.com/questions/1429172/how-to-list-the-files-inside-a-jar-file">Stackoverflow 2</a>
  *
  */
-public class LazyResourcesCore {
+public class LazyResources {
     public static void init()  throws SafeException, UnsafeException {
 
     }

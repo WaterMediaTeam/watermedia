@@ -22,55 +22,49 @@ import java.nio.file.Path;
 @Mod(WaterMedia.ID)
 public class ForgeModLoader implements IMediaLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
-    private final WaterMedia INSTANCE;
+    private final WaterMedia WM;
+    private ClassLoader CL;
 
     public ForgeModLoader() {
-
-        // DEFINE
-        INSTANCE = new WaterMedia(this);
+        WM = new WaterMedia(this);
         IEventBus BUS = FMLJavaModLoadingContext.get().getModEventBus();
 
         // SETUP
-        BUS.addListener((FMLClientSetupEvent event) -> INSTANCE.throwClientException());
-        BUS.addListener((FMLDedicatedServerSetupEvent event) -> INSTANCE.throwServerException());
+        BUS.addListener((FMLClientSetupEvent event) -> WM.throwClientException());
+        BUS.addListener((FMLDedicatedServerSetupEvent event) -> WM.throwServerException());
 
         // INIT
-        INSTANCE.init();
+        WM.init();
 
         //Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible
+        // TODO: Use any tricky way to do that on old forge versions
 //        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
     }
 
     @Override
-    public boolean isDevEnv() {
-        return !FMLLoader.isProduction();
-    }
+    public boolean isDev() { return !FMLLoader.isProduction(); }
 
     @Override
-    public boolean isClient() {
-        return FMLLoader.getDist().isClient();
-    }
+    public boolean isClient() { return FMLLoader.getDist().isClient(); }
 
     @Override
-    public boolean isThisModPresent(String modid) {
+    public boolean isInstalled(String modid) {
         if (ModList.get() != null) return ModList.get().isLoaded(modid);
         else return FMLLoader.getLoadingModList().getModFileById(modid) != null;
     }
 
     @Override
-    public ClassLoader getClassLoader() {
-        return Thread.currentThread().getContextClassLoader(); // This will be problematic
+    public ClassLoader getJarClassLoader() {
+        if (CL != null) return CL;
+        if (WM.workingClassLoader(this.getClass().getClassLoader())) return CL = this.getClass().getClassLoader();
+        return CL = Thread.currentThread().getContextClassLoader();
     }
 
     @Override
-    public String getLoaderName() {
-        return "FORGE";
-    }
+    public String getLoaderName() { return "FORGE"; }
 
     @Override
-    public Path getGameDir() {
-        return FMLLoader.getGamePath();
-    }
+    public Path getWorkingDir() { return FMLLoader.getGamePath(); }
 
     @Override
     public Path getTempDir() {
@@ -79,6 +73,7 @@ public class ForgeModLoader implements IMediaLoader {
 
     @Override
     public boolean isTLauncher() {
-        return getGameDir().toAbsolutePath().toString().contains("tlauncher");
+        // TODO: MORE STRICT CHECKS
+        return getWorkingDir().toAbsolutePath().toString().contains("tlauncher");
     }
 }

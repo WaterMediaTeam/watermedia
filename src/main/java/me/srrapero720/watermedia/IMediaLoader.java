@@ -3,12 +3,12 @@ package me.srrapero720.watermedia;
 import java.nio.file.Path;
 
 public interface IMediaLoader {
-    boolean isDevEnv();
+    boolean isDev();
     boolean isClient();
-    boolean isThisModPresent(String modId);
-    ClassLoader getClassLoader();
+    boolean isInstalled(String modId);
+    ClassLoader getJarClassLoader();
     String getLoaderName();
-    Path getGameDir();
+    Path getWorkingDir();
     Path getTempDir();
     boolean isTLauncher();
 }

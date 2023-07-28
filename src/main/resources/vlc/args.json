@@ -1,4 +1,12 @@
 [
+  "--file-logging",
+  "--logfile",
+  "<this should ne replaced on runtime | index 2>",
+  "--logmode", "text",
+  "--verbose", "2",
+
+  "--no-quiet",
+
   "--file-caching",
   "1000",
 
@@ -8,13 +16,5 @@
   "--network-caching",
   "1500",
 
-  "--http-reconnect",
-
-  "--file-logging",
-  "--logfile",
-  "%logfile%",
-  "--logmode", "text",
-  "--verbose", "2",
-
-  "--no-quiet"
+  "--http-reconnect"
 ]

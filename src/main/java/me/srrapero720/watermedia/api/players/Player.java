@@ -10,7 +10,7 @@ public abstract class Player {
     public Player() {}
 
     protected void compat(String url) {
-        URL compat = WaterMediaAPI.url_convertToURL(url);
+        URL compat = WaterMediaAPI.url_toURL(url);
         if (compat != null) this.url = compat;
     }
 

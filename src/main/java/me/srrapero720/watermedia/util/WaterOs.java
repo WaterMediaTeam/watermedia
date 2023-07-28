@@ -21,7 +21,6 @@ public enum WaterOs {
 
     public final String os, arch, ext;
     public final boolean wrapped;
-
     WaterOs(String os, String arch, String ext, boolean wrapped) {
         this.os = os;
         this.arch = arch;
@@ -35,8 +34,7 @@ public enum WaterOs {
     private static final WaterOs ARCH = WaterOs.getArch();
     public static WaterOs getArch() {
         if (ARCH != null) return ARCH;
-        String arch = Platform.ARCH;
-        switch (arch) {
+        switch (Platform.ARCH) {
             case "x86-64":
             case "amd64":
                 if (RuntimeUtil.isWindows()) return WIN_X64;

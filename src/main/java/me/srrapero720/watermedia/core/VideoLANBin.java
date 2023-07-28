@@ -3,8 +3,8 @@ package me.srrapero720.watermedia.core;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.core.exceptions.SafeException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
+import me.srrapero720.watermedia.util.AssetsUtil;
 import me.srrapero720.watermedia.util.StreamUtil;
-import me.srrapero720.watermedia.util.ResourceUtil;
 import me.srrapero720.watermedia.util.WaterOs;
 
 import java.io.File;
@@ -12,9 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.VideoLANCore.IT;
+import static me.srrapero720.watermedia.core.VideoLAN.IT;
 
-public enum VideoLANBinaries {
+public enum VideoLANBin {
     // CORES
     libvlc(null),
     libvlccore(null),
@@ -205,7 +205,7 @@ public enum VideoLANBinaries {
 
     private final String origin;
     private final String destination;
-    VideoLANBinaries(String dir) {
+    VideoLANBin(String dir) {
         String relativeDir = (dir != null ? ("plugins/") + dir + "/" : "") + name() + WaterOs.getArch().ext;
         this.origin = "vlc/" + WaterOs.getArch() + "/" + relativeDir;
         this.destination = "/" + relativeDir;
@@ -213,8 +213,8 @@ public enum VideoLANBinaries {
 
     void checkIntegrityNorExtract(IMediaLoader modLoader) {
         File destFile = binPath.toAbsolutePath().resolve(this.destination.substring(1)).toFile();
-        if (!destFile.exists() || !StreamUtil.integrityFrom(modLoader.getClassLoader(), origin, destFile)) {
-            ResourceUtil.extractResource(modLoader.getClassLoader(), origin, destFile.toPath());
+        if (!destFile.exists() || !StreamUtil.integrityFrom(modLoader.getJarClassLoader(), origin, destFile)) {
+            AssetsUtil.copyAsset(modLoader.getJarClassLoader(), origin, destFile.toPath());
         }
     }
 
@@ -227,8 +227,8 @@ public enum VideoLANBinaries {
         LOGGER.info(IT, "Mounted bin extraction on {}", binPath.toAbsolutePath());
 
         if (WaterOs.getArch().wrapped) {
-            if (!V_JAR.equals(ResourceUtil.readTextFile(binPath.resolve("version.cfg").toAbsolutePath()))) {
-                for(VideoLANBinaries bin: VideoLANBinaries.values()) bin.checkIntegrityNorExtract(loader);
+            if (!V_JAR.equals(AssetsUtil.getString(binPath.resolve("version.cfg").toAbsolutePath()))) {
+                for(VideoLANBin bin: VideoLANBin.values()) bin.checkIntegrityNorExtract(loader);
 
                 try {
                     Path config = binPath.resolve("version.cfg");
