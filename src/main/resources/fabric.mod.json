@@ -10,7 +10,9 @@
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/watermedia/",
-    "sources": "https://github.com/SrRapero720/watermedia"
+    "sources": "https://github.com/SrRapero720/watermedia",
+    "issues": "https://github.com/SrRapero720/watermedia/issues",
+    "email": "SrRapero720@hotmail.com"
   },
 
   "license": "${mod_license}",
