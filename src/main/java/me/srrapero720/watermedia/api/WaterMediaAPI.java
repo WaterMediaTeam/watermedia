@@ -48,7 +48,7 @@ public final class WaterMediaAPI {
                 new DropboxPatch()
         );
 
-        LOGGER.info(IT, "Loading internal RenderablePicture's");
+        LOGGER.info(IT, "Loading internal {}'s", ImageRenderer.class.getSimpleName());
 
         ThreadUtil.trySimple(() -> {
             if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(AssetsUtil.getGif(modLoader.getJarClassLoader(), "/images/loading.gif"));
