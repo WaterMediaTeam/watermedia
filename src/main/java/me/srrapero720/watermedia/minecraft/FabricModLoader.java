@@ -37,7 +37,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
             LOGGER.error(IT, "###########################  ILLEGAL INIT STATE  ###################################");
             LOGGER.error(IT, "By some FABRIC-LOADER restrictions, WATERMeDIA can't be loaded by itself using loader");
             LOGGER.error(IT, "Dependant mods needs to load WATERMeDIA in game thread by themself");
-            LOGGER.error(IT, "Instance was created and can be loaded using FabricModLoader.force");
+            LOGGER.error(IT, "Instance was created and can be loaded using FabricModLoader#launchWaterMedia()");
             LOGGER.error(IT, "###########################  ILLEGAL INIT STATE  ###################################");
         }
     }
