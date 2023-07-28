@@ -30,7 +30,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoPlayer extends Player {
     private static final Thread THREAD = Thread.currentThread();
-    private static final Marker IT = MarkerFactory.getMarker("VideoLanPlayer");
+    private static final Marker IT = MarkerFactory.getMarker("VideoPlayer");
 
     // RAW
     private CallbackMediaPlayerComponent player;
