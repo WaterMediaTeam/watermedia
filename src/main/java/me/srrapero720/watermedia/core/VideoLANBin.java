@@ -233,7 +233,7 @@ public enum VideoLANBin {
                 try {
                     Path config = binPath.resolve("version.cfg");
                     if (!Files.exists(config.getParent())) Files.createDirectories(config.getParent());
-                    Files.writeString(config, V_JAR);
+                    Files.write(config, V_JAR.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
                 } catch (Exception e) {
                     LOGGER.error(IT, "Exception writing configuration file", e);
                 }
