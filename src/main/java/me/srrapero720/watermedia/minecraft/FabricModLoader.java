@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.minecraft;
 
-import jdk.internal.loader.ClassLoaders;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.EnvType;
@@ -97,9 +96,9 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
                 FabricModLoader.class.getClassLoader(),
                 this.getClass().getClassLoader(),
                 Thread.currentThread().getContextClassLoader(),
-                ClassLoaders.platformClassLoader(),
+//                ClassLoaders.platformClassLoader(),
                 ClassLoader.getSystemClassLoader(),
-                ClassLoaders.appClassLoader(),
+//                ClassLoaders.appClassLoader(),
                 FabricLoader.getInstance().getClass().getClassLoader()
         };
 
