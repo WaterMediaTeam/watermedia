@@ -136,8 +136,9 @@ public class VideoPlayer extends Player {
     @Override
     public boolean isValid() {
         if (player == null) return false;
+        if (RuntimeUtil.isWindows()) return player.mediaPlayer().media().isValid();
         if (!getRawPlayerState().equals(State.ENDED) && !getRawPlayerState().equals(State.ERROR) && !getRawPlayerState().equals(State.OPENING) && !getRawPlayerState().equals(State.NOTHING_SPECIAL)) {
-            return getRawPlayerState().equals(State.STOPPED) ? (!RuntimeUtil.isNix() && getDimensions() != null) : player.mediaPlayer().media().isValid();
+            return getRawPlayerState().equals(State.STOPPED) ? (getDimensions() != null) : player.mediaPlayer().media().isValid();
         }
         return false;
     }
@@ -338,7 +339,7 @@ public class VideoPlayer extends Player {
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
-            eventManager.fireEvent(new MediaStoppedEvent(VideoPlayer.this, player.mediaPlayer().status().length()));
+            eventManager.fireEvent(new MediaStoppedEvent(VideoPlayer.this, getDuration()));
         }
 
         @Override
