@@ -55,7 +55,7 @@ public class VideoPlayer extends Player {
     }
 
     @Override
-    public void start(CharSequence url) { this.start(url, new String[0]); }
+    public synchronized void start(CharSequence url) { this.start(url, new String[0]); }
     public synchronized void start(CharSequence url, String[] vlcArgs) {
         if (player == null) return;
         ThreadUtil.threadTry(() -> {
