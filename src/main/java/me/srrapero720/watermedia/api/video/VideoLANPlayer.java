@@ -230,7 +230,7 @@ public class VideoLANPlayer extends VideoPlayer {
     public long getDuration() {
         if (player == null) return 0L;
         if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
-        return player.mediaPlayer().status().length();
+        return duration = player.mediaPlayer().status().length();
     }
 
     @Override
@@ -320,7 +320,6 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void playing(MediaPlayer mediaPlayer) {
             checkIfCurrentThreadHaveClassLoader();
-            duration = mediaPlayer.status().length();
             if (buffering) {
                 EV.callPlayerBufferEndEvent(VideoLANPlayer.this, new PlayerBuffer.EventEndData());
                 buffering = false;
@@ -342,7 +341,7 @@ public class VideoLANPlayer extends VideoPlayer {
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             checkIfCurrentThreadHaveClassLoader();
-            long current = RuntimeUtil.isWindows() ? player.mediaPlayer().status().length() : duration;
+            long current = RuntimeUtil.isWindows() ? mediaPlayer.status().length() : duration;
             EV.callMediaStoppedEvent(VideoLANPlayer.this, new MediaStoppedEvent.EventData(current));
         }
 
@@ -460,7 +459,7 @@ public class VideoLANPlayer extends VideoPlayer {
             prepared = true;
             EV.callPlayerReadyEvent(VideoLANPlayer.this, new PlayerReadyEvent.EventData());
 
-            synchronized (this) { setVolume(volume); }
+            synchronized (this) { mediaPlayer.audio().setVolume(volume); }
         }
     };
 }
