@@ -29,20 +29,15 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class SafeVideoLANPlayer extends VideoPlayer {
     private static final Marker IT = MarkerFactory.getMarker("SafeVideoLanPlayer");
-    private volatile boolean buffering = false;
-    private volatile boolean prepared = false;
     private final AtomicBoolean started = new AtomicBoolean(false);
     private volatile int volume = 100;
-    private volatile long duration = -1;
     private volatile CallbackMediaPlayerComponent player;
     public final EventManager<SafeVideoLANPlayer> EV = new EventManager<>();
 
-    // SAFE
-    private final IThreadExecutor THREAD_EXECUTOR;
     public CallbackMediaPlayerComponent raw() { return player; }
 
-    public SafeVideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback, IThreadExecutor threadExecutor) {
-        if ((THREAD_EXECUTOR = threadExecutor) == null) throw new IllegalArgumentException("IThreadExecutor CANNOT be null");
+    public SafeVideoLANPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
+        // SAFE
         if (factory == null) factory = VideoLAN.factory();
 
         if (WaterMediaAPI.isVLCReady()) this.player = this.init(factory, renderCallback, bufferFormatCallback);
@@ -229,7 +224,7 @@ public class SafeVideoLANPlayer extends VideoPlayer {
     public long getDuration() {
         if (player == null || !started.get()) return 0L;
 //        if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
-        return duration = player.mediaPlayer().status().length();
+        return player.mediaPlayer().status().length();
     }
 
     @Override
@@ -280,168 +275,15 @@ public class SafeVideoLANPlayer extends VideoPlayer {
     @Override
     public void release() {
         if (player == null) return;
-        player.mediaPlayer().events().removeMediaPlayerEventListener(eventListeners);
         player.mediaPlayer().release();
         player = null;
         started.set(false);
         volume = 0;
-        buffering = false;
     }
 
 
     private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback) {
-        final var component = new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
-        component.mediaPlayer().events().addMediaPlayerEventListener(eventListeners);
-        return component;
+        return new CallbackMediaPlayerComponent(factory, null, null, false, renderCallback, bufferFormatCallback, null);
     }
-
-    private final MediaPlayerEventListener eventListeners = new MediaPlayerEventListener() {
-        @Override
-        public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
-            THREAD_EXECUTOR.execute(() -> prepared = false);
-        }
-
-        @Override
-        public void opening(MediaPlayer mediaPlayer) {
-            THREAD_EXECUTOR.execute(() -> EV.callPlayerPreparingEvent(SafeVideoLANPlayer.this, new PlayerPreparingEvent.EventData()));
-        }
-
-        @Override
-        public void buffering(final MediaPlayer mediaPlayer, final float newCache) {
-            THREAD_EXECUTOR.execute(() -> {
-                EV.callPlayerBufferProgressEvent(SafeVideoLANPlayer.this, new PlayerBuffer.EventProgressData(newCache));
-                buffering = true;
-            });
-        }
-
-        @Override
-        public void playing(MediaPlayer mediaPlayer) {
-            THREAD_EXECUTOR.execute(() -> {
-                if (buffering) EV.callPlayerBufferEndEvent(SafeVideoLANPlayer.this, new PlayerBuffer.EventEndData());
-                buffering = false;
-
-                if (!prepared) EV.callPlayerStartedEvent(SafeVideoLANPlayer.this, new PlayerStartedEvent.EventData());
-                else EV.callMediaResumeEvent(SafeVideoLANPlayer.this, new MediaResumeEvent.EventData(player.mediaPlayer().status().length()));
-
-                mediaPlayer.audio().setVolume(volume);
-            });
-        }
-
-        @Override
-        public void paused(MediaPlayer mediaPlayer) {
-            THREAD_EXECUTOR.execute(() -> {
-                mediaPlayer.audio().setVolume(volume);
-                EV.callMediaPauseEvent(SafeVideoLANPlayer.this, new MediaPauseEvent.EventData(player.mediaPlayer().status().length()));
-            });
-
-        }
-
-        @Override
-        public void stopped(MediaPlayer mediaPlayer) {
-            THREAD_EXECUTOR.execute(() -> {
-                long current = RuntimeUtil.isWindows() ? mediaPlayer.status().length() : duration;
-                EV.callMediaStoppedEvent(SafeVideoLANPlayer.this, new MediaStoppedEvent.EventData(current));
-            });
-        }
-
-        @Override
-        public void forward(MediaPlayer mediaPlayer) {}
-
-        @Override
-        public void backward(MediaPlayer mediaPlayer) {}
-
-        @Override
-        public void finished(MediaPlayer mediaPlayer) {
-            THREAD_EXECUTOR.execute(() -> ThreadUtil.trySimple(() -> EV.callMediaFinishEvent(SafeVideoLANPlayer.this, new MediaFinishEvent.EventData(new URL(url)))));
-        }
-
-        @Override
-        public void timeChanged(MediaPlayer mediaPlayer, long newTime) {}
-
-        @Override
-        public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {}
-
-        @Override
-        public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {}
-
-        @Override
-        public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
-        }
-
-        @Override
-        public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
-
-        }
-
-        @Override
-        public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
-
-        }
-
-        @Override
-        public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
-
-        }
-
-        @Override
-        public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
-        }
-
-        @Override
-        public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
-        }
-
-        @Override
-        public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {
-
-        }
-
-        @Override
-        public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {
-
-        }
-
-        @Override
-        public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {
-        }
-
-        @Override
-        public void corked(MediaPlayer mediaPlayer, boolean corked) {
-
-        }
-
-        @Override
-        public void muted(MediaPlayer mediaPlayer, boolean muted) {
-
-        }
-
-        @Override
-        public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
-            THREAD_EXECUTOR.execute(() -> EV.callMediaVolumeUpdate(SafeVideoLANPlayer.this, new MediaVolumeUpdateEvent.EventData(SafeVideoLANPlayer.this.getVolume(), (int) volume)));
-        }
-
-        @Override
-        public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
-        }
-
-        @Override
-        public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {
-
-        }
-
-        @Override
-        public void error(MediaPlayer mediaPlayer) {
-            THREAD_EXECUTOR.execute(() -> EV.callPlayerExceptionEvent(SafeVideoLANPlayer.this, new PlayerExceptionEvent.EventData(new RuntimeException("Something is wrong on VideoLanPlayer instance"))));
-        }
-
-        @Override
-        public void mediaPlayerReady(MediaPlayer mediaPlayer) {
-            THREAD_EXECUTOR.execute(() -> {
-                prepared = true;
-                EV.callPlayerReadyEvent(SafeVideoLANPlayer.this, new PlayerReadyEvent.EventData());
-                SafeVideoLANPlayer.this.player.mediaPlayer().audio().setVolume(volume);
-            });
-        }
-    };
 }
 
