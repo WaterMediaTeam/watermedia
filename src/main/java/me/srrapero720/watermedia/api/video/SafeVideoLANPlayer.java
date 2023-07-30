@@ -79,7 +79,7 @@ public class SafeVideoLANPlayer extends VideoPlayer {
 
     @Override
     public void setPauseMode(boolean isPaused) {
-        if (player == null || !started.get()) return;
+        if (player == null) return;
         player.mediaPlayer().controls().setPause(isPaused);
     }
 
@@ -118,7 +118,7 @@ public class SafeVideoLANPlayer extends VideoPlayer {
 
     @Override
     public void setRepeatMode(boolean repeatMode) {
-        if (player == null || !started.get()) return;
+        if (player == null) return;
         player.mediaPlayer().controls().setRepeat(repeatMode);
     }
 
@@ -160,7 +160,7 @@ public class SafeVideoLANPlayer extends VideoPlayer {
 
     @Override
     public void setSpeed(float rate) {
-        if (player == null || !started.get()) return;
+        if (player == null) return;
         player.mediaPlayer().controls().setRate(rate);
     }
 
@@ -174,7 +174,7 @@ public class SafeVideoLANPlayer extends VideoPlayer {
     public synchronized void setVolume(int volume) {
         this.volume = volume;
 //        if (RuntimeUtil.isNix() && !isValid()) return;
-        if (player == null || !started.get()) return;
+        if (player == null) return;
         player.mediaPlayer().audio().setVolume(this.volume);
         if (this.volume == 0 && !player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(true);
         else if (this.volume > 0 && player.mediaPlayer().audio().isMute()) player.mediaPlayer().audio().setMute(false);
@@ -188,13 +188,13 @@ public class SafeVideoLANPlayer extends VideoPlayer {
 
     @Override
     public void mute() {
-        if (player == null || !started.get()) return;
-        player.mediaPlayer().audio().mute();
+        if (player == null) return;
+        player.mediaPlayer().audio().setMute(true);
     }
 
     @Override
     public void unmute() {
-        if (player == null || !started.get()) return;
+        if (player == null) return;
         player.mediaPlayer().audio().setMute(false);
     }
 
