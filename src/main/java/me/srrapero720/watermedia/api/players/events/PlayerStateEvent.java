@@ -1,13 +1,13 @@
-package me.srrapero720.watermedia.api.players.event.data;
+package me.srrapero720.watermedia.api.players.events;
 
 import me.srrapero720.watermedia.api.players.VideoPlayer;
-import me.srrapero720.watermedia.api.players.Player;
+import me.srrapero720.watermedia.api.players.AbstractPlayer;
 
 public class PlayerStateEvent extends Event {
 
 
     public static class Error extends PlayerStateEvent {
-        public Error(Player player, RuntimeException exception) {
+        public Error(AbstractPlayer player) {
 
         }
     }
@@ -23,7 +23,7 @@ public class PlayerStateEvent extends Event {
     }
 
     public static class Ready extends PlayerStateEvent {
-        public Ready(Player player) {
+        public Ready(AbstractPlayer player) {
 
         }
     }

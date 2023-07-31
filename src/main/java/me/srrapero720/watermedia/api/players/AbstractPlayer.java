@@ -1,17 +1,38 @@
 package me.srrapero720.watermedia.api.players;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.api.players.events.Event;
 
 import java.awt.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Player {
+public abstract class AbstractPlayer {
+    private final List<Event.Listener<? extends Event>> listeners = new ArrayList<>();
     protected URL url;
-    public Player() {}
+    public AbstractPlayer() {}
 
     protected void compat(String url) {
         URL compat = WaterMediaAPI.url_toURL(url);
         if (compat != null) this.url = compat;
+    }
+
+    public <T extends Event> void addEventListener(Event.Listener<T> listener) {
+        listeners.add(listener);
+    }
+
+    public <T extends Event> void removeEventListener(Event.Listener<T> listener) {
+        listeners.remove(listener);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends Event> void fireEvent(T eventData) {
+        for (Event.Listener<? extends Event> listener : listeners) {
+            if (listener.getClass().equals(eventData.getClass()) || listener.getClass().isAssignableFrom(eventData.getClass())) {
+                ((Event.Listener<T>) listener).onEvent(eventData);
+            }
+        }
     }
 
     public void start(CharSequence url) { compat(url.toString()); }

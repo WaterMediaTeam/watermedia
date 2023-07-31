@@ -4,8 +4,8 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.awt.*;
 
-public class AudioPlayer extends Player {
-    public AudioPlayer() {
+public class MusicPlayer extends AbstractPlayer {
+    public MusicPlayer() {
 //        AudioPlayerInputStream
     }
 

@@ -1,6 +1,6 @@
-package me.srrapero720.watermedia.api.players.event.data;
+package me.srrapero720.watermedia.api.players.events;
 
-import me.srrapero720.watermedia.api.players.Player;
+import me.srrapero720.watermedia.api.players.AbstractPlayer;
 
 public class MediaBufferingEvent extends Event {
     public static class Start extends MediaBufferingEvent {
@@ -9,14 +9,14 @@ public class MediaBufferingEvent extends Event {
 
     public static class Progress extends MediaBufferingEvent {
 
-        public Progress(Player player, float newCache) {
+        public Progress(AbstractPlayer player, float newCache) {
 
         }
     }
 
     public static class End extends MediaBufferingEvent {
 
-        public End(Player player) {
+        public End(AbstractPlayer player) {
 
         }
     }
