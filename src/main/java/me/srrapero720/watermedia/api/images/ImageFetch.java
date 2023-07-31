@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia.api.images;
 
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
-import me.srrapero720.watermedia.util.ThreadUtil;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.MediaCache;
+import me.srrapero720.watermedia.util.ThreadUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -22,36 +22,36 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
 
-public abstract class ImageFetcher extends Thread {
+public class ImageFetch {
     private static final Marker IT = MarkerFactory.getMarker("FetchPicture");
-    private static final Object LOCK = new Object();
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-
-    // STATUS
-    public static final int MAX_FETCH = 6;
-    public static int ACTIVE_FETCH = 0;
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadUtil.getMinThreadCount(), r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        t.setPriority(Thread.MIN_PRIORITY);
+        t.setName("WMPictureFetch");
+        return t;
+    });
 
     private final URL url;
-    public ImageFetcher(String url) {
-        this.url = WaterMediaAPI.url_toURL(url);
-        this.setName("WaterMedia-Picture");
-        this.setDaemon(true);
-        this.start();
-    }
+    private TaskSuccessful successful;
+    private TaskFailed failed;
 
-    public static boolean canSeek() { synchronized(LOCK) { return ACTIVE_FETCH < MAX_FETCH; } }
+    public ImageFetch(String url) { this.url = WaterMediaAPI.url_toURL(url); }
+    public ImageFetch setOnSuccessCallback(TaskSuccessful task) { successful = task; return this; }
+    public ImageFetch setOnFailedCallback(TaskFailed task) { failed = task; return this; }
 
-    public abstract void onFailed(Exception e);
-    public abstract void onSuccess(ImageRenderer imageRenderer);
+//    protected abstract void onFailed(Exception e);
+//    protected abstract void onSuccess(ImageRenderer imageRenderer);
 
-    @Override
-    public void run() {
-        synchronized (LOCK) { ACTIVE_FETCH++; }
-
+    public void start() { EX.execute(this::run); }
+    private void run() {
         try {
             byte[] data = load(url);
             String type = readType(data);
@@ -62,7 +62,7 @@ public abstract class ImageFetcher extends Thread {
                     int status = gif.read(in);
 
                     if (status == GifDecoder.STATUS_OK) {
-                        onSuccess(new ImageRenderer(gif));
+                        if (successful != null) successful.run(new ImageRenderer(gif));
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
                         throw new IOException("");
@@ -71,7 +71,7 @@ public abstract class ImageFetcher extends Thread {
                     try {
                         BufferedImage image = ImageIO.read(in);
                         if (image != null) {
-                            onSuccess(new ImageRenderer(image));
+                            if (successful != null) successful.run(new ImageRenderer(image));
                         }
                     } catch (IOException e1) {
                         LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);
@@ -81,16 +81,12 @@ public abstract class ImageFetcher extends Thread {
             }
         } catch (Exception e) {
             LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
-            onFailed(e);
+            if (failed != null) failed.run(e);
             MediaCache.deleteEntry(url.toString());
-        }
-
-        synchronized (LOCK) {
-            ACTIVE_FETCH--;
         }
     }
 
-    public static byte[] load(URL url) throws IOException, VideoContentException {
+    private static byte[] load(URL url) throws IOException, VideoContentException {
         MediaCache.Entry entry = MediaCache.getEntry(url.toString());
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
@@ -189,4 +185,6 @@ public abstract class ImageFetcher extends Thread {
     }
 
     public static final class VideoContentException extends Exception {}
+    public interface TaskSuccessful { void run(ImageRenderer renderer); }
+    public interface TaskFailed { void run(Exception e); }
 }

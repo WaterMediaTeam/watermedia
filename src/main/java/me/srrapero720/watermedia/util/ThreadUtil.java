@@ -16,6 +16,15 @@ public class ThreadUtil {
         return tryAndReturn(defaultVar1 -> runnable.run(null), catchRunnable, null);
     }
 
+    public static int getThreadsCount() { return Runtime.getRuntime().availableProcessors(); }
+    public static int getMinThreadCount() {
+        int count = getThreadsCount();
+        if (count <= 2) return 1;
+        if (count <= 8) return 2;
+        if (count <= 16) return 3;
+        return 4;
+    }
+
     public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, T defaultVar) {
         return tryAndReturn(runnable, null, defaultVar);
     }
