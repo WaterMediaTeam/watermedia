@@ -16,6 +16,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -27,7 +28,7 @@ public abstract class PictureFetcher extends Thread {
 
     // STATUS
     public static final int MAX_FETCH = 6;
-    public static int ACTIVE_FETCH = 0;
+    public static final AtomicInteger ACTIVE_FETCH = new AtomicInteger(0);
 
     private final String originalURL;
     public PictureFetcher(String originalURL) {
@@ -37,14 +38,13 @@ public abstract class PictureFetcher extends Thread {
         this.start();
     }
 
-    public static boolean canSeek() { synchronized(LOCK) { return ACTIVE_FETCH < MAX_FETCH; } }
-
+    public static boolean canSeek() { synchronized(LOCK) { return ACTIVE_FETCH.get() < MAX_FETCH; } }
     public abstract void onFailed(Exception e);
     public abstract void onSuccess(RenderablePicture renderablePicture);
 
     @Override
     public void run() {
-        synchronized (LOCK) { ACTIVE_FETCH++; }
+        synchronized (ACTIVE_FETCH) { ACTIVE_FETCH.incrementAndGet(); }
 
         try {
             String url = WaterMediaAPI.urlPatch(this.originalURL);
@@ -80,9 +80,7 @@ public abstract class PictureFetcher extends Thread {
             LocalStorage.deleteEntry(originalURL);
         }
 
-        synchronized (LOCK) {
-            ACTIVE_FETCH--;
-        }
+        synchronized (ACTIVE_FETCH) { ACTIVE_FETCH.decrementAndGet(); }
     }
 
     public static byte[] load(String url) throws IOException, VideoContentException {

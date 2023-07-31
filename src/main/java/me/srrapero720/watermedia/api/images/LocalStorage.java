@@ -56,7 +56,7 @@ public class LocalStorage {
     }
 
     public static File getFile(String url) {
-        return new File(dir, Base64.encodeBase64String(url.getBytes()));
+        return new File(dir, Base64.encodeBase64String(url.getBytes()).replace("\\", "--").replace("/", "--"));
     }
 
     public static void saveFile(String url, String tag, long time, long expireTime, byte[] data) {

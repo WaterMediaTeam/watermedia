@@ -6,7 +6,7 @@ import me.srrapero720.watermedia.Util;
 import me.srrapero720.watermedia.api.images.RenderablePicture;
 import me.srrapero720.watermedia.api.url.URLPatch;
 import me.srrapero720.watermedia.api.url.patch.*;
-import me.srrapero720.watermedia.api.video.VideoLANPlayer;
+import me.srrapero720.watermedia.api.video.VideoPlayer;
 import me.srrapero720.watermedia.api.external.ThreadUtil;
 import me.srrapero720.watermedia.core.videolan.VideoLAN;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +29,7 @@ public final class WaterMediaAPI {
     public static final RenderablePicture LOADING_GIF = new RenderablePicture(Util.getGifFromResources("/images/loading.gif"));
     public static final RenderablePicture VLC_FAILED = new RenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed.png"));
     public static final RenderablePicture VLC_FAILED_INSTALL = new RenderablePicture(Util.getImageFromResources("/images/vlc/vlc_failed_install.png"));
+    private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
 
     private static final List<URLPatch> URL_PATCHERS = new ArrayList<>(List.of(
             new YoutubePatch(),
@@ -78,16 +79,17 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * This method is used by default on {@link VideoLANPlayer#start(CharSequence, String[])}
+     * This method is used by default on {@link VideoPlayer#start(CharSequence)}
      * Is not recommended external usages
-     * @param url Media URL to patch
+     * @param urlStr Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
      */
-    public static String urlPatch(String url) {
+    public static String urlPatch(String urlStr) {
         return ThreadUtil.tryAndReturn(defaultVar -> {
-            for (var compat: URL_PATCHERS) if (compat.isValid(new URL(url))) return compat.patch(new URL(url));
+            URL url = new URL(urlStr);
+            for (var compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
             return defaultVar;
-        }, e -> LOGGER.error(IT, "Exception occurred trying to run patchNonStaticUrl", e), url);
+        }, e -> LOGGER.error(IT, "Exception running urlPatch({}): {}", urlStr,e.getMessage()), urlStr);
     }
 
     /**
@@ -96,7 +98,7 @@ public final class WaterMediaAPI {
      * Suggestion: Use the same VLC arguments for logging but with other filename
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
      * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link VideoLANPlayer} can accept factory for new instances
+     * @return a PlayerFactory to create custom VLC players. {@link VideoPlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory createVLCFactory(String[] vlcArgs) {
         var discovery = new NativeDiscovery();
@@ -112,7 +114,7 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * Check if VLC is loaded and ready to be used on {@link VideoLANPlayer} or to make
+     * Check if VLC is loaded and ready to be used on {@link VideoPlayer} or to make
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
