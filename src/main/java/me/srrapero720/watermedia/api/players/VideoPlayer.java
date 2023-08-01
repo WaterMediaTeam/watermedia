@@ -379,7 +379,7 @@ public class VideoPlayer extends AbstractPlayer {
             else setVolume(volume.get());
 
             if (!prepared.get()) fireEvent(new PlayerStateEvent.Started());
-            else fireEvent(new MediaResumeEvent(VideoPlayer.this, raw.mediaPlayer().status().length()));
+            else fireEvent(new MediaResumeEvent(VideoPlayer.this, getDuration()));
         }
 
         @Override
@@ -483,7 +483,7 @@ public class VideoPlayer extends AbstractPlayer {
         @Override
         public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
             checkIfCurrentThreadHasClassLoader();
-            fireEvent(new PlayerVolumeUpdateEvent(VideoPlayer.this, VideoPlayer.this.getVolume(), (int) volume));
+            fireEvent(new PlayerVolumeUpdateEvent(VideoPlayer.this, getVolume(), (int) volume));
         }
 
         @Override
