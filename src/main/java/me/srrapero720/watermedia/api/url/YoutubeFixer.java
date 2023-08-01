@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.url.patches;
+package me.srrapero720.watermedia.api.url;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
 import com.github.kiulian.downloader.downloader.request.RequestVideoInfo;
@@ -6,8 +6,7 @@ import com.github.kiulian.downloader.model.videos.VideoDetails;
 import com.github.kiulian.downloader.model.videos.VideoInfo;
 import com.github.kiulian.downloader.model.videos.formats.AudioFormat;
 import com.github.kiulian.downloader.model.videos.formats.VideoFormat;
-import me.srrapero720.watermedia.api.url.URLPatch;
-import me.srrapero720.watermedia.api.url.util.StreamQuality;
+import me.srrapero720.watermedia.api.network.twitch.StreamQuality;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class YoutubePatch extends URLPatch {
+public class YoutubeFixer extends AbstractFixer {
     private static final Pattern PATTERN = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|shorts/|feeds/api/videos/|watch\\?v=|watch\\?.+&v=))([^/?&#]+)");
 
     @Override

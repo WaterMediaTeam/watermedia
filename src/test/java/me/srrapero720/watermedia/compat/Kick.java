@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia.compat;
 
-import me.srrapero720.watermedia.api.url.URLPatch;
-import me.srrapero720.watermedia.api.url.util.kick.KickAPI;
-import me.srrapero720.watermedia.api.url.util.kick.models.KickChannel;
-import me.srrapero720.watermedia.api.url.util.kick.models.KickVideo;
+import me.srrapero720.watermedia.api.url.AbstractFixer;
+import me.srrapero720.watermedia.api.network.kick.KickAPI;
+import me.srrapero720.watermedia.api.network.kick.models.KickChannel;
+import me.srrapero720.watermedia.api.network.kick.models.KickVideo;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -12,7 +12,7 @@ import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class Kick extends URLPatch {
+public class Kick extends AbstractFixer {
     public static void main(String[] args) throws MalformedURLException, PatchingUrlException {
         LOGGER.info(new Kick().patch(new URL("https://kick.com/kenji")));
         LOGGER.info(new Kick().patch(new URL("https://kick.com/video/af9f91d4-9cbc-4395-8f35-9ef9f245fb8c")));

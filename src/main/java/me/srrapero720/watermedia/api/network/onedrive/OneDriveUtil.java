@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.url.util.onedrive;
+package me.srrapero720.watermedia.api.network.onedrive;
 
 import com.google.gson.Gson;
 

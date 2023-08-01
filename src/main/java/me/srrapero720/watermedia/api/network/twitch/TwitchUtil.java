@@ -1,14 +1,14 @@
-package me.srrapero720.watermedia.api.url.util.twitch;
+package me.srrapero720.watermedia.api.network.twitch;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.srrapero720.watermedia.api.url.util.StreamQuality;
 import me.srrapero720.watermedia.util.StreamUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -20,6 +20,11 @@ import java.util.Map;
 import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
 
 public class TwitchUtil {
+    public static final String GRAPH_QL_URL = "https://gql.twitch.tv/gql";
+    public static final String TTV_LIVE_API_URL_TEMPLATE = "https://api.ttv.lol/playlist/%s.m3u8";
+    public static final String TTV_PLAYLIST_API_URL_TEMPLATE = "https://api.ttv.lol/vod/%s.m3u8";
+    public static final String CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
+
     private static final Gson gson = new Gson();
 
     public static List<StreamQuality> getStream(String stream) throws IOException, StreamNotFound {
@@ -42,12 +47,12 @@ public class TwitchUtil {
         String signature = accessTokenData.get("signature").getAsString();
         String value = accessTokenData.get("value").getAsString();
 
-        String url = String.format(isVOD ? TwitchApiConstants.TTV_PLAYLIST_API_URL_TEMPLATE : TwitchApiConstants.TTV_LIVE_API_URL_TEMPLATE, id);
+        String url = String.format(isVOD ? TTV_PLAYLIST_API_URL_TEMPLATE : TTV_LIVE_API_URL_TEMPLATE, id);
         return url + buildUrlParameters(signature, value);
     }
 
-    private static String buildUrlParameters(String signature, String value) {
-        value = URLEncoder.encode(value, StandardCharsets.UTF_8);
+    private static String buildUrlParameters(String signature, String value) throws UnsupportedEncodingException {
+        value = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
         return String.format("%%3Facmb=e30%%3D&allow_source=true&fast_bread=true&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&supported_codecs=vp09,avc1&transcode_mode=cbr_v1&cdm=wv&player_version=1.20.0&sig=%s&token=%s", signature, value);
     }
 
@@ -63,9 +68,9 @@ public class TwitchUtil {
     }
 
     private static JsonElement post(String id, boolean isVOD) throws IOException {
-        HttpURLConnection conn = initializeConnection(TwitchApiConstants.GRAPH_QL_URL, "POST");
+        HttpURLConnection conn = initializeConnection(GRAPH_QL_URL, "POST");
         conn.setDoOutput(true);
-        conn.setRequestProperty("Client-ID", TwitchApiConstants.CLIENT_ID);
+        conn.setRequestProperty("Client-ID", CLIENT_ID);
         conn.setRequestProperty("User-Agent", USER_AGENT);
         conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
@@ -112,5 +117,12 @@ public class TwitchUtil {
         jsonMap.put("variables", variables);
 
         return gson.toJson(jsonMap);
+    }
+
+    public static class StreamNotFound extends Exception {
+
+        public StreamNotFound(String message) {
+            super(message);
+        }
     }
 }

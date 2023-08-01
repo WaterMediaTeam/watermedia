@@ -1,15 +1,14 @@
-package me.srrapero720.watermedia.api.url.patches;
+package me.srrapero720.watermedia.api.url;
 
-import me.srrapero720.watermedia.api.url.URLPatch;
-import me.srrapero720.watermedia.api.url.util.kick.KickAPI;
-import me.srrapero720.watermedia.api.url.util.kick.models.KickChannel;
-import me.srrapero720.watermedia.api.url.util.kick.models.KickVideo;
+import me.srrapero720.watermedia.api.network.kick.KickAPI;
+import me.srrapero720.watermedia.api.network.kick.models.KickChannel;
+import me.srrapero720.watermedia.api.network.kick.models.KickVideo;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.net.URL;
 
-public class KickPatch extends URLPatch {
+public class KickFixer extends AbstractFixer {
 
     @Override
     public boolean isValid(URL url) {

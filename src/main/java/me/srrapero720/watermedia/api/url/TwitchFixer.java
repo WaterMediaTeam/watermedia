@@ -1,7 +1,6 @@
-package me.srrapero720.watermedia.api.url.patches;
+package me.srrapero720.watermedia.api.url;
 
-import me.srrapero720.watermedia.api.url.URLPatch;
-import me.srrapero720.watermedia.api.url.util.twitch.TwitchUtil;
+import me.srrapero720.watermedia.api.network.twitch.TwitchUtil;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -9,7 +8,7 @@ import java.net.CookiePolicy;
 import java.net.URL;
 
 // Planned
-public class TwitchPatch extends URLPatch {
+public class TwitchFixer extends AbstractFixer {
 
     static {
         CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));

@@ -1,10 +1,8 @@
-package me.srrapero720.watermedia.api.url.patches;
-
-import me.srrapero720.watermedia.api.url.URLPatch;
+package me.srrapero720.watermedia.api.url;
 
 import java.net.URL;
 
-public class DropboxPatch extends URLPatch {
+public class DropboxFixer extends AbstractFixer {
     @Override
     public boolean isValid(URL url) {
         String q;

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.url.util;
+package me.srrapero720.watermedia.api.network.twitch;
 
 import java.util.ArrayList;
 import java.util.List;

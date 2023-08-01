@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.url.util.kick.models;
+package me.srrapero720.watermedia.api.network.kick.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

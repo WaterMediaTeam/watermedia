@@ -3,10 +3,9 @@ package me.srrapero720.watermedia.api;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.IMediaLoader;
-import me.srrapero720.watermedia.api.url.URLPatch;
+import me.srrapero720.watermedia.api.url.*;
 import me.srrapero720.watermedia.util.AssetsUtil;
 import me.srrapero720.watermedia.api.images.ImageRenderer;
-import me.srrapero720.watermedia.api.url.patches.*;
 import me.srrapero720.watermedia.api.players.VideoPlayer;
 import me.srrapero720.watermedia.util.ThreadUtil;
 import me.srrapero720.watermedia.core.VideoLAN;
@@ -25,7 +24,7 @@ import java.util.*;
 
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerFactory.getMarker(WaterMediaAPI.class.getSimpleName());
-    private static final List<URLPatch> URL_PATCHERS = new ArrayList<>();
+    private static final List<AbstractFixer> URL_PATCHERS = new ArrayList<>();
 
     // RESOURCES
     public static ImageRenderer LOADING_GIF;
@@ -35,17 +34,17 @@ public final class WaterMediaAPI {
     public static ImageRenderer VLC_FAILED_INSTALL_EXTENDED;
 
     public static void init(IMediaLoader modLoader) {
-        LOGGER.warn(IT, (URL_PATCHERS.size() > 0 ? "Rel" : "L") + "oading URLPatches");
+        LOGGER.warn(IT, (!URL_PATCHERS.isEmpty() ? "Rel" : "L") + "oading URLPatches");
         URL_PATCHERS.clear();
 
         // REGISTER + LOGGER
         url_registerPatch(
-                new YoutubePatch(),
-                new TwitchPatch(),
-                new KickPatch(),
-                new DrivePatch(),
-                new OnedrivePatch(),
-                new DropboxPatch()
+                new YoutubeFixer(),
+                new TwitchFixer(),
+                new KickFixer(),
+                new DriveFixer(),
+                new OnedriveFixer(),
+                new DropboxFixer()
         );
 
         LOGGER.info(IT, "Loading internal {}'s", ImageRenderer.class.getSimpleName());
@@ -107,8 +106,8 @@ public final class WaterMediaAPI {
      * Creates your own URLPatch and register it to WaterMediaAPI
      * @param patch All patches you want to Use
      */
-    public static void url_registerPatch(URLPatch...patch) {
-        for (final URLPatch p: patch) {
+    public static void url_registerPatch(AbstractFixer...patch) {
+        for (final AbstractFixer p: patch) {
             LOGGER.warn(IT, "Registered new URLPatch: {}", p.getClass().getSimpleName());
             URL_PATCHERS.add(p);
         }
@@ -125,7 +124,7 @@ public final class WaterMediaAPI {
             URL url = new URL(stringUrl);
 
             return ThreadUtil.tryAndReturn(defaultVar -> {
-                for (URLPatch compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
+                for (AbstractFixer compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
         } catch (Exception e) {

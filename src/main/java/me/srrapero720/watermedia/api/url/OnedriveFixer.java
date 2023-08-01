@@ -1,12 +1,11 @@
-package me.srrapero720.watermedia.api.url.patches;
+package me.srrapero720.watermedia.api.url;
 
-import me.srrapero720.watermedia.api.url.URLPatch;
-import me.srrapero720.watermedia.api.url.util.onedrive.OneDriveUtil;
+import me.srrapero720.watermedia.api.network.onedrive.OneDriveUtil;
 
 import java.net.URL;
 import java.util.regex.Pattern;
 
-public class OnedrivePatch extends URLPatch {
+public class OnedriveFixer extends AbstractFixer {
 
     private static final Pattern ONE_DRIVE_URL_PATTERN = Pattern.compile("^https://1drv.ms/[a-z]/[a-zA-Z0-9!_-]+$");
 
