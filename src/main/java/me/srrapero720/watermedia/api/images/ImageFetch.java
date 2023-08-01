@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.images;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
-import me.srrapero720.watermedia.core.MediaCache;
+import me.srrapero720.watermedia.core.MediaStorage;
 import me.srrapero720.watermedia.util.ThreadUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
@@ -83,12 +83,12 @@ public class ImageFetch {
         } catch (Exception e) {
             LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
             if (failed != null) failed.run(e);
-            MediaCache.deleteEntry(url.toString());
+            MediaStorage.deleteEntry(url.toString());
         }
     }
 
     private static byte[] load(URL url) throws IOException, VideoContentException {
-        MediaCache.Entry entry = MediaCache.getEntry(url.toString());
+        MediaStorage.Entry entry = MediaStorage.getEntry(url.toString());
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
 
@@ -141,14 +141,14 @@ public class ImageFetch {
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        MediaCache.updateEntry(new MediaCache.Entry(url.toString(), freshTag, lastTimestamp, expTimestamp));
+                        MediaStorage.updateEntry(new MediaStorage.Entry(url.toString(), freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
             if (readType(data) == null) throw new VideoContentException();
-            MediaCache.saveFile(url.toString(), tag, lastTimestamp, expTimestamp, data);
+            MediaStorage.saveFile(url.toString(), tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();

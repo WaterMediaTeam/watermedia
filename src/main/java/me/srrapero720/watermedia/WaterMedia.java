@@ -3,7 +3,7 @@ package me.srrapero720.watermedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.util.ThreadUtil;
 import me.srrapero720.watermedia.core.LavaPlayer;
-import me.srrapero720.watermedia.core.MediaCache;
+import me.srrapero720.watermedia.core.MediaStorage;
 import me.srrapero720.watermedia.core.VideoLANBin;
 import me.srrapero720.watermedia.core.VideoLAN;
 import org.apache.commons.io.IOUtils;
@@ -61,8 +61,8 @@ public class WaterMedia {
 		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> registerException(WaterMediaAPI.class.getSimpleName(), (RuntimeException) e));
 
 		// PREPARE STORAGES
-		LOGGER.info(IT, "Loading {}", MediaCache.class.getSimpleName());
-		ThreadUtil.trySimple(() -> MediaCache.init(LOADER), e -> registerException(MediaCache.class.getSimpleName(), (RuntimeException) e));
+		LOGGER.info(IT, "Loading {}", MediaStorage.class.getSimpleName());
+		ThreadUtil.trySimple(() -> MediaStorage.init(LOADER), e -> registerException(MediaStorage.class.getSimpleName(), (RuntimeException) e));
 
 		// PREPARE VLC BINARIES
 		LOGGER.info(IT, "Loading {}", VideoLANBin.class.getSimpleName());

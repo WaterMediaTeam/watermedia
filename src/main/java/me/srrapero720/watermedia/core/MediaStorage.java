@@ -18,8 +18,8 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class MediaCache {
-    private static final Marker IT = MarkerFactory.getMarker(MediaCache.class.getSimpleName());
+public class MediaStorage {
+    private static final Marker IT = MarkerFactory.getMarker(MediaStorage.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;
@@ -46,7 +46,7 @@ public class MediaCache {
                     String tag = stream.readUTF();
                     long time = stream.readLong();
                     long expireTime = stream.readLong();
-                    Entry entry = new Entry(url, tag.length() > 0 ? tag : null, time, expireTime);
+                    Entry entry = new Entry(url, !tag.isEmpty() ? tag : null, time, expireTime);
                     ENTRIES.put(entry.getUrl(), entry);
                 }
             } catch (Exception e) {
@@ -130,6 +130,6 @@ public class MediaCache {
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
-        public File getFile() { return MediaCache.getFile(url); }
+        public File getFile() { return MediaStorage.getFile(url); }
     }
 }
