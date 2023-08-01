@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api.images;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.MediaCache;
 import me.srrapero720.watermedia.util.ThreadUtil;
 import org.apache.commons.io.IOUtils;
@@ -24,6 +23,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
@@ -31,11 +31,12 @@ import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
 public class ImageFetch {
     private static final Marker IT = MarkerFactory.getMarker("FetchPicture");
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+    private static final AtomicInteger WK_TH = new AtomicInteger(0);
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadUtil.getMinThreadCount(), r -> {
         Thread t = new Thread(r);
         t.setDaemon(true);
         t.setPriority(Thread.MIN_PRIORITY);
-        t.setName("WMPictureFetch");
+        t.setName("WM-ImageFetch-Worker-" + WK_TH.incrementAndGet());
         return t;
     });
 
