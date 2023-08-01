@@ -43,7 +43,7 @@ public class ImageFetch {
     private TaskSuccessful successful;
     private TaskFailed failed;
 
-    public ImageFetch(String url) { this.url = WaterMediaAPI.url_toURL(url); }
+    public ImageFetch(URL url) { this.url = url; }
     public ImageFetch setOnSuccessCallback(TaskSuccessful task) { successful = task; return this; }
     public ImageFetch setOnFailedCallback(TaskFailed task) { failed = task; return this; }
 
