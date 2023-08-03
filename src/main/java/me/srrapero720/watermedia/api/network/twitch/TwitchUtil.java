@@ -37,6 +37,7 @@ public class TwitchUtil {
         return StreamQuality.parse(performGetRequest(apiUrl));
     }
 
+    // BUSTED
     private static String buildApiUrl(String id, boolean isVOD) throws IOException {
         JsonElement response = post(id, isVOD);
         JsonObject accessTokenData = response
