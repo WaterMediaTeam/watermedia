@@ -20,4 +20,4 @@ issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
     ordering="NONE"
     side="CLIENT"
 [features.${mod_id}]
-    javaVersion="[7,8)"
+    javaVersion="[8,)"
