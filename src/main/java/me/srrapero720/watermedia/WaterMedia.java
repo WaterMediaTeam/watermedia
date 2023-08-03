@@ -1,11 +1,8 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.core.*;
 import me.srrapero720.watermedia.util.ThreadUtil;
-import me.srrapero720.watermedia.core.LavaPlayer;
-import me.srrapero720.watermedia.core.MediaStorage;
-import me.srrapero720.watermedia.core.VideoLANBin;
-import me.srrapero720.watermedia.core.VideoLAN;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +18,8 @@ public class WaterMedia {
 	public static final Marker IT = MarkerFactory.getMarker("Bootstrap");
 
 	// EXCEPTION RETAINER
-	private RuntimeException CLIENT_EXCEPTION;
-	private RuntimeException SERVER_EXCEPTION;
+	private Exception CLIENT_EXCEPTION;
+	private Exception SERVER_EXCEPTION;
 
 	private final IMediaLoader LOADER;
 	public WaterMedia(IMediaLoader modLoader) {
@@ -58,36 +55,36 @@ public class WaterMedia {
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
-		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> registerException(WaterMediaAPI.class.getSimpleName(), (RuntimeException) e));
+		ThreadUtil.trySimple(() -> WaterMediaAPI.init(LOADER), e -> registerException(WaterMediaAPI.class.getSimpleName(), e));
 
 		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading {}", MediaStorage.class.getSimpleName());
-		ThreadUtil.trySimple(() -> MediaStorage.init(LOADER), e -> registerException(MediaStorage.class.getSimpleName(), (RuntimeException) e));
+		ThreadUtil.trySimple(() -> MediaStorage.init(LOADER), e -> registerException(MediaStorage.class.getSimpleName(), e));
 
 		// PREPARE VLC BINARIES
 		LOGGER.info(IT, "Loading {}", VideoLANBin.class.getSimpleName());
-		ThreadUtil.trySimple(() -> VideoLANBin.init(LOADER), e -> registerException(VideoLANBin.class.getSimpleName(), (RuntimeException) e));
+		ThreadUtil.trySimple(() -> VideoLANBin.init(LOADER), e -> registerException(VideoLANBin.class.getSimpleName(), e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
-		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> registerException(VideoLAN.class.getSimpleName(), (RuntimeException) e));
+		ThreadUtil.trySimple(() -> VideoLAN.init(LOADER), e -> registerException(VideoLAN.class.getSimpleName(), e));
 
 		// PREPARE LAVAPLAYER
 		LOGGER.info(IT, "Loading {}", LavaPlayer.class.getSimpleName());
-		ThreadUtil.trySimple(() -> LavaPlayer.init(LOADER), e -> registerException(LavaPlayer.class.getSimpleName(), (RuntimeException) e));
+		ThreadUtil.trySimple(() -> LavaPlayer.init(LOADER), e -> registerException(LavaPlayer.class.getSimpleName(), e));
 
 		LOGGER.info(IT, "Finished WaterMedia startup");
 		if (existsExceptions()) LOGGER.warn(IT, "Detected some critical exceptions after startup");
 	}
 
-	private void registerException(String module, RuntimeException e) {
+	private void registerException(String module, Exception e) {
 		LOGGER.error(IT, "Exception loading {}", module, e);
 		if (CLIENT_EXCEPTION != null) CLIENT_EXCEPTION = e;
 	}
 
 	public boolean existsExceptions() { return CLIENT_EXCEPTION != null || SERVER_EXCEPTION != null; }
-	public void throwClientException() { if (CLIENT_EXCEPTION != null) throw CLIENT_EXCEPTION; }
-	public void throwServerException() { if (SERVER_EXCEPTION != null) throw SERVER_EXCEPTION; }
+	public void throwClientException() { if (CLIENT_EXCEPTION != null) throw new RuntimeException(CLIENT_EXCEPTION); }
+	public void throwServerException() { if (SERVER_EXCEPTION != null) throw new RuntimeException(SERVER_EXCEPTION); }
 	public boolean workingClassLoader(ClassLoader loader) {
 		InputStream dummy = loader.getResourceAsStream("/vlc/args.json");
 		IOUtils.closeQuietly(dummy);
