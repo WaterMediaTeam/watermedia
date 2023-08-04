@@ -93,7 +93,7 @@ public class WaterMedia {
 
 	// TESTERS
 	public boolean test$classLoader(ClassLoader loader) {
-		InputStream dummy = loader.getResourceAsStream("/vlc/args.json");
+		InputStream dummy = loader.getResourceAsStream("/videolan/commandline.json");
 		IOUtils.closeQuietly(dummy);
 		return dummy != null;
 	}
