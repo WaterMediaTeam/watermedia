@@ -6,7 +6,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Marker;
@@ -30,8 +29,7 @@ public class ForgeModLoader implements IMediaLoader {
         IEventBus BUS = FMLJavaModLoadingContext.get().getModEventBus();
 
         // SETUP
-        BUS.addListener((FMLClientSetupEvent event) -> WM.throwClientException());
-        BUS.addListener((FMLDedicatedServerSetupEvent event) -> WM.throwServerException());
+        BUS.addListener((FMLClientSetupEvent event) -> WM.exceptionThrow());
 
         // INIT
         WM.init();
@@ -56,7 +54,7 @@ public class ForgeModLoader implements IMediaLoader {
     @Override
     public ClassLoader getJarClassLoader() {
         if (CL != null) return CL;
-        if (WM.workingClassLoader(this.getClass().getClassLoader())) return CL = this.getClass().getClassLoader();
+        if (WM.test$classLoader(this.getClass().getClassLoader())) return CL = this.getClass().getClassLoader();
         return CL = Thread.currentThread().getContextClassLoader();
     }
 

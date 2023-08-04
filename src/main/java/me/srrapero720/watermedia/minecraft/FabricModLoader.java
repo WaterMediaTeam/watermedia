@@ -42,8 +42,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     public void launchWaterMedia() {
         assert getWorkingClassLoader() != null;
         WM.init();
-        WM.throwClientException();
-        WM.throwServerException();
+        WM.exceptionThrow();
     }
 
     public static FabricModLoader getInstance() {
@@ -103,7 +102,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
         };
 
         for (int i = 0; i < attempts.length; i++)
-            if (WM.workingClassLoader(attempts[i])) {
+            if (WM.test$classLoader(attempts[i])) {
                 LOGGER.info(IT, "Founded a working classloader, index {}", i);
                 return attempts[i];
             }
