@@ -34,7 +34,7 @@ public class ResourceSystem {
         URI jarFileUri = ResourceSystem.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 
         // Abre el JAR usando el sistema de archivos
-        try (FileSystem jarFileSystem = FileSystems.newFileSystem(jarFileUri, Collections.emptyMap())) {
+        try (FileSystem jarFileSystem = FileSystems.newFileSystem(jarFileUri, Collections.emptyMap(), loader.getJarClassLoader())) {
             for (String asset : assets) {
                 Path assetPath = jarFileSystem.getPath(asset);
                 if (Files.exists(assetPath)) {
