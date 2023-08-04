@@ -8,9 +8,7 @@ public class ThreadUtil {
     private static int workers = 0;
     private static Thread THREADLG = null;
     private static final Logger LOGGER = LoggerFactory.getLogger("ThreadUtil");
-    private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> e.printStackTrace();
-
-    public static void printStackTrace(Exception e) { e.printStackTrace(); }
+    private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> LOGGER.error("Failed running {}", t.getName(), e);
 
     public static <T> T tryAndReturnNull(ReturnableRunnable<T> runnable, CatchRunnable catchRunnable) {
         return tryAndReturn(defaultVar1 -> runnable.run(null), catchRunnable, null);
@@ -60,6 +58,15 @@ public class ThreadUtil {
 
     public static void threadNonDaeomTry(TryRunnable toTry, CatchRunnable toCatch, FinallyRunnable toFinally) {
         threadTryArgument(null, (object -> toTry.run()), toCatch, (object -> { if (toFinally != null) toFinally.run(); }));
+    }
+
+    public static Thread unsafeThread(Runnable runnable) {
+        Thread thread = new Thread(runnable);
+        thread.setName("WATERCoRE-worker-" + (++workers));
+        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+        thread.setDaemon(true);
+        thread.start();
+        return thread;
     }
 
     public static Thread thread(Runnable runnable) {
