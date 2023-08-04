@@ -10,7 +10,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.BiPredicate;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
+/**
+ * This class is busted
+ * is usefull to auto extract a list of files from JAR but doesn't works on Forge (fuck you cpw)
+ * BTW, I made a... hacky way do stop lising binaries(?
+ */
 public class ResourceSystem {
 
     public static void init(IMediaLoader loader) throws UnsafeException {
@@ -19,8 +27,13 @@ public class ResourceSystem {
 
         try {
             URI jarFileUri = ResourceSystem.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-            JFS = FileSystems.newFileSystem(jarFileUri, Collections.emptyMap());
+            LOGGER.warn("uri {}", jarFileUri.toString());
 
+            // PAYLOAD
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("filter", (BiPredicate<Object, Object>) (o, o2) -> true);
+
+            JFS = FileSystems.newFileSystem(jarFileUri, payload, loader.getJarClassLoader());
             extract(JFS, loader, "/pictures/", "/vlc/" + WaterOs.getArch() + "/");
         } catch (Exception e) {
             throw new UnsafeException("Failed to extract assets", e);
@@ -30,26 +43,21 @@ public class ResourceSystem {
     }
 
     private static void extract(FileSystem system, IMediaLoader loader, String ...assets) throws IOException, URISyntaxException {
-        // Ruta al archivo JAR (en este caso, el propio archivo JAR que contiene el código)
-        URI jarFileUri = ResourceSystem.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-
         // Abre el JAR usando el sistema de archivos
-        try (FileSystem jarFileSystem = FileSystems.newFileSystem(jarFileUri, Collections.emptyMap(), loader.getJarClassLoader())) {
-            for (String asset : assets) {
-                Path assetPath = jarFileSystem.getPath(asset);
-                if (Files.exists(assetPath)) {
-                    // Si el archivo es un directorio, crea el directorio en la ubicación de destino
-                    if (Files.isDirectory(assetPath)) {
-                        Files.createDirectories(loader.getWorkingDir().resolve(asset));
-                    } else {
-                        // Si el archivo es un archivo, cópialo a la ubicación de destino
-                        Files.copy(assetPath, loader.getWorkingDir().resolve(asset), StandardCopyOption.REPLACE_EXISTING);
-                    }
-
-                    System.out.println("Archivo extraído: " + asset);
+        for (String asset : assets) {
+            Path assetPath = system.getPath(asset);
+            if (Files.exists(assetPath)) {
+                // Si el archivo es un directorio, crea el directorio en la ubicación de destino
+                if (Files.isDirectory(assetPath)) {
+                    Files.createDirectories(loader.getWorkingDir().resolve(asset));
                 } else {
-                    System.out.println("No se encontró el archivo: " + asset);
+                    // Si el archivo es un archivo, cópialo a la ubicación de destino
+                    Files.copy(assetPath, loader.getWorkingDir().resolve(asset), StandardCopyOption.REPLACE_EXISTING);
                 }
+
+                System.out.println("Archivo extraído: " + asset);
+            } else {
+                System.out.println("No se encontró el archivo: " + asset);
             }
         }
     }
