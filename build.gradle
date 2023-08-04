@@ -98,7 +98,7 @@ dependencies {
     library 'com.mpatric:mp3agic:0.9.1'
 }
 
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json']
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]
 def replaceProperties = [
         minecraft_version: mcversion, minecraft_version_range: mcrange,
         forge_version: fgversion, forge_version_range: fgrange,
