@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.api.images;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
-import me.srrapero720.watermedia.util.DataUtil;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -89,7 +88,7 @@ public class ImageRenderer {
      * This method drain buffers and releases OpenGL textures
      */
     public synchronized void release() {
-        if (DataUtil.existsAnyMatch(textures, v -> v != -1)) GL11.glDeleteTextures(textures);
+        for (int i: textures) if (i != -1) GL11.glDeleteTextures(i);
         flush();
     }
 }

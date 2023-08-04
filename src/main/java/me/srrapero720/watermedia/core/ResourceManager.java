@@ -3,12 +3,11 @@ package me.srrapero720.watermedia.core;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.core.exceptions.SafeException;
 import me.srrapero720.watermedia.util.AssetsUtil;
-import me.srrapero720.watermedia.util.UnzipUtil;
+import me.srrapero720.watermedia.util.StreamUtil;
 import me.srrapero720.watermedia.util.WaterOs;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -29,7 +28,7 @@ public class ResourceManager {
             try {
                 if (!VIDEOLAN_V.equals(AssetsUtil.getString(config.toAbsolutePath()))) {
                     if (AssetsUtil.copyAsset(loader.getJarClassLoader(), source, output)) {
-                        UnzipUtil.unzip(output, output.getParent());
+                        StreamUtil.unzip(output, output.getParent());
                         Files.delete(output);
                     }
 
