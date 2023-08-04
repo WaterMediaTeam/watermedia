@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.IMediaLoader;
-import me.srrapero720.watermedia.core.exceptions.SafeException;
+import me.srrapero720.watermedia.core.exceptions.UnsafeException;
 import me.srrapero720.watermedia.util.AssetsUtil;
 import me.srrapero720.watermedia.util.StreamUtil;
 import me.srrapero720.watermedia.util.WaterOs;
@@ -18,7 +18,7 @@ public class ResourceManager {
     private static final String VIDEOLAN_V = "3.0.18a";
     private static final Marker IT = MarkerFactory.getMarker("ResourceManager");
 
-    public static void init(IMediaLoader loader) throws SafeException {
+    public static void init(IMediaLoader loader) throws UnsafeException {
         // STEP 1: EXTRACT VLC
         if (WaterOs.getArch().wrapped) {
             Path output = loader.getTempDir().resolve("videolan/").resolve(WaterOs.getArch().toString() + ".zip");
@@ -41,7 +41,7 @@ public class ResourceManager {
                 }
 
             } catch (Exception e) {
-                throw new SafeException("Cannot perform extraction of VideoLAN", e);
+                throw new UnsafeException("Cannot perform extraction of VideoLAN", e);
             }
         }
     }

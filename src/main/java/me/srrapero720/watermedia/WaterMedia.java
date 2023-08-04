@@ -2,6 +2,7 @@ package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.*;
+import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
 import me.srrapero720.watermedia.util.ThreadUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ public class WaterMedia {
 	public static final Marker IT = MarkerFactory.getMarker("Bootstrap");
 
 	// EXCEPTION RETAINER
-	private Exception exception;
+	private volatile Exception exception;
 
 	private final IMediaLoader loader;
 	public WaterMedia(IMediaLoader modLoader) {
@@ -46,48 +47,48 @@ public class WaterMedia {
 	}
 
 	public void init() {
-		if (!this.loader.isClient()) return;
-		LOGGER.info(IT, "Starting WaterMedia");
+		synchronized (loader) {
+			if (!this.loader.isClient()) return;
+			LOGGER.info(IT, "Starting WaterMedia");
 
-		// RESOURCE EXTRACTOR
-		LOGGER.error(IT, "Loading {}", ResourceManager.class.getSimpleName());
-		ThreadUtil.trySimple(() -> ResourceManager.init(this.loader), e -> exception(ResourceManager.class.getSimpleName(), e));
+			// RESOURCE EXTRACTOR
+			LOGGER.error(IT, "Loading {}", ResourceManager.class.getSimpleName());
+			ThreadUtil.trySimple(() -> ResourceManager.init(this.loader), e -> exception(ResourceManager.class.getSimpleName(), e));
 
-		// PREPARE API
-		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
-		ThreadUtil.trySimple(() -> WaterMediaAPI.init(this.loader), e -> exception(WaterMediaAPI.class.getSimpleName(), e));
+			// PREPARE API
+			LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
+			ThreadUtil.trySimple(() -> WaterMediaAPI.init(this.loader), e -> exception(WaterMediaAPI.class.getSimpleName(), e));
 
-		// PREPARE STORAGES
-		LOGGER.info(IT, "Loading {}", MediaStorage.class.getSimpleName());
-		ThreadUtil.trySimple(() -> MediaStorage.init(this.loader), e -> exception(MediaStorage.class.getSimpleName(), e));
+			// PREPARE STORAGES
+			LOGGER.info(IT, "Loading {}", MediaStorage.class.getSimpleName());
+			ThreadUtil.trySimple(() -> MediaStorage.init(this.loader), e -> exception(MediaStorage.class.getSimpleName(), e));
 
-		// PREPARE VLC BINARIES
-//		LOGGER.info(IT, "Loading {}", VideoLANBin.class.getSimpleName());
-//		ThreadUtil.trySimple(() -> VideoLANBin.init(this.loader), e -> exception(VideoLANBin.class.getSimpleName(), e));
+			// PREPARE VLC
+			LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
+			ThreadUtil.trySimple(() -> VideoLAN.init(this.loader), e -> exception(VideoLAN.class.getSimpleName(), e));
 
-		// PREPARE VLC
-		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
-		ThreadUtil.trySimple(() -> VideoLAN.init(this.loader), e -> exception(VideoLAN.class.getSimpleName(), e));
+			// PREPARE LAVAPLAYER
+			LOGGER.info(IT, "Loading {}", LavaPlayer.class.getSimpleName());
+			ThreadUtil.trySimple(() -> LavaPlayer.init(this.loader), e -> exception(LavaPlayer.class.getSimpleName(), e));
 
-		// PREPARE LAVAPLAYER
-		LOGGER.info(IT, "Loading {}", LavaPlayer.class.getSimpleName());
-		ThreadUtil.trySimple(() -> LavaPlayer.init(this.loader), e -> exception(LavaPlayer.class.getSimpleName(), e));
-
-		LOGGER.info(IT, "Finished WaterMedia startup");
-		if (exception != null) {
-			LOGGER.warn(IT, "Detected some critical exceptions after startup");
-			ThreadUtil.unsafeThread(() -> {
-				ThreadUtil.trySimple(() -> Thread.sleep(60000));
-				if (exception != null) LOGGER.error("WATERMeDIA DETECTS REGISTERED EXCEPTIONS NOT THROW");
-				exceptionThrow();
-			});
+			LOGGER.info(IT, "Finished WaterMedia startup");
+			if (exception != null) {
+				LOGGER.warn(IT, "Detected some critical exceptions after startup");
+				ThreadUtil.unsafeThread(() -> {
+					ThreadUtil.trySimple(() -> Thread.sleep(60000));
+					synchronized (loader) {
+						if (exception != null) LOGGER.error("WATERMeDIA DETECTS REGISTERED EXCEPTIONS NOT THROW");
+					}
+					exceptionThrow();
+				});
+			}
 		}
 	}
 
-	public void exceptionThrow() { if (exception != null) throw new RuntimeException(exception); }
+	public void exceptionThrow() { synchronized (loader) { if (exception != null) throw new RuntimeException(exception); } }
 	private void exception(String module, Exception e) {
 		LOGGER.error(IT, "Exception loading {}", module, e);
-		if (exception != null) exception = e;
+		if (exception != null && !(e instanceof IllegalReloadException)) exception = e;
 	}
 
 	// TESTERS

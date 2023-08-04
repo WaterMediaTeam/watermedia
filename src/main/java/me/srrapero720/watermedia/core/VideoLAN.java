@@ -5,8 +5,7 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.core.exceptions.AttemptToReloadException;
-import me.srrapero720.watermedia.core.exceptions.SafeException;
+import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
 import me.srrapero720.watermedia.util.AssetsUtil;
 import me.srrapero720.watermedia.util.ThreadUtil;
@@ -29,9 +28,9 @@ public class VideoLAN {
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory getFactory() { return FACTORY; }
 
-    public static void init(IMediaLoader loader) throws SafeException, UnsafeException {
+    public static void init(IMediaLoader loader) throws UnsafeException {
         Path dir = loader.getTempDir();
-        if (FACTORY != null) throw new AttemptToReloadException(VideoLAN.class.getSimpleName());
+        if (FACTORY != null) throw new IllegalReloadException(VideoLAN.class.getSimpleName());
 
         // SETUP PATHS
         Path logs = dir.toAbsolutePath().resolve("logs/videolan.log");
