@@ -1,20 +1,21 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.util.WaterOs;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.*;
 import java.util.stream.Stream;
 
-public class ClonarCarpetaDesdeJAR {
-
-    public static void main(String[] args) {
-        String carpetaOrigenDentroJar = "/carpeta_a_clonar"; // Ruta dentro del JAR de la carpeta que deseas clonar
-        String carpetaDestinoExterno = "ruta_del_almacenamiento_externo"; // Ruta del almacenamiento externo
+public class ObsoleteResourceSystem {
+    public static void init(IMediaLoader loader) {
+        String[] CLONE_TARGETS = new String[] {
+                "/pictures/",
+                "/vlc/" + WaterOs.getArch() + "/"
+        };
 
         try {
-            copiarCarpetaDesdeJar(carpetaOrigenDentroJar, carpetaDestinoExterno);
+            copiarCarpetaDesdeJar(loader, "", "");
             System.out.println("Carpeta clonada exitosamente en el almacenamiento externo.");
         } catch (IOException e) {
             e.printStackTrace();
