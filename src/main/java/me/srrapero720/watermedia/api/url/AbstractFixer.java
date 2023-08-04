@@ -3,6 +3,8 @@ package me.srrapero720.watermedia.api.url;
 import java.net.URL;
 
 public abstract class AbstractFixer {
+    public String name() { return this.getClass().getSimpleName(); }
+
     /**
      * Validates if URL can be processed by this URLPatch instance
      * @param url Valid URL to check

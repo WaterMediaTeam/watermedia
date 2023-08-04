@@ -34,11 +34,11 @@ public final class WaterMediaAPI {
     public static ImageRenderer VLC_FAILED_INSTALL_EXTENDED;
 
     public static void init(IMediaLoader modLoader) {
-        LOGGER.warn(IT, (!URL_PATCHERS.isEmpty() ? "Rel" : "L") + "oading URLPatches");
+        LOGGER.warn(IT, (!URL_PATCHERS.isEmpty() ? "Rel" : "L") + "oading URLFixers");
         URL_PATCHERS.clear();
 
         // REGISTER + LOGGER
-        url_registerPatch(
+        url_registerFixer(
                 new YoutubeFixer(),
                 new TwitchFixer(),
                 new KickFixer(),
@@ -106,11 +106,14 @@ public final class WaterMediaAPI {
      * Creates your own URLPatch and register it to WaterMediaAPI
      * @param patch All patches you want to Use
      */
-    public static void url_registerPatch(AbstractFixer...patch) {
-        for (final AbstractFixer p: patch) {
-            LOGGER.warn(IT, "Registered new URLPatch: {}", p.getClass().getSimpleName());
-            URL_PATCHERS.add(p);
+    public static void url_registerFixer(AbstractFixer...patch) {
+        String[] names = new String[patch.length];
+        for (int i = 0; i < patch.length; i++) {
+            URL_PATCHERS.add(patch[i]);
+            names[i] = patch[i].name();
         }
+        LOGGER.warn(IT, "Fixers registered: {}", Arrays.toString(names));
+        names = null;
     }
 
     /**
