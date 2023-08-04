@@ -7,7 +7,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.URL;
 
-// Planned
+// TODO: BUSTED
 public class TwitchFixer extends AbstractFixer {
 
     static {
