@@ -51,7 +51,7 @@ public class WaterMedia {
 
 		// RESOURCE EXTRACTOR
 		LOGGER.error(IT, "Loading {}", ResourceSystem.class.getSimpleName());
-		ThreadUtil.trySimple(() -> ResourceSystem.init(this.loader), e -> exception(WaterMediaAPI.class.getSimpleName(), e));
+		ThreadUtil.trySimple(() -> ResourceSystem.init(this.loader), e -> exception(ResourceSystem.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
