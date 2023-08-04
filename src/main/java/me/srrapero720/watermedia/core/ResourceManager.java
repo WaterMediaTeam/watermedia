@@ -1,4 +1,49 @@
 package me.srrapero720.watermedia.core;
 
+import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.core.exceptions.SafeException;
+import me.srrapero720.watermedia.util.AssetsUtil;
+import me.srrapero720.watermedia.util.UnzipUtil;
+import me.srrapero720.watermedia.util.WaterOs;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 public class ResourceManager {
+    private static final String VIDEOLAN_V = "3.0.18a";
+    private static final Marker IT = MarkerFactory.getMarker("ResourceManager");
+
+    public static void init(IMediaLoader loader) throws SafeException {
+        // STEP 1: EXTRACT VLC
+        if (WaterOs.getArch().wrapped) {
+            Path output = loader.getTempDir().resolve("videolan/").resolve(WaterOs.getArch().toString() + ".zip");
+            Path config = output.getParent().resolve("version.cfg");
+            String source = "/videolan/"  + WaterOs.getArch() + ".zip";
+
+            try {
+                if (!VIDEOLAN_V.equals(AssetsUtil.getString(config.toAbsolutePath()))) {
+                    if (AssetsUtil.copyAsset(loader.getJarClassLoader(), source, output)) {
+                        UnzipUtil.unzip(output, output.getParent());
+                        Files.delete(output);
+                    }
+
+                    // WRITE VERSION FILE
+                    try {
+                        Files.write(config, VIDEOLAN_V.getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+                    } catch (Exception e) {
+                        LOGGER.error(IT, "Exception writing configuration file", e);
+                    }
+                }
+
+            } catch (Exception e) {
+                throw new SafeException("Cannot perform extraction of VideoLAN", e);
+            }
+        }
+    }
 }

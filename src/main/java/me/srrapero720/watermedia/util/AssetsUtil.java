@@ -26,22 +26,24 @@ public class AssetsUtil {
     static final Marker IT = MarkerFactory.getMarker("Util");
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
 
-    public static void copyAsset(ClassLoader loader, String origin, Path dest) {
-        copyAsset(loader, origin, dest.toString());
+    public static boolean copyAsset(ClassLoader loader, String origin, Path dest) {
+        return copyAsset(loader, origin, dest.toString());
     }
 
-    public static void copyAsset(ClassLoader loader, String origin, String dest) {
+    public static boolean copyAsset(ClassLoader loader, String origin, String dest) {
         try (InputStream is = loader.getResourceAsStream(origin)) {
             Path dllDestinationPath = Paths.get(dest);
             if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
 
             Files.createDirectories(dllDestinationPath.getParent());
             Files.copy(is, dllDestinationPath, StandardCopyOption.REPLACE_EXISTING);
+            return true;
         } catch (Exception e) {
             LOGGER.error(IT, "### Failed to extract from (JAR) {} to {} due to unexpected error", origin, dest);
             if (LOGGER.isDebugEnabled()) LOGGER.debug(IT, "### Information", e);
             else LOGGER.error("### Information", e);
         }
+        return false;
     }
 
     public static String getString(Path from) {

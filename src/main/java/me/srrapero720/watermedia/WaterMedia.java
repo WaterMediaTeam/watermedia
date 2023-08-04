@@ -50,8 +50,8 @@ public class WaterMedia {
 		LOGGER.info(IT, "Starting WaterMedia");
 
 		// RESOURCE EXTRACTOR
-		LOGGER.error(IT, "Loading {}", ResourceSystem.class.getSimpleName());
-		ThreadUtil.trySimple(() -> ResourceSystem.init(this.loader), e -> exception(ResourceSystem.class.getSimpleName(), e));
+		LOGGER.error(IT, "Loading {}", ResourceManager.class.getSimpleName());
+		ThreadUtil.trySimple(() -> ResourceManager.init(this.loader), e -> exception(ResourceManager.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
@@ -62,8 +62,8 @@ public class WaterMedia {
 		ThreadUtil.trySimple(() -> MediaStorage.init(this.loader), e -> exception(MediaStorage.class.getSimpleName(), e));
 
 		// PREPARE VLC BINARIES
-		LOGGER.info(IT, "Loading {}", VideoLANBin.class.getSimpleName());
-		ThreadUtil.trySimple(() -> VideoLANBin.init(this.loader), e -> exception(VideoLANBin.class.getSimpleName(), e));
+//		LOGGER.info(IT, "Loading {}", VideoLANBin.class.getSimpleName());
+//		ThreadUtil.trySimple(() -> VideoLANBin.init(this.loader), e -> exception(VideoLANBin.class.getSimpleName(), e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());

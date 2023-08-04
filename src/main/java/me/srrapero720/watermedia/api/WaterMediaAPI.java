@@ -50,27 +50,27 @@ public final class WaterMediaAPI {
         LOGGER.info(IT, "Loading internal {}'s", ImageRenderer.class.getSimpleName());
 
         ThreadUtil.trySimple(() -> {
-            if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(AssetsUtil.getGif(modLoader.getJarClassLoader(), "/images/loading.gif"));
+            if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(AssetsUtil.getGif(modLoader.getJarClassLoader(), "/pictures/loading.gif"));
             else LOGGER.warn("Skipping LOADING_GIF");
         }, (e) -> LOGGER.error("Failed to load 'LOADING_GIF'", e));
 
         ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED == null) VLC_FAILED = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/images/vlc/vlc_failed.png"));
+            if (VLC_FAILED == null) VLC_FAILED = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/pictures/videolan/failed.png"));
             else LOGGER.warn("Skipping VLC_FAILED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED'", e));
 
         ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED_EXTENDED == null) VLC_FAILED_EXTENDED = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/images/vlc/vlc_failed_extended.png"));
+            if (VLC_FAILED_EXTENDED == null) VLC_FAILED_EXTENDED = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/pictures/videolan/failed-landscape.png"));
             else LOGGER.warn("Skipping VLC_FAILED_EXTENDED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_EXTENDED'", e));
 
         ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED_INSTALL == null) VLC_FAILED_INSTALL = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/images/vlc/vlc_failed_install.png"));
+            if (VLC_FAILED_INSTALL == null) VLC_FAILED_INSTALL = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/pictures/videolan/failed-install.png"));
             else LOGGER.warn("Skipping VLC_FAILED_INSTALL");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL'", e));
 
         ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED_INSTALL_EXTENDED == null) VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/images/vlc/vlc_failed_install_extended.png"));
+            if (VLC_FAILED_INSTALL_EXTENDED == null) VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(AssetsUtil.getImage(modLoader.getJarClassLoader(), "/pictures/videolan/failed-install-landscape.png"));
             else LOGGER.warn("Skipping VLC_FAILED_INSTALL_EXTENDED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL_EXTENDED'", e));
     }

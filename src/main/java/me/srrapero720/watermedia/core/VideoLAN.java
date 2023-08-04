@@ -35,7 +35,6 @@ public class VideoLAN {
 
         // SETUP PATHS
         Path logs = dir.toAbsolutePath().resolve("logs/videolan.log");
-        Path path = dir.toAbsolutePath().resolve("vlc/");
 
         // LOGGER INIT
         if (!Files.exists(logs.toAbsolutePath())) {
@@ -44,10 +43,10 @@ public class VideoLAN {
         }
 
         // VLCJ INIT
-        CustomDirectoryProvider.init(path);
+        CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
 
         FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = AssetsUtil.getStringList(loader.getJarClassLoader(), "/vlc/args.json").toArray(new String[0]);
+            String[] args = AssetsUtil.getStringList(loader.getJarClassLoader(), "/videolan/commandline.json").toArray(new String[0]);
             args[2] = logs.toAbsolutePath().toString();
 
             return WaterMediaAPI.vlc_createFactory(args);
