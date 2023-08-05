@@ -86,9 +86,10 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
         return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
 
-    // TODO: DECIDE DO IT OR NOT, DEPENDS OF FABRIC BEHAVIOR
     @Override
-    public boolean isTLauncher() { return false; }
+    public boolean isTLauncher() {
+        return isInstalled("tlskincape") || getWorkingDir().toAbsolutePath().toString().contains("tlauncher");
+    }
 
     private ClassLoader getWorkingClassLoader() {
         ClassLoader[] attempts = new ClassLoader[] {

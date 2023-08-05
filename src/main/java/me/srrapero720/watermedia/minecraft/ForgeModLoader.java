@@ -71,7 +71,6 @@ public class ForgeModLoader implements IMediaLoader {
 
     @Override
     public boolean isTLauncher() {
-        // TODO: MORE STRICT CHECKS
-        return getWorkingDir().toAbsolutePath().toString().contains("tlauncher");
+        return isInstalled("tlskincape") || getWorkingDir().toAbsolutePath().toString().contains("tlauncher");
     }
 }
