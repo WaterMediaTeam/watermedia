@@ -93,8 +93,11 @@ public class WaterMedia {
 
 	// TESTERS
 	public boolean test$classLoader(ClassLoader loader) {
-		InputStream dummy = loader.getResourceAsStream("/videolan/commandline.json");
-		IOUtils.closeQuietly(dummy);
-		return dummy != null;
+		try(InputStream dummy = loader.getResourceAsStream("/videolan/commandline.json"); InputStream maybe = loader.getResourceAsStream("videolan/win-x64.zip")) {
+			return dummy != null || maybe != null;
+		} catch (Exception e) {
+			LOGGER.warn(IT, "ClassLoader test failed", e);
+		}
+		return false;
 	}
 }

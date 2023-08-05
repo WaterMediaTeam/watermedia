@@ -93,12 +93,9 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     private ClassLoader getWorkingClassLoader() {
         ClassLoader[] attempts = new ClassLoader[] {
                 FabricModLoader.class.getClassLoader(),
+                FabricModLoader.class.getProtectionDomain().getClassLoader(),
                 this.getClass().getClassLoader(),
                 Thread.currentThread().getContextClassLoader(),
-//                ClassLoaders.platformClassLoader(),
-                ClassLoader.getSystemClassLoader(),
-//                ClassLoaders.appClassLoader(),
-                FabricLoader.getInstance().getClass().getClassLoader()
         };
 
         for (int i = 0; i < attempts.length; i++)

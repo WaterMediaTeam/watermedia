@@ -33,7 +33,7 @@ public class MediaStorage {
         index = new File(dir, "indexer");
 
         // LOGGER
-        LOGGER.info(IT, "Mounted on path '{}'", dir.toString());
+        LOGGER.info(IT, "Mounted on path '{}'", dir);
 
         if (!dir.exists()) dir.mkdirs();
         if (index.exists()) {

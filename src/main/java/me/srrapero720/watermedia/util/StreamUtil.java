@@ -25,7 +25,7 @@ public class StreamUtil {
 
 
     public static boolean integrityFrom(ClassLoader loader, String source, File targetFile) {
-        try (InputStream is = loader.getResourceAsStream(source)) {
+        try (InputStream is = getResource(loader, source)) {
             return integrityFrom(is, targetFile);
         } catch (Exception e) {
             LOGGER.error(AssetsUtil.IT, "Failed to check file integrity of '{}'", targetFile.toPath(), e);
@@ -165,5 +165,11 @@ public class StreamUtil {
             bos.write(bytesIn, 0, read);
         }
         bos.close();
+    }
+
+    public static InputStream getResource(ClassLoader loader, String source) {
+        InputStream is = loader.getResourceAsStream(source);
+        if (is == null && source.startsWith("/")) is = loader.getResourceAsStream(source.substring(1));
+        return is;
     }
 }
