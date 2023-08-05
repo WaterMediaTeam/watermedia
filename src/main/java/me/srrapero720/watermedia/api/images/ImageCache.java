@@ -86,10 +86,11 @@ public class ImageCache {
                 if (exception instanceof ImageFetch.VideoContentException) {
                     this.video.set(true);
                     this.exception = null;
+                    this.status = Status.READY;
                 } else {
                     this.exception = exception;
+                    this.status = Status.FAILED;
                 }
-                this.status = Status.FAILED;
             }).start();
         }
     }
