@@ -48,9 +48,6 @@ public class ImageFetch {
     public ImageFetch setOnSuccessCallback(TaskSuccessful task) { successful = task; return this; }
     public ImageFetch setOnFailedCallback(TaskFailed task) { failed = task; return this; }
 
-//    protected abstract void onFailed(Exception e);
-//    protected abstract void onSuccess(ImageRenderer imageRenderer);
-
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
