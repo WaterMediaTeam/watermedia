@@ -29,12 +29,12 @@ public class ImageCache {
     private final AsyncRunnable asyncRunnable;
 
     // STATUS
-    private Status status = Status.WAITING;
     private final AtomicBoolean video = new AtomicBoolean(false);
     private final AtomicInteger uses = new AtomicInteger(1);
+    private volatile Status status = Status.WAITING;
 
-    private ImageRenderer renderer;
-    private Exception exception;
+    private volatile ImageRenderer renderer;
+    private volatile Exception exception;
 
     public ImageCache(String url, AsyncRunnable runnable) {
         this(WaterMediaAPI.url_toURL(url), runnable);
