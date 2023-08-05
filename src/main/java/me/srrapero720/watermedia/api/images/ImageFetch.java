@@ -63,7 +63,7 @@ public class ImageFetch {
                         if (successful != null) successful.run(new ImageRenderer(gif));
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
-                        throw new IOException("");
+                        throw new GifDecodingException();
                     }
                 } else {
                     try {
@@ -183,6 +183,7 @@ public class ImageFetch {
     }
 
     public static final class VideoContentException extends Exception {}
+    public static final class GifDecodingException extends Exception {}
     public interface TaskSuccessful { void run(ImageRenderer renderer); }
     public interface TaskFailed { void run(Exception e); }
 }
