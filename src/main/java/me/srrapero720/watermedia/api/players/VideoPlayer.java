@@ -40,6 +40,11 @@ public class VideoPlayer extends AbstractPlayer {
     // SYNCHRONIZED OBJECTS
     private final Object SC_ACTIONS = new Object();
 
+    public VideoPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable SimpleBufferFormatCallback bufferFormatCallback) {
+        if (factory == null) factory = VideoLAN.getFactory();
+        this.raw = this.init(factory, renderCallback, bufferFormatCallback);
+    }
+
     public VideoPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable BufferFormatCallback bufferFormatCallback) {
         if (factory == null) factory = VideoLAN.getFactory();
         this.raw = this.init(factory, renderCallback, bufferFormatCallback);
