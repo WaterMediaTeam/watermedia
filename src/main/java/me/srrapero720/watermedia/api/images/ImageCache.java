@@ -10,23 +10,28 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-
 public class ImageCache {
     private static final Marker IT = MarkerFactory.getMarker("ImageCache");
     private static final Map<String, ImageCache> CACHE = new HashMap<>();
 
-    public static ImageCache findOrCreate(URL url, AsyncRunnable runnable) {
-        ImageCache image = CACHE.get(url.toString());
-        image = (image == null) ? new ImageCache(url, runnable) : image.use();
-        CACHE.put(url.toString(), image);
+    public static ImageCache findOrCreate(String originalURL, RenderThread runnable) {
+        ImageCache image = CACHE.get(originalURL);
+        image = (image == null) ? new ImageCache(originalURL, runnable) : image.use();
+        CACHE.put(originalURL, image);
+        return image;
+    }
+    public static ImageCache findOrCreate(URL url, String originalURL, RenderThread runnable) {
+        ImageCache image = CACHE.get(originalURL);
+        image = (image == null) ? new ImageCache(url, originalURL, runnable) : image.use();
+        CACHE.put(originalURL, image);
         return image;
     }
 
     // INFO
     public final URL url;
+    public final String originalURL;
     private final ImageFetch fetch;
-    private final AsyncRunnable asyncRunnable;
+    private final RenderThread renderThread;
 
     // STATUS
     private final AtomicBoolean video = new AtomicBoolean(false);
@@ -36,34 +41,38 @@ public class ImageCache {
     private volatile ImageRenderer renderer;
     private volatile Exception exception;
 
-    public ImageCache(String url, AsyncRunnable runnable) {
-        this(WaterMediaAPI.url_toURL(url), runnable);
+    public ImageCache(String url, RenderThread runnable) {
+        this(WaterMediaAPI.url_toURL(url), url, runnable);
     }
 
-    public ImageCache(URL url, AsyncRunnable runnable) {
+    public ImageCache(URL url, String originalURL, RenderThread runnable) {
         this.url = url;
-        this.asyncRunnable = runnable;
+        this.originalURL = originalURL;
+        this.renderThread = runnable;
         this.fetch = new ImageFetch(url);
         CACHE.put(url.toString(), this);
     }
 
     public ImageCache(ImageRenderer renderer) {
         this.url = null;
+        this.originalURL = null;
         this.fetch = null;
-        this.asyncRunnable = null;
+        this.renderThread = null;
         this.renderer = renderer;
     }
 
     public boolean isVideo() { return video.get(); }
     public boolean isUsed() { return uses.get() > 0; }
     public ImageCache use() { uses.getAndIncrement(); return this; }
-    public ImageCache deuse() { uses.decrementAndGet(); return this; }
+    public ImageCache deuse() {
+        uses.decrementAndGet();
+        if (uses.get() <= 0) release();
+        return this;
+    }
     public URL getUrl() { return url; }
     public Status getStatus() { return status; }
     public Exception getException() { return exception; }
     public ImageRenderer getRenderer() { return renderer; }
-
-
 
     public synchronized void load() {
         if (fetch == null) return;
@@ -102,7 +111,7 @@ public class ImageCache {
             this.status = Status.WAITING;
             this.video.set(false);
             this.exception = null;
-            this.asyncRunnable.askForExecution(() -> {
+            this.renderThread.askForExecution(() -> {
                 this.renderer.release();
                 // ENSURE IS THE SAME FUCKING RENDERER AND IF WAS RELEASED
                 synchronized (fetch) {
@@ -121,7 +130,7 @@ public class ImageCache {
             this.video.set(false);
             this.exception = null;
             this.uses.set(0);
-            this.asyncRunnable.askForExecution(() -> {
+            this.renderThread.askForExecution(() -> {
                 this.renderer.release();
                 synchronized (this) { if ( renderer.textures[0] == -1) this.renderer = null; }
             });
@@ -130,5 +139,5 @@ public class ImageCache {
     }
 
     public enum Status { WAITING, LOADING, READY, FORGOTTEN, FAILED; }
-    public interface AsyncRunnable { void askForExecution(Runnable runnable); }
+    public interface RenderThread { void askForExecution(Runnable runnable); }
 }
