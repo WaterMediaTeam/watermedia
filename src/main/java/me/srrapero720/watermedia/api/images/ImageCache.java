@@ -26,6 +26,10 @@ public class ImageCache {
         CACHE.put(originalURL, image);
         return image;
     }
+    public static void reloadAll() {
+        ImageCache[] loaded = CACHE.values().toArray(new ImageCache[0]);
+        for (ImageCache imageCache : loaded) { imageCache.reload(); }
+    }
 
     // INFO
     public final URL url;
