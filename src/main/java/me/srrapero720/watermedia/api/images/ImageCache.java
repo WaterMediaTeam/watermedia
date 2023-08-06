@@ -50,7 +50,7 @@ public class ImageCache {
         this.originalURL = originalURL;
         this.renderThread = runnable;
         this.fetch = new ImageFetch(url);
-        CACHE.put(url.toString(), this);
+        CACHE.put(originalURL, this);
     }
 
     public ImageCache(ImageRenderer renderer) {
