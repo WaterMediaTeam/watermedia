@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoPlayer extends AbstractPlayer {
-    private static final Thread THREAD = Thread.currentThread();
+    private static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     private static final Marker IT = MarkerFactory.getMarker("VideoPlayer");
 
     // PLAYER
@@ -354,7 +354,7 @@ public class VideoPlayer extends AbstractPlayer {
     }
     
     private static void checkIfCurrentThreadHasClassLoader() {
-        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(THREAD.getContextClassLoader());
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(LOADER);
     }
     private final MediaPlayerEventListener EV = new MediaPlayerEventListener() {
         @Override
@@ -394,7 +394,7 @@ public class VideoPlayer extends AbstractPlayer {
         @Override
         public void paused(MediaPlayer mediaPlayer) {
             checkIfCurrentThreadHasClassLoader();
-            fireEvent(new MediaPauseEvent(VideoPlayer.this, raw.mediaPlayer().status().length()));
+            fireEvent(new MediaPauseEvent(VideoPlayer.this, getDuration()));
         }
 
         @Override
