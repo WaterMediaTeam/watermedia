@@ -61,7 +61,7 @@ public class VideoPlayer extends AbstractPlayer {
                 started.set(true);
             }
             else LOGGER.error(IT, "Playback start failed. URL is invalid or null");
-        }, null, null);
+        }, (e) -> LOGGER.error(IT, "Failed to prepare player", e), null);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class VideoPlayer extends AbstractPlayer {
             super.start(url.toString());
             raw.mediaPlayer().media().prepare(this.url.toString(), vlcArgs);
             started.set(true);
-        }, null, null);
+        }, (e) -> LOGGER.error(IT, "Failed to prepare player", e), null);
     }
 
     public boolean isStarted() { return started.get(); }
