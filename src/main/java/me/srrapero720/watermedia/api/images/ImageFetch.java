@@ -29,7 +29,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
 
 public class ImageFetch {
-    private static final Marker IT = MarkerFactory.getMarker("FetchPicture");
+    private static final Marker IT = MarkerFactory.getMarker(ImageFetch.class.getSimpleName());
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final AtomicInteger WK_TH = new AtomicInteger(0);
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadUtil.getMinThreadCount(), r -> {
@@ -78,7 +78,9 @@ public class ImageFetch {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error(IT, "An exception occurred while loading Waterframes image", e);
+            if (!(e instanceof VideoContentException)) {
+                LOGGER.error(IT, "An exception occurred while loading image", e);
+            }
             if (failed != null) failed.run(e);
             MediaStorage.deleteEntry(url.toString());
         }
