@@ -33,12 +33,10 @@ public class VideoPlayer extends AbstractPlayer {
 
     // PLAYER
     public final CallbackMediaPlayerComponent raw;
+    private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicBoolean buffering = new AtomicBoolean(false);
     private final AtomicBoolean prepared = new AtomicBoolean(false);
     private final AtomicInteger volume = new AtomicInteger(100);
-
-    // SYNCHRONIZED OBJECTS
-    private final Object SC_ACTIONS = new Object();
 
     public VideoPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable SimpleBufferFormatCallback bufferFormatCallback) {
         if (factory == null) factory = VideoLAN.getFactory();
@@ -50,6 +48,8 @@ public class VideoPlayer extends AbstractPlayer {
         this.raw = this.init(factory, renderCallback, bufferFormatCallback);
     }
 
+    public boolean isStarted() { return started.get(); }
+
     @Override
     public synchronized void start(CharSequence url) { this.start(url, new String[0]); }
     public synchronized void start(CharSequence url, String[] vlcArgs) {
@@ -57,7 +57,10 @@ public class VideoPlayer extends AbstractPlayer {
         ThreadUtil.threadTry(() -> {
             super.start(url.toString());
 
-            if (this.url != null) raw.mediaPlayer().media().start(this.url.toString(), vlcArgs);
+            if (this.url != null) {
+                raw.mediaPlayer().media().start(this.url.toString(), vlcArgs);
+                started.set(true);
+            }
             else LOGGER.error(IT, "Playback start failed. URL is invalid or null");
         }, null, null);
     }
@@ -69,13 +72,14 @@ public class VideoPlayer extends AbstractPlayer {
         ThreadUtil.threadTry(() -> {
             super.start(url.toString());
             raw.mediaPlayer().media().prepare(this.url.toString(), vlcArgs);
+            started.set(true);
         }, null, null);
     }
 
     @Override
     public synchronized void play() {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().play();
         }
     }
@@ -83,7 +87,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void pause() {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().pause();
         }
     }
@@ -91,7 +95,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void setPauseMode(boolean isPaused) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().setPause(isPaused);
         }
     }
@@ -99,7 +103,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void stop() {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().stop();
         }
     }
@@ -107,7 +111,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void seekTo(long time) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             fireEvent(new MediaTimeChangedEvent(this, getTime(), time));
             raw.mediaPlayer().controls().setTime(time);
         }
@@ -116,7 +120,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void seekFastTo(long ticks) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().setTime(ticks);
         }
     }
@@ -124,7 +128,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void seekGameTicksTo(int ticks) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             long time = WaterMediaAPI.math_ticksToMillis(ticks);
             fireEvent(new MediaTimeChangedEvent(this, getTime(), time));
             raw.mediaPlayer().controls().setTime(time);
@@ -134,7 +138,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void seekGameTickFastTo(int ticks) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().setTime(WaterMediaAPI.math_ticksToMillis(ticks));
         }
     }
@@ -142,7 +146,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void setRepeatMode(boolean repeatMode) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().setRepeat(repeatMode);
         }
     }
@@ -150,7 +154,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized boolean isValid() {
         if (raw == null) return false;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return raw.mediaPlayer().media().isValid();
         }
     }
@@ -158,7 +162,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized Dimension getDimensions() {
         if (raw == null) return null;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return raw.mediaPlayer().video().videoDimension();
         }
     }
@@ -166,7 +170,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized boolean isPlaying() {
         if (raw == null) return false;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return getRawPlayerState().equals(State.PLAYING);
         }
     }
@@ -174,7 +178,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized boolean getRepeatMode() {
         if (raw == null) return false;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return raw.mediaPlayer().controls().getRepeat();
         }
     }
@@ -182,7 +186,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void fastFoward() {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().skipTime(5L);
         }
     }
@@ -190,7 +194,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void setSpeed(float rate) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().setRate(rate);
         }
     }
@@ -198,7 +202,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void rewind() {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().controls().skipTime(-5L);
         }
     }
@@ -207,7 +211,7 @@ public class VideoPlayer extends AbstractPlayer {
     public synchronized void setVolume(int volume) {
         this.volume.set(volume);
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().audio().setVolume(this.volume.get());
             if (this.volume.get() == 0 && !raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(true);
             else if (this.volume.get() > 0 && raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(false);
@@ -217,7 +221,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized int getVolume() {
         if (raw == null) return volume.get();
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return raw.mediaPlayer().audio().volume();
         }
     }
@@ -225,7 +229,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void mute() {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().audio().setMute(true);
         }
     }
@@ -233,7 +237,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void unmute() {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().audio().setMute(false);
         }
     }
@@ -241,7 +245,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void setMuteMode(boolean mode) {
         if (raw == null) return;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             raw.mediaPlayer().audio().setMute(mode);
         }
     }
@@ -249,7 +253,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized boolean isStream() {
         if (raw == null) return false;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             InfoApi mediaInfo = raw.mediaPlayer().media().info();
             return mediaInfo != null && (mediaInfo.type().equals(MediaType.STREAM) || mediaInfo.mrl().endsWith(".m3u") || mediaInfo.mrl().endsWith(".m3u8"));
         }
@@ -257,7 +261,7 @@ public class VideoPlayer extends AbstractPlayer {
 
     public synchronized State getRawPlayerState() {
         if (raw == null) return State.ERROR;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return raw.mediaPlayer().status().state();
         }
     }
@@ -269,7 +273,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized long getDuration() {
         if (raw == null) return 0L;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
             return raw.mediaPlayer().status().length();
         }
@@ -278,7 +282,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized int getGameTickDuration() {
         if (raw == null) return 0;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return WaterMediaAPI.math_millisToTicks(raw.mediaPlayer().status().length());
         }
     }
@@ -290,7 +294,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Deprecated
     public synchronized long getMediaInfoDuration() {
         if (raw == null) return 0L;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             InfoApi info = raw.mediaPlayer().media().info();
             if (info != null) return info.duration();
             return 0L;
@@ -300,7 +304,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Deprecated
     public synchronized int getGameTickMediaInfoDuration() {
         if (raw == null) return 0;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             InfoApi info = raw.mediaPlayer().media().info();
             if (info != null) return WaterMediaAPI.math_millisToTicks(info.duration());
             return 0;
@@ -310,7 +314,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized long getTime() {
         if (raw == null) return 0L;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return raw.mediaPlayer().status().time();
         }
     }
@@ -318,7 +322,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized int getGameTickTime() {
         if (raw == null) return 0;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return WaterMediaAPI.math_millisToTicks(raw.mediaPlayer().status().time());
         }
     }
@@ -326,7 +330,7 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized boolean isSeekable() {
         if (raw == null) return false;
-        synchronized (SC_ACTIONS) {
+        synchronized (this) {
             return raw.mediaPlayer().status().isSeekable();
         }
     }
