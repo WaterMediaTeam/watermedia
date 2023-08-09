@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+@SuppressWarnings("unused")
 public class VideoPlayer extends AbstractPlayer {
     private static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     private static final Marker IT = MarkerFactory.getMarker("VideoPlayer");
@@ -47,8 +48,6 @@ public class VideoPlayer extends AbstractPlayer {
         if (factory == null) factory = VideoLAN.getFactory();
         this.raw = this.init(factory, renderCallback, bufferFormatCallback);
     }
-
-    public boolean isStarted() { return started.get(); }
 
     @Override
     public synchronized void start(CharSequence url) { this.start(url, new String[0]); }
@@ -75,6 +74,8 @@ public class VideoPlayer extends AbstractPlayer {
             started.set(true);
         }, null, null);
     }
+
+    public boolean isStarted() { return started.get(); }
 
     @Override
     public synchronized void play() {
@@ -338,25 +339,24 @@ public class VideoPlayer extends AbstractPlayer {
     @Override
     public synchronized void release() {
         if (raw == null) return;
-        raw.mediaPlayer().events().removeMediaPlayerEventListener(EV);
         raw.mediaPlayer().release();
     }
     
     private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        if (!WaterMediaAPI.vlc_isReady()) {
-            LOGGER.error(IT, "Failed to create CallbackMediaPlayerComponent because VLC is not loaded");
-            return null;
-        } else {
-            final CallbackMediaPlayerComponent component = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
-            component.mediaPlayer().events().addMediaPlayerEventListener(EV);
-            return component;
-        }
+        CallbackMediaPlayerComponent component = null;
+        if (WaterMediaAPI.vlc_isReady()) {
+            component = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
+            component.mediaPlayer().events().addMediaPlayerEventListener(new CustomMediaPlayerEventListener());
+        } else LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
+
+        return component;
     }
     
     private static void checkIfCurrentThreadHasClassLoader() {
         if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(LOADER);
     }
-    private final MediaPlayerEventListener EV = new MediaPlayerEventListener() {
+
+    private final class CustomMediaPlayerEventListener implements MediaPlayerEventListener {
         @Override
         public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
             checkIfCurrentThreadHasClassLoader();
@@ -519,6 +519,6 @@ public class VideoPlayer extends AbstractPlayer {
             prepared.set(true);
             setVolume(volume.get());
         }
-    };
+    }
 }
 
