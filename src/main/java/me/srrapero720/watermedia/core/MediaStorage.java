@@ -29,7 +29,7 @@ public class MediaStorage {
         if (inited) throw new IllegalReloadException("Rejected attempt to reload LocalStorage");
 
         // SETUP
-        dir = modLoader.getTempDir().toAbsolutePath().resolve("cache/pictures").toFile();
+        dir = modLoader.getTmpDirectory().toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "indexer");
 
         // LOGGER

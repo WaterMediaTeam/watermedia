@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.minecraft;
 
+import me.srrapero720.watermedia.IEnvLoader;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.EnvType;
@@ -19,93 +20,53 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * By default, this class preloads WATERMeDIA over other mods
  * but haven't warranties, because other mods can preload easy too.
  */
-public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
-    private static final Marker IT = MarkerFactory.getMarker("FabricLoader");
-    private final WaterMedia WM;
+public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader, IEnvLoader {
+    private static final Marker IT = MarkerFactory.getMarker("FabricModLoader");
+    private static final String NAME = "Fabric";
+    private final WaterMedia instance;
     private ClassLoader CL;
 
     public FabricModLoader() {
-        WM = new WaterMedia(this);
+        instance = WaterMedia.getInstance(this);
     }
 
     @Override
     public void onPreLaunch() {
-        if (getWorkingClassLoader() != null) {
-            launchWaterMedia();
-        } else {
-            LOGGER.error(IT, "###########################  ILLEGAL INIT STATE  ###################################");
-            LOGGER.error(IT, "By some FABRIC-LOADER restrictions, WATERMeDIA can't be loaded by itself using loader");
-            LOGGER.error(IT, "Dependant mods needs to load WATERMeDIA in game thread by themself");
-            LOGGER.error(IT, "Instance was created and can be loaded using FabricModLoader#launchWaterMedia()");
-            LOGGER.error(IT, "###########################  ILLEGAL INIT STATE  ###################################");
-        }
+        if (client()) instance.init();
+        instance.crash();
     }
-
-    public void launchWaterMedia() {
-        assert getWorkingClassLoader() != null;
-        WM.init();
-        WM.exceptionThrow();
-    }
-
-    public static FabricModLoader getInstance() {
-        return (FabricModLoader) FabricLoader.getInstance().getEntrypointContainers(WaterMedia.ID, PreLaunchEntrypoint.class);
-    }
+    @Override
+    public boolean development() { return FabricLoader.getInstance().isDevelopmentEnvironment(); }
 
     @Override
-    public boolean isDev() { return FabricLoader.getInstance().isDevelopmentEnvironment(); }
+    public boolean client() { return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT); }
 
     @Override
-    public boolean isClient() { return FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT); }
+    public boolean installed(String modid) { return FabricLoader.getInstance().isModLoaded(modid); }
 
     @Override
-    public boolean isInstalled(String modid) { return FabricLoader.getInstance().isModLoaded(modid); }
-
-    @Override
-    public ClassLoader getJarClassLoader() {
+    public ClassLoader getModuleClassLoader() {
         if (CL != null) return CL;
-
-        ClassLoader cl = getWorkingClassLoader();
-        if (cl == null) {
-            LOGGER.error(IT, "Cannot get a working ClassLoader, returning (CurrentThread) by default");
-            return Thread.currentThread().getContextClassLoader(); // This is not working
-        }
-
-        return CL = cl;
+        return CL = Thread.currentThread().getContextClassLoader();
     }
 
     @Override
-    public String getLoaderName() {
-        return "FABRIC";
+    public String getName() {
+        return NAME;
     }
 
     @Override
-    public Path getWorkingDir() {
+    public Path getProcessDirectory() {
         return FabricLoader.getInstance().getGameDir();
     }
 
     @Override
-    public Path getTempDir() {
+    public Path getTmpDirectory() {
         return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
 
     @Override
-    public boolean isTLauncher() {
-        return isInstalled("tlskincape") || getWorkingDir().toAbsolutePath().toString().contains("tlauncher");
-    }
-
-    private ClassLoader getWorkingClassLoader() {
-        ClassLoader[] attempts = new ClassLoader[] {
-                FabricModLoader.class.getClassLoader(),
-                FabricModLoader.class.getProtectionDomain().getClassLoader(),
-                this.getClass().getClassLoader(),
-                Thread.currentThread().getContextClassLoader(),
-        };
-
-        for (int i = 0; i < attempts.length; i++)
-            if (WM.test$classLoader(attempts[i])) {
-                LOGGER.info(IT, "Founded a working classloader, index {}", i);
-                return attempts[i];
-            }
-        return null;
+    public boolean tlauncher() {
+        return installed("tlskincape") || getProcessDirectory().toAbsolutePath().toString().contains("tlauncher");
     }
 }

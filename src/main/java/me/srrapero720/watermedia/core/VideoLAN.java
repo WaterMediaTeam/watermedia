@@ -29,7 +29,7 @@ public class VideoLAN {
     public static MediaPlayerFactory getFactory() { return FACTORY; }
 
     public static void init(IMediaLoader loader) throws UnsafeException {
-        Path dir = loader.getTempDir();
+        Path dir = loader.getTmpDirectory();
         if (FACTORY != null) throw new IllegalReloadException(VideoLAN.class.getSimpleName());
 
         // SETUP PATHS
@@ -45,7 +45,7 @@ public class VideoLAN {
         CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
 
         FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = AssetsUtil.getStringList(loader.getJarClassLoader(), "/videolan/commandline.json").toArray(new String[0]);
+            String[] args = AssetsUtil.getStringList(loader.getModuleClassLoader(), "/videolan/commandline.json").toArray(new String[0]);
             args[2] = logs.toAbsolutePath().toString();
 
             return WaterMediaAPI.vlc_createFactory(args);

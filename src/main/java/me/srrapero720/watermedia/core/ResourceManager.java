@@ -21,13 +21,13 @@ public class ResourceManager {
     public static void init(IMediaLoader loader) throws UnsafeException {
         // STEP 1: EXTRACT VLC
         if (WaterOs.getArch().wrapped) {
-            Path output = loader.getTempDir().resolve("videolan/").resolve(WaterOs.getArch().toString() + ".zip");
+            Path output = loader.getTmpDirectory().resolve("videolan/").resolve(WaterOs.getArch().toString() + ".zip");
             Path config = output.getParent().resolve("version.cfg");
             String source = "/videolan/"  + WaterOs.getArch() + ".zip";
 
             try {
                 if (!VIDEOLAN_V.equals(AssetsUtil.getString(config.toAbsolutePath()))) {
-                    if (AssetsUtil.copyAsset(loader.getJarClassLoader(), source, output)) {
+                    if (AssetsUtil.copyAsset(loader.getModuleClassLoader(), source, output)) {
                         StreamUtil.unzip(output, output.getParent());
                         Files.delete(output);
                     }
