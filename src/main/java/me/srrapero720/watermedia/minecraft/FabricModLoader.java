@@ -15,7 +15,9 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
  * Loader for FABRIC
- * Doing things with FABRIC classes/api is safe
+ * Is safe do things inside this class
+ * By default, this class preloads WATERMeDIA over other mods
+ * but haven't warranties, because other mods can preload easy too.
  */
 public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader {
     private static final Marker IT = MarkerFactory.getMarker("FabricLoader");

@@ -1,7 +1,7 @@
-package me.srrapero720.watermedia.minecraft;
+package me.srrapero720.watermedia.minecraft.plugins;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.util.ClazzUtil;
+import me.srrapero720.watermedia.util.ReflectUtil;
 import org.objectweb.asm.tree.ClassNode;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import java.util.List;
 import java.util.Set;
 
-public class MixinBootPlugin implements IMixinConfigPlugin {
-    private static final Marker IT = MarkerFactory.getMarker(MixinBootPlugin.class.getSimpleName());
+public class MixinPlugin implements IMixinConfigPlugin {
+    private static final Marker IT = MarkerFactory.getMarker(MixinPlugin.class.getSimpleName());
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -25,7 +25,7 @@ public class MixinBootPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.startsWith("Forge")) {
-            if (!ClazzUtil.existsClass("cpw.mods.modlauncher.Launcher")) return false;
+            if (!ReflectUtil.existsClass("cpw.mods.modlauncher.Launcher")) return false;
 
         }
         return true;

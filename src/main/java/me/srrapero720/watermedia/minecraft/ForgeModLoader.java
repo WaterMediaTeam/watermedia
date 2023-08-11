@@ -19,6 +19,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 /**
  * Loader for FORGE
  * Doing things with FORGE classes/api is safe
+ * IMPORTANT: this class just fires post-launch just to interact with forge stuff
  */
 @Mod(WaterMedia.ID)
 public class ForgeModLoader implements IMediaLoader {
