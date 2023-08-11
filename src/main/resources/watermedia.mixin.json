@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "watermedia.mixin-refmap.json",
+  "package": "me.srrapero720.watermedia.minecraft.mixin",
+  "plugin": "me.srrapero720.watermedia.minecraft.MixinBootPlugin",
+  "client": [],
+  "minVersion": "0.8",
+  "mixins": []
+}

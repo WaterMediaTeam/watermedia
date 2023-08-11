@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.minecraft;
 
-import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.WaterMedia;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -14,6 +14,8 @@ import org.slf4j.MarkerFactory;
 import java.io.File;
 import java.nio.file.Path;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 /**
  * Loader for FORGE
  * Doing things with FORGE classes/api is safe
@@ -24,7 +26,12 @@ public class ForgeModLoader implements IMediaLoader {
     private final WaterMedia WM;
     private ClassLoader CL;
 
+    static {
+        LOGGER.info(IT, "Class was PRELOADED");
+    }
+
     public ForgeModLoader() {
+        LOGGER.info(IT, "Starting ForgeModLoader");
         WM = new WaterMedia(this);
         IEventBus BUS = FMLJavaModLoadingContext.get().getModEventBus();
 

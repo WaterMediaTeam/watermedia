@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
@@ -31,8 +32,8 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', modid
 
-//            arg '--mixin.config'
-//            arg 'watermedia.mixin.json'
+            arg '--mixin.config'
+            arg 'watermedia.mixin.json'
 
             mods {
                 "${modid}" {
@@ -113,7 +114,7 @@ processResources {
     }
 }
 
-//mixin { add sourceSets.main, "waterframes.mixin-refmap.json" }
+mixin { add sourceSets.main, "watermedia.mixin-refmap.json" }
 
 // ShadowJar task (run this task to make a built JAR.
 shadowJar {
@@ -148,9 +149,9 @@ jar {
                 "Implementation-Version"  : project.modversion,
                 "Implementation-Vendor"   : project.modauthor,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-//                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-//                "TweakOrder": 0,
-//                "MixinConfigs": "watermedia.mixin.json"
+                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+                "TweakOrder": 0,
+                "MixinConfigs": "watermedia.mixin.json"
         ])
     }
     from {
