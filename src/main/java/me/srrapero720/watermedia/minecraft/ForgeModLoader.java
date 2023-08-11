@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.minecraft;
 
 import cpw.mods.modlauncher.Launcher;
 import me.srrapero720.watermedia.IEnvLoader;
+import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.WaterMedia;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
@@ -14,6 +15,9 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.spongepowered.asm.launch.MixinBootstrap;
 
+import java.io.File;
+import java.nio.file.Path;
+
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
@@ -22,15 +26,17 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * IMPORTANT: this class just fires post-launch just to interact with forge stuff
  */
 @Mod(WaterMedia.ID)
-public class ForgeModLoader implements IEnvLoader {
+public class ForgeModLoader implements IMediaLoader, IEnvLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
+    private static final String NAME = "Forge";
     private final WaterMedia instance;
 
-    public ForgeModLoader() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+    public ForgeModLoader() {
         LOGGER.info(IT, "Starting ForgeModLoader");
 
-        instance = ((WaterMedia) Class.forName("me.srrapero720.watermedia.minecraft.CpwLoader", false, Launcher.INSTANCE.getClass().getClassLoader()).getField("instance").get(null));
+        instance = WaterMedia.getInstance(this);
         instance.onEnvironmentInit(this);
+        if (client()) instance.init();
 
         // SETUP
         IEventBus BUS = FMLJavaModLoadingContext.get().getModEventBus();
@@ -40,6 +46,20 @@ public class ForgeModLoader implements IEnvLoader {
         // TODO: Use any tricky way to do that on old forge versions
         //Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible
 //        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+    }
+
+    @Override
+    public ClassLoader getModuleClassLoader() { return Thread.currentThread().getContextClassLoader(); }
+
+    @Override
+    public String getName() { return NAME; }
+
+    @Override
+    public Path getProcessDirectory() { return new File("").toPath(); }
+
+    @Override
+    public Path getTmpDirectory() {
+        return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     }
 
     @Override

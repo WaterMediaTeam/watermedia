@@ -25,8 +25,10 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.startsWith("Forge")) {
-            if (!ReflectUtil.existsClass("cpw.mods.modlauncher.Launcher")) return false;
-
+            // MIXINS FOR FORGE
+        }
+        if (mixinClassName.startsWith("Fabric")) {
+            // MIXINS FOR FABRIC
         }
         return true;
     }
