@@ -1,6 +1,8 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.api.loader.IEnvLoader;
+import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.*;
 import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
 import me.lib720.watermod.ThreadCore;

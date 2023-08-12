@@ -4,7 +4,7 @@ package me.srrapero720.watermedia.core;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
 import me.lib720.watermod.ThreadCore;
-import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;

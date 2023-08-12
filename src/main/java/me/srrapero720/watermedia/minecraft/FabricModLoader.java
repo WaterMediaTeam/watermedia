@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.minecraft;
 
-import me.srrapero720.watermedia.IEnvLoader;
-import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.api.loader.IEnvLoader;
+import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -11,8 +11,6 @@ import org.slf4j.MarkerFactory;
 
 import java.io.File;
 import java.nio.file.Path;
-
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
  * Loader for FABRIC

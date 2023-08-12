@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.minecraft;
 
-import me.srrapero720.watermedia.IEnvLoader;
-import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.api.loader.IEnvLoader;
+import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.WaterMedia;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;

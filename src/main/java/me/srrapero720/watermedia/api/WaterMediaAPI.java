@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
-import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.url.*;
 import me.srrapero720.watermedia.api.images.ImageRenderer;
 import me.srrapero720.watermedia.api.players.VideoPlayer;

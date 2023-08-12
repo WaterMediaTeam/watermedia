@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia;
+package me.srrapero720.watermedia.api.loader;
 
 public interface IEnvLoader {
     boolean tlauncher();

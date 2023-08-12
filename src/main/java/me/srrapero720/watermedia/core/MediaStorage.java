@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.core;
 
-import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
 import org.apache.commons.codec.binary.Base64;
