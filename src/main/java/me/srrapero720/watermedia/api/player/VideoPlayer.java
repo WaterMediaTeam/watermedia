@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.player;
 
+import com.sun.jna.Pointer;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.media.InfoApi;
@@ -9,6 +10,7 @@ import me.lib720.caprica.vlcj.media.TrackType;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
 import me.lib720.caprica.vlcj.player.base.State;
+import me.lib720.caprica.vlcj.player.base.callback.AudioCallback;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
@@ -329,7 +331,7 @@ public class VideoPlayer extends AbstractPlayer {
     }
 
     @Override
-    public synchronized boolean isSeekable() {
+    public synchronized boolean isSeekAble() {
         if (raw == null) return false;
         synchronized (this) {
             return raw.mediaPlayer().status().isSeekable();

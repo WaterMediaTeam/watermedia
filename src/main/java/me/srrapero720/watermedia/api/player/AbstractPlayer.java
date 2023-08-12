@@ -49,24 +49,23 @@ public abstract class AbstractPlayer {
     public void prepare(CharSequence url) { compat(url.toString()); }
     public abstract void play();
     public abstract void pause();
-    public abstract void setPauseMode(boolean isPaused);
     public abstract void stop();
+    public abstract void setPauseMode(boolean isPaused);
 
 
     /* seekTo */
+    public abstract boolean isSeekAble();
     public abstract void seekTo(long time);
     public abstract void seekFastTo(long ticks);
     public abstract void seekGameTicksTo(int ticks);
+
     public abstract void seekGameTickFastTo(int ticks);
-
     public abstract long getDuration();
-    public abstract int getGameTickDuration();
 
+    public abstract int getGameTickDuration();
     public abstract long getTime();
 
     public abstract int getGameTickTime();
-
-    public abstract boolean isSeekable();
     public abstract void setRepeatMode(boolean repeatMode);
     public abstract boolean getRepeatMode();
 
@@ -92,5 +91,4 @@ public abstract class AbstractPlayer {
     public abstract boolean isStream();
 
     public abstract void release();
-
 }

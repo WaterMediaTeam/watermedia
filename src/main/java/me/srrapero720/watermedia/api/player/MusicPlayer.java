@@ -70,7 +70,7 @@ public class MusicPlayer extends AbstractPlayer {
     }
 
     @Override
-    public boolean isSeekable() {
+    public boolean isSeekAble() {
         return false;
     }
 
