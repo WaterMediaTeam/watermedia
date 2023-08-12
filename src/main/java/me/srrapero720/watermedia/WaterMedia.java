@@ -77,10 +77,6 @@ public class WaterMedia {
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
 		ThreadUtil.trySimple(() -> VideoLAN.init(this.loader), e -> onLoadFailed(VideoLAN.class.getSimpleName(), e));
 
-		// PREPARE LAVAPLAYER
-		LOGGER.info(IT, "Loading {}", LavaPlayer.class.getSimpleName());
-		ThreadUtil.trySimple(() -> LavaPlayer.init(this.loader), e -> onLoadFailed(LavaPlayer.class.getSimpleName(), e));
-
 		LOGGER.info(IT, "Finished WaterMedia startup");
 	}
 
