@@ -10,32 +10,24 @@ import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
 import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.player.events.*;
-import me.srrapero720.watermedia.api.player.events.Event;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public abstract class AbstractPlayer {
+public abstract class MediaPlayerBase extends EventManager {
     private static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     private static final Marker IT = MarkerFactory.getMarker("Player");
 
-    private final List<Event.Listener<? extends Event>> listeners = new ArrayList<>();
     protected URL url;
 
     // PLAYER
@@ -45,8 +37,14 @@ public abstract class AbstractPlayer {
     protected final AtomicBoolean prepared = new AtomicBoolean(false);
     protected final AtomicInteger volume = new AtomicInteger(100);
 
-    public AbstractPlayer(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        this.raw = this.init(factory, renderCallback, bufferFormatCallback);
+    public MediaPlayerBase(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+        if (WaterMediaAPI.vlc_isReady()) {
+            this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
+            raw.mediaPlayer().events().addMediaPlayerEventListener(new WaterMediaPlayerEventListener());
+        } else {
+            LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
+            this.raw = null;
+        }
     }
 
     public boolean isStarted() { return started.get(); }
@@ -90,11 +88,14 @@ public abstract class AbstractPlayer {
         }, (e) -> LOGGER.error(IT, "Failed to start paused player", e), null);
     }
 
+    public synchronized State getRawPlayerState() {
+        if (raw == null) return State.ERROR;
+        synchronized (this) { return raw.mediaPlayer().status().state(); }
+    }
+
     public synchronized void play() {
         if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().controls().play();
-        }
+        synchronized (this) { raw.mediaPlayer().controls().play(); }
     }
 
     public synchronized void pause() {
@@ -114,16 +115,12 @@ public abstract class AbstractPlayer {
 
     public synchronized boolean isValid() {
         if (raw == null) return false;
-        synchronized (this) {
-            return raw.mediaPlayer().media().isValid();
-        }
+        synchronized (this) { return raw.mediaPlayer().media().isValid(); }
     }
 
     public synchronized boolean isPlaying() {
         if (raw == null) return false;
-        synchronized (this) {
-            return getRawPlayerState().equals(State.PLAYING);
-        }
+        synchronized (this) { return getRawPlayerState().equals(State.PLAYING); }
     }
 
     public synchronized boolean isStream() {
@@ -134,17 +131,15 @@ public abstract class AbstractPlayer {
         }
     }
 
-    public synchronized State getRawPlayerState() {
-        if (raw == null) return State.ERROR;
-        synchronized (this) {
-            return raw.mediaPlayer().status().state();
-        }
+    public synchronized boolean isSeekAble() {
+        if (raw == null) return false;
+        synchronized (this) { return raw.mediaPlayer().status().isSeekable(); }
     }
 
     public synchronized void seekTo(long time) {
         if (raw == null) return;
         synchronized (this) {
-            fireEvent(new MediaTimeChangedEvent(this, getTime(), time));
+            post(new MediaTimeChangedEvent(this, getTime(), time));
             raw.mediaPlayer().controls().setTime(time);
         }
     }
@@ -154,34 +149,41 @@ public abstract class AbstractPlayer {
         synchronized (this) { raw.mediaPlayer().controls().setTime(ticks); }
     }
 
-    public synchronized void seekGameTicksTo(int ticks) {
+    /**
+     * Use {@link MediaPlayerBase#seekTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
+     * @deprecated is gonna being removed for 2.1.0
+     */
+    public synchronized void seekMineTo(int ticks) {
         if (raw == null) return;
         synchronized (this) {
             long time = WaterMediaAPI.math_ticksToMillis(ticks);
-            fireEvent(new MediaTimeChangedEvent(this, getTime(), time));
+            post(new MediaTimeChangedEvent(this, getTime(), time));
             raw.mediaPlayer().controls().setTime(time);
         }
     }
 
-    public synchronized void fastFoward() {
+    /**
+     * Use {@link MediaPlayerBase#seekFastTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
+     * @deprecated is gonna being removed for 2.1.0
+     */
+    public synchronized void seekMineFastTo(int ticks) {
         if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().controls().skipTime(5L);
-        }
+        synchronized (this) { raw.mediaPlayer().controls().setTime(WaterMediaAPI.math_ticksToMillis(ticks)); }
     }
 
-    public synchronized void setSpeed(float rate) {
+    public synchronized void foward() {
         if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().controls().setRate(rate);
-        }
+        synchronized (this) { raw.mediaPlayer().controls().skipTime(5L); }
     }
 
     public synchronized void rewind() {
         if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().controls().skipTime(-5L);
-        }
+        synchronized (this) { raw.mediaPlayer().controls().skipTime(-5L); }
+    }
+
+    public synchronized void setSpeed(float rate) {
+        if (raw == null) return;
+        synchronized (this) { raw.mediaPlayer().controls().setRate(rate); }
     }
 
     public synchronized void setVolume(int volume) {
@@ -196,44 +198,22 @@ public abstract class AbstractPlayer {
 
     public synchronized int getVolume() {
         if (raw == null) return volume.get();
-        synchronized (this) {
-            return raw.mediaPlayer().audio().volume();
-        }
+        synchronized (this) { return raw.mediaPlayer().audio().volume(); }
     }
 
     public synchronized void mute() {
         if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().audio().setMute(true);
-        }
+        synchronized (this) { raw.mediaPlayer().audio().setMute(true); }
     }
 
     public synchronized void unmute() {
         if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().audio().setMute(false);
-        }
+        synchronized (this) { raw.mediaPlayer().audio().setMute(false); }
     }
 
     public synchronized void setMuteMode(boolean mode) {
         if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().audio().setMute(mode);
-        }
-    }
-
-    public synchronized boolean isSeekAble() {
-        if (raw == null) return false;
-        synchronized (this) {
-            return raw.mediaPlayer().status().isSeekable();
-        }
-    }
-
-    public synchronized void seekGameTickFastTo(int ticks) {
-        if (raw == null) return;
-        synchronized (this) {
-            raw.mediaPlayer().controls().setTime(WaterMediaAPI.math_ticksToMillis(ticks));
-        }
+        synchronized (this) { raw.mediaPlayer().audio().setMute(mode); }
     }
 
     /**
@@ -248,18 +228,16 @@ public abstract class AbstractPlayer {
         }
     }
 
-    public synchronized int getGameTickDuration() {
-        if (raw == null) return 0;
-        synchronized (this) {
-            return WaterMediaAPI.math_millisToTicks(raw.mediaPlayer().status().length());
-        }
-    }
-
     /**
-     * Equals to <pre>player.mediaPlayer().media().info().duration()</pre>
-     * @return Media information about duration
+     * Use {@link MediaPlayerBase#getDuration()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
+     * @deprecated is gonna being removed for 2.1.0
      */
     @Deprecated
+    public synchronized int getMineDuration() {
+        if (raw == null) return 0;
+        synchronized (this) { return WaterMediaAPI.math_millisToTicks(raw.mediaPlayer().status().length()); }
+    }
+
     public synchronized long getMediaInfoDuration() {
         if (raw == null) return 0L;
         synchronized (this) {
@@ -269,8 +247,12 @@ public abstract class AbstractPlayer {
         }
     }
 
+    /**
+     * Use {@link MediaPlayerBase#getMediaInfoDuration()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
+     * @deprecated is gonna being removed for 2.1.0
+     */
     @Deprecated
-    public synchronized int getGameTickMediaInfoDuration() {
+    public synchronized int getMineMediaInfoDuration() {
         if (raw == null) return 0;
         synchronized (this) {
             InfoApi info = raw.mediaPlayer().media().info();
@@ -281,16 +263,16 @@ public abstract class AbstractPlayer {
 
     public synchronized long getTime() {
         if (raw == null) return 0L;
-        synchronized (this) {
-            return raw.mediaPlayer().status().time();
-        }
+        synchronized (this) { return raw.mediaPlayer().status().time(); }
     }
 
-    public synchronized int getGameTickTime() {
+    /**
+     * Use {@link MediaPlayerBase#getTime()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
+     * @deprecated is gonna being removed for 2.1.0
+     */
+    public synchronized int getMineTime() {
         if (raw == null) return 0;
-        synchronized (this) {
-            return WaterMediaAPI.math_millisToTicks(raw.mediaPlayer().status().time());
-        }
+        synchronized (this) { return WaterMediaAPI.math_millisToTicks(raw.mediaPlayer().status().time()); }
     }
 
     public synchronized boolean getRepeatMode() {
@@ -305,35 +287,6 @@ public abstract class AbstractPlayer {
     public synchronized void release() {
         if (raw == null) return;
         synchronized (this) { raw.mediaPlayer().release(); }
-
-    }
-
-    private CallbackMediaPlayerComponent init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        CallbackMediaPlayerComponent component = null;
-        if (WaterMediaAPI.vlc_isReady()) {
-            component = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
-            component.mediaPlayer().events().addMediaPlayerEventListener(new WaterMediaPlayerEventListener());
-        } else LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
-
-        return component;
-    }
-
-    /* EVENTS */
-    public void addEventListener(Object object) {
-        for (Method method : object.getClass().getDeclaredMethods()) {
-            if (method.getAnnotation(SubscribePlayerEvent.class) != null) listeners.add(eventData -> ThreadCore.trySimple(() -> method.invoke(object, eventData)));
-        }
-    }
-    public <T extends Event> void addEventListener(Event.Listener<T> listener) { listeners.add(listener); }
-    public <T extends Event> void removeEventListener(Event.Listener<T> listener) { listeners.remove(listener); }
-
-    @SuppressWarnings("unchecked")
-    private  <T extends Event> void fireEvent(T eventData) {
-        for (Event.Listener<? extends Event> listener : listeners) {
-            if (listener.getClass().equals(eventData.getClass()) || listener.getClass().isAssignableFrom(eventData.getClass())) {
-                ((Event.Listener<T>) listener).onEvent(eventData);
-            }
-        }
     }
 
     private static void checkClassLoader() {
@@ -350,13 +303,13 @@ public abstract class AbstractPlayer {
         @Override
         public void opening(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            fireEvent(new PlayerStateEvent.Prepare(AbstractPlayer.this));
+            post(new PlayerStateEvent.Prepare(MediaPlayerBase.this));
         }
 
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
             checkClassLoader();
-            fireEvent(new MediaBufferingEvent.Progress(AbstractPlayer.this, newCache));
+            post(new MediaBufferingEvent.Progress(MediaPlayerBase.this, newCache));
             buffering.set(true);
         }
 
@@ -364,27 +317,27 @@ public abstract class AbstractPlayer {
         public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
             if (buffering.get()) {
-                fireEvent(new MediaBufferingEvent.End(AbstractPlayer.this));
+                post(new MediaBufferingEvent.End(MediaPlayerBase.this));
                 buffering.set(false);
             }
 
             if (volume.get() == 0) setMuteMode(true);
             else setVolume(volume.get());
 
-            if (!prepared.get()) fireEvent(new PlayerStateEvent.Started());
-            else fireEvent(new MediaResumeEvent(AbstractPlayer.this, getDuration()));
+            if (!prepared.get()) post(new PlayerStateEvent.Started());
+            else post(new MediaResumeEvent(MediaPlayerBase.this, getDuration()));
         }
 
         @Override
         public void paused(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            fireEvent(new MediaPauseEvent(AbstractPlayer.this, getDuration()));
+            post(new MediaPauseEvent(MediaPlayerBase.this, getDuration()));
         }
 
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            fireEvent(new MediaStoppedEvent(AbstractPlayer.this, getDuration()));
+            post(new MediaStoppedEvent(MediaPlayerBase.this, getDuration()));
         }
 
         @Override
@@ -400,7 +353,7 @@ public abstract class AbstractPlayer {
         @Override
         public void finished(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            fireEvent(new MediaFinishedEvent(AbstractPlayer.this, url.toString()));
+            post(new MediaFinishedEvent(MediaPlayerBase.this, url.toString()));
         }
 
         @Override
@@ -476,7 +429,7 @@ public abstract class AbstractPlayer {
         @Override
         public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
             checkClassLoader();
-            fireEvent(new PlayerVolumeUpdateEvent(AbstractPlayer.this, getVolume(), (int) volume));
+            post(new PlayerVolumeUpdateEvent(MediaPlayerBase.this, getVolume(), (int) volume));
         }
 
         @Override
@@ -492,13 +445,13 @@ public abstract class AbstractPlayer {
         @Override
         public void error(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            fireEvent(new PlayerStateEvent.Error(AbstractPlayer.this));
+            post(new PlayerStateEvent.Error(MediaPlayerBase.this));
         }
 
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            fireEvent(new PlayerStateEvent.Ready(AbstractPlayer.this));
+            post(new PlayerStateEvent.Ready(MediaPlayerBase.this));
 
             prepared.set(true);
             setVolume(volume.get());

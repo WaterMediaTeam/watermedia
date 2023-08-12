@@ -45,7 +45,6 @@ import java.nio.ByteBuffer;
  * <p>
  * When the component is no longer needed, it should be released by invoking the {@link #release()} method.
  */
-@SuppressWarnings("serial")
 public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBase implements MediaPlayerComponent {
 
     /**

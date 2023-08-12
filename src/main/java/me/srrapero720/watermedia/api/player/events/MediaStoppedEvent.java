@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia.api.player.events;
 
-import me.srrapero720.watermedia.api.player.AbstractPlayer;
+import me.srrapero720.watermedia.api.player.MediaPlayerBase;
 
 public class MediaStoppedEvent extends Event {
-    public MediaStoppedEvent(AbstractPlayer player, long currentTime) {
+    public MediaStoppedEvent(MediaPlayerBase player, long currentTime) {
 
     }
 }

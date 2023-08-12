@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia.api.player.events;
 
-import me.srrapero720.watermedia.api.player.AbstractPlayer;
+import me.srrapero720.watermedia.api.player.MediaPlayerBase;
 
 public class PlayerVolumeUpdateEvent extends Event {
-    public PlayerVolumeUpdateEvent(AbstractPlayer player, int oldVolume, int freshVolume) {
+    public PlayerVolumeUpdateEvent(MediaPlayerBase player, int oldVolume, int freshVolume) {
 
     }
 }
