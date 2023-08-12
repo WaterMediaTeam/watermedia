@@ -33,7 +33,6 @@ public class ForgeModLoader implements IMediaLoader, IEnvLoader {
         LOGGER.info(IT, "Starting ForgeModLoader");
 
         instance = WaterMedia.getInstance(this);
-        instance.onEnvironmentInit(this);
         if (client()) instance.init();
 
         // SETUP

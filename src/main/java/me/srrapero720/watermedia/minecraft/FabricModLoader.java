@@ -24,15 +24,14 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader, IEnvL
     private final WaterMedia instance;
     private ClassLoader CL;
 
-    public FabricModLoader() {
-        instance = WaterMedia.getInstance(this);
-    }
+    public FabricModLoader() { instance = WaterMedia.getInstance(this); }
 
     @Override
     public void onPreLaunch() {
         if (client()) instance.init();
         instance.crash();
     }
+
     @Override
     public boolean development() { return FabricLoader.getInstance().isDevelopmentEnvironment(); }
 
