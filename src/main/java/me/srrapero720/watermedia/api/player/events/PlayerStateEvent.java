@@ -13,7 +13,7 @@ public class PlayerStateEvent extends Event {
     }
 
     public static class Prepare extends PlayerStateEvent {
-        public Prepare(VideoPlayer videoPlayer) {
+        public Prepare(AbstractPlayer videoPlayer) {
 
         }
     }
