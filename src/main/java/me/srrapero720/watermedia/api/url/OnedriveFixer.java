@@ -5,7 +5,7 @@ import me.srrapero720.watermedia.api.network.onedrive.OneDriveUtil;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-public class OnedriveFixer extends AbstractFixer {
+public class OnedriveFixer extends FixerBase {
 
     private static final Pattern ONE_DRIVE_URL_PATTERN = Pattern.compile("^https://1drv.ms/[a-z]/[a-zA-Z0-9!_-]+$");
 

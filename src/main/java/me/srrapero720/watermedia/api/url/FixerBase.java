@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.url;
 
 import java.net.URL;
 
-public abstract class AbstractFixer {
+public abstract class FixerBase {
     public String name() { return this.getClass().getSimpleName(); }
 
     /**

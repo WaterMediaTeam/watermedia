@@ -8,7 +8,7 @@ import retrofit2.Response;
 
 import java.net.URL;
 
-public class KickFixer extends AbstractFixer {
+public class KickFixer extends FixerBase {
 
     @Override
     public boolean isValid(URL url) {

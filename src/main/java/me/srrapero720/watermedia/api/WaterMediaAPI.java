@@ -24,7 +24,7 @@ import java.util.*;
 
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerFactory.getMarker(WaterMediaAPI.class.getSimpleName());
-    private static final List<AbstractFixer> URL_PATCHERS = new ArrayList<>();
+    private static final List<FixerBase> URL_PATCHERS = new ArrayList<>();
 
     // RESOURCES
     public static ImageRenderer LOADING_GIF;
@@ -106,7 +106,7 @@ public final class WaterMediaAPI {
      * Creates your own URLPatch and register it to WaterMediaAPI
      * @param patch All patches you want to Use
      */
-    public static void url_registerFixer(AbstractFixer...patch) {
+    public static void url_registerFixer(FixerBase...patch) {
         String[] names = new String[patch.length];
         for (int i = 0; i < patch.length; i++) {
             URL_PATCHERS.add(patch[i]);
@@ -127,7 +127,7 @@ public final class WaterMediaAPI {
             URL url = new URL(stringUrl);
 
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (AbstractFixer compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
+                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
         } catch (Exception e) {

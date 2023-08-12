@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.url;
 
 import java.net.URL;
 
-public class DropboxFixer extends AbstractFixer {
+public class DropboxFixer extends FixerBase {
     @Override
     public boolean isValid(URL url) {
         String q;
