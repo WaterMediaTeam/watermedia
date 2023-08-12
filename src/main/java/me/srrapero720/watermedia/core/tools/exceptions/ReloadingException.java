@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tools.exceptions;
+package me.srrapero720.watermedia.core.tools.exceptions;
 
 public class ReloadingException extends Exception {
     public ReloadingException(String module) {

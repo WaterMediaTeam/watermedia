@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.tools.JarTool.USER_AGENT;
+import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
 
 public class ImageFetch {
     private static final Marker IT = MarkerFactory.getMarker(ImageFetch.class.getSimpleName());

@@ -6,8 +6,8 @@ import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.tools.exceptions.ReloadingException;
-import me.srrapero720.watermedia.tools.JarTool;
+import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.JarTool;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tools;
+package me.srrapero720.watermedia.core.tools;
 
 import com.sun.jna.Platform;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;

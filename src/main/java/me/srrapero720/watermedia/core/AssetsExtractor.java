@@ -1,10 +1,10 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.tools.exceptions.ReloadingException;
-import me.srrapero720.watermedia.tools.FileTool;
-import me.srrapero720.watermedia.tools.JarTool;
-import me.srrapero720.watermedia.tools.OsTool;
+import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.FileTool;
+import me.srrapero720.watermedia.core.tools.JarTool;
+import me.srrapero720.watermedia.core.tools.OsTool;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

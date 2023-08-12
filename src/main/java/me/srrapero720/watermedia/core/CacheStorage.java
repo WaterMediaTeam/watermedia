@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tools;
+package me.srrapero720.watermedia.core.tools;
 
 import java.io.*;
 import java.nio.charset.Charset;

@@ -6,7 +6,7 @@ import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.url.*;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.player.VideoPlayer;
-import me.srrapero720.watermedia.tools.JarTool;
+import me.srrapero720.watermedia.core.tools.JarTool;
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.core.VideoLAN;
 import org.lwjgl.BufferUtils;

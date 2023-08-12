@@ -4,7 +4,7 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.*;
-import me.srrapero720.watermedia.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import me.lib720.watermod.ThreadCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
