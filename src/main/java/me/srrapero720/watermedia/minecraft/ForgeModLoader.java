@@ -29,6 +29,7 @@ public class ForgeModLoader implements IMediaLoader, IEnvLoader {
     private static final String NAME = "Forge";
     private final WaterMedia instance;
 
+    private ClassLoader CL;
     public ForgeModLoader() {
         LOGGER.info(IT, "Starting ForgeModLoader");
 
@@ -46,7 +47,9 @@ public class ForgeModLoader implements IMediaLoader, IEnvLoader {
     }
 
     @Override
-    public ClassLoader getModuleClassLoader() { return Thread.currentThread().getContextClassLoader(); }
+    public ClassLoader getModuleClassLoader() {
+        return (CL != null) ? CL : (CL = Thread.currentThread().getContextClassLoader());
+    }
 
     @Override
     public String getName() { return NAME; }
