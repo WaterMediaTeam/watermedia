@@ -21,7 +21,7 @@
   "environment": "client",
   "entrypoints": {
     "preLaunch": [
-      "me.srrapero720.watermedia.minecraft.FabricModLoader"
+      "me.srrapero720.watermedia.fml.FabricML"
     ]
   },
   "breaks": {

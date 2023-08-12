@@ -2,8 +2,8 @@
   "required": true,
   "compatibilityLevel": "JAVA_8",
   "refmap": "watermedia.mixin-refmap.json",
-  "package": "me.srrapero720.watermedia.minecraft.mixins",
-  "plugin": "me.srrapero720.watermedia.minecraft.plugins.MixinPlugin",
+  "package": "me.srrapero720.watermedia.mixins",
+  "plugin": "me.srrapero720.watermedia.fml.mixin.MixinPlugin",
   "client": [],
   "minVersion": "0.8",
   "mixins": []

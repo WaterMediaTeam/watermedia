@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.minecraft;
+package me.srrapero720.watermedia.fml;
 
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
@@ -24,13 +24,13 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * IMPORTANT: this class just fires post-launch just to interact with forge stuff
  */
 @Mod(WaterMedia.ID)
-public class ForgeModLoader implements IMediaLoader, IEnvLoader {
+public class ForgeML implements IMediaLoader, IEnvLoader {
     private static final Marker IT = MarkerFactory.getMarker("ForgeModLoader");
     private static final String NAME = "Forge";
     private final WaterMedia instance;
 
     private ClassLoader CL;
-    public ForgeModLoader() {
+    public ForgeML() {
         LOGGER.info(IT, "Starting...");
 
         instance = WaterMedia.getInstance(this);
