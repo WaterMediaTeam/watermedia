@@ -45,7 +45,7 @@ public class VideoLAN {
         CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
 
         FACTORY = ThreadCore.tryAndReturnNull(defaultVar -> {
-            String[] args = JarTool.readStringList(loader.getModuleClassLoader(), "/videolan/commandline.json").toArray(new String[0]);
+            String[] args = JarTool.readStringList(loader.getModuleClassLoader(), "/videolan/arguments.json").toArray(new String[0]);
             args[2] = logs.toAbsolutePath().toString();
 
             return WaterMediaAPI.vlc_createFactory(args);
