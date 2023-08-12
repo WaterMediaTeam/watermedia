@@ -12,6 +12,8 @@ import org.slf4j.MarkerFactory;
 import java.io.File;
 import java.nio.file.Path;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 /**
  * Loader for FABRIC
  * Is safe do things inside this class
@@ -24,7 +26,10 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader, IEnvL
     private final WaterMedia instance;
     private ClassLoader CL;
 
-    public FabricModLoader() { instance = WaterMedia.getInstance(this); }
+    public FabricModLoader() {
+        LOGGER.info(IT, "Starting...");
+        instance = WaterMedia.getInstance(this);
+    }
 
     @Override
     public void onPreLaunch() {

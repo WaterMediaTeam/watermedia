@@ -17,10 +17,6 @@ public class WaterMedia {
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 	public static final Marker IT = MarkerFactory.getMarker("Bootstrap");
 
-	static {
-		LOGGER.warn(IT, "Class was loaded");
-	}
-
 	// RETAINERS
 	private static WaterMedia instance;
 	private static volatile Exception exception;
@@ -32,12 +28,12 @@ public class WaterMedia {
 		return instance;
 	}
 
-	public WaterMedia(IMediaLoader loader) {
+	private WaterMedia(IMediaLoader loader) {
 		this.loader = loader;
 		LOGGER.info(IT, "Running WATERMeDIA on {}", this.loader.getName());
 
         if (loader instanceof IEnvLoader) onEnvironmentInit((IEnvLoader) loader);
-        else LOGGER.warn(IT, "Preloading mode enabled, must be loaded environment manually");
+        else LOGGER.warn(IT, "Environment not detected");
     }
 
 	public void onEnvironmentInit(IEnvLoader loader) {

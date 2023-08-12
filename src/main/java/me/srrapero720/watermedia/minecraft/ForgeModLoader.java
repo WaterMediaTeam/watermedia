@@ -25,13 +25,13 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  */
 @Mod(WaterMedia.ID)
 public class ForgeModLoader implements IMediaLoader, IEnvLoader {
-    private static final Marker IT = MarkerFactory.getMarker("ForgeLoader");
+    private static final Marker IT = MarkerFactory.getMarker("ForgeModLoader");
     private static final String NAME = "Forge";
     private final WaterMedia instance;
 
     private ClassLoader CL;
     public ForgeModLoader() {
-        LOGGER.info(IT, "Starting ForgeModLoader");
+        LOGGER.info(IT, "Starting...");
 
         instance = WaterMedia.getInstance(this);
         if (client()) instance.init();
