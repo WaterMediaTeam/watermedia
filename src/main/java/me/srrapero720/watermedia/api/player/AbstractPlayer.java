@@ -1,9 +1,13 @@
 package me.srrapero720.watermedia.api.player;
 
+import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.player.events.Event;
+import me.srrapero720.watermedia.api.player.events.SubscribePlayerEvent;
 
 import java.awt.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +22,19 @@ public abstract class AbstractPlayer {
         if (compat != null) this.url = compat;
     }
 
-    public <T extends Event> void addEventListener(Event.Listener<T> listener) {
-        listeners.add(listener);
-    }
+    public void register(Object object) {
+        Class<?> clazz = object.getClass();
+        Method[] methods = clazz.getDeclaredMethods();
 
-    public <T extends Event> void removeEventListener(Event.Listener<T> listener) {
-        listeners.remove(listener);
+        for (Method method : methods) {
+            Annotation annotation = method.getAnnotation(SubscribePlayerEvent.class);
+            if (annotation != null) {
+                listeners.add(eventData -> ThreadCore.trySimple(() -> method.invoke(object, eventData)));
+            }
+        }
     }
+    public <T extends Event> void addEventListener(Event.Listener<T> listener) { listeners.add(listener); }
+    public <T extends Event> void removeEventListener(Event.Listener<T> listener) { listeners.remove(listener); }
 
     @SuppressWarnings("unchecked")
     protected <T extends Event> void fireEvent(T eventData) {
