@@ -25,7 +25,7 @@ public class JarTool {
     static final Marker IT = MarkerFactory.getMarker("JarUtil");
 
     public static boolean copyAsset(ClassLoader loader, String origin, String dest) {
-        try (InputStream is = getResource(loader, origin)) {
+        try (InputStream is = readResource(loader, origin)) {
             Path dllDestinationPath = Paths.get(dest);
             if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
 
@@ -42,7 +42,7 @@ public class JarTool {
 
     public static List<String> readStringList(ClassLoader loader, String path) {
         List<String> result = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getResource(loader, path)))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResource(loader, path)))) {
             result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
         } catch (Exception e) {
             LOGGER.error(IT, "### Exception trying to read JSON from {}", path, e);
@@ -52,7 +52,7 @@ public class JarTool {
     }
 
     public static BufferedImage readImage(ClassLoader loader, String path) {
-        try (InputStream in = getResource(loader, path)) {
+        try (InputStream in = readResource(loader, path)) {
             BufferedImage image = ImageIO.read(Objects.requireNonNull(in));
             if (image != null) return image;
             else throw new FileNotFoundException("Image read from WaterMedia resources was NULL");
@@ -62,7 +62,7 @@ public class JarTool {
     }
 
     public static GifDecoder readGif(ClassLoader loader, String path) {
-        try (InputStream inputStream = getResource(loader, path); ByteArrayInputStream in = (inputStream != null) ? new ByteArrayInputStream(IOUtils.toByteArray(inputStream)) : null) {
+        try (InputStream inputStream = readResource(loader, path); ByteArrayInputStream in = (inputStream != null) ? new ByteArrayInputStream(IOUtils.toByteArray(inputStream)) : null) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
 
@@ -78,7 +78,7 @@ public class JarTool {
         }
     }
 
-    public static InputStream getResource(ClassLoader loader, String source) {
+    public static InputStream readResource(ClassLoader loader, String source) {
         InputStream is = loader.getResourceAsStream(source);
         if (is == null && source.startsWith("/")) is = loader.getResourceAsStream(source.substring(1));
         return is;
