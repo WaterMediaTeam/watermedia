@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.players.VideoPlayer;
+import me.srrapero720.watermedia.api.player.VideoPlayer;
 
 public class Testo {
     public static void t() {

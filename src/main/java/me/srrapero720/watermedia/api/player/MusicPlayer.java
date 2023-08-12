@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.players;
+package me.srrapero720.watermedia.api.player;
 
 import org.apache.commons.lang3.NotImplementedException;
 

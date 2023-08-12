@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.images;
+package me.srrapero720.watermedia.api.image;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import org.slf4j.Marker;

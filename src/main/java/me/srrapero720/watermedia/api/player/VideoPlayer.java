@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.players;
+package me.srrapero720.watermedia.api.player;
 
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
@@ -14,7 +14,7 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.players.events.*;
+import me.srrapero720.watermedia.api.player.events.*;
 import me.srrapero720.watermedia.core.VideoLAN;
 import me.lib720.watermod.ThreadCore;
 import org.slf4j.Marker;

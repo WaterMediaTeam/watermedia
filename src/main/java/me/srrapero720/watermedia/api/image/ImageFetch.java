@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.images;
+package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.core.CacheStorage;

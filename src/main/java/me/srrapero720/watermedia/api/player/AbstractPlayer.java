@@ -1,7 +1,7 @@
-package me.srrapero720.watermedia.api.players;
+package me.srrapero720.watermedia.api.player;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.players.events.Event;
+import me.srrapero720.watermedia.api.player.events.Event;
 
 import java.awt.*;
 import java.net.URL;
