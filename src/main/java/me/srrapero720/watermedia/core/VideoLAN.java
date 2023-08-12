@@ -3,12 +3,12 @@ package me.srrapero720.watermedia.core;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
+import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
-import me.srrapero720.watermedia.util.AssetsUtil;
-import me.srrapero720.watermedia.util.ThreadUtil;
+import me.srrapero720.watermedia.tools.JarTool;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -44,8 +44,8 @@ public class VideoLAN {
         // VLCJ INIT
         CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
 
-        FACTORY = ThreadUtil.tryAndReturnNull(defaultVar -> {
-            String[] args = AssetsUtil.getStringList(loader.getModuleClassLoader(), "/videolan/commandline.json").toArray(new String[0]);
+        FACTORY = ThreadCore.tryAndReturnNull(defaultVar -> {
+            String[] args = JarTool.readStringList(loader.getModuleClassLoader(), "/videolan/commandline.json").toArray(new String[0]);
             args[2] = logs.toAbsolutePath().toString();
 
             return WaterMediaAPI.vlc_createFactory(args);

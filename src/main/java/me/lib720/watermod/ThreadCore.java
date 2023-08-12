@@ -1,10 +1,10 @@
-package me.srrapero720.watermedia.util;
+package me.lib720.watermod;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // This class comes from WATERCoRE and isn't sync with WATERCoRE main project
-public class ThreadUtil {
+public class ThreadCore {
     private static int workers = 0;
     private static Thread THREADLG = null;
     private static final Logger LOGGER = LoggerFactory.getLogger("ThreadUtil");
@@ -110,7 +110,7 @@ public class ThreadUtil {
         threadLoggerKill();
         THREADLG = thread(() -> {
             while (true) {
-                trySimple(ThreadUtil::showThreads);
+                trySimple(ThreadCore::showThreads);
                 trySimple(() -> Thread.sleep(2000));
                 if (THREADLG == null) throw new IllegalStateException("Thread logger was lost");
             }

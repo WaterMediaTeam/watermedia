@@ -26,7 +26,7 @@ public class MediaStorage {
     private static boolean inited = false;
 
     public static void init(IMediaLoader modLoader) throws UnsafeException {
-        if (inited) throw new IllegalReloadException("Rejected attempt to reload LocalStorage");
+        if (inited) throw new IllegalReloadException(MediaStorage.class.getSimpleName());
 
         // SETUP
         dir = modLoader.getTmpDirectory().toAbsolutePath().resolve("cache/pictures").toFile();
@@ -57,28 +57,32 @@ public class MediaStorage {
     }
 
     private static File getFile(String url) {
-        return new File(dir, Base64.encodeBase64String(url.getBytes()));
+        synchronized (ENTRIES) {
+            return new File(dir, Base64.encodeBase64String(url.getBytes()));
+        }
     }
 
-    public static void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
-        Entry entry = new Entry(url, tag, time, expireTime);
-        boolean saved = false;
-        OutputStream out = null;
-        File file = getFile(entry.url);
+    public static synchronized void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
+        synchronized (ENTRIES) {
+            Entry entry = new Entry(url, tag, time, expireTime);
+            boolean saved = false;
+            OutputStream out = null;
+            File file = getFile(entry.url);
 
-        try {
-            out = new FileOutputStream(file);
-            out.write(data);
-            saved = true;
-        } catch (Exception e) { LOGGER.error(IT, "Failed to save cache file {}", url, e);
-        } finally { IOUtils.closeQuietly(out); }
+            try {
+                out = new FileOutputStream(file);
+                out.write(data);
+                saved = true;
+            } catch (Exception e) { LOGGER.error(IT, "Failed to save cache file {}", url, e);
+            } finally { IOUtils.closeQuietly(out); }
 
-        // SAVE INDEX FIST
-        if (saved && refreshAllIndexOnFile()) ENTRIES.put(url, entry);
-        else if (file.exists()) file.delete();
+            // SAVE INDEX FIST
+            if (saved && refreshAll()) ENTRIES.put(url, entry);
+            else if (file.exists()) file.delete();
+        }
     }
 
-    private static boolean refreshAllIndexOnFile() {
+    private static boolean refreshAll() {
         DataOutputStream out = null;
         try {
             out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)));
@@ -100,10 +104,8 @@ public class MediaStorage {
     }
 
     public static Entry getEntry(String url) { return ENTRIES.get(url); }
-    public static void updateEntry(Entry fresh) {
-        ENTRIES.put(fresh.url, fresh);
-    }
-    public static void deleteEntry(String url) {
+    public static synchronized void updateEntry(Entry fresh) { ENTRIES.put(fresh.url, fresh); }
+    public static synchronized void deleteEntry(String url) {
         ENTRIES.remove(url);
         File file = getFile(url);
         if (file.exists()) file.delete();

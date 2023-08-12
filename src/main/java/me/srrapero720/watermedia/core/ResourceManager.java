@@ -1,10 +1,11 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.IMediaLoader;
+import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
 import me.srrapero720.watermedia.core.exceptions.UnsafeException;
-import me.srrapero720.watermedia.util.AssetsUtil;
-import me.srrapero720.watermedia.util.StreamUtil;
-import me.srrapero720.watermedia.util.WaterOs;
+import me.srrapero720.watermedia.tools.FileTool;
+import me.srrapero720.watermedia.tools.JarTool;
+import me.srrapero720.watermedia.tools.OsTool;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -17,18 +18,20 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class ResourceManager {
     private static final String VIDEOLAN_V = "3.0.18a";
     private static final Marker IT = MarkerFactory.getMarker("ResourceManager");
+    private static boolean loaded = false;
 
     public static void init(IMediaLoader loader) throws UnsafeException {
+        if (loaded) throw new IllegalReloadException(ResourceManager.class.getSimpleName());
         // STEP 1: EXTRACT VLC
-        if (WaterOs.getArch().wrapped) {
-            Path output = loader.getTmpDirectory().resolve("videolan/").resolve(WaterOs.getArch().toString() + ".zip");
+        if (OsTool.getArch().wrapped) {
+            Path output = loader.getTmpDirectory().resolve("videolan/").resolve(OsTool.getArch().toString() + ".zip");
             Path config = output.getParent().resolve("version.cfg");
-            String source = "/videolan/"  + WaterOs.getArch() + ".zip";
+            String source = "/videolan/"  + OsTool.getArch() + ".zip";
 
             try {
-                if (!VIDEOLAN_V.equals(AssetsUtil.getString(config.toAbsolutePath()))) {
-                    if (AssetsUtil.copyAsset(loader.getModuleClassLoader(), source, output)) {
-                        StreamUtil.unzip(output, output.getParent());
+                if (!VIDEOLAN_V.equals(FileTool.readString(config.toAbsolutePath()))) {
+                    if (JarTool.copyAsset(loader.getModuleClassLoader(), source, output.toString())) {
+                        FileTool.unzip(output, output.getParent());
                         Files.delete(output);
                     }
 

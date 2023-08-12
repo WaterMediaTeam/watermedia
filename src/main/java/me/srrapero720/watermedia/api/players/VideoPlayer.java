@@ -16,7 +16,7 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBuffer
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.players.events.*;
 import me.srrapero720.watermedia.core.VideoLAN;
-import me.srrapero720.watermedia.util.ThreadUtil;
+import me.lib720.watermod.ThreadCore;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -53,7 +53,7 @@ public class VideoPlayer extends AbstractPlayer {
     public synchronized void start(CharSequence url) { this.start(url, new String[0]); }
     public synchronized void start(CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
-        ThreadUtil.threadTry(() -> {
+        ThreadCore.threadTry(() -> {
             super.start(url.toString());
 
             if (this.url != null) {
@@ -68,7 +68,7 @@ public class VideoPlayer extends AbstractPlayer {
     public synchronized void prepare(CharSequence url) { this.prepare(url, new String[0]); }
     public synchronized void prepare(CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
-        ThreadUtil.threadTry(() -> {
+        ThreadCore.threadTry(() -> {
             super.start(url.toString());
             raw.mediaPlayer().media().prepare(this.url.toString(), vlcArgs);
             started.set(true);

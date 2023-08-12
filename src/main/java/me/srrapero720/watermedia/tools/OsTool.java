@@ -1,9 +1,9 @@
-package me.srrapero720.watermedia.util;
+package me.srrapero720.watermedia.tools;
 
 import com.sun.jna.Platform;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 
-public enum WaterOs {
+public enum OsTool {
     WIN_X32("win", "x32", ".dll", false),
     WIN_X64("win", "x64", ".dll", true),
     MAC_X64("mac", "x64", ".dylib", false),
@@ -21,7 +21,7 @@ public enum WaterOs {
 
     public final String os, arch, ext;
     public final boolean wrapped;
-    WaterOs(String os, String arch, String ext, boolean wrapped) {
+    OsTool(String os, String arch, String ext, boolean wrapped) {
         this.os = os;
         this.arch = arch;
         this.ext = ext;
@@ -31,8 +31,8 @@ public enum WaterOs {
     @Override
     public String toString() { return os + "-" + arch; }
 
-    private static final WaterOs ARCH = WaterOs.getArch();
-    public static WaterOs getArch() {
+    private static final OsTool ARCH = OsTool.getArch();
+    public static OsTool getArch() {
         if (ARCH != null) return ARCH;
         switch (Platform.ARCH) {
             case "x86-64":

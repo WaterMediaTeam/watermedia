@@ -4,20 +4,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.srrapero720.watermedia.util.StreamUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
+import static me.srrapero720.watermedia.tools.JarTool.USER_AGENT;
 
 public class TwitchUtil {
     public static final String GRAPH_QL_URL = "https://gql.twitch.tv/gql";
@@ -26,6 +24,8 @@ public class TwitchUtil {
     public static final String CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 
     private static final Gson gson = new Gson();
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
+    private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 
     public static List<StreamQuality> getStream(String stream) throws IOException, StreamNotFound {
         String apiUrl = buildApiUrl(stream, false);
@@ -64,8 +64,8 @@ public class TwitchUtil {
         int responseCode = conn.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) throw new StreamNotFound("Stream not found");
         return (responseCode == HttpURLConnection.HTTP_OK) ?
-                new String(StreamUtil.readAllBytes(conn.getInputStream())) :
-                new String(StreamUtil.readAllBytes(conn.getErrorStream()));
+                new String(readAllBytes(conn.getInputStream())) :
+                new String(readAllBytes(conn.getErrorStream()));
     }
 
     private static JsonElement post(String id, boolean isVOD) throws IOException {
@@ -79,7 +79,7 @@ public class TwitchUtil {
             os.write(buildJsonString(id, isVOD).getBytes(StandardCharsets.UTF_8));
         }
 
-        return new JsonParser().parse(new String(StreamUtil.readAllBytes(conn.getInputStream())));
+        return new JsonParser().parse(new String(readAllBytes(conn.getInputStream())));
     }
 
     /**
@@ -118,6 +118,71 @@ public class TwitchUtil {
         jsonMap.put("variables", variables);
 
         return gson.toJson(jsonMap);
+    }
+
+    public static byte[] readAllBytes(InputStream inputStream) throws IOException {
+        int len = Integer.MAX_VALUE;
+        if (len < 0) {
+            throw new IllegalArgumentException("len < 0");
+        }
+
+        List<byte[]> bufs = null;
+        byte[] result = null;
+        int total = 0;
+        int remaining = len;
+        int n;
+        do {
+            byte[] buf = new byte[Math.min(remaining, DEFAULT_BUFFER_SIZE)];
+            int nread = 0;
+
+            // read to EOF which may read more or less than buffer size
+            while ((n = inputStream.read(buf, nread,
+                    Math.min(buf.length - nread, remaining))) > 0) {
+                nread += n;
+                remaining -= n;
+            }
+
+            if (nread > 0) {
+                if (MAX_BUFFER_SIZE - total < nread) {
+                    throw new OutOfMemoryError("Required array size too large");
+                }
+                if (nread < buf.length) {
+                    buf = Arrays.copyOfRange(buf, 0, nread);
+                }
+                total += nread;
+                if (result == null) {
+                    result = buf;
+                } else {
+                    if (bufs == null) {
+                        bufs = new ArrayList<>();
+                        bufs.add(result);
+                    }
+                    bufs.add(buf);
+                }
+            }
+            // if the last call to read returned -1 or the number of bytes
+            // requested have been read then break
+        } while (n >= 0 && remaining > 0);
+
+        if (bufs == null) {
+            if (result == null) {
+                return new byte[0];
+            }
+            return result.length == total ?
+                    result : Arrays.copyOf(result, total);
+        }
+
+        result = new byte[total];
+        int offset = 0;
+        remaining = total;
+        for (byte[] b : bufs) {
+            int count = Math.min(b.length, remaining);
+            System.arraycopy(b, 0, result, offset, count);
+            offset += count;
+            remaining -= count;
+        }
+
+        return result;
     }
 
     public static class StreamNotFound extends Exception {

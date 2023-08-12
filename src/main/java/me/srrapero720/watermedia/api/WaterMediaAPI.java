@@ -4,10 +4,10 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.api.url.*;
-import me.srrapero720.watermedia.util.AssetsUtil;
 import me.srrapero720.watermedia.api.images.ImageRenderer;
 import me.srrapero720.watermedia.api.players.VideoPlayer;
-import me.srrapero720.watermedia.util.ThreadUtil;
+import me.srrapero720.watermedia.tools.JarTool;
+import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.core.VideoLAN;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -49,28 +49,28 @@ public final class WaterMediaAPI {
 
         LOGGER.info(IT, "Loading internal {}'s", ImageRenderer.class.getSimpleName());
 
-        ThreadUtil.trySimple(() -> {
-            if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(AssetsUtil.getGif(modLoader.getModuleClassLoader(), "/pictures/loading.gif"));
+        ThreadCore.trySimple(() -> {
+            if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(JarTool.readGif(modLoader.getModuleClassLoader(), "/pictures/loading.gif"));
             else LOGGER.warn("Skipping LOADING_GIF");
         }, (e) -> LOGGER.error("Failed to load 'LOADING_GIF'", e));
 
-        ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED == null) VLC_FAILED = new ImageRenderer(AssetsUtil.getImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
+        ThreadCore.trySimple(() -> {
+            if (VLC_FAILED == null) VLC_FAILED = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
             else LOGGER.warn("Skipping VLC_FAILED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED'", e));
 
-        ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED_EXTENDED == null) VLC_FAILED_EXTENDED = new ImageRenderer(AssetsUtil.getImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-landscape.png"));
+        ThreadCore.trySimple(() -> {
+            if (VLC_FAILED_EXTENDED == null) VLC_FAILED_EXTENDED = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-landscape.png"));
             else LOGGER.warn("Skipping VLC_FAILED_EXTENDED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_EXTENDED'", e));
 
-        ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED_INSTALL == null) VLC_FAILED_INSTALL = new ImageRenderer(AssetsUtil.getImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-install.png"));
+        ThreadCore.trySimple(() -> {
+            if (VLC_FAILED_INSTALL == null) VLC_FAILED_INSTALL = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-install.png"));
             else LOGGER.warn("Skipping VLC_FAILED_INSTALL");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL'", e));
 
-        ThreadUtil.trySimple(() -> {
-            if (VLC_FAILED_INSTALL_EXTENDED == null) VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(AssetsUtil.getImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-install-landscape.png"));
+        ThreadCore.trySimple(() -> {
+            if (VLC_FAILED_INSTALL_EXTENDED == null) VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-install-landscape.png"));
             else LOGGER.warn("Skipping VLC_FAILED_INSTALL_EXTENDED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL_EXTENDED'", e));
     }
@@ -99,7 +99,7 @@ public final class WaterMediaAPI {
      * @param url the URL in a string
      * @return if is valid.
      */
-    public static boolean url_isValid(String url) { return ThreadUtil.tryAndReturn(defaultVar -> { new URL(url); return true; }, false); }
+    public static boolean url_isValid(String url) { return ThreadCore.tryAndReturn(defaultVar -> { new URL(url); return true; }, false); }
 
 
     /**
@@ -126,7 +126,7 @@ public final class WaterMediaAPI {
         try {
             URL url = new URL(stringUrl);
 
-            return ThreadUtil.tryAndReturn(defaultVar -> {
+            return ThreadCore.tryAndReturn(defaultVar -> {
                 for (AbstractFixer compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);

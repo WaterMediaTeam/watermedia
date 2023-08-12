@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.images;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.core.MediaStorage;
-import me.srrapero720.watermedia.util.ThreadUtil;
+import me.lib720.watermod.ThreadCore;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -26,13 +26,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.util.AssetsUtil.USER_AGENT;
+import static me.srrapero720.watermedia.tools.JarTool.USER_AGENT;
 
 public class ImageFetch {
     private static final Marker IT = MarkerFactory.getMarker(ImageFetch.class.getSimpleName());
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final AtomicInteger WK_TH = new AtomicInteger(0);
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadUtil.getMinThreadCount(), r -> {
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {
         Thread t = new Thread(r);
         t.setDaemon(true);
         t.setPriority(Thread.MIN_PRIORITY);
@@ -117,17 +117,17 @@ public class ImageFetch {
 
             // EXPIRATION GETTER FIRST
             if (maxAge != null && !maxAge.isEmpty())
-                expTimestamp = ThreadUtil.tryAndReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
+                expTimestamp = ThreadCore.tryAndReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
 
             // EXPIRATION GETTER SECOND WAY
             String expires = request.getHeaderField("Expires");
             if (expires != null && !expires.isEmpty())
-                expTimestamp = ThreadUtil.tryAndReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
+                expTimestamp = ThreadCore.tryAndReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
 
             // LAST TIMESTAMP
             String lastMod = request.getHeaderField("Last-Modified");
             if (lastMod != null && !lastMod.isEmpty()) {
-                lastTimestamp = ThreadUtil.tryAndReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
+                lastTimestamp = ThreadCore.tryAndReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
             } else lastTimestamp = requestTime;
 
             if (entry != null) {

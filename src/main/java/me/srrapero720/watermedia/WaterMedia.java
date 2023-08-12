@@ -3,7 +3,7 @@ package me.srrapero720.watermedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.*;
 import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
-import me.srrapero720.watermedia.util.ThreadUtil;
+import me.lib720.watermod.ThreadCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -63,19 +63,19 @@ public class WaterMedia {
 
 		// RESOURCE EXTRACTOR
 		LOGGER.info(IT, "Loading {}", ResourceManager.class.getSimpleName());
-		ThreadUtil.trySimple(() -> ResourceManager.init(this.loader), e -> onLoadFailed(ResourceManager.class.getSimpleName(), e));
+		ThreadCore.trySimple(() -> ResourceManager.init(this.loader), e -> onLoadFailed(ResourceManager.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
-		ThreadUtil.trySimple(() -> WaterMediaAPI.init(this.loader), e -> onLoadFailed(WaterMediaAPI.class.getSimpleName(), e));
+		ThreadCore.trySimple(() -> WaterMediaAPI.init(this.loader), e -> onLoadFailed(WaterMediaAPI.class.getSimpleName(), e));
 
 		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading {}", MediaStorage.class.getSimpleName());
-		ThreadUtil.trySimple(() -> MediaStorage.init(this.loader), e -> onLoadFailed(MediaStorage.class.getSimpleName(), e));
+		ThreadCore.trySimple(() -> MediaStorage.init(this.loader), e -> onLoadFailed(MediaStorage.class.getSimpleName(), e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
-		ThreadUtil.trySimple(() -> VideoLAN.init(this.loader), e -> onLoadFailed(VideoLAN.class.getSimpleName(), e));
+		ThreadCore.trySimple(() -> VideoLAN.init(this.loader), e -> onLoadFailed(VideoLAN.class.getSimpleName(), e));
 
 		LOGGER.info(IT, "Finished WaterMedia startup");
 	}
