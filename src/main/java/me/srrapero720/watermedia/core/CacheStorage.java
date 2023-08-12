@@ -16,8 +16,8 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class MediaStorage {
-    private static final Marker IT = MarkerFactory.getMarker(MediaStorage.class.getSimpleName());
+public class CacheStorage {
+    private static final Marker IT = MarkerFactory.getMarker(CacheStorage.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;
@@ -25,7 +25,7 @@ public class MediaStorage {
     private static boolean inited = false;
 
     public static void init(IMediaLoader modLoader) throws Exception {
-        if (inited) throw new ReloadingException(MediaStorage.class.getSimpleName());
+        if (inited) throw new ReloadingException(CacheStorage.class.getSimpleName());
 
         // SETUP
         dir = modLoader.getTmpDirectory().toAbsolutePath().resolve("cache/pictures").toFile();
@@ -130,6 +130,6 @@ public class MediaStorage {
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
-        public File getFile() { return MediaStorage.getFile(url); }
+        public File getFile() { return CacheStorage.getFile(url); }
     }
 }

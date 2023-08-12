@@ -60,16 +60,16 @@ public class WaterMedia {
 		LOGGER.info(IT, "Starting WaterMedia");
 
 		// RESOURCE EXTRACTOR
-		LOGGER.info(IT, "Loading {}", ResourceManager.class.getSimpleName());
-		ThreadCore.trySimple(() -> ResourceManager.init(this.loader), e -> onLoadFailed(ResourceManager.class.getSimpleName(), e));
+		LOGGER.info(IT, "Loading {}", AssetsExtractor.class.getSimpleName());
+		ThreadCore.trySimple(() -> AssetsExtractor.init(this.loader), e -> onLoadFailed(AssetsExtractor.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
 		ThreadCore.trySimple(() -> WaterMediaAPI.init(this.loader), e -> onLoadFailed(WaterMediaAPI.class.getSimpleName(), e));
 
 		// PREPARE STORAGES
-		LOGGER.info(IT, "Loading {}", MediaStorage.class.getSimpleName());
-		ThreadCore.trySimple(() -> MediaStorage.init(this.loader), e -> onLoadFailed(MediaStorage.class.getSimpleName(), e));
+		LOGGER.info(IT, "Loading {}", CacheStorage.class.getSimpleName());
+		ThreadCore.trySimple(() -> CacheStorage.init(this.loader), e -> onLoadFailed(CacheStorage.class.getSimpleName(), e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
