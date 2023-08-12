@@ -4,7 +4,7 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.*;
-import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
+import me.srrapero720.watermedia.tools.exceptions.ReloadingException;
 import me.lib720.watermod.ThreadCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +81,6 @@ public class WaterMedia {
 	public void crash() { if (exception != null) throw new RuntimeException(exception); }
 	private void onLoadFailed(String module, Exception e) {
 		LOGGER.error(IT, "Exception loading {}", module, e);
-		if (exception != null && !(e instanceof IllegalReloadException)) exception = e;
+		if (exception != null && !(e instanceof ReloadingException)) exception = e;
 	}
 }

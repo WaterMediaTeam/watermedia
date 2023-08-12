@@ -1,14 +1,14 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
-import me.srrapero720.watermedia.core.exceptions.UnsafeException;
+import me.srrapero720.watermedia.tools.exceptions.ReloadingException;
 import me.srrapero720.watermedia.tools.FileTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.tools.OsTool;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -20,8 +20,8 @@ public class ResourceManager {
     private static final Marker IT = MarkerFactory.getMarker("ResourceManager");
     private static boolean loaded = false;
 
-    public static void init(IMediaLoader loader) throws UnsafeException {
-        if (loaded) throw new IllegalReloadException(ResourceManager.class.getSimpleName());
+    public static void init(IMediaLoader loader) throws Exception {
+        if (loaded) throw new ReloadingException(ResourceManager.class.getSimpleName());
         // STEP 1: EXTRACT VLC
         if (OsTool.getArch().wrapped) {
             Path output = loader.getTmpDirectory().resolve("videolan/").resolve(OsTool.getArch().toString() + ".zip");
@@ -44,8 +44,9 @@ public class ResourceManager {
                 }
 
             } catch (Exception e) {
-                throw new UnsafeException("Cannot perform extraction of VideoLAN", e);
+                throw new IOException("Cannot perform extraction of VideoLAN", e);
             }
         }
+        loaded = true;
     }
 }

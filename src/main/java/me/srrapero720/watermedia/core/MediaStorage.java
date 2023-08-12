@@ -1,8 +1,7 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.exceptions.IllegalReloadException;
-import me.srrapero720.watermedia.core.exceptions.UnsafeException;
+import me.srrapero720.watermedia.tools.exceptions.ReloadingException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Marker;
@@ -25,8 +24,8 @@ public class MediaStorage {
     private static File index;
     private static boolean inited = false;
 
-    public static void init(IMediaLoader modLoader) throws UnsafeException {
-        if (inited) throw new IllegalReloadException(MediaStorage.class.getSimpleName());
+    public static void init(IMediaLoader modLoader) throws Exception {
+        if (inited) throw new ReloadingException(MediaStorage.class.getSimpleName());
 
         // SETUP
         dir = modLoader.getTmpDirectory().toAbsolutePath().resolve("cache/pictures").toFile();
