@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.minecraft;
 
-import cpw.mods.modlauncher.Launcher;
 import me.srrapero720.watermedia.IEnvLoader;
 import me.srrapero720.watermedia.IMediaLoader;
 import me.srrapero720.watermedia.WaterMedia;
@@ -13,7 +12,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.spongepowered.asm.launch.MixinBootstrap;
 
 import java.io.File;
 import java.nio.file.Path;
