@@ -1,6 +1,5 @@
-package me.srrapero720.watermedia.fml.mixin;
+package me.srrapero720.watermedia.modloaders.mixin;
 
-import me.srrapero720.watermedia.WaterMedia;
 import org.objectweb.asm.tree.ClassNode;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.fml;
+package me.srrapero720.watermedia.modloaders;
 
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
