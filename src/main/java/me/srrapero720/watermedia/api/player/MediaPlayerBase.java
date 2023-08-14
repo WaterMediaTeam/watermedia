@@ -47,7 +47,6 @@ public abstract class MediaPlayerBase extends EventManager {
         }
     }
 
-    public boolean isStarted() { return started.get(); }
     public synchronized void start(CharSequence url) { this.start(url, new String[0]); }
     public synchronized void start(CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
@@ -61,8 +60,8 @@ public abstract class MediaPlayerBase extends EventManager {
             else LOGGER.error(IT, "Playback start failed. URL is invalid or null");
         }, (e) -> LOGGER.error(IT, "Failed to start player", e), null);
     }
-
     public synchronized void prepare(CharSequence url) { this.prepare(url, new String[0]); }
+
     public synchronized void prepare(CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
         ThreadCore.threadTry(() -> {
@@ -87,7 +86,6 @@ public abstract class MediaPlayerBase extends EventManager {
             else LOGGER.error(IT, "Playback start paused failed. URL is invalid or null");
         }, (e) -> LOGGER.error(IT, "Failed to start paused player", e), null);
     }
-
     public synchronized State getRawPlayerState() {
         if (raw == null) return State.ERROR;
         synchronized (this) { return raw.mediaPlayer().status().state(); }
@@ -112,6 +110,11 @@ public abstract class MediaPlayerBase extends EventManager {
         if (raw == null) return;
         synchronized (this) { raw.mediaPlayer().controls().stop(); }
     }
+
+    public synchronized boolean isStarted() { return started.get(); }
+    public synchronized boolean isBuffering() { return buffering.get(); }
+    public synchronized boolean isPrepared() { return prepared.get(); }
+
 
     public synchronized boolean isValid() {
         if (raw == null) return false;
