@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public abstract class MediaPlayerBase extends EventManager {
-    private static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
-    private static final Marker IT = MarkerFactory.getMarker("Player");
+    protected static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
+    protected static final Marker IT = MarkerFactory.getMarker("MediaPlayer");
 
     protected URL url;
 
@@ -289,7 +289,7 @@ public abstract class MediaPlayerBase extends EventManager {
         synchronized (this) { raw.mediaPlayer().release(); }
     }
 
-    private static void checkClassLoader() {
+    protected static void checkClassLoader() {
         if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(LOADER);
     }
 
