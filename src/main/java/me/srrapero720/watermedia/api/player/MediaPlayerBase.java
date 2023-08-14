@@ -15,6 +15,7 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBuffer
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.player.events.*;
+import me.srrapero720.watermedia.core.tools.annotations.Untested;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -114,7 +115,12 @@ public abstract class MediaPlayerBase extends EventManager {
     public synchronized boolean isStarted() { return started.get(); }
     public synchronized boolean isBuffering() { return buffering.get(); }
     public synchronized boolean isPrepared() { return prepared.get(); }
-
+    @Untested
+    public synchronized boolean isPaused() { return getRawPlayerState().equals(State.PAUSED); }
+    @Untested
+    public synchronized boolean isStopped() { return getRawPlayerState().equals(State.STOPPED); }
+    @Untested
+    public synchronized boolean isEnded() { return getRawPlayerState().equals(State.ENDED); }
 
     public synchronized boolean isValid() {
         if (raw == null) return false;
