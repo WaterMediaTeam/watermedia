@@ -51,18 +51,18 @@ public class ImageRenderer {
         duration = time;
     }
 
-    public int textureId(long time) {
+    public int texture(long time) {
         if (textures == null) return -1;
-        if (textures.length == 1) return textureId(0);
-        int last = textureId(0);
+        if (textures.length == 1) return texture(0);
+        int last = texture(0);
         for (int i = 1; i < delay.length; i++) {
             if (delay[i] > time) break;
-            last = textureId(i);
+            last = texture(i);
         }
         return last;
     }
 
-    public int textureId(int index) {
+    public int texture(int index) {
         if (this.textures[index] == -1) {
             if (decoder != null) {
                 this.textures[index] = WaterMediaAPI.gl_genTexture(this.decoder.getFrame(index), width, height);
