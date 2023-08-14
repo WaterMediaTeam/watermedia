@@ -132,6 +132,11 @@ public abstract class MediaPlayerBase extends EventManager {
         synchronized (this) { return getRawPlayerState().equals(State.PLAYING); }
     }
 
+    public synchronized boolean isLive() {
+        return false;
+    }
+
+    @Deprecated
     public synchronized boolean isStream() {
         if (raw == null) return false;
         synchronized (this) {
