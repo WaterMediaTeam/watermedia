@@ -24,8 +24,8 @@ public abstract class FixerBase {
     }
 
     public static final class FixingURLException extends Exception {
-        public FixingURLException(String url, Throwable t) { super("Failed to patch URL " + url, t); }
-        public FixingURLException(URL url, Throwable t) { super("Failed to patch URL " + url.toString(), t); }
+        public FixingURLException(String url, Throwable t) { super("Failed to fix URL " + url, t); }
+        public FixingURLException(URL url, Throwable t) { super("Failed to fix URL " + url.toString(), t); }
     }
 
     public static class Result {

@@ -20,14 +20,14 @@ public class Checker {
 //        url = WaterMediaAPI.urlPatch("https://www.youtube.com/watch?v=hsXeFqj5p7Q&list=RDYIC1aK6CleE&index=6&ab_channel=Diversity");
 //        LOGGER.info(IT, "Url from Youtube {}", url);
 
-        URL url = new KickFixer().patch(new URL("https://kick.com/javioliveira"));
-        System.out.println("Url from Twitch " + url.toString());
-//
-        url = new TwitchFixer().patch(new URL("https://www.twitch.tv/lilousurtwitch/clip/UnsightlyGorgeousTruffleBrainSlug-pkyHV-eBlMh9l0Wz"));
-        System.out.println("Url from Twitch " + url.toString());
-//
-        url = new TwitchFixer().patch(new URL("https://www.twitch.tv/videos/1859049751"));
-        System.out.println("Url from Twitch (vod)" + url.toString());
+//        URL url = new KickFixer().patch(new URL("https://kick.com/javioliveira"));
+//        System.out.println("Url from Twitch " + url.toString());
+////
+//        url = new TwitchFixer().patch(new URL("https://www.twitch.tv/lilousurtwitch/clip/UnsightlyGorgeousTruffleBrainSlug-pkyHV-eBlMh9l0Wz"));
+//        System.out.println("Url from Twitch " + url.toString());
+////
+//        url = new TwitchFixer().patch(new URL("https://www.twitch.tv/videos/1859049751"));
+//        System.out.println("Url from Twitch (vod)" + url.toString());
 
 
 //
