@@ -49,7 +49,6 @@ public abstract class MediaPlayerBase extends EventManager {
     protected final AtomicBoolean started = new AtomicBoolean(false);
     protected final AtomicBoolean buffering = new AtomicBoolean(false);
     protected final AtomicBoolean prepared = new AtomicBoolean(false);
-    protected final AtomicBoolean ended = new AtomicBoolean(false);
     protected final AtomicInteger volume = new AtomicInteger(100);
     protected final AtomicBoolean assumeStream = new AtomicBoolean(false);
 
@@ -155,8 +154,6 @@ public abstract class MediaPlayerBase extends EventManager {
     public boolean isPaused() { return getRawPlayerState().equals(State.PAUSED); }
     @Untested
     public boolean isStopped() { return getRawPlayerState().equals(State.STOPPED); }
-    @Untested
-    public boolean isEnded() { return getRawPlayerState().equals(State.ENDED); }
 
     public boolean isValid() {
         if (raw == null) return false;
