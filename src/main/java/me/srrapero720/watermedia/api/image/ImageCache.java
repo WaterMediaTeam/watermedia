@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -20,20 +19,14 @@ public class ImageCache {
         CACHE.put(originalURL, image);
         return image;
     }
-    public static ImageCache findOrCreate(URL url, String originalURL, RenderThread runnable) {
-        ImageCache image = CACHE.get(originalURL);
-        image = (image == null) ? new ImageCache(url, originalURL, runnable) : image.use();
-        CACHE.put(originalURL, image);
-        return image;
-    }
+
     public static void reloadAll() {
         ImageCache[] loaded = CACHE.values().toArray(new ImageCache[0]);
         for (ImageCache imageCache : loaded) { imageCache.reload(); }
     }
 
-    // INFO
-    public final URL url;
-    public final String originalURL;
+    // INFO;
+    public final String url;
     private final ImageFetch fetch;
     private final RenderThread renderThread;
 
@@ -46,20 +39,14 @@ public class ImageCache {
     private volatile Exception exception;
 
     public ImageCache(String url, RenderThread runnable) {
-        this(WaterMediaAPI.url_toURL(url), url, runnable);
-    }
-
-    public ImageCache(URL url, String originalURL, RenderThread runnable) {
         this.url = url;
-        this.originalURL = originalURL;
         this.renderThread = runnable;
         this.fetch = new ImageFetch(url);
-        CACHE.put(originalURL, this);
+        CACHE.put(url, this);
     }
 
     public ImageCache(ImageRenderer renderer) {
         this.url = null;
-        this.originalURL = null;
         this.fetch = null;
         this.renderThread = null;
         this.renderer = renderer;
@@ -73,12 +60,12 @@ public class ImageCache {
         if (uses.get() <= 0) release();
         return this;
     }
-    public URL getUrl() { return url; }
+
     public Status getStatus() { return status; }
     public Exception getException() { return exception; }
     public ImageRenderer getRenderer() { return renderer; }
 
-    public synchronized void load() {
+    public void load() {
         if (fetch == null) return;
         synchronized (fetch) {
             if (!status.equals(Status.WAITING)) return;
@@ -86,7 +73,7 @@ public class ImageCache {
             fetch.setOnSuccessCallback(imageRenderer -> {
                 synchronized (fetch) {
                     if (!this.status.equals(Status.LOADING)) {
-                        imageRenderer.release(); // IS SAFE DO THAT WHEN ANY TEXT PICTURE ISN'T GENERATED
+                        imageRenderer.release(); // IS SAFE DO THAT WHEN ANY TEX PICTURE ISN'T GENERATED
                         return;
                     }
                     synchronized (this) { this.renderer = imageRenderer; }
@@ -138,7 +125,7 @@ public class ImageCache {
                 this.renderer.release();
                 synchronized (this) { if ( renderer.textures[0] == -1) this.renderer = null; }
             });
-            CACHE.remove(url.toString());
+            CACHE.remove(url);
         }
     }
 

@@ -20,17 +20,17 @@ public class TwitchFixer extends FixerBase {
     }
 
     @Override
-    public URL patch(URL url) throws PatchingUrlException {
+    public Result patch(URL url) throws FixingURLException {
         super.patch(url);
         try {
             String path = url.getPath();
             if (path.startsWith("/videos/")) {
-                return new URL(TwitchUtil.getVod(path.substring(8)).get(0).getUrl());
+                return new Result(new URL(TwitchUtil.getVod(path.substring(8)).get(0).getUrl()), true, false);
             }
 
-            return new URL(TwitchUtil.getStream(path.substring(1)).get(0).getUrl());
+            return new Result(new URL(TwitchUtil.getStream(path.substring(1)).get(0).getUrl()), true, true);
         } catch (Exception e) {
-            throw new PatchingUrlException(url, e);
+            throw new FixingURLException(url, e);
         }
     }
 }

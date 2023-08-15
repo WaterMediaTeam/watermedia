@@ -25,7 +25,7 @@ public class YoutubeFixer extends FixerBase {
     }
 
     @Override
-    public URL patch(URL url) throws PatchingUrlException {
+    public Result patch(URL url) throws FixingURLException {
         super.patch(url);
 
         Matcher matcher = PATTERN.matcher(url.toString());
@@ -38,25 +38,25 @@ public class YoutubeFixer extends FixerBase {
                 if (videoDetails.isLive()) {
                     // LIVE STREAM
                     String ytLivePlaylist = fetchLivePlaylist(videoDetails.liveUrl());
-                    if (ytLivePlaylist != null) return new URL(StreamQuality.parse(ytLivePlaylist).get(0).getUrl());
+                    if (ytLivePlaylist != null) return new Result(new URL(StreamQuality.parse(ytLivePlaylist).get(0).getUrl()), true, true);
                 } else {
                     // BEST WITH AUDIO
                     VideoFormat bestWithAudio = videoInfo.bestVideoWithAudioFormat();
-                    if (bestWithAudio != null) return new URL(bestWithAudio.url());
+                    if (bestWithAudio != null) return new Result(new URL(bestWithAudio.url()), true, false);
 
                     // WITHOUT AUDIO
                     VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
-                    if (bestWithoutAudio != null) return new URL(bestWithoutAudio.url());
+                    if (bestWithoutAudio != null) return new Result(new URL(bestWithoutAudio.url()), true, false);
 
                     // WITHOUT VIDEO
                     AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
-                    if (bestWithoutVideo != null) return new URL(bestWithoutVideo.url());
+                    if (bestWithoutVideo != null) return new Result(new URL(bestWithoutVideo.url()), true, false);
                 }
 
-                // GIVE IT TO VLC
-                return new URL("https://www.youtube.com/watch?v=" + videoId);
+                // VLC shouldn't use LUAC
+                return null;
             } catch (Exception e) {
-                throw new PatchingUrlException(url.toString(), e);
+                throw new FixingURLException(url.toString(), e);
             }
         }
 
@@ -78,7 +78,6 @@ public class YoutubeFixer extends FixerBase {
         while ((length = inputStream.read(buffer)) != -1) {
             result.write(buffer, 0, length);
         }
-        String response = result.toString("UTF-8");
-        return response;
+        return result.toString("UTF-8");
     }
 }

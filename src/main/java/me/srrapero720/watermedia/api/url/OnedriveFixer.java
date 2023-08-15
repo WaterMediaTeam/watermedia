@@ -15,12 +15,12 @@ public class OnedriveFixer extends FixerBase {
     }
 
     @Override
-    public URL patch(URL url) throws PatchingUrlException {
+    public Result patch(URL url) throws FixingURLException {
         super.patch(url);
         try {
-            return new URL(OneDriveUtil.getDownloableItem(url.toString()).getUrl());
+            return new Result(new URL(OneDriveUtil.getDownloableItem(url.toString()).getUrl()), false, false);
         } catch (Exception e) {
-            throw new PatchingUrlException(url.toString(), e);
+            throw new FixingURLException(url.toString(), e);
         }
     }
 }

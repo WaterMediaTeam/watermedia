@@ -15,11 +15,14 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBuffer
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.player.events.*;
+import me.srrapero720.watermedia.api.url.FixerBase;
 import me.srrapero720.watermedia.core.tools.annotations.Untested;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,15 +31,26 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public abstract class MediaPlayerBase extends EventManager {
     protected static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     protected static final Marker IT = MarkerFactory.getMarker("MediaPlayer");
+    private static final AtomicInteger WK_TH = new AtomicInteger(0);
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        t.setPriority(7);
+        t.setName("WM-MediaPlayer-Worker-" + WK_TH.incrementAndGet());
+        return t;
+    });
 
-    protected URL url;
+
+    protected String url;
 
     // PLAYER
     public final CallbackMediaPlayerComponent raw;
     protected final AtomicBoolean started = new AtomicBoolean(false);
     protected final AtomicBoolean buffering = new AtomicBoolean(false);
     protected final AtomicBoolean prepared = new AtomicBoolean(false);
+    protected final AtomicBoolean ended = new AtomicBoolean(false);
     protected final AtomicInteger volume = new AtomicInteger(100);
+    protected final AtomicBoolean assumeStream = new AtomicBoolean(false);
 
     public MediaPlayerBase(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (WaterMediaAPI.vlc_isReady()) {
@@ -51,41 +65,62 @@ public abstract class MediaPlayerBase extends EventManager {
     public synchronized void start(CharSequence url) { this.start(url, new String[0]); }
     public synchronized void start(CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
-        ThreadCore.threadTry(() -> {
-            this.url = WaterMediaAPI.url_toURL(url.toString());
+        EX.execute(() -> {
+            try {
+                if (isPlaying()) stop();
+                FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
 
-            if (this.url != null) {
-                raw.mediaPlayer().media().start(this.url.toString(), vlcArgs);
-                started.set(true);
+                if (result != null) {
+                    this.url = result.url.toString();
+                    assumeStream.set(result.assumeStream);
+
+                    raw.mediaPlayer().media().start(this.url, vlcArgs);
+                    started.set(true);
+                } else LOGGER.error(IT, "Playback start failed. URL is invalid or null");
+            } catch (Exception e) {
+                LOGGER.error(IT, "Failed to start player", e);
             }
-            else LOGGER.error(IT, "Playback start failed. URL is invalid or null");
-        }, (e) -> LOGGER.error(IT, "Failed to start player", e), null);
+        });
     }
     public synchronized void prepare(CharSequence url) { this.prepare(url, new String[0]); }
-
     public synchronized void prepare(CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
-        ThreadCore.threadTry(() -> {
-            this.url = WaterMediaAPI.url_toURL(url.toString());
+        EX.execute(() -> {
+            try {
+                if (isPlaying()) stop();
+                FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
 
-            if (this.url != null) {
-                raw.mediaPlayer().media().prepare(this.url.toString(), vlcArgs);
-                started.set(true);
-            } else LOGGER.error(IT, "Playback prepare failed. URL is invalid or null");
-        }, (e) -> LOGGER.error(IT, "Failed to prepare player", e), null);
+                if (result != null) {
+                    this.url = result.url.toString();
+                    assumeStream.set(result.assumeStream);
+
+                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
+                    started.set(true);
+                } else LOGGER.error(IT, "Playback prepare failed. URL is invalid or null");
+            } catch (Exception e) {
+                LOGGER.error(IT, "Failed to prepare player", e);
+            }
+        });
     }
     public synchronized void startPaused(CharSequence url) { this.prepare(url, new String[0]); }
     public synchronized void startPaused(CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
-        ThreadCore.threadTry(() -> {
-            this.url = WaterMediaAPI.url_toURL(url.toString());
+        EX.execute(() -> {
+            try {
+                if (isPlaying()) stop();
+                FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
 
-            if (this.url != null) {
-                raw.mediaPlayer().media().startPaused(this.url.toString(), vlcArgs);
-                started.set(true);
+                if (result != null) {
+                    this.url = result.url.toString();
+                    assumeStream.set(result.assumeStream);
+
+                    raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
+                    started.set(true);
+                } else LOGGER.error(IT, "Playback start paused failed. URL is invalid or null");
+            } catch (Exception e) {
+                LOGGER.error(IT, "Failed to start paused player", e);
             }
-            else LOGGER.error(IT, "Playback start paused failed. URL is invalid or null");
-        }, (e) -> LOGGER.error(IT, "Failed to start paused player", e), null);
+        });
     }
     public synchronized State getRawPlayerState() {
         if (raw == null) return State.ERROR;

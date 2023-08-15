@@ -33,7 +33,7 @@ public final class WaterMediaAPI {
     public static ImageRenderer VLC_FAILED_INSTALL;
     public static ImageRenderer VLC_FAILED_INSTALL_EXTENDED;
 
-    public static void init(IMediaLoader modLoader) {
+    public static void init(IMediaLoader loader) {
         LOGGER.warn(IT, (!URL_PATCHERS.isEmpty() ? "Rel" : "L") + "oading URLFixers");
         URL_PATCHERS.clear();
 
@@ -50,27 +50,27 @@ public final class WaterMediaAPI {
         LOGGER.info(IT, "Loading internal {}'s", ImageRenderer.class.getSimpleName());
 
         ThreadCore.trySimple(() -> {
-            if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(JarTool.readGif(modLoader.getModuleClassLoader(), "/pictures/loading.gif"));
+            if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(JarTool.readGif(loader.getModuleClassLoader(), "/pictures/loading.gif"));
             else LOGGER.warn("Skipping LOADING_GIF");
         }, (e) -> LOGGER.error("Failed to load 'LOADING_GIF'", e));
 
         ThreadCore.trySimple(() -> {
-            if (VLC_FAILED == null) VLC_FAILED = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
+            if (VLC_FAILED == null) VLC_FAILED = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
             else LOGGER.warn("Skipping VLC_FAILED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED'", e));
 
         ThreadCore.trySimple(() -> {
-            if (VLC_FAILED_EXTENDED == null) VLC_FAILED_EXTENDED = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-landscape.png"));
+            if (VLC_FAILED_EXTENDED == null) VLC_FAILED_EXTENDED = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-landscape.png"));
             else LOGGER.warn("Skipping VLC_FAILED_EXTENDED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_EXTENDED'", e));
 
         ThreadCore.trySimple(() -> {
-            if (VLC_FAILED_INSTALL == null) VLC_FAILED_INSTALL = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-install.png"));
+            if (VLC_FAILED_INSTALL == null) VLC_FAILED_INSTALL = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-install.png"));
             else LOGGER.warn("Skipping VLC_FAILED_INSTALL");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL'", e));
 
         ThreadCore.trySimple(() -> {
-            if (VLC_FAILED_INSTALL_EXTENDED == null) VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(JarTool.readImage(modLoader.getModuleClassLoader(), "/pictures/videolan/failed-install-landscape.png"));
+            if (VLC_FAILED_INSTALL_EXTENDED == null) VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-install-landscape.png"));
             else LOGGER.warn("Skipping VLC_FAILED_INSTALL_EXTENDED");
         }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL_EXTENDED'", e));
     }
@@ -121,17 +121,32 @@ public final class WaterMediaAPI {
      * Is not recommended external usages
      * @param stringUrl Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
+     * @deprecated use {@link #url_fixURL(String)} instead
      */
+    @Deprecated
     public static URL url_toURL(String stringUrl) {
         try {
             URL url = new URL(stringUrl);
 
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
+                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url).url;
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
         } catch (Exception e) {
-            LOGGER.error(IT, "Exception occurred trying to build URL", e);
+            LOGGER.error(IT, "Exception occurred instancing URL", e);
+        }
+        return null;
+    }
+
+    public static FixerBase.Result url_fixURL(String str) {
+        try {
+            URL url = new URL(str);
+            return ThreadCore.tryAndReturn(defaultVar -> {
+                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
+                return defaultVar;
+            }, e -> LOGGER.error("Exception occurred trying to fix URL", e), new FixerBase.Result(url, false, false));
+        } catch (Exception e) {
+            LOGGER.error(IT, "Exception occurred instancing URL", e);
         }
         return null;
     }

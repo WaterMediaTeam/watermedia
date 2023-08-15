@@ -16,15 +16,27 @@ public abstract class FixerBase {
      * Patch the URL
      * @param url URL to patch
      * @return static URL
-     * @throws PatchingUrlException if URL is null or invalid in this patch
+     * @throws FixingURLException if URL is null or invalid in this patch
      */
-    public URL patch(URL url) throws PatchingUrlException {
-        if (!isValid(url)) throw new PatchingUrlException(url, new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat"));
+    public Result patch(URL url) throws FixingURLException {
+        if (!isValid(url)) throw new FixingURLException(url, new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat"));
         return null;
     }
 
-    public static final class PatchingUrlException extends Exception {
-        public PatchingUrlException(String url, Throwable t) { super("Failed to patch URL " + url, t); }
-        public PatchingUrlException(URL url, Throwable t) { super("Failed to patch URL " + url.toString(), t); }
+    public static final class FixingURLException extends Exception {
+        public FixingURLException(String url, Throwable t) { super("Failed to patch URL " + url, t); }
+        public FixingURLException(URL url, Throwable t) { super("Failed to patch URL " + url.toString(), t); }
+    }
+
+    public static class Result {
+        public final URL url;
+        public final boolean assumeStream;
+        public final boolean assumeVideo;
+
+        public Result(URL url, boolean assumeVideo, boolean assumeStream) {
+            this.url = url;
+            this.assumeVideo = assumeVideo;
+            this.assumeStream = assumeStream;
+        }
     }
 }

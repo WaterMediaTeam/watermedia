@@ -13,7 +13,7 @@ import java.net.URL;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class Kick extends FixerBase {
-    public static void main(String[] args) throws MalformedURLException, PatchingUrlException {
+    public static void main(String[] args) throws MalformedURLException, FixingURLException {
 //        LOGGER.info(new Kick().patch(new URL("https://kick.com/kenji")));
 //        LOGGER.info(new Kick().patch(new URL("https://kick.com/video/af9f91d4-9cbc-4395-8f35-9ef9f245fb8c")));
     }
@@ -26,7 +26,7 @@ public class Kick extends FixerBase {
     }
 
     @Override
-    public URL patch(URL url) throws PatchingUrlException {
+    public URL patch(URL url) throws FixingURLException {
         super.patch(url);
 
         if (url.getPath().contains("/video/")) {

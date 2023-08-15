@@ -61,7 +61,7 @@ public class CacheStorage {
         }
     }
 
-    public static synchronized void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
+    public static void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
         synchronized (ENTRIES) {
             Entry entry = new Entry(url, tag, time, expireTime);
             boolean saved = false;
@@ -97,17 +97,27 @@ public class CacheStorage {
 
             return true;
         } catch (IOException e) {
-            LOGGER.error(IT, "Failed to save cache index", e);
+            LOGGER.error(IT, "Failed to refresh cache index", e);
             return false;
         } finally { IOUtils.closeQuietly(out); }
     }
 
-    public static Entry getEntry(String url) { return ENTRIES.get(url); }
-    public static synchronized void updateEntry(Entry fresh) { ENTRIES.put(fresh.url, fresh); }
-    public static synchronized void deleteEntry(String url) {
-        ENTRIES.remove(url);
-        File file = getFile(url);
-        if (file.exists()) file.delete();
+    public static Entry getEntry(String url) {
+        synchronized (ENTRIES) {
+            return ENTRIES.get(url);
+        }
+    }
+    public static void updateEntry(Entry fresh) {
+        synchronized (ENTRIES) {
+            ENTRIES.put(fresh.url, fresh);
+        }
+    }
+    public static void deleteEntry(String url) {
+        synchronized (ENTRIES) {
+            ENTRIES.remove(url);
+            File file = getFile(url);
+            if (file.exists()) file.delete();
+        }
     }
 
     public static final class Entry {

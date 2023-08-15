@@ -10,12 +10,12 @@ public class DropboxFixer extends FixerBase {
     }
 
     @Override
-    public URL patch(URL url) throws PatchingUrlException {
+    public Result patch(URL url) throws FixingURLException {
         super.patch(url);
         try {
-            return new URL(url.toString().replace("dl=0", "dl=1"));
+            return new Result(new URL(url.toString().replace("dl=0", "dl=1")), false, false);
         } catch (Exception e) {
-            throw new PatchingUrlException(url, e);
+            throw new FixingURLException(url, e);
         }
     }
 }

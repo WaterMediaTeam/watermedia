@@ -12,7 +12,7 @@ public class DriveFixer extends FixerBase {
     }
 
     @Override
-    public URL patch(URL url) throws PatchingUrlException {
+    public Result patch(URL url) throws FixingURLException {
         super.patch(url);
         try {
 
@@ -22,9 +22,9 @@ public class DriveFixer extends FixerBase {
             if (end == -1) end = url.getPath().length();
             String fileID = url.getPath().substring(start, end);
 
-            return new URL(String.format(API_URL, fileID, API_KEY));
+            return new Result(new URL(String.format(API_URL, fileID, API_KEY)), false, false);
         } catch (Exception e) {
-            throw new PatchingUrlException(url, e);
+            throw new FixingURLException(url, e);
         }
     }
 }

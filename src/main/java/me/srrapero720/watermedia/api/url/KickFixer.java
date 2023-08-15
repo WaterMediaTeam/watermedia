@@ -16,24 +16,24 @@ public class KickFixer extends FixerBase {
     }
 
     @Override
-    public URL patch(URL url) throws PatchingUrlException {
+    public Result patch(URL url) throws FixingURLException {
         super.patch(url);
 
         if (url.getPath().contains("/video/")) {
              Call<KickVideo> call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));
              try {
                  Response<KickVideo> res = call.execute();
-                 if (res.isSuccessful() && res.body() != null) return new URL(res.body().url);
+                 if (res.isSuccessful() && res.body() != null) return new Result(new URL(res.body().url), true, false);
              } catch (Exception e) {
-                 throw new PatchingUrlException(url.toString(), e);
+                 throw new FixingURLException(url.toString(), e);
              }
         } else {
             Call<KickChannel> call = KickAPI.NET.getChannelInfo(url.getPath().replace("/", ""));
             try {
                 Response<KickChannel> res = call.execute();
-                if (res.isSuccessful() && res.body() != null) return new URL(res.body().url);
+                if (res.isSuccessful() && res.body() != null) return new Result(new URL(res.body().url), true, true);
             } catch (Exception e) {
-                throw new PatchingUrlException(url.toString(), e);
+                throw new FixingURLException(url.toString(), e);
             }
         }
 

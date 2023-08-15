@@ -1,6 +1,8 @@
 package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.api.url.FixerBase;
 import me.srrapero720.watermedia.core.CacheStorage;
 import me.lib720.watermod.ThreadCore;
 import org.apache.commons.io.IOUtils;
@@ -40,18 +42,22 @@ public class ImageFetch {
         return t;
     });
 
-    private final URL url;
+    private final String url;
     private TaskSuccessful successful;
     private TaskFailed failed;
 
-    public ImageFetch(URL url) { this.url = url; }
+    public ImageFetch(String url) { this.url = url; }
     public ImageFetch setOnSuccessCallback(TaskSuccessful task) { successful = task; return this; }
     public ImageFetch setOnFailedCallback(TaskFailed task) { failed = task; return this; }
 
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            byte[] data = load(url);
+            FixerBase.Result result = WaterMediaAPI.url_fixURL(url);
+            if (result == null) throw new IllegalArgumentException("Invalid URL");
+            if (result.assumeVideo) throw new VideoContentException();
+
+            byte[] data = load(url, result.url);
             String type = readType(data);
 
             try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
@@ -82,12 +88,12 @@ public class ImageFetch {
                 LOGGER.error(IT, "An exception occurred while loading image", e);
             }
             if (failed != null) failed.run(e);
-            CacheStorage.deleteEntry(url.toString());
+            CacheStorage.deleteEntry(url);
         }
     }
 
-    private static byte[] load(URL url) throws IOException, VideoContentException {
-        CacheStorage.Entry entry = CacheStorage.getEntry(url.toString());
+    private static byte[] load(String originalUrl, URL url) throws IOException, VideoContentException {
+        CacheStorage.Entry entry = CacheStorage.getEntry(originalUrl);
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
 
@@ -140,14 +146,14 @@ public class ImageFetch {
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        CacheStorage.updateEntry(new CacheStorage.Entry(url.toString(), freshTag, lastTimestamp, expTimestamp));
+                        CacheStorage.updateEntry(new CacheStorage.Entry(originalUrl, freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
             if (readType(data) == null) throw new VideoContentException();
-            CacheStorage.saveFile(url.toString(), tag, lastTimestamp, expTimestamp, data);
+            CacheStorage.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();
