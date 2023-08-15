@@ -129,7 +129,7 @@ public final class WaterMediaAPI {
             URL url = new URL(stringUrl);
 
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url).url;
+                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url, null).url;
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
         } catch (Exception e) {
@@ -142,7 +142,7 @@ public final class WaterMediaAPI {
         try {
             URL url = new URL(str);
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url);
+                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url, null);
                 return defaultVar;
             }, e -> LOGGER.error("Exception occurred trying to fix URL", e), new FixerBase.Result(url, false, false));
         } catch (Exception e) {

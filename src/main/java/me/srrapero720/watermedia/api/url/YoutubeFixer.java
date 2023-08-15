@@ -25,8 +25,8 @@ public class YoutubeFixer extends FixerBase {
     }
 
     @Override
-    public Result patch(URL url) throws FixingURLException {
-        super.patch(url);
+    public Result patch(URL url, Quality preferQuality) throws FixingURLException {
+        super.patch(url, preferQuality);
 
         Matcher matcher = PATTERN.matcher(url.toString());
         if (matcher.find()) {

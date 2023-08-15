@@ -15,8 +15,8 @@ public class OnedriveFixer extends FixerBase {
     }
 
     @Override
-    public Result patch(URL url) throws FixingURLException {
-        super.patch(url);
+    public Result patch(URL url, Quality preferQuality) throws FixingURLException {
+        super.patch(url, preferQuality);
         try {
             return new Result(new URL(OneDriveUtil.getDownloableItem(url.toString()).getUrl()), false, false);
         } catch (Exception e) {

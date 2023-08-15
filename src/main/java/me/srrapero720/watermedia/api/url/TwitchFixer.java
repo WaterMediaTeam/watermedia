@@ -20,8 +20,8 @@ public class TwitchFixer extends FixerBase {
     }
 
     @Override
-    public Result patch(URL url) throws FixingURLException {
-        super.patch(url);
+    public Result patch(URL url, Quality preferQuality) throws FixingURLException {
+        super.patch(url, preferQuality);
         try {
             String path = url.getPath();
             if (path.startsWith("/videos/")) {

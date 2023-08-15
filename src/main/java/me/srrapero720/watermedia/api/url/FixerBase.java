@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.url;
 
+import javax.swing.plaf.PanelUI;
 import java.net.URL;
 
 public abstract class FixerBase {
@@ -18,7 +19,7 @@ public abstract class FixerBase {
      * @return static URL
      * @throws FixingURLException if URL is null or invalid in this patch
      */
-    public Result patch(URL url) throws FixingURLException {
+    public Result patch(URL url, Quality prefQuality) throws FixingURLException {
         if (!isValid(url)) throw new FixingURLException(url, new IllegalArgumentException("Attempt to build a invalid URL in a invalid Compat"));
         return null;
     }
@@ -30,13 +31,23 @@ public abstract class FixerBase {
 
     public static class Result {
         public final URL url;
+        public final Quality quality;
         public final boolean assumeStream;
         public final boolean assumeVideo;
 
         public Result(URL url, boolean assumeVideo, boolean assumeStream) {
             this.url = url;
+            this.quality = null;
             this.assumeVideo = assumeVideo;
             this.assumeStream = assumeStream;
         }
+    }
+
+    public enum Quality {
+        LOWEST(),
+        LOW(),
+        MIDDLE(),
+        HIGH(),
+        HIGHEST(),
     }
 }

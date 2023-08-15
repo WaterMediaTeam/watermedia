@@ -16,8 +16,8 @@ public class KickFixer extends FixerBase {
     }
 
     @Override
-    public Result patch(URL url) throws FixingURLException {
-        super.patch(url);
+    public Result patch(URL url, Quality preferQuality) throws FixingURLException {
+        super.patch(url, preferQuality);
 
         if (url.getPath().contains("/video/")) {
              Call<KickVideo> call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));
