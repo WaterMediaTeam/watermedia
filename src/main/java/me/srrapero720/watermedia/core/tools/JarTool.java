@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,7 +22,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class JarTool {
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
-    static final Marker IT = MarkerFactory.getMarker("JarUtil");
+    static final Marker IT = MarkerManager.getMarker("JarUtil");
 
     public static boolean copyAsset(ClassLoader loader, String origin, String dest) {
         try (InputStream is = readResource(loader, origin)) {

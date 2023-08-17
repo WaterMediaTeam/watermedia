@@ -6,8 +6,8 @@ import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -21,7 +21,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * but haven't warranties, because other mods can preload easy too.
  */
 public class FabricML implements PreLaunchEntrypoint, IMediaLoader, IEnvLoader {
-    private static final Marker IT = MarkerFactory.getMarker("FabricModLoader");
+    private static final Marker IT = MarkerManager.getMarker("FabricModLoader");
     private static final String NAME = "Fabric";
     private final WaterMedia instance;
     private ClassLoader CL;

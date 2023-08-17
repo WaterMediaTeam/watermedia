@@ -76,7 +76,9 @@ dependencies {
 //    compileOnly 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     // FabricLoader (just to give loading support on FABRIC)
-    compileOnly "net.fabricmc:fabric-loader:${project.fabricv}"
+    compileOnly ("net.fabricmc:fabric-loader:${project.fabricv}") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
 
     // TODO: Implement LavaPlayer and all dependencies
     // library 'com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT'

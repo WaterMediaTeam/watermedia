@@ -4,8 +4,8 @@ import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class CacheStorage {
-    private static final Marker IT = MarkerFactory.getMarker(CacheStorage.class.getSimpleName());
+    private static final Marker IT = MarkerManager.getMarker(CacheStorage.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;

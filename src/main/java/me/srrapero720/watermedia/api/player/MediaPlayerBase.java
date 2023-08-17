@@ -18,8 +18,8 @@ import me.srrapero720.watermedia.api.player.events.*;
 import me.srrapero720.watermedia.api.url.FixerBase;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import me.srrapero720.watermedia.core.tools.annotations.Untested;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +31,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public abstract class MediaPlayerBase extends EventManager {
     protected static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
-    protected static final Marker IT = MarkerFactory.getMarker("MediaPlayer");
+    protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
     private static final AtomicInteger WK_TH = new AtomicInteger(0);
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {
         Thread t = new Thread(r);

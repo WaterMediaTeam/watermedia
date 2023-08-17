@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.image;
 
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageCache {
-    private static final Marker IT = MarkerFactory.getMarker("ImageCache");
+    private static final Marker IT = MarkerManager.getMarker("ImageCache");
     private static final Map<String, ImageCache> CACHE = new HashMap<>();
 
     public static ImageCache findOrCreate(String originalURL, RenderThread runnable) {

@@ -5,8 +5,8 @@ import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.tools.OsTool;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +17,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class AssetsExtractor {
     private static final String VIDEOLAN_V = "3.0.18a";
-    private static final Marker IT = MarkerFactory.getMarker("ResourceManager");
+    private static final Marker IT = MarkerManager.getMarker("ResourceManager");
     private static boolean loaded = false;
 
     public static void init(IMediaLoader loader) throws Exception {

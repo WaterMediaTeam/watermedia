@@ -1,13 +1,13 @@
 package me.lib720.watermod;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 // This class comes from WATERCoRE and isn't sync with WATERCoRE main project
 public class ThreadCore {
     private static int workers = 0;
     private static Thread THREADLG = null;
-    private static final Logger LOGGER = LoggerFactory.getLogger("ThreadUtil");
+    private static final Logger LOGGER = LogManager.getLogger("ThreadCore");
     private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> LOGGER.error("Failed running {}", t.getName(), e);
 
     public static <T> T tryAndReturnNull(ReturnableRunnable<T> runnable, CatchRunnable catchRunnable) {

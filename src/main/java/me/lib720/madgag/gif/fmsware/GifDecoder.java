@@ -19,7 +19,7 @@ import java.util.ArrayList;
  *     GifDecoder d = new GifDecoder();
  *     d.read("sample.gif");
  *     int n = d.getFrameCount();
- *     for (int i = 0; i < n; i++) {
+ *     for (int i = 0; i &#60; n; i++) {
  *         BufferedImage frame = d.getFrame(i); // frame i
  *         int t = d.getDelay(i); // display duration of frame in milliseconds
  *         // do something with frame

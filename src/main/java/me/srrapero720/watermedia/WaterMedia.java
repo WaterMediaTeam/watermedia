@@ -6,16 +6,18 @@ import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.*;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import me.lib720.watermod.ThreadCore;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WaterMedia {
 	public static final String ID = "watermedia";
-	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
-	public static final Marker IT = MarkerFactory.getMarker("Bootstrap");
+	public static final Logger LOGGER = LogManager.getLogger(ID);
+	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
 
 	// RETAINERS
 	private static WaterMedia instance;

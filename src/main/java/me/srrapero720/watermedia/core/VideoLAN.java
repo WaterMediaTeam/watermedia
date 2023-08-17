@@ -8,8 +8,8 @@ import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import me.srrapero720.watermedia.core.tools.JarTool;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +23,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class VideoLAN {
-    public static final Marker IT = MarkerFactory.getMarker(VideoLAN.class.getSimpleName());
+    public static final Marker IT = MarkerManager.getMarker(VideoLAN.class.getSimpleName());
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory getFactory() { return FACTORY; }
 

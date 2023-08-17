@@ -12,8 +12,8 @@ import me.srrapero720.watermedia.core.VideoLAN;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public final class WaterMediaAPI {
-    private static final Marker IT = MarkerFactory.getMarker(WaterMediaAPI.class.getSimpleName());
+    private static final Marker IT = MarkerManager.getMarker(WaterMediaAPI.class.getSimpleName());
     private static final List<FixerBase> URL_PATCHERS = new ArrayList<>();
 
     // RESOURCES

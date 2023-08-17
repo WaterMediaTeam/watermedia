@@ -6,8 +6,8 @@ import me.srrapero720.watermedia.api.url.FixerBase;
 import me.srrapero720.watermedia.core.CacheStorage;
 import me.lib720.watermod.ThreadCore;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -31,7 +31,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
 
 public class ImageFetch {
-    private static final Marker IT = MarkerFactory.getMarker(ImageFetch.class.getSimpleName());
+    private static final Marker IT = MarkerManager.getMarker(ImageFetch.class.getSimpleName());
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final AtomicInteger WK_TH = new AtomicInteger(0);
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {

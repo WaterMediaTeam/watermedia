@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.modloaders.mixin;
 
 import org.objectweb.asm.tree.ClassNode;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
@@ -12,7 +12,7 @@ import java.util.Set;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class MixinPlugin implements IMixinConfigPlugin {
-    private static final Marker IT = MarkerFactory.getMarker(MixinPlugin.class.getSimpleName());
+    private static final Marker IT = MarkerManager.getMarker(MixinPlugin.class.getSimpleName());
 
     @Override
     public void onLoad(String mixinPackage) {

@@ -10,9 +10,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
-
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import java.io.File;
 import java.nio.file.Path;
 
@@ -25,7 +24,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  */
 @Mod(WaterMedia.ID)
 public class ForgeML implements IMediaLoader, IEnvLoader {
-    private static final Marker IT = MarkerFactory.getMarker("ForgeModLoader");
+    private static final Marker IT = MarkerManager.getMarker("ForgeModLoader");
     private static final String NAME = "Forge";
     private final WaterMedia instance;
 

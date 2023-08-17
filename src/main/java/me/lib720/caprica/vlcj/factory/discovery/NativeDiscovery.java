@@ -10,7 +10,8 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrat
 import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
-import org.slf4j.Marker;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.slf4j.MarkerFactory;
 
 import java.lang.ref.Reference;
@@ -150,7 +151,7 @@ public class NativeDiscovery {
 
     private static Field searchPaths;
     private static Field libraries;
-    private static final Marker IT = MarkerFactory.getMarker("VideoLAN");
+    private static final Marker IT = MarkerManager.getMarker("VideoLAN");
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         try {
