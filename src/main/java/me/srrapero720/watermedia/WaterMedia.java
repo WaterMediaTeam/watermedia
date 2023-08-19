@@ -16,6 +16,7 @@ import org.apache.logging.log4j.MarkerManager;
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WaterMedia {
 	public static final String ID = "watermedia";
+	public static final String NAME = "WATERMeDIA";
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
 
@@ -26,7 +27,7 @@ public class WaterMedia {
 	private IEnvLoader envLoader;
 
 	public static WaterMedia getInstance() {
-		if (instance == null) throw new IllegalStateException("WATERMeDIA is not initialized");
+		if (instance == null) throw new IllegalStateException("not initialized");
 		return instance;
 	}
 
@@ -38,7 +39,7 @@ public class WaterMedia {
 
 	private WaterMedia(IMediaLoader loader) {
 		this.loader = loader;
-		LOGGER.info(IT, "Running WATERMeDIA on {}", this.loader.getName());
+		LOGGER.info(IT, "Running {} on {}", NAME, this.loader.getName());
 
         if (loader instanceof IEnvLoader) onEnvironmentInit((IEnvLoader) loader);
         else LOGGER.warn(IT, "Environment not detected on instance");
@@ -49,7 +50,7 @@ public class WaterMedia {
 		this.envLoader = loader;
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)
 		if (!this.loader.getName().equalsIgnoreCase("fabric") && !loader.client() && !loader.development()) {
-			exception = new IllegalStateException("WATERMeDIA is running on SERVER");
+			exception = new IllegalStateException(NAME + " is running on SERVER");
 
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
 			LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVERS. remove this mod from server to stop crashes");
@@ -59,16 +60,16 @@ public class WaterMedia {
 
 		// ENSURE FANCYVIDEO_API IS NOT INSTALLED (to prevent more bugreports about it)
 		if (loader.installed("fancyvideo_api"))
-			exception = new IllegalStateException("FancyVideo-API is explicit incompatible with WATERMeDIA, please remove it");
+			exception = new IllegalStateException("FancyVideo-API is explicit incompatible with " + NAME + ", please remove it");
 
 		// ENSURE IS NOT RUNNING BY TLAUNCHER
 		if (loader.tlauncher())
-			exception = new IllegalStateException("[CRITICAL] TLauncher is a virus launcher and not supported by WATERMeDIA - Suggested: SKLauncher, MultiMC");
+			exception = new IllegalStateException("[CRITICAL] TLauncher is a virus launcher and not supported by " + NAME +  " - Suggested: SKLauncher, MultiMC");
 	}
 
 	public void init() {
-		LOGGER.info(IT, "Starting WaterMedia");
-		if (envLoader == null) LOGGER.warn(IT, "WATERMeDIA is starting without Environment, may cause problems");
+		LOGGER.info(IT, "Starting {}", NAME);
+		if (envLoader == null) LOGGER.warn(IT, "{} is starting without Environment, may cause problems", NAME);
 
 		// RESOURCE EXTRACTOR
 		LOGGER.info(IT, "Loading {}", JarAssets.class.getSimpleName());
@@ -86,7 +87,7 @@ public class WaterMedia {
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
 		ThreadCore.trySimple(() -> VideoLAN.init(this.loader), e -> onLoadFailed(VideoLAN.class.getSimpleName(), e));
 
-		LOGGER.info(IT, "Finished WaterMedia startup");
+		LOGGER.info(IT, "Finished {} startup", NAME);
 	}
 
 	public void crash() { if (exception != null) throw new RuntimeException(exception); }
