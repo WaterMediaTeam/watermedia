@@ -4,7 +4,7 @@ import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.AssetsExtractor;
+import me.srrapero720.watermedia.core.JarAssets;
 import me.srrapero720.watermedia.core.CacheStorage;
 import me.srrapero720.watermedia.core.VideoLAN;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
@@ -71,8 +71,8 @@ public class WaterMedia {
 		if (envLoader == null) LOGGER.warn(IT, "WATERMeDIA is starting without Environment, may cause problems");
 
 		// RESOURCE EXTRACTOR
-		LOGGER.info(IT, "Loading {}", AssetsExtractor.class.getSimpleName());
-		ThreadCore.trySimple(() -> AssetsExtractor.init(this.loader), e -> onLoadFailed(AssetsExtractor.class.getSimpleName(), e));
+		LOGGER.info(IT, "Loading {}", JarAssets.class.getSimpleName());
+		ThreadCore.trySimple(() -> JarAssets.init(this.loader), e -> onLoadFailed(JarAssets.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
