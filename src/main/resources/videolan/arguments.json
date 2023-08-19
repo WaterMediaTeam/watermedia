@@ -8,13 +8,13 @@
   "--no-quiet",
 
   "--file-caching",
-  "1000",
+  "4500",
 
   "--aout",
   "directsound",
 
   "--network-caching",
-  "1500",
+  "3000",
 
   "--http-reconnect"
 ]
