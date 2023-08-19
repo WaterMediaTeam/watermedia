@@ -96,7 +96,9 @@ public final class WaterMediaAPI {
         return time;
     }
 
-    public static long render_getTexture(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
+    public static int math_colorARGB(int a, int r, int g, int b) { return (a << 24) | (r << 16) | (g << 8) | b; }
+
+    public static int render_getTexture(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
         return renderer.texture(math_textureTime(renderer, tick, deltaTime, loop));
     }
 
