@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
-  "version": "${mod_version}",
-  "name": "${mod_name}",
-  "description": "${mod_description}",
+  "id": "${modid}",
+  "version": "${modversion}",
+  "name": "${modname}",
+  "description": "${moddescription}",
   "authors": [
     "SrRapero720",
     "nGoedix"
@@ -15,7 +15,7 @@
     "email": "SrRapero720@hotmail.com"
   },
 
-  "license": "${mod_license}",
+  "license": "${modlicense}",
   "icon": "pack.png",
   "mixins": [
     "watermedia.mixin.json"
@@ -30,7 +30,6 @@
     "fancyvideo_api": "*"
   },
   "depends": {
-    "fabricloader": ">=0.14.21",
     "java": ">=8"
   }
 }

@@ -19,7 +19,6 @@ targetCompatibility = JavaVersion.VERSION_1_8
 println "Gradle Java: ${JavaVersion.current()}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-//    mappings channel: "${mappingsch}", version: "${mappings_version}"
     mappings channel: "snapshot", version: "20171003-1.12"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
@@ -73,7 +72,6 @@ minecraft.runs.all {
 }
 
 dependencies {
-//    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     // FabricLoader (just to give loading support on FABRIC)
@@ -104,24 +102,16 @@ dependencies {
 
 }
 
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]
-def replaceProperties = [
-        minecraft_version: mcversion, minecraft_version_range: mcrange,
-        forge_version: fgversion, forge_version_range: fgrange,
-        loader_version_range: fgrange,
-        mod_id: modid, mod_name: modname, mod_license: modlicense, mod_version: modversion,
-        mod_authors: modauthor, mod_description: mod_description
-]
-
 // Process target resources with mod info
 processResources {
     inputs.properties replaceProperties
     replaceProperties.put 'project', project
 
-    filesMatching(resourceTargets) {
-        expand replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]) {
+        expand project.properties
     }
 }
+
 
 mixin { add sourceSets.main, "watermedia.mixin-refmap.json" }
 
