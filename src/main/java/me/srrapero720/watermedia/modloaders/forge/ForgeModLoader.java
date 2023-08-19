@@ -11,16 +11,13 @@ import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-/**
- * Loader for FORGE
- */
-@Mod(value = WaterMedia.ID, modid = WaterMedia.ID, acceptableRemoteVersions = "*")
-public class ForgeBase implements IMediaLoader {
+@Mod(modid = WaterMedia.ID, acceptableRemoteVersions = "*", value = WaterMedia.ID)
+public class ForgeModLoader implements IMediaLoader {
     private static final Marker IT = MarkerManager.getMarker("ForgeModLoader");
     private static final String NAME = "Forge";
 
     private ClassLoader CL;
-    public ForgeBase() {
+    public ForgeModLoader() {
         LOGGER.info(IT, "Starting...");
 
         WaterMedia instance = WaterMedia.getInstance(this);
@@ -29,8 +26,6 @@ public class ForgeBase implements IMediaLoader {
         try { WaterMedia.getInstance().onEnvironmentInit(new WideLoader()); } catch (Throwable ignored) {}
 
         if (instance.getEnvLoader().client()) instance.init();
-
-        // TODO: Use any tricky way to do that on old forge versions
     }
 
     @Override
