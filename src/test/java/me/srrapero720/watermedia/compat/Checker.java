@@ -1,15 +1,5 @@
 package me.srrapero720.watermedia.compat;
 
-import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.KickFixer;
-import me.srrapero720.watermedia.api.url.TwitchFixer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
-
-import java.net.URL;
-
 public class Checker {
 //    private static final Logger LOGGER = LoggerFactory.getLogger("Checker");
 //    private static final Marker IT = MarkerFactory.getMarker("TEST");

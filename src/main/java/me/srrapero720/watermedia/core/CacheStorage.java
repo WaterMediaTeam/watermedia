@@ -2,12 +2,12 @@ package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -57,7 +57,7 @@ public class CacheStorage {
 
     private static File getFile(String url) {
         synchronized (ENTRIES) {
-            return new File(dir, Base64.encodeBase64String(url.getBytes()));
+            return new File(dir, Base64.getEncoder().encodeToString(url.getBytes()));
         }
     }
 

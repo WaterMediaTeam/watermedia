@@ -11,7 +11,7 @@ issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia"
     logoFile="pack.png" #optional
     credits="${modcredits}"
-    authors="${modauthors}"
+    authors="${modauthor}"
     description='''${moddescription}'''
-[features.${mod_id}]
+[features.${modid}]
     javaVersion="[8,)"

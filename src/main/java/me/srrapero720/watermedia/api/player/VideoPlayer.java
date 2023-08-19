@@ -6,15 +6,14 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBuffer
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 
 @SuppressWarnings("unused")
 public class VideoPlayer extends MediaPlayerBase {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
 
-    public VideoPlayer(@Nullable MediaPlayerFactory factory, @Nullable RenderCallback renderCallback, @Nullable SimpleBufferFormatCallback bufferFormatCallback) {
-        super(factory, renderCallback, bufferFormatCallback);
+    public VideoPlayer(MediaPlayerFactory factory, PlayerThread playerThread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+        super(factory, playerThread, renderCallback, bufferFormatCallback);
     }
 
     public synchronized Dimension getDimensions() {

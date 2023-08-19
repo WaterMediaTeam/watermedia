@@ -2,15 +2,12 @@ plugins {
     id 'java'
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 /* JAR INFO */
 version = modversion
 group = modgroup
-archivesBaseName = modid
+base { archivesName = "${modid}" }
 
 /* SOURCE AND TARGET JAVA VERSION */
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -18,33 +15,6 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 println "Gradle Java: ${JavaVersion.current()}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-    mappings channel: "snapshot", version: "20171003-1.12"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    copyIdeResources = true
-    runs {
-        client {
-            taskName "MClient-${mcversion}"
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', modid
-
-            arg '--mixin.config'
-            arg 'watermedia.mixin.json'
-
-            mods {
-                "${modid}" {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
-
-/* SET GENERATED RESOURCES */
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 /* PROJECT REPOSITORIES */
 repositories {
@@ -64,60 +34,52 @@ configurations {
     implementation.extendsFrom library
 }
 
-/* TELLS FORGE TO IDENTIFY LIBRARY CLASSES  */
-minecraft.runs.all {
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-    }
-}
-
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-
     // FabricLoader (just to give loading support on FABRIC)
-    compileOnly ("net.fabricmc:fabric-loader:${project.fabricv}") {
+    compileOnly("net.fabricmc:fabric-loader:${project.fabricv}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
+    // DEPENDENCIES INCLUDED IN MINECRAFT
+    compileOnly 'net.java.dev.jna:jna:4.4.0'
+    compileOnly 'net.java.dev.jna:platform:3.4.0'
+    compileOnly 'org.apache.logging.log4j:log4j-api:2.15.0'
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.17.1'
+    compileOnly 'org.apache.commons:commons-lang3:3.12.0'
+    compileOnly 'commons-io:commons-io:2.7'
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
+    compileOnly 'org.ow2.asm:asm-tree:9.1'
     compileOnly('org.spongepowered:mixin:0.8.5') {
         exclude module: 'guava'
         exclude module: 'commons-io'
         exclude module: 'gson'
     }
-
     // SUB-PROJECTS
-    library(project(":lib-vlcj"))
-    library(project(":lib-extras"))
     compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
 
+    // SUB-LIBRARIES
+    library(project(":lib-vlcj"))
+    library(project(":lib-extras"))
 
     // LIBRARIES TO BE SHADOW
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     library 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-    library ('com.squareup.retrofit2:retrofit:2.6.4')
+    library 'com.squareup.retrofit2:retrofit:2.6.4'
     library ('com.squareup.retrofit2:converter-gson:2.9.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
-    library 'com.mpatric:mp3agic:0.9.1'
-
 }
 
 // Process target resources with mod info
 processResources {
-    inputs.properties replaceProperties
-    replaceProperties.put 'project', project
-
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]) {
         expand project.properties
     }
 }
 
-
-mixin { add sourceSets.main, "watermedia.mixin-refmap.json" }
-
 // ShadowJar task (run this task to make a built JAR.
 shadowJar {
-    configurations = [project.configurations.library]
 
     // Add relocation rules for each dependency
     relocate 'com.github', 'me.lib720.github'
@@ -128,55 +90,43 @@ shadowJar {
     relocate 'okio', 'me.lib720.okio'
     relocate 'com.fasterxml', 'me.lib720'
     relocate 'retrofit2', 'me.lib720.retrofit2'
-//    relocate 'org.slf4j', 'me.lib720'
+
+    exclude "META-INF/versions/**"
+    exclude "META-INF/proguard/**"
+    exclude "META-INF/maven/**"
+    exclude "META-INF/LICENSE.*"
+    exclude "META-INF/LICENSE"
+    exclude "META-INF/NOTICE.**"
+    exclude "META-INF/NOTICE"
+    exclude "META-INF/retrofit.**"
 
     mergeServiceFiles()
-    archiveFileName = "${project.modid}-${project.modversion}.jar"
+    archiveFileName = "${modid}-${modversion}.jar"
 }
 
 // Make the reobfJar task depend on shadowJar
 tasks.build.dependsOn shadowJar
-
-java {
-    withSourcesJar()
-    withJavadocJar()
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
 }
-
 // DO NOT RUN
 jar {
     manifest {
-        attributes "ForceLoadAsMod": "true"
-//        attributes "FMLCorePluginContainsFMLMod": "true"
-//        attributes "FMLCorePlugin": "de.keksuccino.fancymenu.core.FMCore"
         attributes([
-                "Specification-Title"     : project.modname,
-                "Specification-Vendor"    : project.modauthor,
-                "Specification-Version"   : project.modversion,
-                "Implementation-Title"    : project.modname,
-                "Implementation-Version"  : project.modversion,
-                "Implementation-Vendor"   : project.modauthor,
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-                "TweakOrder": 0,
-                "MixinConfigs": "watermedia.mixin.json"
+                "Specification-Title"       : modname,
+                "Specification-Vendor"      : modauthor,
+                "Specification-Version"     : modversion,
+                "Implementation-Title"      : modname,
+                "Implementation-Version"    : modversion,
+                "Implementation-Vendor"     : modauthor,
+                "Implementation-Timestamp"  : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "TweakClass"                : "org.spongepowered.asm.launch.MixinTweaker",
+                "TweakOrder"                : 0,
+                "MixinConfigs"              : "watermedia.mixin.json",
+                "ForceLoadAsMod"            : "true"
         ])
     }
-    from {
-        configurations.library.collect {
-            it.isDirectory() ? it.matching {
-                exclude '*', 'META-INF/**'
-            } : zipTree(it).matching {
-                exclude '*', 'META-INF/**'
-            }
-        }
+    from(configurations.library.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF', 'META-INF/**'
     }
-    from("LICENSE") {
-        rename { "${it}_${base.archivesName.get()}"}
-    }
-}
-
-jar.finalizedBy('reobfJar')
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
 }

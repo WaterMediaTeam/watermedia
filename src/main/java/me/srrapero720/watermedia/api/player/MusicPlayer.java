@@ -12,8 +12,8 @@ import java.util.Arrays;
 @Experimental
 public class MusicPlayer extends MediaPlayerBase {
     WaterAudioCallback callback;
-    public MusicPlayer(MediaPlayerFactory factory, WaterAudioCallback callback) {
-        super(factory, null, null);
+    public MusicPlayer(MediaPlayerFactory factory, PlayerThread playerThread, WaterAudioCallback callback) {
+        super(factory, playerThread, null, null);
         this.callback = callback;
         if (callback != null) this.raw.mediaPlayer().audio().callback("ogg", 44100, 2, callback);
     }

@@ -17,7 +17,6 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.player.events.*;
 import me.srrapero720.watermedia.api.url.FixerBase;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
-import me.srrapero720.watermedia.core.tools.annotations.Untested;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -28,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+@SuppressWarnings("unused")
 public abstract class MediaPlayerBase extends EventManager {
     protected static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
@@ -41,87 +41,72 @@ public abstract class MediaPlayerBase extends EventManager {
     });
 
 
-    protected String url;
-
     // PLAYER
+    protected String url;
     public final CallbackMediaPlayerComponent raw;
+    private final WaterMediaPlayerEventListener listener;
     protected final AtomicBoolean started = new AtomicBoolean(false);
     protected final AtomicBoolean buffering = new AtomicBoolean(false);
     protected final AtomicBoolean prepared = new AtomicBoolean(false);
     protected final AtomicInteger volume = new AtomicInteger(100);
     protected final AtomicBoolean assumeStream = new AtomicBoolean(false);
 
-    public MediaPlayerBase(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+    // PLAYER THREAD
+    protected final PlayerThread playerThread;
+
+    public MediaPlayerBase(MediaPlayerFactory factory, PlayerThread thread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (WaterMediaAPI.vlc_isReady()) {
+            this.playerThread = thread;
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
-            raw.mediaPlayer().events().addMediaPlayerEventListener(new WaterMediaPlayerEventListener());
+            raw.mediaPlayer().events().addMediaPlayerEventListener(listener = new WaterMediaPlayerEventListener());
         } else {
             LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
             this.raw = null;
+            this.playerThread = null;
+            this.listener = null;
+        }
+    }
+
+    private void runPlayerAction(PlayerAction action, CharSequence url, String[] vlcArgs) {
+        if (raw == null) return;
+        try {
+            if (isPlaying()) stop();
+            FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
+
+            if (result != null) {
+                this.url = result.url.toString();
+                assumeStream.set(result.assumeStream);
+
+                switch (action) {
+                    case START: raw.mediaPlayer().media().start(this.url, vlcArgs); break;
+                    case PREPARE: raw.mediaPlayer().media().prepare(this.url, vlcArgs); break;
+                    case START_PAUSED: raw.mediaPlayer().media().startPaused(this.url, vlcArgs); break;
+                    default: throw new Exception("What?");
+                }
+                playerThread.askForExecution(() -> started.set(true));
+            } else LOGGER.error(IT, "Player failed to load. URL is invalid or null");
+        } catch (Exception e) {
+            LOGGER.error(IT, "Failed to load player", e);
         }
     }
 
     public void start(CharSequence url) { this.start(url, new String[0]); }
     public void start(CharSequence url, String[] vlcArgs) {
-        if (raw == null) return;
-        EX.execute(() -> {
-            try {
-                if (isPlaying()) stop();
-                FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
-
-                if (result != null) {
-                    this.url = result.url.toString();
-                    assumeStream.set(result.assumeStream);
-
-                    raw.mediaPlayer().media().start(this.url, vlcArgs);
-                    started.set(true);
-                } else LOGGER.error(IT, "Playback start failed. URL is invalid or null");
-            } catch (Exception e) {
-                LOGGER.error(IT, "Failed to start player", e);
-            }
-        });
+        EX.execute(() -> runPlayerAction(PlayerAction.START, url, vlcArgs));
     }
+
     public void prepare(CharSequence url) { this.prepare(url, new String[0]); }
     public void prepare(CharSequence url, String[] vlcArgs) {
-        if (raw == null) return;
-        EX.execute(() -> {
-            try {
-                if (isPlaying()) stop();
-                FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
-
-                if (result != null) {
-                    this.url = result.url.toString();
-                    assumeStream.set(result.assumeStream);
-
-                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                    started.set(true);
-                } else LOGGER.error(IT, "Playback prepare failed. URL is invalid or null");
-            } catch (Exception e) {
-                LOGGER.error(IT, "Failed to prepare player", e);
-            }
-        });
+        EX.execute(() -> runPlayerAction(PlayerAction.PREPARE, url, vlcArgs));
     }
-    public void startPaused(CharSequence url) { this.prepare(url, new String[0]); }
+
+
+    public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        if (raw == null) return;
-        EX.execute(() -> {
-            try {
-                if (isPlaying()) stop();
-                FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
-
-                if (result != null) {
-                    this.url = result.url.toString();
-                    assumeStream.set(result.assumeStream);
-
-                    raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
-                    started.set(true);
-                } else LOGGER.error(IT, "Playback start paused failed. URL is invalid or null");
-            } catch (Exception e) {
-                LOGGER.error(IT, "Failed to start paused player", e);
-            }
-        });
+        EX.execute(() -> runPlayerAction(PlayerAction.START_PAUSED, url, vlcArgs));
     }
-    public State getRawPlayerState() {
+
+    public State getPlayerState() {
         if (raw == null) return State.ERROR;
         synchronized (this) { return raw.mediaPlayer().status().state(); }
     }
@@ -149,10 +134,8 @@ public abstract class MediaPlayerBase extends EventManager {
     public boolean isStarted() { return started.get(); }
     public boolean isBuffering() { return buffering.get(); }
     public boolean isPrepared() { return prepared.get(); }
-    @Untested
-    public boolean isPaused() { return getRawPlayerState().equals(State.PAUSED); }
-    @Untested
-    public boolean isStopped() { return getRawPlayerState().equals(State.STOPPED); }
+    public boolean isPaused() { return getPlayerState().equals(State.PAUSED); }
+    public boolean isStopped() { return getPlayerState().equals(State.STOPPED); }
 
     public boolean isValid() {
         if (raw == null) return false;
@@ -161,7 +144,7 @@ public abstract class MediaPlayerBase extends EventManager {
 
     public boolean isPlaying() {
         if (raw == null) return false;
-        synchronized (this) { return getRawPlayerState().equals(State.PLAYING); }
+        synchronized (this) { return getPlayerState().equals(State.PLAYING); }
     }
 
     @Experimental
@@ -273,7 +256,7 @@ public abstract class MediaPlayerBase extends EventManager {
     public long getDuration() {
         if (raw == null) return 0L;
         synchronized (this) {
-            if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
+            if (!isValid() || (RuntimeUtil.isNix() && getPlayerState().equals(State.STOPPED))) return 0L;
             return raw.mediaPlayer().status().length();
         }
     }
@@ -339,55 +322,73 @@ public abstract class MediaPlayerBase extends EventManager {
         synchronized (this) { raw.mediaPlayer().release(); }
     }
 
+    public void releaseSync() {
+        if (raw == null) return;
+        playerThread.askForExecution(() -> {
+            raw.mediaPlayer().events().removeMediaPlayerEventListener(listener);
+            EX.execute(raw.mediaPlayer()::release);
+        });
+    }
+
     protected static void checkClassLoader() {
         if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(LOADER);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private final class WaterMediaPlayerEventListener implements MediaPlayerEventListener {
         @Override
         public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
             checkClassLoader();
-            prepared.set(false);
+            playerThread.askForExecution(() -> prepared.set(false));
         }
 
         @Override
         public void opening(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            post(new PlayerStateEvent.Prepare(MediaPlayerBase.this));
+            playerThread.askForExecution(() -> post(new PlayerStateEvent.Prepare(MediaPlayerBase.this)));
+            prepared.set(false);
         }
 
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
             checkClassLoader();
-            post(new MediaBufferingEvent.Progress(MediaPlayerBase.this, newCache));
-            buffering.set(true);
+            playerThread.askForExecution(() -> {
+                post(new MediaBufferingEvent.Progress(MediaPlayerBase.this, newCache));
+                buffering.set(true);
+            });
         }
 
         @Override
         public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            if (buffering.get()) {
-                post(new MediaBufferingEvent.End(MediaPlayerBase.this));
-                buffering.set(false);
-            }
+            playerThread.askForExecution(() -> {
+                if (buffering.get()) {
+                    post(new MediaBufferingEvent.End(MediaPlayerBase.this));
+                    buffering.set(false);
+                }
 
-            if (volume.get() == 0) setMuteMode(true);
-            else setVolume(volume.get());
+                if (volume.get() == 0) setMuteMode(true);
+                else setVolume(volume.get());
 
-            if (!prepared.get()) post(new PlayerStateEvent.Started());
-            else post(new MediaResumeEvent(MediaPlayerBase.this, getDuration()));
+                if (!prepared.get()) post(new PlayerStateEvent.Started());
+                else post(new MediaResumeEvent(MediaPlayerBase.this, getDuration()));
+            });
         }
 
         @Override
         public void paused(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            post(new MediaPauseEvent(MediaPlayerBase.this, getDuration()));
+            playerThread.askForExecution(() -> {
+                post(new MediaPauseEvent(MediaPlayerBase.this, getDuration()));
+            });
         }
 
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            post(new MediaStoppedEvent(MediaPlayerBase.this, getDuration()));
+            playerThread.askForExecution(() -> {
+                post(new MediaStoppedEvent(MediaPlayerBase.this, getDuration()));
+            });
         }
 
         @Override
@@ -403,7 +404,9 @@ public abstract class MediaPlayerBase extends EventManager {
         @Override
         public void finished(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            post(new MediaFinishedEvent(MediaPlayerBase.this, url.toString()));
+            playerThread.askForExecution(() -> {
+                post(new MediaFinishedEvent(MediaPlayerBase.this, url.toString()));
+            });
         }
 
         @Override
@@ -479,7 +482,9 @@ public abstract class MediaPlayerBase extends EventManager {
         @Override
         public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
             checkClassLoader();
-            post(new PlayerVolumeUpdateEvent(MediaPlayerBase.this, getVolume(), (int) volume));
+            playerThread.askForExecution(() -> {
+                post(new PlayerVolumeUpdateEvent(MediaPlayerBase.this, getVolume(), (int) volume));
+            });
         }
 
         @Override
@@ -495,16 +500,23 @@ public abstract class MediaPlayerBase extends EventManager {
         @Override
         public void error(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            post(new PlayerStateEvent.Error(MediaPlayerBase.this));
+            playerThread.askForExecution(() -> {
+                post(new PlayerStateEvent.Error(MediaPlayerBase.this));
+            });
         }
 
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            post(new PlayerStateEvent.Ready(MediaPlayerBase.this));
+            playerThread.askForExecution(() -> {
+                post(new PlayerStateEvent.Ready(MediaPlayerBase.this));
 
-            prepared.set(true);
-            setVolume(volume.get());
+                prepared.set(true);
+                setVolume(volume.get());
+            });
         }
     }
+
+    public interface PlayerThread { void askForExecution(Runnable runnable); }
+    private enum PlayerAction { PREPARE, START, START_PAUSED }
 }

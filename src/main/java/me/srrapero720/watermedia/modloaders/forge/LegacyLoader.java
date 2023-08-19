@@ -2,12 +2,10 @@ package me.srrapero720.watermedia.modloaders.forge;
 
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -19,7 +17,7 @@ public class LegacyLoader implements IEnvLoader {
     private static final Marker IT = MarkerManager.getMarker("LegacyForge");
 
     LegacyLoader() {
-        LOGGER.info(IT, "Minecraft version '{}'", Loader.MC_VERSION);
+        if (client()) LOGGER.info(IT, "Minecraft version '{}'", Loader.MC_VERSION);
         WaterMedia.getInstance().onEnvironmentInit(this);
     }
 
@@ -40,7 +38,7 @@ public class LegacyLoader implements IEnvLoader {
 
     @Override
     public boolean client() {
-        return FMLCommonHandler.instance().getSide() == Side.CLIENT;
+        return FMLCommonHandler.instance().getSide().isClient();
     }
 
     @Override
