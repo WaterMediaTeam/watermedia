@@ -10,16 +10,16 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrat
 import me.lib720.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.slf4j.MarkerFactory;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.lib720.caprica.vlcj.binding.lib.LibVlc.libvlc_new;
 import static me.lib720.caprica.vlcj.binding.lib.LibVlc.libvlc_release;
 
@@ -50,7 +50,6 @@ import static me.lib720.caprica.vlcj.binding.lib.LibVlc.libvlc_release;
  * load (e.g. different version of VLC if multiple are installed).
  */
 public class NativeDiscovery {
-
     /**
      * Name of the system environment variable containing the VLC plugin path location.
      * <p>
@@ -151,7 +150,8 @@ public class NativeDiscovery {
 
     private static Field searchPaths;
     private static Field libraries;
-    private static final Marker IT = MarkerManager.getMarker("VideoLAN");
+    public static final Logger LOGGER = LogManager.getLogger("VLCJ");
+    private static final Marker IT = MarkerManager.getMarker("NativeDiscovery");
     @SuppressWarnings("unchecked")
     public boolean attemptFix(String path, NativeDiscoveryStrategy discoveryStrategy) {
         try {
