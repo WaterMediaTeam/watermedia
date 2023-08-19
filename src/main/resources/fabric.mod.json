@@ -17,7 +17,9 @@
 
   "license": "${mod_license}",
   "icon": "pack.png",
-
+  "mixins": [
+    "watermedia.mixin.json"
+  ],
   "environment": "client",
   "entrypoints": {
     "preLaunch": [
