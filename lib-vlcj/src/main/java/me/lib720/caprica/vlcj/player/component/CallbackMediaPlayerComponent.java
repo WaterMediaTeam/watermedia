@@ -20,15 +20,14 @@
 package me.lib720.caprica.vlcj.player.component;
 
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.component.callback.CallbackImagePainter;
 import me.lib720.caprica.vlcj.player.component.callback.ScaledCallbackImagePainter;
-import me.lib720.caprica.vlcj.player.embedded.fullscreen.FullScreenStrategy;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.format.RV32BufferFormat;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.*;
-import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import me.lib720.vlcj.player.embedded.videosurface.callback.*;
+import me.lib720.caprica.vlcj.player.embedded.fullscreen.FullScreenStrategy;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.*;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.format.RV32BufferFormat;
 
 import javax.swing.*;
 import java.awt.*;

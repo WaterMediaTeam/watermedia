@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.modloaders;
+package me.srrapero720.watermedia.modloaders.fabric;
 
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
@@ -20,13 +20,13 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * By default, this class preloads WATERMeDIA over other mods
  * but haven't warranties, because other mods can preload easy too.
  */
-public class FabricML implements PreLaunchEntrypoint, IMediaLoader, IEnvLoader {
+public class FabricBase implements PreLaunchEntrypoint, IMediaLoader, IEnvLoader {
     private static final Marker IT = MarkerManager.getMarker("FabricModLoader");
     private static final String NAME = "Fabric";
     private final WaterMedia instance;
     private ClassLoader CL;
 
-    public FabricML() {
+    public FabricBase() {
         LOGGER.info(IT, "Starting...");
         instance = WaterMedia.getInstance(this);
     }

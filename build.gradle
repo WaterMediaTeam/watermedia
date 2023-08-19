@@ -19,7 +19,8 @@ targetCompatibility = JavaVersion.VERSION_1_8
 println "Gradle Java: ${JavaVersion.current()}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: "${mappingsch}", version: "${mappings_version}"
+//    mappings channel: "${mappingsch}", version: "${mappings_version}"
+    mappings channel: "snapshot", version: "20171003-1.12"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
     runs {
@@ -72,16 +73,25 @@ minecraft.runs.all {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
-//    compileOnly 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+//    minecraft "net.minecraftforge:forge:${project.mcversion}-${project.fgversion}"
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     // FabricLoader (just to give loading support on FABRIC)
     compileOnly ("net.fabricmc:fabric-loader:${project.fabricv}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
+    compileOnly('org.spongepowered:mixin:0.8.5') {
+        exclude module: 'guava'
+        exclude module: 'commons-io'
+        exclude module: 'gson'
+    }
+
+    // SUB-PROJECTS
     library(project(":lib-vlcj"))
     library(project(":lib-extras"))
+    compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
+
 
     // LIBRARIES TO BE SHADOW
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
@@ -91,6 +101,7 @@ dependencies {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
     library 'com.mpatric:mp3agic:0.9.1'
+
 }
 
 def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]
@@ -144,6 +155,9 @@ java {
 // DO NOT RUN
 jar {
     manifest {
+        attributes "ForceLoadAsMod": "true"
+//        attributes "FMLCorePluginContainsFMLMod": "true"
+//        attributes "FMLCorePlugin": "de.keksuccino.fancymenu.core.FMCore"
         attributes([
                 "Specification-Title"     : project.modname,
                 "Specification-Vendor"    : project.modauthor,

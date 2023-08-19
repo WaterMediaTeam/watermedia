@@ -22,3 +22,4 @@ plugins {
 
 include 'lib-vlcj'
 include 'lib-extras'
+include 'lib-forge'

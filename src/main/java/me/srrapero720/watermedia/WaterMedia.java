@@ -1,11 +1,13 @@
 package me.srrapero720.watermedia;
 
+import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.*;
+import me.srrapero720.watermedia.core.AssetsExtractor;
+import me.srrapero720.watermedia.core.CacheStorage;
+import me.srrapero720.watermedia.core.VideoLAN;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
-import me.lib720.watermod.ThreadCore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -21,6 +23,12 @@ public class WaterMedia {
 	private static WaterMedia instance;
 	private static volatile Exception exception;
 	private final IMediaLoader loader;
+	private IEnvLoader envLoader;
+
+	public static WaterMedia getInstance() {
+		if (instance == null) throw new IllegalStateException("WATERMeDIA is not initialized");
+		return instance;
+	}
 
 	public static WaterMedia getInstance(IMediaLoader loader) {
 		if (instance == null && loader == null) throw new IllegalArgumentException("IMediaLoader must not be null with non instances");
@@ -33,12 +41,14 @@ public class WaterMedia {
 		LOGGER.info(IT, "Running WATERMeDIA on {}", this.loader.getName());
 
         if (loader instanceof IEnvLoader) onEnvironmentInit((IEnvLoader) loader);
-        else LOGGER.warn(IT, "Environment not detected");
+        else LOGGER.warn(IT, "Environment not detected on instance");
     }
 
+	public IEnvLoader getEnvLoader() { return envLoader; }
 	public void onEnvironmentInit(IEnvLoader loader) {
+		this.envLoader = loader;
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)
-		if (!loader.client() && !loader.development()) {
+		if (!this.loader.getName().equalsIgnoreCase("fabric") && !loader.client() && !loader.development()) {
 			exception = new IllegalStateException("WATERMeDIA is running on SERVER");
 
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
@@ -58,6 +68,7 @@ public class WaterMedia {
 
 	public void init() {
 		LOGGER.info(IT, "Starting WaterMedia");
+		if (envLoader == null) LOGGER.warn(IT, "WATERMeDIA is starting without Environment, may cause problems");
 
 		// RESOURCE EXTRACTOR
 		LOGGER.info(IT, "Loading {}", AssetsExtractor.class.getSimpleName());
