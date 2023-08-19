@@ -3,6 +3,7 @@ package me.srrapero720.watermedia.modloaders.forge;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -39,7 +40,7 @@ public class LegacyLoader implements IEnvLoader {
 
     @Override
     public boolean client() {
-        return FMLClientHandler.instance().getSide() == Side.CLIENT;
+        return FMLCommonHandler.instance().getSide() == Side.CLIENT;
     }
 
     @Override
