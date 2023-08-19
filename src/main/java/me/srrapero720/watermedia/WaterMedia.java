@@ -42,7 +42,7 @@ public class WaterMedia {
 		LOGGER.info(IT, "Running {} on {}", NAME, this.loader.getName());
 
         if (loader instanceof IEnvLoader) onEnvironmentInit((IEnvLoader) loader);
-        else LOGGER.warn(IT, "Environment not detected on instance");
+        else LOGGER.warn(IT, "Environment not detected");
     }
 
 	public IEnvLoader getEnvLoader() { return envLoader; }
@@ -50,25 +50,25 @@ public class WaterMedia {
 		this.envLoader = loader;
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)
 		if (!this.loader.getName().equalsIgnoreCase("fabric") && !loader.client() && !loader.development()) {
-			exception = new IllegalStateException(NAME + " is running on SERVER");
+			exception = new IllegalAccessException("Environment is a server");
 
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-			LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVERS. remove this mod from server to stop crashes");
-			LOGGER.error(IT, "If dependant mods throws error loading WATERMeDIA classes report it to the creator");
+			LOGGER.error(IT, "Mod is not designed to run on SERVERS. remove this mod from server to stop crashes");
+			LOGGER.error(IT, "If dependant mods throws error loading our classes then report it to the creator");
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
 		}
 
 		// ENSURE FANCYVIDEO_API IS NOT INSTALLED (to prevent more bugreports about it)
 		if (loader.installed("fancyvideo_api"))
-			exception = new IllegalStateException("FancyVideo-API is explicit incompatible with " + NAME + ", please remove it");
+			exception = new IllegalStateException("FancyVideo-API detected, please remove it");
 
 		// ENSURE IS NOT RUNNING BY TLAUNCHER
 		if (loader.tlauncher())
-			exception = new IllegalStateException("[CRITICAL] TLauncher is a virus launcher and not supported by " + NAME +  " - Suggested: SKLauncher, MultiMC");
+			exception = new IllegalStateException("TLauncher is VIRUS and not supported. Use instead: SKLauncher or MultiMC");
 	}
 
 	public void init() {
-		LOGGER.info(IT, "Starting {}", NAME);
+		LOGGER.info(IT, "Starting modules");
 		if (envLoader == null) LOGGER.warn(IT, "{} is starting without Environment, may cause problems", NAME);
 
 		// RESOURCE EXTRACTOR
@@ -87,7 +87,7 @@ public class WaterMedia {
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
 		ThreadCore.trySimple(() -> VideoLAN.init(this.loader), e -> onLoadFailed(VideoLAN.class.getSimpleName(), e));
 
-		LOGGER.info(IT, "Finished {} startup", NAME);
+		LOGGER.info(IT, "Startup finished");
 	}
 
 	public void crash() { if (exception != null) throw new RuntimeException(exception); }
