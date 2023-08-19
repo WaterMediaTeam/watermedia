@@ -27,14 +27,15 @@ public final class WaterMediaAPI {
     private static final List<FixerBase> URL_PATCHERS = new ArrayList<>();
 
     // RESOURCES
-    public static ImageRenderer LOADING_GIF;
-    public static ImageRenderer VLC_FAILED;
-    public static ImageRenderer VLC_FAILED_EXTENDED;
-    public static ImageRenderer VLC_FAILED_INSTALL;
-    public static ImageRenderer VLC_FAILED_INSTALL_EXTENDED;
+    private static ImageRenderer IMG_LOADING;
+    public static ImageRenderer img_getLoading() { return IMG_LOADING; }
+    private static ImageRenderer IMG_VLC_FAIL;
+    public static ImageRenderer img_getFailedVLC() { return IMG_VLC_FAIL; }
+    private static ImageRenderer IMG_VLC_FAIL_LAND;
+    public static ImageRenderer img_getLandFailedVLC() { return IMG_VLC_FAIL_LAND; }
 
     public static void init(IMediaLoader loader) {
-        LOGGER.warn(IT, (!URL_PATCHERS.isEmpty() ? "Rel" : "L") + "oading URLFixers");
+        LOGGER.warn(IT, (!URL_PATCHERS.isEmpty() ? "Rel" : "L") + "oading {}", FixerBase.class.getSimpleName());
         URL_PATCHERS.clear();
 
         // REGISTER + LOGGER
@@ -47,32 +48,15 @@ public final class WaterMediaAPI {
                 new DropboxFixer()
         );
 
-        LOGGER.info(IT, "Loading internal {}'s", ImageRenderer.class.getSimpleName());
 
         ThreadCore.trySimple(() -> {
-            if (LOADING_GIF == null) LOADING_GIF = new ImageRenderer(JarTool.readGif(loader.getModuleClassLoader(), "/pictures/loading.gif"));
-            else LOGGER.warn("Skipping LOADING_GIF");
-        }, (e) -> LOGGER.error("Failed to load 'LOADING_GIF'", e));
+            if (IMG_LOADING != null) return;
 
-        ThreadCore.trySimple(() -> {
-            if (VLC_FAILED == null) VLC_FAILED = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
-            else LOGGER.warn("Skipping VLC_FAILED");
-        }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED'", e));
-
-        ThreadCore.trySimple(() -> {
-            if (VLC_FAILED_EXTENDED == null) VLC_FAILED_EXTENDED = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-landscape.png"));
-            else LOGGER.warn("Skipping VLC_FAILED_EXTENDED");
-        }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_EXTENDED'", e));
-
-        ThreadCore.trySimple(() -> {
-            if (VLC_FAILED_INSTALL == null) VLC_FAILED_INSTALL = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-install.png"));
-            else LOGGER.warn("Skipping VLC_FAILED_INSTALL");
-        }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL'", e));
-
-        ThreadCore.trySimple(() -> {
-            if (VLC_FAILED_INSTALL_EXTENDED == null) VLC_FAILED_INSTALL_EXTENDED = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-install-landscape.png"));
-            else LOGGER.warn("Skipping VLC_FAILED_INSTALL_EXTENDED");
-        }, (e) -> LOGGER.error("Failed to load 'VLC_FAILED_INSTALL_EXTENDED'", e));
+            LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
+            IMG_LOADING = new ImageRenderer(JarTool.readGif(loader.getModuleClassLoader(), "/pictures/loading.gif"));
+            IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
+            IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-land.png"));
+        }, e -> LOGGER.error(IT, "Failed to load image resources", e));
     }
 
     /**
