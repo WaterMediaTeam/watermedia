@@ -9,22 +9,25 @@ import me.srrapero720.watermedia.api.player.VideoPlayer;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.core.VideoLAN;
+import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import retrofit2.http.PUT;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.*;
 
 public final class WaterMediaAPI {
-    private static final Marker IT = MarkerManager.getMarker(WaterMediaAPI.class.getSimpleName());
-    private static final List<FixerBase> URL_PATCHERS = new ArrayList<>();
+    private static final Marker IT = MarkerManager.getMarker("API");
+    private static final List<FixerBase> URLFIXERS = new ArrayList<>();
 
     // RESOURCES
     private static ImageRenderer IMG_LOADING;
@@ -34,11 +37,10 @@ public final class WaterMediaAPI {
     private static ImageRenderer IMG_VLC_FAIL_LAND;
     public static ImageRenderer img_getLandFailedVLC() { return IMG_VLC_FAIL_LAND; }
 
-    public static void init(IMediaLoader loader) {
-        LOGGER.warn(IT, (!URL_PATCHERS.isEmpty() ? "Rel" : "L") + "oading {}", FixerBase.class.getSimpleName());
-        URL_PATCHERS.clear();
+    public static void init(IMediaLoader loader) throws ReloadingException {
+        if (!URLFIXERS.isEmpty()) throw new ReloadingException(IT.getName());
 
-        // REGISTER + LOGGER
+        LOGGER.warn(IT,"Loading {}", FixerBase.class.getSimpleName());
         url_registerFixer(
                 new YoutubeFixer(),
                 new TwitchFixer(),
@@ -77,6 +79,27 @@ public final class WaterMediaAPI {
      */
     public static int math_millisToTicks(long ms) { return (int) (ms / 50L); }
 
+    /**
+     * Calculates time for rendering a picture based on a 20 tps math
+     * 20 tick equals 1 second, depending on given tick time, image delay and duration
+     * do more calculations including delta-time and if was in LOOP
+     * @param renderer image to get time
+     * @param tick game tick (20t = 1s)
+     * @param deltaTime time scale
+     * @param loop if tick reach max gif duration should restart it or keep last frame
+     * @return texture time
+     */
+    public static long math_textureTime(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
+        long time = tick * 50L + deltaTime;
+        long duration = renderer.duration;
+        if (duration > 0 && time > duration && loop) time %= duration;
+        return time;
+    }
+
+    public static long render_getTexture(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
+        return renderer.texture(math_textureTime(renderer, tick, deltaTime, loop));
+    }
+
 
     /**
      * Check if any String is a valid URL
@@ -93,7 +116,7 @@ public final class WaterMediaAPI {
     public static void url_registerFixer(FixerBase...patch) {
         String[] names = new String[patch.length];
         for (int i = 0; i < patch.length; i++) {
-            URL_PATCHERS.add(patch[i]);
+            URLFIXERS.add(patch[i]);
             names[i] = patch[i].name();
         }
         LOGGER.warn(IT, "Fixers registered: {}", Arrays.toString(names));
@@ -113,7 +136,7 @@ public final class WaterMediaAPI {
             URL url = new URL(stringUrl);
 
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url, null).url;
+                for (FixerBase compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null).url;
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
         } catch (Exception e) {
@@ -126,7 +149,7 @@ public final class WaterMediaAPI {
         try {
             URL url = new URL(str);
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (FixerBase compat: URL_PATCHERS) if (compat.isValid(url)) return compat.patch(url, null);
+                for (FixerBase compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null);
                 return defaultVar;
             }, e -> LOGGER.error("Exception occurred trying to fix URL", e), new FixerBase.Result(url, false, false));
         } catch (Exception e) {
@@ -209,7 +232,14 @@ public final class WaterMediaAPI {
             buffer.put((byte) (pixel & 0xFF)); // Blue
             if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
         }
-        buffer.flip();
+
+        // THSI AVOID crashes trying to execute, everything is "human" fine but class bytecode didn't help
+        try {
+            Method flip = buffer.getClass().getMethod("flip");
+            flip.invoke(buffer);
+        } catch (Exception e) {
+            LOGGER.error("Cannot flip buffer, careful");
+        }
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
