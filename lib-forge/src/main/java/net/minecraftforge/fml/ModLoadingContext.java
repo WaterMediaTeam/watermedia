@@ -1,7 +1,6 @@
 package net.minecraftforge.fml;
 
 import java.util.function.Supplier;
-import java.lang.Record;
 
 public class ModLoadingContext {
     public static ModLoadingContext get() {
