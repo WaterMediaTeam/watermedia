@@ -38,7 +38,7 @@ public class ImageFetch {
         Thread t = new Thread(r);
         t.setDaemon(true);
         t.setPriority(Thread.MIN_PRIORITY);
-        t.setName("WM-ImageFetch-Worker-" + WK_TH.incrementAndGet());
+        t.setName("WATERMeDIA-if-Worker-" + WK_TH.incrementAndGet());
         return t;
     });
 
