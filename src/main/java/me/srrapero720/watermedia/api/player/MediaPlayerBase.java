@@ -77,10 +77,14 @@ public abstract class MediaPlayerBase {
                 assumeStream.set(result.assumeStream);
 
                 switch (action) {
-                    case START: raw.mediaPlayer().media().start(this.url, vlcArgs); break;
-                    case PREPARE: raw.mediaPlayer().media().prepare(this.url, vlcArgs); break;
-                    case START_PAUSED: raw.mediaPlayer().media().startPaused(this.url, vlcArgs); break;
-                    default: throw new Exception("What?");
+                    case START:
+                        raw.mediaPlayer().media().start(this.url, vlcArgs);
+                        break;
+                    case START_PAUSED:
+                        raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
+                        break;
+                    default:
+                        throw new Exception("What?");
                 }
                 safeUsage.set(true);
             } else LOGGER.error(IT, "Player failed to load. URL is invalid or null");
@@ -89,16 +93,13 @@ public abstract class MediaPlayerBase {
         }
     }
 
-    public void start(CharSequence url) { this.start(url, new String[0]); }
+    public void start(CharSequence url) {
+        this.start(url, new String[0]);
+    }
+
     public void start(CharSequence url, String[] vlcArgs) {
         EX.execute(() -> runPlayerAction(PlayerAction.START, url, vlcArgs));
     }
-
-    public void prepare(CharSequence url) { this.prepare(url, new String[0]); }
-    public void prepare(CharSequence url, String[] vlcArgs) {
-        EX.execute(() -> runPlayerAction(PlayerAction.PREPARE, url, vlcArgs));
-    }
-
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
@@ -133,7 +134,7 @@ public abstract class MediaPlayerBase {
     public boolean safeToUse() { return safeUsage.get(); }
     public boolean isBuffering() { return state.equals(State.BUFFERING); }
     public boolean isReady() { return state.equals(State.READY); }
-
+    public boolean isPaused() { return state.equals(State.PAUSED); }
     public boolean isStopped() { return state.equals(State.STOPPED); }
     public boolean isEnded() { return state.equals(State.ENDED); }
 
@@ -144,7 +145,7 @@ public abstract class MediaPlayerBase {
 
     public boolean isPlaying() {
         if (raw == null) return false;
-        synchronized (this) { return raw.mediaPlayer().status().isPlaying(); }
+        synchronized (this) { return state.equals(State.PLAYING) || raw.mediaPlayer().status().isPlaying() ; }
     }
 
     @Experimental
@@ -344,30 +345,44 @@ public abstract class MediaPlayerBase {
             state = State.OPENING;
         }
 
+        State buffering_retainedState;
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
             checkClassLoader();
-            state = State.BUFFERING;
+            if (buffering_retainedState == null) {
+                buffering_retainedState = state;
+                state = State.BUFFERING;
+            }
+            if (newCache >= 100.0f) {
+                state = buffering_retainedState;
+                buffering_retainedState = null;
+            }
         }
 
         @Override
+        // we cannot trust this method
         public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            state = State.PLAYING;
-            if (volume.get() == 0) mediaPlayer.audio().setMute(true);
-            else mediaPlayer.audio().setVolume(volume.get());
+            playerThread.askForExecution(() -> {
+                if (volume.get() == 0) setMuteMode(true);
+                else setVolume(volume.get());
+            });
         }
 
         @Override
         public void paused(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            state = State.PAUSED;
+            playerThread.askForExecution(() -> {
+                state = State.PAUSED;
+            });
         }
 
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            state = State.STOPPED;
+            playerThread.askForExecution(() -> {
+                state = State.STOPPED;
+            });
         }
 
         @Override
@@ -383,7 +398,9 @@ public abstract class MediaPlayerBase {
         @Override
         public void finished(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            state = State.ENDED;
+            playerThread.askForExecution(() -> {
+                state = State.ENDED;
+            });
         }
 
         @Override
@@ -474,20 +491,22 @@ public abstract class MediaPlayerBase {
         @Override
         public void error(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            state = State.ERROR;
+            playerThread.askForExecution(() -> {
+                state = State.ERROR;
+            });
         }
 
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
-            state = State.READY;
             checkClassLoader();
             playerThread.askForExecution(() -> {
+                state = isPlaying() ? State.PLAYING : State.READY;
                 setVolume(volume.get());
             });
         }
     }
 
     public interface PlayerThread { void askForExecution(Runnable runnable); }
-    private enum PlayerAction { PREPARE, START, START_PAUSED }
+    private enum PlayerAction { START, START_PAUSED }
     public enum State { WAITING, STARTING, OPENING, READY, BUFFERING, PLAYING, PAUSED, STOPPED, ENDED, ERROR, }
 }

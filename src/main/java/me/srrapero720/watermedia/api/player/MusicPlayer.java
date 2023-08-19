@@ -44,19 +44,6 @@ public class MusicPlayer extends MediaPlayerBase {
         }
     }
 
-    @Override public synchronized void prepare(CharSequence url) { this.prepare(url, new String[0]); }
-    @Override public synchronized void prepare(CharSequence url, String[] vlcArgs) {
-        if (callback != null) {
-            ArrayList<String> extra = (ArrayList<String>) Arrays.asList(vlcArgs);
-            extra.add(":aout");
-            extra.add("amem");
-
-            super.prepare(url, extra.toArray(new String[0]));
-        } else {
-            super.prepare(url, vlcArgs);
-        }
-    }
-
     public static abstract class WaterAudioCallback implements AudioCallback {
         @Override
         public void play(MediaPlayer mediaPlayer, Pointer samples, int sampleCount, long pts) {
