@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.*;
 
 public final class WaterMediaAPI {
@@ -266,5 +267,16 @@ public final class WaterMediaAPI {
 
         //Return the texture ID, so we can bind it later again
         return textureID;
+    }
+
+    public static int gl_applyBuffer(IntBuffer videoBuffer, int videoTexture, int videoWidth, int videoHeight, boolean firstFrame) {
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, videoTexture);
+        if (firstFrame) {GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, videoWidth, videoHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, videoBuffer);
+        } else GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, videoWidth, videoHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, videoBuffer);
+        return videoTexture;
     }
 }
