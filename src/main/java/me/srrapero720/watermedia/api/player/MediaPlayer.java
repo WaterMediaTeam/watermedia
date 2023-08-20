@@ -136,6 +136,7 @@ public abstract class MediaPlayer {
     public boolean isPaused() { return state.equals(State.PAUSED); }
     public boolean isStopped() { return state.equals(State.STOPPED); }
     public boolean isEnded() { return state.equals(State.ENDED); }
+    public boolean isBroken() { return state.equals(State.ERROR); }
 
     public boolean isValid() {
         if (raw == null) return false;
