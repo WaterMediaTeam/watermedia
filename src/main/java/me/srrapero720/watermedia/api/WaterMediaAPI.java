@@ -9,6 +9,7 @@ import me.srrapero720.watermedia.api.player.VideoPlayer;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.core.VideoLAN;
+import me.srrapero720.watermedia.core.tools.ReflectTool;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -236,13 +237,9 @@ public final class WaterMediaAPI {
             if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
         }
 
-        // THSI AVOID crashes trying to execute, everything is "human" fine but class bytecode didn't help
-        try {
-            Method flip = buffer.getClass().getMethod("flip");
-            flip.invoke(buffer);
-        } catch (Exception e) {
-            LOGGER.error("Cannot flip buffer, careful");
-        }
+        // FLIP method changes what class type returns in new JAVA versions, in runtime causes a JVM crash by that
+        // THIS EXECUTES ByteBuffer#flip
+        ReflectTool.executeMethod("flip", buffer.getClass(), buffer);
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
