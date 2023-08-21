@@ -37,19 +37,29 @@ public class VideoLAN {
         // LOGGER INIT
         if (!Files.exists(logs)) {
             if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
+            else LOGGER.error(IT, "Failed to create logger dir");
         } else compressAndDeleteLogFile(logs);
 
         // VLCJ INIT
         CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
 
-        FACTORY = ThreadCore.tryAndReturnNull(defaultVar -> {
-            String[] args = JarTool.readStringList(loader.getModuleClassLoader(), "/videolan/arguments.json").toArray(new String[0]);
-            args[2] = logs.toAbsolutePath().toString();
-
-            return WaterMediaAPI.vlc_createFactory(args);
-        }, e -> LOGGER.error(IT, "Failed to load VLC", e));
+        try {
+            FACTORY = WaterMediaAPI.vlc_createFactory(readArgsFile(loader, logs));
+        } catch (Exception e) {
+            LOGGER.error(IT, "Failed to load VLC", e);
+        }
     }
 
+    private static String[] readArgsFile(IMediaLoader loader, Path loggerPath) {
+        // READ FROM JAR RESOURCES
+        String[] args = JarTool.readStringList(loader.getModuleClassLoader(), "/videolan/arguments.json").toArray(new String[0]);
+
+        // ADD LOGGER PATH
+        args[2] = loggerPath.toString();
+
+        // RETURN
+        return  args;
+    }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void compressAndDeleteLogFile(Path logFilePath) {
