@@ -16,6 +16,8 @@ public class ForgeModLoader implements IMediaLoader {
     private static final Marker IT = MarkerManager.getMarker("ForgeModLoader");
     private static final String NAME = "Forge";
 
+    private Path PS;
+    private Path TMP;
     private ClassLoader CL;
     public ForgeModLoader() {
         LOGGER.info(IT, "Starting...");
@@ -35,10 +37,10 @@ public class ForgeModLoader implements IMediaLoader {
     public String getName() { return NAME; }
 
     @Override
-    public Path getProcessDirectory() { return new File("").toPath(); }
+    public Path getProcessDirectory() { return (PS != null) ? PS : (PS = new File("").toPath()); }
 
     @Override
     public Path getTmpDirectory() {
-        return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
+        return (TMP != null) ? TMP : (TMP = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia"));
     }
 }

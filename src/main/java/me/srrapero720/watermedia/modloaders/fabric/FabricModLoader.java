@@ -25,6 +25,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader, IEnvL
     private static final String NAME = "Fabric";
     private final WaterMedia instance;
     private ClassLoader CL;
+    private Path TMP;
 
     public FabricModLoader() {
         LOGGER.info(IT, "Starting...");
@@ -47,24 +48,17 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader, IEnvL
     public boolean installed(String modid) { return FabricLoader.getInstance().isModLoaded(modid); }
 
     @Override
-    public ClassLoader getModuleClassLoader() {
-        if (CL != null) return CL;
-        return CL = Thread.currentThread().getContextClassLoader();
-    }
+    public ClassLoader getModuleClassLoader() { return (CL != null) ? CL : (CL = Thread.currentThread().getContextClassLoader()); }
 
     @Override
-    public String getName() {
-        return NAME;
-    }
+    public String getName() { return NAME; }
 
     @Override
-    public Path getProcessDirectory() {
-        return FabricLoader.getInstance().getGameDir();
-    }
+    public Path getProcessDirectory() { return FabricLoader.getInstance().getGameDir(); }
 
     @Override
     public Path getTmpDirectory() {
-        return new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
+        return (TMP != null) ? TMP : (TMP = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia"));
     }
 
     @Override
