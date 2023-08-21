@@ -3,13 +3,14 @@ package me.srrapero720.watermedia.api.player;
 import com.sun.jna.Pointer;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.base.callback.AudioCallback;
+import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 @Experimental
-public class MusicPlayer extends MediaPlayer {
+public class MusicPlayer extends BasePlayer {
     WaterAudioCallback callback;
     public MusicPlayer(MediaPlayerFactory factory, PlayerThread playerThread, WaterAudioCallback callback) {
         super(factory, playerThread, null, null);
@@ -45,27 +46,27 @@ public class MusicPlayer extends MediaPlayer {
 
     public static abstract class WaterAudioCallback implements AudioCallback {
         @Override
-        public void play(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, Pointer samples, int sampleCount, long pts) {
+        public void play(MediaPlayer mediaPlayer, Pointer samples, int sampleCount, long pts) {
             checkClassLoader();
         }
 
         @Override
-        public void pause(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, long pts) {
+        public void pause(MediaPlayer mediaPlayer, long pts) {
             checkClassLoader();
         }
 
         @Override
-        public void resume(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, long pts) {
+        public void resume(MediaPlayer mediaPlayer, long pts) {
             checkClassLoader();
         }
 
         @Override
-        public void flush(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, long pts) {
+        public void flush(MediaPlayer mediaPlayer, long pts) {
             checkClassLoader();
         }
 
         @Override
-        public void drain(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void drain(MediaPlayer mediaPlayer) {
             checkClassLoader();
         }
 

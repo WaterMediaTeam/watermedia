@@ -9,7 +9,7 @@ import org.apache.logging.log4j.MarkerManager;
 import java.awt.*;
 
 @SuppressWarnings("unused")
-public class VideoPlayer extends MediaPlayer {
+public class VideoPlayer extends BasePlayer {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
 
     public VideoPlayer(MediaPlayerFactory factory, PlayerThread playerThread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {

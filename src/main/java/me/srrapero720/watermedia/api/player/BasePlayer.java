@@ -6,6 +6,7 @@ import me.lib720.caprica.vlcj.media.InfoApi;
 import me.lib720.caprica.vlcj.media.MediaRef;
 import me.lib720.caprica.vlcj.media.MediaType;
 import me.lib720.caprica.vlcj.media.TrackType;
+import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("unused")
-public abstract class MediaPlayer {
+public abstract class BasePlayer {
     protected static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
     private static final AtomicInteger WK_TH = new AtomicInteger(0);
@@ -51,7 +52,7 @@ public abstract class MediaPlayer {
     // PLAYER THREAD
     protected final PlayerThread playerThread;
 
-    MediaPlayer(MediaPlayerFactory factory, PlayerThread thread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+    BasePlayer(MediaPlayerFactory factory, PlayerThread thread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (WaterMediaAPI.vlc_isReady()) {
             this.playerThread = thread;
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
@@ -183,7 +184,7 @@ public abstract class MediaPlayer {
     }
 
     /**
-     * Use {@link MediaPlayer#seekTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
+     * Use {@link BasePlayer#seekTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineTo(int ticks) {
@@ -195,7 +196,7 @@ public abstract class MediaPlayer {
     }
 
     /**
-     * Use {@link MediaPlayer#seekFastTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
+     * Use {@link BasePlayer#seekFastTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineFastTo(int ticks) {
@@ -261,7 +262,7 @@ public abstract class MediaPlayer {
     }
 
     /**
-     * Use {@link MediaPlayer#getDuration()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
+     * Use {@link BasePlayer#getDuration()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
      * @deprecated is gonna being removed for 2.1.0
      */
     @Deprecated
@@ -280,7 +281,7 @@ public abstract class MediaPlayer {
     }
 
     /**
-     * Use {@link MediaPlayer#getMediaInfoDuration()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
+     * Use {@link BasePlayer#getMediaInfoDuration()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
      * @deprecated is gonna being removed for 2.1.0
      */
     @Deprecated
@@ -299,7 +300,7 @@ public abstract class MediaPlayer {
     }
 
     /**
-     * Use {@link MediaPlayer#getTime()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
+     * Use {@link BasePlayer#getTime()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
      * @deprecated is gonna being removed for 2.1.0
      */
     public int getMineTime() {
@@ -334,20 +335,20 @@ public abstract class MediaPlayer {
     @SuppressWarnings("ConstantConditions")
     private final class WaterMediaPlayerEventListener implements MediaPlayerEventListener {
         @Override
-        public void mediaChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, MediaRef media) {
+        public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
             checkClassLoader();
             state = State.WAITING;
         }
 
         @Override
-        public void opening(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void opening(MediaPlayer mediaPlayer) {
             checkClassLoader();
             state = State.OPENING;
         }
 
         State buffering_retainedState;
         @Override
-        public void buffering(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, float newCache) {
+        public void buffering(MediaPlayer mediaPlayer, float newCache) {
             checkClassLoader();
             if (buffering_retainedState == null) {
                 buffering_retainedState = state;
@@ -361,7 +362,7 @@ public abstract class MediaPlayer {
 
         @Override
         // we cannot trust this method
-        public void playing(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
             playerThread.askForExecution(() -> {
                 if (volume.get() == 0) setMuteMode(true);
@@ -370,7 +371,7 @@ public abstract class MediaPlayer {
         }
 
         @Override
-        public void paused(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void paused(MediaPlayer mediaPlayer) {
             checkClassLoader();
             playerThread.askForExecution(() -> {
                 state = State.PAUSED;
@@ -378,7 +379,7 @@ public abstract class MediaPlayer {
         }
 
         @Override
-        public void stopped(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void stopped(MediaPlayer mediaPlayer) {
             checkClassLoader();
             playerThread.askForExecution(() -> {
                 state = State.STOPPED;
@@ -386,17 +387,17 @@ public abstract class MediaPlayer {
         }
 
         @Override
-        public void forward(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void forward(MediaPlayer mediaPlayer) {
             checkClassLoader();
         }
 
         @Override
-        public void backward(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void backward(MediaPlayer mediaPlayer) {
             checkClassLoader();
         }
 
         @Override
-        public void finished(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void finished(MediaPlayer mediaPlayer) {
             checkClassLoader();
             playerThread.askForExecution(() -> {
                 state = State.ENDED;
@@ -404,92 +405,92 @@ public abstract class MediaPlayer {
         }
 
         @Override
-        public void timeChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, long newTime) {
+        public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
             checkClassLoader();
         }
 
         @Override
-        public void positionChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, float newPosition) {
+        public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
             checkClassLoader();
         }
 
         @Override
-        public void seekableChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int newSeekable) {
+        public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
             checkClassLoader();
         }
 
         @Override
-        public void pausableChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int newPausable) {
+        public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
             checkClassLoader();
         }
 
         @Override
-        public void titleChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int newTitle) {
+        public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
             checkClassLoader();
         }
 
         @Override
-        public void snapshotTaken(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, String filename) {
+        public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
             checkClassLoader();
         }
 
         @Override
-        public void lengthChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, long newLength) {
+        public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
             checkClassLoader();
         }
 
         @Override
-        public void videoOutput(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int newCount) {
+        public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
             checkClassLoader();
         }
 
         @Override
-        public void scrambledChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int newScrambled) {
+        public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
             checkClassLoader();
         }
 
         @Override
-        public void elementaryStreamAdded(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, TrackType type, int id) {
+        public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {
             checkClassLoader();
         }
 
         @Override
-        public void elementaryStreamDeleted(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, TrackType type, int id) {
+        public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {
             checkClassLoader();
         }
 
         @Override
-        public void elementaryStreamSelected(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, TrackType type, int id) {
+        public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {
             checkClassLoader();
         }
 
         @Override
-        public void corked(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, boolean corked) {
+        public void corked(MediaPlayer mediaPlayer, boolean corked) {
             checkClassLoader();
         }
 
         @Override
-        public void muted(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, boolean muted) {
+        public void muted(MediaPlayer mediaPlayer, boolean muted) {
             checkClassLoader();
         }
 
         @Override
-        public void volumeChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, float volume) {
+        public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
             checkClassLoader();
         }
 
         @Override
-        public void audioDeviceChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, String audioDevice) {
+        public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
             checkClassLoader();
         }
 
         @Override
-        public void chapterChanged(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int newChapter) {
+        public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {
             checkClassLoader();
         }
 
         @Override
-        public void error(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void error(MediaPlayer mediaPlayer) {
             checkClassLoader();
             playerThread.askForExecution(() -> {
                 state = State.ERROR;
@@ -497,7 +498,7 @@ public abstract class MediaPlayer {
         }
 
         @Override
-        public void mediaPlayerReady(me.lib720.caprica.vlcj.player.base.MediaPlayer mediaPlayer) {
+        public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             checkClassLoader();
             playerThread.askForExecution(() -> {
                 state = isPlaying() ? State.PLAYING : State.READY;
