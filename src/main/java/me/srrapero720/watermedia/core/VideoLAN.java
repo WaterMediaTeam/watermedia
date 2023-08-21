@@ -28,17 +28,16 @@ public class VideoLAN {
     public static MediaPlayerFactory getFactory() { return FACTORY; }
 
     public static void init(IMediaLoader loader) throws Exception {
-        Path dir = loader.getTmpDirectory();
         if (FACTORY != null) throw new ReloadingException(VideoLAN.class.getSimpleName());
 
         // SETUP PATHS
+        Path dir = loader.getTmpDirectory();
         Path logs = dir.toAbsolutePath().resolve("logs/videolan.log");
 
         // LOGGER INIT
-        if (!Files.exists(logs.toAbsolutePath())) {
+        if (!Files.exists(logs)) {
             if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
-            else compressAndDeleteLogFile(logs);
-        }
+        } else compressAndDeleteLogFile(logs);
 
         // VLCJ INIT
         CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
