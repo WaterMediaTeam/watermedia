@@ -34,7 +34,7 @@ public abstract class BasePlayer {
         Thread t = new Thread(r);
         t.setDaemon(true);
         t.setPriority(7);
-        t.setName("WM-MediaPlayer-Worker-" + WK_TH.incrementAndGet());
+        t.setName("WATERMeDIA-bp-Worker-" + WK_TH.incrementAndGet());
         return t;
     });
 
