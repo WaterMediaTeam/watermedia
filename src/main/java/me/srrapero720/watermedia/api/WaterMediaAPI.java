@@ -49,7 +49,8 @@ public final class WaterMediaAPI {
                 new KickFixer(),
                 new DriveFixer(),
                 new OnedriveFixer(),
-                new DropboxFixer()
+                new DropboxFixer(),
+                new TwitterFixer()
         );
 
 
