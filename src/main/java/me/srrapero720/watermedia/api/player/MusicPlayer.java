@@ -5,17 +5,19 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.base.callback.AudioCallback;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
+import me.srrapero720.watermedia.core.tools.annotations.Unstable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Unstable
 @Experimental
 public class MusicPlayer extends BasePlayer {
     WaterAudioCallback callback;
     public MusicPlayer(MediaPlayerFactory factory, PlayerThread playerThread, WaterAudioCallback callback) {
         super(factory, playerThread, null, null);
         this.callback = callback;
-        if (callback != null) this.raw.mediaPlayer().audio().callback("ogg", 44100, 2, callback);
+        if (callback != null) this.raw().mediaPlayer().audio().callback("ogg", 44100, 2, callback);
     }
 
     @Override public synchronized void start(CharSequence url) { this.start(url, new String[0]); }

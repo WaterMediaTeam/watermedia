@@ -38,35 +38,52 @@ public abstract class BasePlayer {
         return t;
     });
 
-
     // PLAYER
     protected String url;
-    public final CallbackMediaPlayerComponent raw;
-    private final WaterMediaPlayerEventListener listener;
-    protected volatile State state = State.WAITING;
+    private CallbackMediaPlayerComponent raw;
+    public CallbackMediaPlayerComponent raw() { return raw; }
+    private WaterMediaPlayerEventListener listener;
 
+    // PLAYER THREAD
+    protected State state = State.WAITING;
     protected final AtomicBoolean safeUsage = new AtomicBoolean(false);
     protected final AtomicInteger volume = new AtomicInteger(100);
     protected final AtomicBoolean assumeStream = new AtomicBoolean(false);
-
-    // PLAYER THREAD
     protected final PlayerThread playerThread;
 
+
     BasePlayer(MediaPlayerFactory factory, PlayerThread thread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+        this.playerThread = thread;
+        this.init(factory, renderCallback, bufferFormatCallback);
+    }
+
+    /**
+     * This constructor skips raw player creation, instead waits for {@link #init(MediaPlayerFactory, RenderCallback, SimpleBufferFormatCallback)} to create raw player
+     * Intended to be used just in case you need to do some special implementations of {@link RenderCallback} or {@link SimpleBufferFormatCallback}
+     * @param thread Async executor for any method executed outside main thread
+     */
+    protected BasePlayer(PlayerThread thread) { this.playerThread = thread; }
+
+
+    /**
+     * Creates raw player and makes this works normally {@link }
+     * @param factory MediaPlayerFactory to create raw player, can be null
+     * @param renderCallback this is executed when buffer loads media info (first time)
+     * @param bufferFormatCallback creates a buffer for the frame
+     */
+    void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (WaterMediaAPI.vlc_isReady()) {
-            this.playerThread = thread;
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(listener = new WaterMediaPlayerEventListener());
         } else {
             LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
             this.raw = null;
-            this.playerThread = null;
             this.listener = null;
             this.state = State.ERROR;
         }
     }
 
-    private void runPlayerAction(PlayerAction action, CharSequence url, String[] vlcArgs) {
+    private void rpa(PlayerAction action, CharSequence url, String[] vlcArgs) {
         if (raw == null) return;
         try {
             if (isPlaying()) stop();
@@ -77,14 +94,9 @@ public abstract class BasePlayer {
                 assumeStream.set(result.assumeStream);
 
                 switch (action) {
-                    case START:
-                        raw.mediaPlayer().media().start(this.url, vlcArgs);
-                        break;
-                    case START_PAUSED:
-                        raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
-                        break;
-                    default:
-                        throw new Exception("What?");
+                    case START: raw.mediaPlayer().media().start(this.url, vlcArgs);break;
+                    case START_PAUSED: raw.mediaPlayer().media().startPaused(this.url, vlcArgs);break;
+                    default: throw new Error("What the heck is happening here?");
                 }
                 safeUsage.set(true);
             } else LOGGER.error(IT, "Player failed to load. URL is invalid or null");
@@ -98,12 +110,12 @@ public abstract class BasePlayer {
     }
 
     public void start(CharSequence url, String[] vlcArgs) {
-        EX.execute(() -> runPlayerAction(PlayerAction.START, url, vlcArgs));
+        EX.execute(() -> rpa(PlayerAction.START, url, vlcArgs));
     }
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        EX.execute(() -> runPlayerAction(PlayerAction.START_PAUSED, url, vlcArgs));
+        EX.execute(() -> rpa(PlayerAction.START_PAUSED, url, vlcArgs));
     }
 
     public State getPlayerState() {
@@ -114,16 +126,28 @@ public abstract class BasePlayer {
     public void play() {
         if (raw == null) return;
         synchronized (this) { raw.mediaPlayer().controls().play(); }
+        if (state.equals(State.PAUSED)) this.state = State.PLAYING;
     }
 
     public void pause() {
         if (raw == null) return;
         synchronized (this) { if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().pause(); }
+        if (state.equals(State.PLAYING)) this.state = State.PAUSED;
+    }
+
+    public void togglePlayback() {
+        if (raw == null) return;
+        synchronized (this) {
+            if (state.equals(State.PAUSED)) raw.mediaPlayer().controls().play();
+            else if (state.equals(State.PLAYING)) raw.mediaPlayer().controls().pause();
+        }
     }
 
     public void setPauseMode(boolean isPaused) {
         if (raw == null) return;
         synchronized (this) { if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().setPause(isPaused); }
+        if (state.equals(State.PAUSED)) this.state = State.PLAYING;
+        if (state.equals(State.PLAYING)) this.state = State.PAUSED;
     }
 
     public void stop() {
@@ -131,7 +155,7 @@ public abstract class BasePlayer {
         synchronized (this) { raw.mediaPlayer().controls().stop(); }
     }
 
-    public boolean safeToUse() { return safeUsage.get(); }
+    public boolean isSafeUse() { return safeUsage.get(); }
     public boolean isBuffering() { return state.equals(State.BUFFERING); }
     public boolean isReady() { return state.equals(State.READY); }
     public boolean isPaused() { return state.equals(State.PAUSED); }
@@ -149,9 +173,20 @@ public abstract class BasePlayer {
         synchronized (this) { return state.equals(State.PLAYING) || raw.mediaPlayer().status().isPlaying() ; }
     }
 
+    /**
+     * Method is currently incomplete
+     * it cannot distingue if was a stream after get media information
+     * that is supplied with our API but isn't enough, because other type of streams cannot be handled
+     * @return if mrl was a livestream
+     */
     @Experimental
     public boolean isLive() {
         if (assumeStream.get()) return true;
+
+        if (url.endsWith(".m3u8")) {
+            if (getMediaInfoDuration() == -1) return true;
+            if (getTime() > getDuration()) return true;
+        }
 
         // MISSING IMPL
         return false;
@@ -364,6 +399,7 @@ public abstract class BasePlayer {
         // we cannot trust this method
         public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
+            if (state == State.PAUSED) state = State.PLAYING; // just to resume playing
             playerThread.askForExecution(() -> {
                 if (volume.get() == 0) setMuteMode(true);
                 else setVolume(volume.get());
