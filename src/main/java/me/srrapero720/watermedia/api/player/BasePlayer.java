@@ -131,23 +131,33 @@ public abstract class BasePlayer {
 
     public void pause() {
         if (raw == null) return;
-        synchronized (this) { if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().pause(); }
-        if (state.equals(State.PLAYING)) this.state = State.PAUSED;
+        synchronized (this) {
+            if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().pause();
+            if (state.equals(State.PLAYING)) this.state = State.PAUSED;
+        }
     }
 
     public void togglePlayback() {
         if (raw == null) return;
         synchronized (this) {
-            if (state.equals(State.PAUSED)) raw.mediaPlayer().controls().play();
-            else if (state.equals(State.PLAYING)) raw.mediaPlayer().controls().pause();
+            if (state.equals(State.PAUSED)) {
+                raw.mediaPlayer().controls().play();
+                this.state = State.PLAYING;
+            }
+            else if (state.equals(State.PLAYING)) {
+                raw.mediaPlayer().controls().pause();
+                this.state = State.PAUSED;
+            }
         }
     }
 
     public void setPauseMode(boolean isPaused) {
         if (raw == null) return;
-        synchronized (this) { if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().setPause(isPaused); }
-        if (state.equals(State.PAUSED)) this.state = State.PLAYING;
-        if (state.equals(State.PLAYING)) this.state = State.PAUSED;
+        synchronized (this) {
+            if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().setPause(isPaused);
+            if (state.equals(State.PAUSED)) this.state = State.PLAYING;
+            if (state.equals(State.PLAYING)) this.state = State.PAUSED;
+        }
     }
 
     public void stop() {
