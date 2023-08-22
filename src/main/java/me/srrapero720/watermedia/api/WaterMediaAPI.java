@@ -6,6 +6,7 @@ import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.url.*;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.player.VideoPlayer;
+import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.core.VideoLAN;
@@ -57,7 +58,7 @@ public final class WaterMediaAPI {
             if (IMG_LOADING != null) return;
 
             LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
-            IMG_LOADING = new ImageRenderer(JarTool.readGif(loader.getModuleClassLoader(), "/pictures/loading.gif"));
+            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.getProcessDirectory(), "/pictures/loading.gif"));
             IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
             IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-land.png"));
         }, e -> LOGGER.error(IT, "Failed to load image resources", e));

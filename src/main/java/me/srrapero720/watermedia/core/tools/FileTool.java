@@ -1,5 +1,10 @@
 package me.srrapero720.watermedia.core.tools;
 
+import me.lib720.madgag.gif.fmsware.GifDecoder;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -7,7 +12,11 @@ import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 public class FileTool {
+    private static final Marker IT = MarkerManager.getMarker(FileTool.class.getSimpleName());
+
     public static String readString(Path from) {
         try {
             byte[] bytes = Files.readAllBytes(from);
@@ -38,6 +47,24 @@ public class FileTool {
             entry = zipIn.getNextEntry();
         }
         zipIn.close();
+    }
+
+    public static GifDecoder readGif(Path processRoot, String path) {
+        Path loadingGif = processRoot.resolve("./config/watermedia/assets/loading.gif");
+        try (ByteArrayInputStream in = new ByteArrayInputStream(IOUtils.toByteArray(new FileInputStream(loadingGif.toFile())))) {
+            GifDecoder gif = new GifDecoder();
+            int status = gif.read(in);
+
+            if (status == GifDecoder.STATUS_OK) {
+                return gif;
+            } else {
+                LOGGER.error(IT, "Exception reading Gif from {}", path);
+                throw new IOException("Failed to read/process gif, status code " + status);
+            }
+        } catch (Exception e) {
+            LOGGER.error(IT, "Failed loading GIF from WaterMedia resources", e);
+            return null;
+        }
     }
 
     /**

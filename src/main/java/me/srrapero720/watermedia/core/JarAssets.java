@@ -8,6 +8,7 @@ import me.srrapero720.watermedia.core.tools.OsTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +23,7 @@ public class JarAssets {
 
     public static void init(IMediaLoader loader) throws Exception {
         if (loaded) throw new ReloadingException(JarAssets.class.getSimpleName());
+
         // STEP 1: EXTRACT VLC
         if (OsTool.getArch().wrapped) {
             Path output = loader.getTmpDirectory().resolve("videolan/").resolve(OsTool.getArch().toString() + ".zip");
@@ -30,7 +32,7 @@ public class JarAssets {
 
             try {
                 if (!VIDEOLAN_V.equals(FileTool.readString(config.toAbsolutePath()))) {
-                    if (JarTool.copyAsset(loader.getModuleClassLoader(), source, output.toString())) {
+                    if (JarTool.copyAsset(loader.getModuleClassLoader(), source, output)) {
                         FileTool.unzip(output, output.getParent());
                         Files.delete(output);
                     }
@@ -47,6 +49,13 @@ public class JarAssets {
                 throw new IOException("Cannot perform extraction of VideoLAN", e);
             }
         }
+
+        // STEP 2: EXTRACT LOADING GIF (was extracted on process root folder)
+        Path loadingGif = loader.getProcessDirectory().resolve("config/watermedia/assets/loading.gif");
+        if (!Files.exists(loadingGif)) {
+            JarTool.copyAsset(loader.getModuleClassLoader(), "/pictures/loading.gif", loadingGif);
+        }
+
         loaded = true;
     }
 }
