@@ -19,8 +19,8 @@ import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
 
 public class TwitchUtil {
     public static final String GRAPH_QL_URL = "https://gql.twitch.tv/gql";
-    public static final String TTV_LIVE_API_URL_TEMPLATE = "https://api.ttv.lol/playlist/%s.m3u8";
-    public static final String TTV_PLAYLIST_API_URL_TEMPLATE = "https://api.ttv.lol/vod/%s.m3u8";
+    public static final String TTV_LIVE_API_URL_TEMPLATE = "https://usher.ttvnw.net/api/channel/hls/%s.m3u8";
+    public static final String TTV_PLAYLIST_API_URL_TEMPLATE = "https://usher.ttvnw.net/vod/s.m3u8";
     public static final String CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 
     private static final Gson gson = new Gson();
@@ -54,7 +54,7 @@ public class TwitchUtil {
 
     private static String buildUrlParameters(String signature, String value) throws UnsupportedEncodingException {
         value = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        return String.format("%%3Facmb=e30%%3D&allow_source=true&fast_bread=true&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&supported_codecs=vp09,avc1&transcode_mode=cbr_v1&cdm=wv&player_version=1.20.0&sig=%s&token=%s", signature, value);
+        return String.format("?acmb=e30%%3D&allow_source=true&fast_bread=true&p=7370379&play_session_id=21efcd962e7b3fbc891bac088214aa63&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&sig=%s&supported_codecs=avc1&token=%s&transcode_mode=cbr_v1&cdm=wv&player_version=1.21.0", signature, value);
     }
 
     private static String performGetRequest(String apiUrl) throws IOException, StreamNotFound {
