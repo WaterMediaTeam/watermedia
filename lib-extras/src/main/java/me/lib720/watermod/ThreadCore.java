@@ -3,6 +3,9 @@ package me.lib720.watermod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+
 // This class comes from WATERCoRE and isn't sync with WATERCoRE main project
 public class ThreadCore {
     private static int workers = 0;
@@ -87,6 +90,18 @@ public class ThreadCore {
         thread.setUncaughtExceptionHandler(EXCEPTION_HANDLER);
         thread.start();
         return thread;
+    }
+
+    public static ThreadFactory basicThreadFactory(String name) {
+        AtomicInteger count = new AtomicInteger();
+        return r -> {
+            Thread t = new Thread(r);
+            t.setName(name + "-" + count.incrementAndGet());
+            t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+            t.setDaemon(true);
+            t.setPriority(7);
+            return t;
+        };
     }
 
     public static <T> void threadTryArgument(T object, TryRunnableWithArgument<T> toTry, CatchRunnable toCatch, FinallyRunnableWithArgument<T> toFinally) {

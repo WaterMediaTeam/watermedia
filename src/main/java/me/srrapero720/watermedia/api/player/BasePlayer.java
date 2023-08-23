@@ -27,16 +27,9 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("unused")
 public abstract class BasePlayer {
-    protected static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
-    private static final AtomicInteger WK_TH = new AtomicInteger(0);
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true);
-        t.setPriority(7);
-        t.setName("WATERMeDIA-bp-Worker-" + WK_TH.incrementAndGet());
-        return t;
-    });
+    protected static final ClassLoader CL = Thread.currentThread().getContextClassLoader();
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), ThreadCore.basicThreadFactory("WATERMeDIA-bp-Worker"));
 
     // PLAYER
     protected String url;
@@ -374,7 +367,7 @@ public abstract class BasePlayer {
     }
 
     protected static void checkClassLoader() {
-        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(LOADER);
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(CL);
     }
 
     @SuppressWarnings("ConstantConditions")

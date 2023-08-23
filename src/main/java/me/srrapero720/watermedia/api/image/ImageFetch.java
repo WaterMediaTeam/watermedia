@@ -33,14 +33,7 @@ import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
 public class ImageFetch {
     private static final Marker IT = MarkerManager.getMarker(ImageFetch.class.getSimpleName());
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-    private static final AtomicInteger WK_TH = new AtomicInteger(0);
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true);
-        t.setPriority(Thread.MIN_PRIORITY);
-        t.setName("WATERMeDIA-if-Worker-" + WK_TH.incrementAndGet());
-        return t;
-    });
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), ThreadCore.basicThreadFactory("WATERMeDIA-if-Worker"));
 
     private final String url;
     private TaskSuccessful successful;
