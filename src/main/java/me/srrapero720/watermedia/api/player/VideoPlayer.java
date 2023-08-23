@@ -10,15 +10,12 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("unused")
 public class VideoPlayer extends BasePlayer {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
-    private static final Map<VideoPlayer, ReentrantLock> LOCKS = new HashMap<>();
 
     private volatile int texture;
     private volatile int width = 1;
@@ -83,6 +80,5 @@ public class VideoPlayer extends BasePlayer {
         super.release();
     }
 
-    // UTIL MINECRAFT/WATERMEDIA
     public interface MemoryAllocatorHelper { ByteBuffer create(int size); }
 }
