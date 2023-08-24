@@ -195,6 +195,10 @@ public final class WaterMediaAPI {
         return queryParams;
     }
 
+    public static MediaPlayerFactory vlc_getFactory() {
+        return VideoLAN.getFactory();
+    }
+
     /**
      * Use your own VLCArgs at your own risk
      * By default this method makes a ReleaseHook to release everything after close Minecraft
@@ -210,9 +214,11 @@ public final class WaterMediaAPI {
             LOGGER.info(IT, "New instance of VLC loaded from '{}' with the next args:\n{}", discovery.discoveredPath(), Arrays.toString(vlcArgs));
             Runtime.getRuntime().addShutdownHook(new Thread(factory::release));
             return factory;
+        } else {
+            LOGGER.error(IT, "VLC was not found on your system.");
         }
 
-        LOGGER.error(IT, "VLC was not found on your system.");
+        LOGGER.fatal(IT, "Cannot create MediaPlayerFactory instance");
         return null;
     }
 

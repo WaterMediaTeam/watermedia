@@ -69,7 +69,7 @@ public abstract class BasePlayer {
      */
     protected void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (WaterMediaAPI.vlc_isReady() && raw == null) {
-            if (factory == null) factory = VideoLAN.getFactory();
+            if (factory == null) factory = WaterMediaAPI.vlc_getFactory();
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(listener = new WaterMediaPlayerEventListener());
         } else {
