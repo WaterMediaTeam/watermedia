@@ -15,6 +15,7 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBuffer
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.URLFixer;
+import me.srrapero720.watermedia.core.VideoLAN;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import me.srrapero720.watermedia.core.tools.annotations.Unstable;
 import org.apache.logging.log4j.Marker;
@@ -66,8 +67,9 @@ public abstract class BasePlayer {
      * @param renderCallback this is executed when buffer loads media info (first time)
      * @param bufferFormatCallback creates a buffer for the frame
      */
-    void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+    protected void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (WaterMediaAPI.vlc_isReady() && raw == null) {
+            if (factory == null) factory = VideoLAN.getFactory();
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(listener = new WaterMediaPlayerEventListener());
         } else {
