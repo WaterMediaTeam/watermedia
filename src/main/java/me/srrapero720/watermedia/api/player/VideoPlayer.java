@@ -69,7 +69,9 @@ public class VideoPlayer extends BasePlayer {
 
     public Dimension getDimensions() {
         if (raw() == null) return null;
-        synchronized (this) { return raw().mediaPlayer().video().videoDimension(); }
+        return ThreadCore.lockExecute(playerLock, () -> {
+            return raw().mediaPlayer().video().videoDimension();
+        });
     }
 
     @Override
