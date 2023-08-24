@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
 
 // This class comes from WATERCoRE and isn't sync with WATERCoRE main project
 public class ThreadCore {
@@ -24,6 +25,32 @@ public class ThreadCore {
         if (count <= 8) return 2;
         if (count <= 16) return 3;
         return 4;
+    }
+
+    public static void sleep(long timeMillis) {
+        try {
+            Thread.sleep(timeMillis);
+        } catch (Exception e) {
+            LOGGER.warn("Cannot sleep thread {}", Thread.currentThread().getName());
+        }
+    }
+
+    public static <T> T lockExecute(Lock lock, RunnableToReturn<T> runnable) {
+        lock.lock();
+        try {
+            return runnable.run();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void lockExecute(Lock lock, Runnable runnable) {
+        lock.lock();
+        try {
+            runnable.run();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, T defaultVar) {
@@ -147,6 +174,8 @@ public class ThreadCore {
         for (Thread t: Thread.getAllStackTraces().keySet())
             LOGGER.info("{}\t{}\t{}\t{}\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
     }
+
+    public interface RunnableToReturn<T> { T run(); }
 
     public interface ReturnableRunnable<T> { T run(T defaultVar) throws Exception; }
     public interface ReturnableFinallyRunnable<T> { void run(T returnedVar); }
