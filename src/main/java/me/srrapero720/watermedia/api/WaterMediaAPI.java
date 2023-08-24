@@ -17,12 +17,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import retrofit2.http.PUT;
-
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -157,7 +154,7 @@ public final class WaterMediaAPI {
             return ThreadCore.tryAndReturn(defaultVar -> {
                 for (FixerBase compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null);
                 return defaultVar;
-            }, e -> LOGGER.error("Exception occurred trying to fix URL", e), new FixerBase.Result(url, false, false));
+            }, e -> LOGGER.error(IT, "Exception occurred trying to fix URL", e), new FixerBase.Result(url, false, false));
         } catch (Exception e) {
             LOGGER.error(IT, "Exception occurred instancing URL", e);
         }
