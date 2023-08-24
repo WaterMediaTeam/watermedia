@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.api.player;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
+import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -21,7 +22,7 @@ public class VideoPlayer extends BasePlayer {
     private volatile int width = 1;
     private volatile int height = 1;
     private volatile IntBuffer buffer;
-    protected final ReentrantLock lock = new ReentrantLock();
+    protected final ReentrantLock renderLock = new ReentrantLock();
     protected final AtomicBoolean updateFrame = new AtomicBoolean(false);
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
 
@@ -29,16 +30,16 @@ public class VideoPlayer extends BasePlayer {
         super(playerThread);
         this.texture = GL11.glGenTextures();
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
-            lock.lock();
+            renderLock.lock();
             try {
                 buffer.put(nativeBuffers[0].asIntBuffer());
                 buffer.rewind();
                 updateFrame.set(true);
             } finally {
-                lock.unlock();
+                renderLock.unlock();
             }
         }, (sourceWidth, sourceHeight) -> {
-            lock.lock();
+            renderLock.lock();
             try {
                 width = sourceWidth;
                 height = sourceHeight;
@@ -46,7 +47,7 @@ public class VideoPlayer extends BasePlayer {
                 updateFrame.set(true);
                 updateFirstFrame.set(true);
             } finally {
-                lock.unlock();
+                renderLock.unlock();
             }
             return new BufferFormat("RGBA", sourceWidth, sourceHeight, new int[]{sourceWidth * 4}, new int[]{sourceHeight});
         });
@@ -54,13 +55,13 @@ public class VideoPlayer extends BasePlayer {
 
     public int prepareTexture() {
         if (raw() == null) return -1;
-        lock.lock();
+        renderLock.lock();
         try {
             if (updateFrame.compareAndSet(true, false))
                 WaterMediaAPI.gl_applyBuffer(buffer, texture, width, height, updateFirstFrame.compareAndSet(true, false));
             return texture;
         } finally {
-            lock.unlock();
+            renderLock.unlock();
         }
     }
 
