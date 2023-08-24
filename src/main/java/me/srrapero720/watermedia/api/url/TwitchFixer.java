@@ -8,7 +8,7 @@ import java.net.CookiePolicy;
 import java.net.URL;
 
 // TODO: BUSTED
-public class TwitchFixer extends FixerBase {
+public class TwitchFixer extends URLFixer {
 
     static {
         CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));

@@ -1,9 +1,8 @@
 package me.srrapero720.watermedia.api.url;
 
-import javax.swing.plaf.PanelUI;
 import java.net.URL;
 
-public abstract class FixerBase {
+public abstract class URLFixer {
     public String name() { return this.getClass().getSimpleName(); }
 
     /**

@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api.url;
 
 import com.google.gson.Gson;
-import me.srrapero720.watermedia.api.network.twitch.TwitchUtil;
 import me.srrapero720.watermedia.api.network.twitter.TweetScrapper;
 
 import java.net.CookieHandler;
@@ -10,7 +9,7 @@ import java.net.CookiePolicy;
 import java.net.URL;
 
 // TODO: BUSTED
-public class TwitterFixer extends FixerBase {
+public class TwitterFixer extends URLFixer {
 
     private static final Gson gson = new Gson();
 

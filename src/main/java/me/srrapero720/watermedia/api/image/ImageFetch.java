@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.FixerBase;
+import me.srrapero720.watermedia.api.url.URLFixer;
 import me.srrapero720.watermedia.core.CacheStorage;
 import me.lib720.watermod.ThreadCore;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
@@ -46,7 +45,7 @@ public class ImageFetch {
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            FixerBase.Result result = WaterMediaAPI.url_fixURL(url);
+            URLFixer.Result result = WaterMediaAPI.url_fixURL(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
             if (result.assumeVideo) throw new VideoContentException();
 
