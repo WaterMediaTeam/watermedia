@@ -13,12 +13,15 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WaterMedia {
 	public static final String ID = "watermedia";
 	public static final String NAME = "WATERMeDIA";
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
+	private static final ReentrantLock LOCK = new ReentrantLock();
 
 	// RETAINERS
 	private static WaterMedia instance;
@@ -69,6 +72,7 @@ public class WaterMedia {
 
 	public void init() {
 		LOGGER.info(IT, "Starting modules");
+		LOCK.lock();
 		if (envLoader == null) LOGGER.warn(IT, "{} is starting without Environment, may cause problems", NAME);
 
 		// RESOURCE EXTRACTOR
@@ -87,10 +91,15 @@ public class WaterMedia {
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
 		ThreadCore.trySimple(() -> VideoLAN.init(this.loader), e -> onLoadFailed(VideoLAN.class.getSimpleName(), e));
 
+		LOCK.unlock();
 		LOGGER.info(IT, "Startup finished");
 	}
 
-	public void crash() { if (exception != null) throw new RuntimeException(exception); }
+	public void crash() {
+		LOCK.lock();
+		if (exception != null) throw new RuntimeException(exception);
+		LOCK.unlock();
+	}
 	private void onLoadFailed(String module, Exception e) {
 		LOGGER.error(IT, "Exception loading {}", module, e);
 		if (exception != null && !(e instanceof ReloadingException)) exception = e;

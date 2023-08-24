@@ -11,18 +11,17 @@ import me.srrapero720.watermedia.core.tools.JarTool;
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.core.VideoLAN;
 import me.srrapero720.watermedia.core.tools.ReflectTool;
+import me.srrapero720.watermedia.core.tools.annotations.Experimental;
+import me.srrapero720.watermedia.core.tools.annotations.Untested;
 import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import retrofit2.http.PUT;
-
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -30,7 +29,7 @@ import java.util.*;
 
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker("API");
-    private static final List<FixerBase> URLFIXERS = new ArrayList<>();
+    private static final List<URLFixer> URLFIXERS = new ArrayList<>();
 
     // RESOURCES
     private static ImageRenderer IMG_LOADING;
@@ -43,7 +42,7 @@ public final class WaterMediaAPI {
     public static void init(IMediaLoader loader) throws ReloadingException {
         if (!URLFIXERS.isEmpty()) throw new ReloadingException(IT.getName());
 
-        LOGGER.warn(IT,"Loading {}", FixerBase.class.getSimpleName());
+        LOGGER.warn(IT,"Loading {}", URLFixer.class.getSimpleName());
         url_registerFixer(
                 new YoutubeFixer(),
                 new TwitchFixer(),
@@ -119,7 +118,7 @@ public final class WaterMediaAPI {
      * Creates your own URLPatch and register it to WaterMediaAPI
      * @param patch All patches you want to Use
      */
-    public static void url_registerFixer(FixerBase...patch) {
+    public static void url_registerFixer(URLFixer...patch) {
         String[] names = new String[patch.length];
         for (int i = 0; i < patch.length; i++) {
             URLFIXERS.add(patch[i]);
@@ -142,7 +141,7 @@ public final class WaterMediaAPI {
             URL url = new URL(stringUrl);
 
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (FixerBase compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null).url;
+                for (URLFixer compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null).url;
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
         } catch (Exception e) {
@@ -151,16 +150,28 @@ public final class WaterMediaAPI {
         return null;
     }
 
-    public static FixerBase.Result url_fixURL(String str) {
+    public static URLFixer.Result url_fixURL(String str) {
         try {
             URL url = new URL(str);
             return ThreadCore.tryAndReturn(defaultVar -> {
-                for (FixerBase compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null);
+                for (URLFixer compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null);
                 return defaultVar;
-            }, e -> LOGGER.error("Exception occurred trying to fix URL", e), new FixerBase.Result(url, false, false));
+            }, e -> LOGGER.error(IT, "Exception occurred trying to fix URL", e), new URLFixer.Result(url, false, false));
         } catch (Exception e) {
             LOGGER.error(IT, "Exception occurred instancing URL", e);
         }
+        return null;
+    }
+
+    /**
+     * Fix URL string using URLFixers and returns a bundle data with the URL, type of and qualities
+     * @param str URL to fix and convert into URL
+     * @param ns This method should use NothingSpecialURLFixer!? be careful with this
+     * @return Bundle data with the URL and info
+     */
+    @Experimental
+    @Untested
+    public static URLFixer.Result url_fixURL(String str, boolean ns) {
         return null;
     }
 

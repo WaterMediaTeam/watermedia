@@ -8,52 +8,47 @@ import me.lib720.caprica.vlcj.media.MediaType;
 import me.lib720.caprica.vlcj.media.TrackType;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
+import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.FixerBase;
+import me.srrapero720.watermedia.api.url.URLFixer;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
+import me.srrapero720.watermedia.core.tools.annotations.Unstable;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings("unused")
 public abstract class BasePlayer {
-    protected static final ClassLoader LOADER = Thread.currentThread().getContextClassLoader();
     protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
-    private static final AtomicInteger WK_TH = new AtomicInteger(0);
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true);
-        t.setPriority(7);
-        t.setName("WATERMeDIA-bp-Worker-" + WK_TH.incrementAndGet());
-        return t;
-    });
+    protected static final ClassLoader CL = Thread.currentThread().getContextClassLoader();
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getThreadsCount() / 2, ThreadCore.basicThreadFactory("WATERMeDIA-bp-Worker"));
 
     // PLAYER
     protected String url;
     private CallbackMediaPlayerComponent raw;
-    public CallbackMediaPlayerComponent raw() { return raw; }
     private WaterMediaPlayerEventListener listener;
+    public CallbackMediaPlayerComponent raw() { return raw; }
+    protected final ReentrantLock playerLock = new ReentrantLock();
 
     // PLAYER THREAD
-    protected State state = State.WAITING;
-    protected final AtomicBoolean safeUsage = new AtomicBoolean(false);
+    protected volatile boolean live = false;
+    protected volatile boolean started = false;
     protected final AtomicInteger volume = new AtomicInteger(100);
-    protected final AtomicBoolean assumeStream = new AtomicBoolean(false);
     protected final PlayerThread playerThread;
 
-
     BasePlayer(MediaPlayerFactory factory, PlayerThread thread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        this.playerThread = thread;
+        this(thread);
         this.init(factory, renderCallback, bufferFormatCallback);
     }
 
@@ -66,121 +61,160 @@ public abstract class BasePlayer {
 
 
     /**
-     * Creates raw player and makes this works normally {@link }
+     * Creates raw player and makes this works normally
      * @param factory MediaPlayerFactory to create raw player, can be null
      * @param renderCallback this is executed when buffer loads media info (first time)
      * @param bufferFormatCallback creates a buffer for the frame
      */
     void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        if (WaterMediaAPI.vlc_isReady()) {
+        if (WaterMediaAPI.vlc_isReady() && raw == null) {
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(listener = new WaterMediaPlayerEventListener());
         } else {
             LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
             this.raw = null;
             this.listener = null;
-            this.state = State.ERROR;
         }
     }
 
-    private void rpa(PlayerAction action, CharSequence url, String[] vlcArgs) {
-        if (raw == null) return;
+    private boolean rpa(CharSequence url, String[] vlcArgs) {
+        if (raw == null) return false;
         try {
-            if (isPlaying()) stop();
-            FixerBase.Result result = WaterMediaAPI.url_fixURL(url.toString());
+            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString());
+            if (fixedURL == null) throw new NullPointerException("URL was invalid");
 
-            if (result != null) {
-                this.url = result.url.toString();
-                assumeStream.set(result.assumeStream);
-
-                switch (action) {
-                    case START: raw.mediaPlayer().media().start(this.url, vlcArgs);break;
-                    case START_PAUSED: raw.mediaPlayer().media().startPaused(this.url, vlcArgs);break;
-                    default: throw new Error("What the heck is happening here?");
-                }
-                safeUsage.set(true);
-            } else LOGGER.error(IT, "Player failed to load. URL is invalid or null");
+            this.url = fixedURL.url.toString();
+            live = fixedURL.assumeStream;
+            return true;
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load player", e);
         }
+        return false;
     }
 
-    public void start(CharSequence url) {
-        this.start(url, new String[0]);
+    private <T> void lockAndExecute(Runnable runnable) {
+        playerLock.lock();
+        try {
+            runnable.run();
+        } finally {
+            playerLock.unlock();
+        }
     }
+
+    public void start(CharSequence url) { this.start(url, new String[0]); }
 
     public void start(CharSequence url, String[] vlcArgs) {
-        EX.execute(() -> rpa(PlayerAction.START, url, vlcArgs));
+        EX.execute(() -> {
+            if (rpa(url, vlcArgs)) raw.mediaPlayer().media().start(this.url, vlcArgs);
+            started = true;
+        });
     }
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        EX.execute(() -> rpa(PlayerAction.START_PAUSED, url, vlcArgs));
+        EX.execute(() -> {
+            if (rpa(url, vlcArgs)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
+            started = true;
+        });
     }
 
-    public State getPlayerState() {
-        if (raw == null) return State.ERROR;
-        synchronized (this) { return state; }
+    @Unstable
+    public State getRawPlayerState() {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return State.ERROR;
+            return raw.mediaPlayer().status().state();
+        });
     }
 
     public void play() {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().play(); }
-        if (state.equals(State.PAUSED)) this.state = State.PLAYING;
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().play();
+        });
     }
 
     public void pause() {
-        if (raw == null) return;
-        synchronized (this) {
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
             if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().pause();
-            if (state.equals(State.PLAYING)) this.state = State.PAUSED;
-        }
+        });
     }
 
     public void togglePlayback() {
-        if (raw == null) return;
-        synchronized (this) {
-            if (state.equals(State.PAUSED)) {
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            if (isPaused()) {
                 raw.mediaPlayer().controls().play();
-                this.state = State.PLAYING;
-            }
-            else if (state.equals(State.PLAYING)) {
+            } else if (isPlaying()) {
                 raw.mediaPlayer().controls().pause();
-                this.state = State.PAUSED;
             }
-        }
+        });
     }
 
-    public void setPauseMode(boolean isPaused) {
-        if (raw == null) return;
-        synchronized (this) {
-            if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().setPause(isPaused);
-            if (state.equals(State.PAUSED)) this.state = State.PLAYING;
-            if (state.equals(State.PLAYING)) this.state = State.PAUSED;
-        }
+    public void setPauseMode(boolean pauseMode) {
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().setPause(pauseMode);
+        });
     }
 
     public void stop() {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().stop(); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().stop();
+        });
     }
 
-    public boolean isSafeUse() { return safeUsage.get(); }
-    public boolean isBuffering() { return state.equals(State.BUFFERING); }
-    public boolean isReady() { return state.equals(State.READY); }
-    public boolean isPaused() { return state.equals(State.PAUSED); }
-    public boolean isStopped() { return state.equals(State.STOPPED); }
-    public boolean isEnded() { return state.equals(State.ENDED); }
-    public boolean isBroken() { return state.equals(State.ERROR); }
+    public boolean isSafeUse() { return !playerLock.isLocked(); }
+    public boolean isBuffering() {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().status().state().equals(State.BUFFERING);
+        });
+    }
+    public boolean isReady() {
+        return ThreadCore.lockExecute(playerLock, () -> {
+           if (raw == null) return false;
+           return raw.mediaPlayer().status().isPlayable();
+        });
+    }
+    public boolean isPaused() {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().status().state().equals(State.PAUSED);
+        });
+    }
+    public boolean isStopped() {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().status().state().equals(State.STOPPED);
+        });
+    }
+    public boolean isEnded() {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().status().state().equals(State.ENDED);
+        });
+    }
+    public boolean isBroken() {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return true;
+            return raw.mediaPlayer().status().state().equals(me.lib720.caprica.vlcj.player.base.State.ERROR);
+        });
+    }
 
     public boolean isValid() {
-        if (raw == null) return false;
-        synchronized (this) { return raw.mediaPlayer().media().isValid(); }
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().media().isValid();
+        });
     }
 
     public boolean isPlaying() {
-        if (raw == null) return false;
-        synchronized (this) { return state.equals(State.PLAYING) || raw.mediaPlayer().status().isPlaying() ; }
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().status().isPlaying();
+        });
     }
 
     /**
@@ -191,41 +225,49 @@ public abstract class BasePlayer {
      */
     @Experimental
     public boolean isLive() {
-        if (assumeStream.get()) return true;
+        if (live) return true;
 
         if (url.endsWith(".m3u8")) {
             if (getMediaInfoDuration() == -1) return true;
             if (getTime() > getDuration()) return true;
         }
 
-        // MISSING IMPL
         return false;
     }
 
+    /**
+     * This metrod is gonna begin removed on version 2.1.0
+     * @deprecated
+     * @return is was a stream based on m3u8 stream
+     */
     @Deprecated
     public boolean isStream() {
-        if (raw == null) return false;
-        synchronized (this) {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
             InfoApi mediaInfo = raw.mediaPlayer().media().info();
             return mediaInfo != null && (mediaInfo.type().equals(MediaType.STREAM) || mediaInfo.mrl().endsWith(".m3u") || mediaInfo.mrl().endsWith(".m3u8"));
-        }
+        });
     }
 
     public boolean isSeekAble() {
-        if (raw == null) return false;
-        synchronized (this) { return raw.mediaPlayer().status().isSeekable(); }
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().status().isSeekable();
+        });
     }
 
     public void seekTo(long time) {
-        if (raw == null) return;
-        synchronized (this) {
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
             raw.mediaPlayer().controls().setTime(time);
-        }
+        });
     }
 
     public void seekFastTo(long ticks) {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().setTime(ticks); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().setTime(ticks);
+        });
     }
 
     /**
@@ -233,11 +275,11 @@ public abstract class BasePlayer {
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineTo(int ticks) {
-        if (raw == null) return;
-        synchronized (this) {
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
             long time = WaterMediaAPI.math_ticksToMillis(ticks);
             raw.mediaPlayer().controls().setTime(time);
-        }
+        });
     }
 
     /**
@@ -245,53 +287,69 @@ public abstract class BasePlayer {
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineFastTo(int ticks) {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().setTime(WaterMediaAPI.math_ticksToMillis(ticks)); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().setTime(WaterMediaAPI.math_ticksToMillis(ticks));
+        });
     }
 
     public void foward() {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().skipTime(5L); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().skipTime(5000L);
+        });
     }
 
     public void rewind() {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().skipTime(-5L); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().skipTime(-5000L);
+        });
     }
 
     public void setSpeed(float rate) {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().setRate(rate); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().setRate(rate);
+        });
     }
 
     public void setVolume(int volume) {
         this.volume.set(volume);
-        if (raw == null) return;
-        synchronized (this) {
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
             raw.mediaPlayer().audio().setVolume(this.volume.get());
             if (this.volume.get() == 0 && !raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(true);
             else if (this.volume.get() > 0 && raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(false);
-        }
+        });
     }
 
     public int getVolume() {
-        if (raw == null) return volume.get();
-        synchronized (this) { return raw.mediaPlayer().audio().volume(); }
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return volume.get();
+            return raw.mediaPlayer().audio().volume();
+        });
     }
 
     public void mute() {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().audio().setMute(true); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().audio().setMute(true);
+        });
     }
 
     public void unmute() {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().audio().setMute(false); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().audio().setMute(false);
+        });
     }
 
     public void setMuteMode(boolean mode) {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().audio().setMute(mode); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().audio().setMute(mode);
+        });
     }
 
     /**
@@ -299,11 +357,11 @@ public abstract class BasePlayer {
      * @return Player duration
      */
     public long getDuration() {
-        if (raw == null) return 0L;
-        synchronized (this) {
-            if (!isValid() || (RuntimeUtil.isNix() && getPlayerState().equals(State.STOPPED))) return 0L;
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return 0L;
+            if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
             return raw.mediaPlayer().status().length();
-        }
+        });
     }
 
     /**
@@ -317,12 +375,12 @@ public abstract class BasePlayer {
     }
 
     public long getMediaInfoDuration() {
-        if (raw == null) return 0L;
-        synchronized (this) {
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return 0L;
             InfoApi info = raw.mediaPlayer().media().info();
             if (info != null) return info.duration();
             return 0L;
-        }
+        });
     }
 
     /**
@@ -340,41 +398,58 @@ public abstract class BasePlayer {
     }
 
     public long getTime() {
-        if (raw == null) return 0L;
-        synchronized (this) { return raw.mediaPlayer().status().time(); }
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return 0L;
+            return raw.mediaPlayer().status().time();
+        });
     }
 
     /**
      * Use {@link BasePlayer#getTime()} in conjunction with {@link WaterMediaAPI#math_millisToTicks(long)}
      * @deprecated is gonna being removed for 2.1.0
      */
+    @Deprecated
     public int getMineTime() {
         if (raw == null) return 0;
         synchronized (this) { return WaterMediaAPI.math_millisToTicks(raw.mediaPlayer().status().time()); }
     }
 
     public boolean getRepeatMode() {
-        if (raw == null) return false;
-        synchronized (this) { return raw.mediaPlayer().controls().getRepeat(); }
+        return ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return false;
+            return raw.mediaPlayer().controls().getRepeat();
+        });
     }
     public void setRepeatMode(boolean repeatMode) {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().controls().setRepeat(repeatMode); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().controls().setRepeat(repeatMode);
+        });
     }
 
     public void release() {
-        if (raw == null) return;
-        synchronized (this) { raw.mediaPlayer().release(); }
+        ThreadCore.lockExecute(playerLock, () -> {
+            if (raw == null) return;
+            raw.mediaPlayer().release();
+            raw = null;
+
+            // I AM DISSAPOINTMENT WITH THIS
+            // gc deletes callback when vlc (for some no reason) still requires callback after begin released
+            // with this code I ensure is still referenced for at least 3 seconds, then clear any reference, so MediaPlayer and Callback can DIE
+            AtomicReference<WaterMediaPlayerEventListener> ls = new AtomicReference<>(listener);
+            ThreadCore.sleep(3000);
+            listener = null;
+            ls.set(null);
+        });
     }
 
     public void releaseAsync() {
         if (raw == null) return;
-        raw.mediaPlayer().events().removeMediaPlayerEventListener(listener);
-        EX.execute(raw.mediaPlayer()::release);
+        EX.execute(this::release);
     }
 
     protected static void checkClassLoader() {
-        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(LOADER);
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(CL);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -382,54 +457,35 @@ public abstract class BasePlayer {
         @Override
         public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
             checkClassLoader();
-            state = State.WAITING;
         }
 
         @Override
         public void opening(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            state = State.OPENING;
         }
 
-        State buffering_retainedState;
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
             checkClassLoader();
-            if (buffering_retainedState == null) {
-                buffering_retainedState = state;
-                state = State.BUFFERING;
-            }
-            if (newCache >= 100.0f) {
-                state = buffering_retainedState;
-                buffering_retainedState = null;
-            }
+            if (newCache >= 100) setVolume(volume.get());
         }
 
         @Override
-        // we cannot trust this method
         public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            if (state == State.PAUSED) state = State.PLAYING; // just to resume playing
             playerThread.askForExecution(() -> {
-                if (volume.get() == 0) setMuteMode(true);
-                else setVolume(volume.get());
+                setVolume(volume.get());
             });
         }
 
         @Override
         public void paused(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThread.askForExecution(() -> {
-                state = State.PAUSED;
-            });
         }
 
         @Override
         public void stopped(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThread.askForExecution(() -> {
-                state = State.STOPPED;
-            });
         }
 
         @Override
@@ -445,9 +501,6 @@ public abstract class BasePlayer {
         @Override
         public void finished(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThread.askForExecution(() -> {
-                state = State.ENDED;
-            });
         }
 
         @Override
@@ -538,22 +591,16 @@ public abstract class BasePlayer {
         @Override
         public void error(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThread.askForExecution(() -> {
-                state = State.ERROR;
-            });
         }
 
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             checkClassLoader();
             playerThread.askForExecution(() -> {
-                state = isPlaying() ? State.PLAYING : State.READY;
                 setVolume(volume.get());
             });
         }
     }
 
     public interface PlayerThread { void askForExecution(Runnable runnable); }
-    private enum PlayerAction { START, START_PAUSED }
-    public enum State { WAITING, STARTING, OPENING, READY, BUFFERING, PLAYING, PAUSED, STOPPED, ENDED, ERROR, }
 }

@@ -3,6 +3,10 @@ package me.lib720.watermod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+
 // This class comes from WATERCoRE and isn't sync with WATERCoRE main project
 public class ThreadCore {
     private static int workers = 0;
@@ -21,6 +25,32 @@ public class ThreadCore {
         if (count <= 8) return 2;
         if (count <= 16) return 3;
         return 4;
+    }
+
+    public static void sleep(long timeMillis) {
+        try {
+            Thread.sleep(timeMillis);
+        } catch (Exception e) {
+            LOGGER.warn("Cannot sleep thread {}", Thread.currentThread().getName());
+        }
+    }
+
+    public static <T> T lockExecute(Lock lock, RunnableToReturn<T> runnable) {
+        lock.lock();
+        try {
+            return runnable.run();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void lockExecute(Lock lock, Runnable runnable) {
+        lock.lock();
+        try {
+            runnable.run();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static <T> T tryAndReturn(ReturnableRunnable<T> runnable, T defaultVar) {
@@ -89,6 +119,18 @@ public class ThreadCore {
         return thread;
     }
 
+    public static ThreadFactory basicThreadFactory(String name) {
+        AtomicInteger count = new AtomicInteger();
+        return r -> {
+            Thread t = new Thread(r);
+            t.setName(name + "-" + count.incrementAndGet());
+            t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+            t.setDaemon(true);
+            t.setPriority(7);
+            return t;
+        };
+    }
+
     public static <T> void threadTryArgument(T object, TryRunnableWithArgument<T> toTry, CatchRunnable toCatch, FinallyRunnableWithArgument<T> toFinally) {
         thread(() -> {
             try { toTry.run(object);
@@ -132,6 +174,8 @@ public class ThreadCore {
         for (Thread t: Thread.getAllStackTraces().keySet())
             LOGGER.info("{}\t{}\t{}\t{}\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
     }
+
+    public interface RunnableToReturn<T> { T run(); }
 
     public interface ReturnableRunnable<T> { T run(T defaultVar) throws Exception; }
     public interface ReturnableFinallyRunnable<T> { void run(T returnedVar); }

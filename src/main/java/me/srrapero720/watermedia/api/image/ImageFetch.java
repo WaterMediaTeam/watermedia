@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.FixerBase;
+import me.srrapero720.watermedia.api.url.URLFixer;
 import me.srrapero720.watermedia.core.CacheStorage;
 import me.lib720.watermod.ThreadCore;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
@@ -33,14 +32,7 @@ import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
 public class ImageFetch {
     private static final Marker IT = MarkerManager.getMarker(ImageFetch.class.getSimpleName());
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-    private static final AtomicInteger WK_TH = new AtomicInteger(0);
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true);
-        t.setPriority(Thread.MIN_PRIORITY);
-        t.setName("WATERMeDIA-if-Worker-" + WK_TH.incrementAndGet());
-        return t;
-    });
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), ThreadCore.basicThreadFactory("WATERMeDIA-if-Worker"));
 
     private final String url;
     private TaskSuccessful successful;
@@ -53,7 +45,7 @@ public class ImageFetch {
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            FixerBase.Result result = WaterMediaAPI.url_fixURL(url);
+            URLFixer.Result result = WaterMediaAPI.url_fixURL(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
             if (result.assumeVideo) throw new VideoContentException();
 
