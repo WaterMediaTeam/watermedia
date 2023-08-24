@@ -118,10 +118,18 @@ public class StreamQuality implements Comparable<StreamQuality> {
                     // Note: using `parseFloat` to have a more lax parser which does not panic on "60.000".
                     // Twitch sends framerate using this notation which causes parseInt to throw.
                     switch (key) {
-                        case "BANDWIDTH": currentQuality.setBandwidth((int) Float.parseFloat(value));
-                        case "RESOLUTION": currentQuality.setResolution(value);
-                        case "CODECS": currentQuality.setCodecs(value);
-                        case "FRAME-RATE": currentQuality.setFramerate((int) Float.parseFloat(value));
+                        case "BANDWIDTH":
+                            currentQuality.setBandwidth((int) Float.parseFloat(value));
+                            break;
+                        case "RESOLUTION":
+                            currentQuality.setResolution(value);
+                            break;
+                        case "CODECS":
+                            currentQuality.setCodecs(value);
+                            break;
+                        case "FRAME-RATE":
+                            currentQuality.setFramerate((int) Float.parseFloat(value));
+                            break;
                     }
                 }
             } else if (HTTP_URL_RE.matcher(line).matches()) {
