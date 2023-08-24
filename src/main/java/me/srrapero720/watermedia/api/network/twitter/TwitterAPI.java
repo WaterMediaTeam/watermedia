@@ -99,46 +99,35 @@ public class TwitterAPI {
         // Load request details (features and variables) from file
         RequestDetails requestDetails;
 
-        String t = "{\n" +
-                "    \"features\": {\n" +
-                "        \"responsive_web_graphql_exclude_directive_enabled\": true,\n" +
-                "        \"verified_phone_label_enabled\": false,\n" +
-                "        \"responsive_web_graphql_timeline_navigation_enabled\": true,\n" +
-                "        \"responsive_web_graphql_skip_user_profile_image_extensions_enabled\": false,\n" +
-                "        \"tweetypie_unmention_optimization_enabled\": true,\n" +
-                "        \"vibe_api_enabled\": false,\n" +
-                "        \"responsive_web_edit_tweet_api_enabled\": false,\n" +
-                "        \"graphql_is_translatable_rweb_tweet_is_translatable_enabled\": false,\n" +
-                "        \"view_counts_everywhere_api_enabled\": true,\n" +
-                "        \"longform_notetweets_consumption_enabled\": true,\n" +
-                "        \"tweet_awards_web_tipping_enabled\": false,\n" +
-                "        \"freedom_of_speech_not_reach_fetch_enabled\": false,\n" +
-                "        \"standardized_nudges_misinfo\": false,\n" +
-                "        \"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled\": false,\n" +
-                "        \"interactive_text_enabled\": false,\n" +
-                "        \"responsive_web_twitter_blue_verified_badge_is_enabled\": true,\n" +
-                "        \"responsive_web_text_conversations_enabled\": false,\n" +
-                "        \"longform_notetweets_richtext_consumption_enabled\": false,\n" +
-                "        \"responsive_web_enhance_cards_enabled\": false,\n" +
-                "        \"longform_notetweets_inline_media_enabled\": true,\n" +
-                "        \"longform_notetweets_rich_text_read_enabled\": true,\n" +
-                "        \"responsive_web_media_download_video_enabled\": true,\n" +
-                "        \"responsive_web_twitter_article_tweet_consumption_enabled\": true,\n" +
-                "        \"creator_subscriptions_tweet_preview_api_enabled\": true\n" +
-                "    },\n" +
-                "    \"variables\": {\n" +
-                "        \"with_rux_injections\": false,\n" +
-                "        \"includePromotedContent\": true,\n" +
-                "        \"withCommunity\": true,\n" +
-                "        \"withQuickPromoteEligibilityTweetFields\": true,\n" +
-                "        \"withBirdwatchNotes\": true,\n" +
-                "        \"withDownvotePerspective\": false,\n" +
-                "        \"withReactionsMetadata\": false,\n" +
-                "        \"withReactionsPerspective\": false,\n" +
-                "        \"withVoice\": true,\n" +
-                "        \"withV2Timeline\": true\n" +
-                "    }\n" +
-                "}";
+        String t =
+                "{\n" +
+                        "    \"features\":{\n" +
+                        "        \"creator_subscriptions_tweet_preview_api_enabled\":true,\n" +
+                        "        \"tweetypie_unmention_optimization_enabled\":true,\n" +
+                        "        \"responsive_web_edit_tweet_api_enabled\":true,\n" +
+                        "        \"graphql_is_translatable_rweb_tweet_is_translatable_enabled\":true,\n" +
+                        "        \"view_counts_everywhere_api_enabled\":true,\n" +
+                        "        \"longform_notetweets_consumption_enabled\":true,\n" +
+                        "        \"responsive_web_twitter_article_tweet_consumption_enabled\":false,\n" +
+                        "        \"tweet_awards_web_tipping_enabled\":false,\n" +
+                        "        \"freedom_of_speech_not_reach_fetch_enabled\":true,\n" +
+                        "        \"standardized_nudges_misinfo\":true,\n" +
+                        "        \"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled\":true,\n" +
+                        "        \"longform_notetweets_rich_text_read_enabled\":true,\n" +
+                        "        \"longform_notetweets_inline_media_enabled\":true,\n" +
+                        "        \"responsive_web_graphql_exclude_directive_enabled\":true,\n" +
+                        "        \"verified_phone_label_enabled\":false,\n" +
+                        "        \"responsive_web_media_download_video_enabled\":false,\n" +
+                        "        \"responsive_web_graphql_skip_user_profile_image_extensions_enabled\":false,\n" +
+                        "        \"responsive_web_graphql_timeline_navigation_enabled\":true,\n" +
+                        "        \"responsive_web_enhance_cards_enabled\":false\n" +
+                        "    },\n" +
+                        "    \"variables\": {\n" +
+                        "        \"withCommunity\":false,\n" +
+                        "        \"includePromotedContent\":false,\n" +
+                        "        \"withVoice\":true\n" +
+                        "    }\n" +
+                        "}";
 
         requestDetails = gson.fromJson(t, RequestDetails.class);
 
@@ -193,7 +182,7 @@ public class TwitterAPI {
     private String getDetailsUrl(String tweetId, Map<String, Boolean> features, Map<String, Boolean> variables) throws UnsupportedEncodingException {
         // Create a copy of variables - we don't want to modify the original
         Map<String, Object> newVariables = new HashMap<>(variables);
-        newVariables.put("focalTweetId", tweetId);
+        newVariables.put("tweetId", tweetId);
 
         String variablesJson = gson.toJson(newVariables);
         String featuresJson = gson.toJson(features);

@@ -6,12 +6,10 @@ import java.util.List;
 
 public class TweetScrapper {
 
-    private final Gson gson;
     private final TwitterAPI twitterAPI;
     private final TwitterVideoExtractor videoExtractor;
 
     public TweetScrapper(Gson gson) {
-        this.gson = gson;
         this.twitterAPI = new TwitterAPI(gson);
         this.videoExtractor = new TwitterVideoExtractor();
     }
