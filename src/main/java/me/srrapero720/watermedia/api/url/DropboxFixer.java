@@ -4,6 +4,11 @@ import java.net.URL;
 
 public class DropboxFixer extends URLFixer {
     @Override
+    public String platform() {
+        return "Dropbox";
+    }
+
+    @Override
     public boolean isValid(URL url) {
         String q;
         return url.getHost().contains("dropbox.com") && ((q = url.getQuery()) != null) && q.contains("dl=0");

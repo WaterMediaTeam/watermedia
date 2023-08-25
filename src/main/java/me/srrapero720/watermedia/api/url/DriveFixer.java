@@ -1,10 +1,16 @@
 package me.srrapero720.watermedia.api.url;
 
+import java.awt.*;
 import java.net.URL;
 
 public class DriveFixer extends URLFixer {
     private static final String API_KEY = "AIzaSyBiFNT6TTo506kCYYwA2NHqs36TlXC1DMo";
     private static final String API_URL = "https://www.googleapis.com/drive/v3/files/%s?alt=media&key=%s";
+
+    @Override
+    public String platform() {
+        return "Google Drive";
+    }
 
     @Override
     public boolean isValid(URL url) {

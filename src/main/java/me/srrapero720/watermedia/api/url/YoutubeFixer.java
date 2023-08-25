@@ -20,6 +20,11 @@ public class YoutubeFixer extends URLFixer {
     private static final Pattern PATTERN = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|shorts/|feeds/api/videos/|watch\\?v=|watch\\?.+&v=))([^/?&#]+)");
 
     @Override
+    public String platform() {
+        return "Youtube";
+    }
+
+    @Override
     public boolean isValid(URL url) {
         return (url.getHost().endsWith("youtube.com") || url.getHost().endsWith("youtu.be"));
     }

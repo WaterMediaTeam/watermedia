@@ -8,13 +8,17 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.URL;
 
-// TODO: BUSTED
 public class TwitterFixer extends URLFixer {
 
     private static final Gson gson = new Gson();
 
     static {
         CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+    }
+
+    @Override
+    public String platform() {
+        return "Twitter";
     }
 
     @Override

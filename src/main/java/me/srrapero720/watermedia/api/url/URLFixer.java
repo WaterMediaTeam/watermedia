@@ -1,9 +1,12 @@
 package me.srrapero720.watermedia.api.url;
 
+import java.awt.*;
 import java.net.URL;
 
 public abstract class URLFixer {
     public String name() { return this.getClass().getSimpleName(); }
+
+    public abstract String platform();
 
     /**
      * Validates if URL can be processed by this URLPatch instance

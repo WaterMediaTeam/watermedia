@@ -10,6 +10,11 @@ public class OnedriveFixer extends URLFixer {
     private static final Pattern ONE_DRIVE_URL_PATTERN = Pattern.compile("^https://1drv.ms/[a-z]/[a-zA-Z0-9!_-]+$");
 
     @Override
+    public String platform() {
+        return "OneDrive";
+    }
+
+    @Override
     public boolean isValid(URL url) {
         return ONE_DRIVE_URL_PATTERN.matcher(url.toString()).matches();
     }

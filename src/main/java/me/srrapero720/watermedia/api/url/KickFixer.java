@@ -11,6 +11,11 @@ import java.net.URL;
 public class KickFixer extends URLFixer {
 
     @Override
+    public String platform() {
+        return "Kick.com";
+    }
+
+    @Override
     public boolean isValid(URL url) {
         return url.getHost().contains("kick.com");
     }

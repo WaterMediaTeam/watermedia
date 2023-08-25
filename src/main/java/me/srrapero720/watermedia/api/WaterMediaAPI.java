@@ -128,6 +128,14 @@ public final class WaterMediaAPI {
         names = null;
     }
 
+    public static String[] url_getFixerProviders() {
+        String[] result = new String[URLFIXERS.size()];
+        for (int i = 0; i < URLFIXERS.size(); i++) {
+            result[i] = URLFIXERS.get(i).platform();
+        }
+        return result;
+    }
+
     /**
      * This method is used by default on {@link VideoPlayer#start(CharSequence, String[])}
      * Is not recommended external usages
