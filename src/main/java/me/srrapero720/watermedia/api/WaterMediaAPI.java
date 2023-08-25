@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.url.*;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
@@ -25,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public final class WaterMediaAPI {
@@ -58,10 +61,20 @@ public final class WaterMediaAPI {
             if (IMG_LOADING != null) return;
 
             LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
-            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.getProcessDirectory(), "/pictures/loading.gif"));
+            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.getProcessDirectory().resolve("./config/watermedia/assets/loading.gif").toAbsolutePath()));
             IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
             IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-land.png"));
         }, e -> LOGGER.error(IT, "Failed to load image resources", e));
+    }
+
+    public static ImageRenderer img_getLoading(String modId) {
+        Path processDir = WaterMedia.getInstance().getLoader().getProcessDirectory();
+        Path modConfig = processDir.resolve("./config/watermedia/assets" + modId + "/loading.gif");
+
+        if (Files.exists(modConfig)) return new ImageRenderer(FileTool.readGif(modConfig.toAbsolutePath()));
+        if (modConfig.getParent().toFile().mkdirs()) LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
+        else LOGGER.error(IT, "Custom loading gif not found, directories cannot be created");
+        return IMG_LOADING;
     }
 
     /**

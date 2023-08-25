@@ -49,6 +49,7 @@ public class WaterMedia {
     }
 
 	public IEnvLoader getEnvLoader() { return envLoader; }
+	public IMediaLoader getLoader() { return loader; }
 	public void onEnvironmentInit(IEnvLoader loader) {
 		this.envLoader = loader;
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)

@@ -26,6 +26,24 @@ public class FileTool {
         }
     }
 
+    public static GifDecoder readGif(Path path) {
+//        Path loadingGif = processRoot.resolve("./config/watermedia/assets/loading.gif");
+        try (ByteArrayInputStream in = new ByteArrayInputStream(IOUtils.toByteArray(new FileInputStream(path.toFile())))) {
+            GifDecoder gif = new GifDecoder();
+            int status = gif.read(in);
+
+            if (status == GifDecoder.STATUS_OK) {
+                return gif;
+            } else {
+                LOGGER.error(IT, "Exception reading Gif from {}", path);
+                throw new IOException("Failed to read/process gif, status code " + status);
+            }
+        } catch (Exception e) {
+            LOGGER.error(IT, "Failed loading GIF from WaterMedia resources", e);
+            return null;
+        }
+    }
+
     public static void unzip(Path zipFilePath, Path destDirectory) throws IOException {
         File destDir = destDirectory.toFile();
         if (!destDir.exists()) destDir.mkdir();
@@ -49,24 +67,6 @@ public class FileTool {
         zipIn.close();
     }
 
-    public static GifDecoder readGif(Path processRoot, String path) {
-        Path loadingGif = processRoot.resolve("./config/watermedia/assets/loading.gif");
-        try (ByteArrayInputStream in = new ByteArrayInputStream(IOUtils.toByteArray(new FileInputStream(loadingGif.toFile())))) {
-            GifDecoder gif = new GifDecoder();
-            int status = gif.read(in);
-
-            if (status == GifDecoder.STATUS_OK) {
-                return gif;
-            } else {
-                LOGGER.error(IT, "Exception reading Gif from {}", path);
-                throw new IOException("Failed to read/process gif, status code " + status);
-            }
-        } catch (Exception e) {
-            LOGGER.error(IT, "Failed loading GIF from WaterMedia resources", e);
-            return null;
-        }
-    }
-
     /**
      * Extracts a zip entry (file entry)
      * @param zipIn
@@ -76,7 +76,7 @@ public class FileTool {
     private static void unzip$extract(ZipInputStream zipIn, String filePath) throws IOException {
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
         byte[] bytesIn = new byte[4096];
-        int read = 0;
+        int read;
         while ((read = zipIn.read(bytesIn)) != -1) {
             bos.write(bytesIn, 0, read);
         }
