@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia;
 
-import me.lib720.watermod.ThreadCore;
+import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
@@ -83,19 +83,19 @@ public class WaterMedia {
 
 		// JAR ASSETS
 		LOGGER.info(IT, "Loading {}", JarAssets.class.getSimpleName());
-		ThreadCore.trySimple(() -> JarAssets.init(this.loader), e -> onFailed(JarAssets.class.getSimpleName(), e));
+		TryCore.simple(() -> JarAssets.init(this.loader), e -> onFailed(JarAssets.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
-		ThreadCore.trySimple(() -> WaterMediaAPI.init(this.loader), e -> onFailed(WaterMediaAPI.class.getSimpleName(), e));
+		TryCore.simple(() -> WaterMediaAPI.init(this.loader), e -> onFailed(WaterMediaAPI.class.getSimpleName(), e));
 
 		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading {}", CacheStorage.class.getSimpleName());
-		ThreadCore.trySimple(() -> CacheStorage.init(this.loader), e -> onFailed(CacheStorage.class.getSimpleName(), e));
+		TryCore.simple(() -> CacheStorage.init(this.loader), e -> onFailed(CacheStorage.class.getSimpleName(), e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
-		ThreadCore.trySimple(() -> VideoLAN.init(this.loader), e -> onFailed(VideoLAN.class.getSimpleName(), e));
+		TryCore.simple(() -> VideoLAN.init(this.loader), e -> onFailed(VideoLAN.class.getSimpleName(), e));
 
 		LOCK.unlock();
 		LOGGER.info(IT, "Startup finished");

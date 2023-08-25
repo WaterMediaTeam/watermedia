@@ -12,10 +12,9 @@ import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
-import me.lib720.watermod.ThreadCore;
+import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.URLFixer;
-import me.srrapero720.watermedia.core.VideoLAN;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import me.srrapero720.watermedia.core.tools.annotations.Unstable;
 import org.apache.logging.log4j.Marker;
@@ -33,7 +32,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public abstract class BasePlayer {
     protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
     protected static final ClassLoader CL = Thread.currentThread().getContextClassLoader();
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getThreadsCount() / 2, ThreadCore.basicThreadFactory("WATERMeDIA-bp-Worker"));
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.maxThreads() / 2, ThreadCore.factory("WATERMeDIA-bp-Worker"));
 
     // PLAYER
     protected String url;
@@ -112,28 +111,28 @@ public abstract class BasePlayer {
 
     @Unstable
     public State getRawPlayerState() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return State.ERROR;
             return raw.mediaPlayer().status().state();
         });
     }
 
     public void play() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().play();
         });
     }
 
     public void pause() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().pause();
         });
     }
 
     public void togglePlayback() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             if (isPaused()) {
                 raw.mediaPlayer().controls().play();
@@ -144,14 +143,14 @@ public abstract class BasePlayer {
     }
 
     public void setPauseMode(boolean pauseMode) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             if (raw.mediaPlayer().status().canPause()) raw.mediaPlayer().controls().setPause(pauseMode);
         });
     }
 
     public void stop() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().stop();
         });
@@ -159,51 +158,51 @@ public abstract class BasePlayer {
 
     public boolean isSafeUse() { return !playerLock.isLocked(); }
     public boolean isBuffering() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().status().state().equals(State.BUFFERING);
         });
     }
     public boolean isReady() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
            if (raw == null) return false;
            return raw.mediaPlayer().status().isPlayable();
         });
     }
     public boolean isPaused() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().status().state().equals(State.PAUSED);
         });
     }
     public boolean isStopped() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().status().state().equals(State.STOPPED);
         });
     }
     public boolean isEnded() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().status().state().equals(State.ENDED);
         });
     }
     public boolean isBroken() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return true;
             return raw.mediaPlayer().status().state().equals(me.lib720.caprica.vlcj.player.base.State.ERROR);
         });
     }
 
     public boolean isValid() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().media().isValid();
         });
     }
 
     public boolean isPlaying() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().status().isPlaying();
         });
@@ -234,7 +233,7 @@ public abstract class BasePlayer {
      */
     @Deprecated
     public boolean isStream() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             InfoApi mediaInfo = raw.mediaPlayer().media().info();
             return mediaInfo != null && (mediaInfo.type().equals(MediaType.STREAM) || mediaInfo.mrl().endsWith(".m3u") || mediaInfo.mrl().endsWith(".m3u8"));
@@ -242,21 +241,21 @@ public abstract class BasePlayer {
     }
 
     public boolean isSeekAble() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().status().isSeekable();
         });
     }
 
     public void seekTo(long time) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().setTime(time);
         });
     }
 
     public void seekFastTo(long ticks) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().setTime(ticks);
         });
@@ -267,7 +266,7 @@ public abstract class BasePlayer {
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineTo(int ticks) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             long time = WaterMediaAPI.math_ticksToMillis(ticks);
             raw.mediaPlayer().controls().setTime(time);
@@ -279,28 +278,28 @@ public abstract class BasePlayer {
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineFastTo(int ticks) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().setTime(WaterMediaAPI.math_ticksToMillis(ticks));
         });
     }
 
     public void foward() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().skipTime(5000L);
         });
     }
 
     public void rewind() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().skipTime(-5000L);
         });
     }
 
     public void setSpeed(float rate) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().setRate(rate);
         });
@@ -308,7 +307,7 @@ public abstract class BasePlayer {
 
     public void setVolume(int volume) {
         this.volume.set(volume);
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().audio().setVolume(this.volume.get());
             if (this.volume.get() == 0 && !raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(true);
@@ -317,28 +316,28 @@ public abstract class BasePlayer {
     }
 
     public int getVolume() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return volume.get();
             return raw.mediaPlayer().audio().volume();
         });
     }
 
     public void mute() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().audio().setMute(true);
         });
     }
 
     public void unmute() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().audio().setMute(false);
         });
     }
 
     public void setMuteMode(boolean mode) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().audio().setMute(mode);
         });
@@ -349,7 +348,7 @@ public abstract class BasePlayer {
      * @return Player duration
      */
     public long getDuration() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return 0L;
             if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
             return raw.mediaPlayer().status().length();
@@ -367,7 +366,7 @@ public abstract class BasePlayer {
     }
 
     public long getMediaInfoDuration() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return 0L;
             InfoApi info = raw.mediaPlayer().media().info();
             if (info != null) return info.duration();
@@ -390,7 +389,7 @@ public abstract class BasePlayer {
     }
 
     public long getTime() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return 0L;
             return raw.mediaPlayer().status().time();
         });
@@ -407,20 +406,20 @@ public abstract class BasePlayer {
     }
 
     public boolean getRepeatMode() {
-        return ThreadCore.lockExecute(playerLock, () -> {
+        return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return false;
             return raw.mediaPlayer().controls().getRepeat();
         });
     }
     public void setRepeatMode(boolean repeatMode) {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().controls().setRepeat(repeatMode);
         });
     }
 
     public void release() {
-        ThreadCore.lockExecute(playerLock, () -> {
+        ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return;
             raw.mediaPlayer().release();
             raw = null;

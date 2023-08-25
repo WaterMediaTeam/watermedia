@@ -1,10 +1,11 @@
 package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.URLFixer;
 import me.srrapero720.watermedia.core.CacheStorage;
-import me.lib720.watermod.ThreadCore;
+import me.lib720.watermod.concurrent.ThreadCore;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -32,7 +33,7 @@ import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
 public class ImageFetch {
     private static final Marker IT = MarkerManager.getMarker(ImageFetch.class.getSimpleName());
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.getMinThreadCount(), ThreadCore.basicThreadFactory("WATERMeDIA-if-Worker"));
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("WATERMeDIA-if-Worker"));
 
     private final String url;
     private TaskSuccessful successful;
@@ -115,17 +116,17 @@ public class ImageFetch {
 
             // EXPIRATION GETTER FIRST
             if (maxAge != null && !maxAge.isEmpty())
-                expTimestamp = ThreadCore.tryAndReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
+                expTimestamp = TryCore.withReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
 
             // EXPIRATION GETTER SECOND WAY
             String expires = request.getHeaderField("Expires");
             if (expires != null && !expires.isEmpty())
-                expTimestamp = ThreadCore.tryAndReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
+                expTimestamp = TryCore.withReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
 
             // LAST TIMESTAMP
             String lastMod = request.getHeaderField("Last-Modified");
             if (lastMod != null && !lastMod.isEmpty()) {
-                lastTimestamp = ThreadCore.tryAndReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
+                lastTimestamp = TryCore.withReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
             } else lastTimestamp = requestTime;
 
             if (entry != null) {

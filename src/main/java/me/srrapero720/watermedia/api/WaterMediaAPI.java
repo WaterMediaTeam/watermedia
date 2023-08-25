@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.api;
 
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.url.*;
@@ -9,7 +10,6 @@ import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.player.VideoPlayer;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
-import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.core.VideoLAN;
 import me.srrapero720.watermedia.core.tools.ReflectTool;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
@@ -56,7 +56,7 @@ public final class WaterMediaAPI {
                 new TwitterFixer()
         );
 
-        ThreadCore.trySimple(() -> {
+        TryCore.simple(() -> {
             if (IMG_LOADING != null) return;
 
             LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
@@ -123,7 +123,7 @@ public final class WaterMediaAPI {
      * @param url the URL in a string
      * @return if is valid.
      */
-    public static boolean url_isValid(String url) { return ThreadCore.tryAndReturn(defaultVar -> { new URL(url); return true; }, false); }
+    public static boolean url_isValid(String url) { return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false); }
 
 
     /**
@@ -160,7 +160,7 @@ public final class WaterMediaAPI {
         try {
             URL url = new URL(stringUrl);
 
-            return ThreadCore.tryAndReturn(defaultVar -> {
+            return TryCore.withReturn(defaultVar -> {
                 for (URLFixer compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null).url;
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
@@ -173,7 +173,7 @@ public final class WaterMediaAPI {
     public static URLFixer.Result url_fixURL(String str) {
         try {
             URL url = new URL(str);
-            return ThreadCore.tryAndReturn(defaultVar -> {
+            return TryCore.withReturn(defaultVar -> {
                 for (URLFixer compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null);
                 return defaultVar;
             }, e -> LOGGER.error(IT, "Exception occurred trying to fix URL", e), new URLFixer.Result(url, false, false));
