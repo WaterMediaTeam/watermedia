@@ -48,21 +48,21 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader, IEnvL
     public boolean installed(String modid) { return FabricLoader.getInstance().isModLoaded(modid); }
 
     @Override
-    public ClassLoader getModuleClassLoader() { return (CL != null) ? CL : (CL = Thread.currentThread().getContextClassLoader()); }
+    public ClassLoader classLoader() { return (CL != null) ? CL : (CL = Thread.currentThread().getContextClassLoader()); }
 
     @Override
-    public String getName() { return NAME; }
+    public String name() { return NAME; }
 
     @Override
-    public Path getProcessDirectory() { return FabricLoader.getInstance().getGameDir(); }
+    public Path processPath() { return FabricLoader.getInstance().getGameDir(); }
 
     @Override
-    public Path getTmpDirectory() {
+    public Path tmpPath() {
         return (TMP != null) ? TMP : (TMP = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia"));
     }
 
     @Override
     public boolean tlauncher() {
-        return installed("tlskincape") || getProcessDirectory().toAbsolutePath().toString().contains("tlauncher");
+        return installed("tlskincape") || processPath().toAbsolutePath().toString().contains("tlauncher");
     }
 }

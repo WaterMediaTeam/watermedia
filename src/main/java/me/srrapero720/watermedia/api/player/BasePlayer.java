@@ -93,16 +93,6 @@ public abstract class BasePlayer {
         }
         return false;
     }
-
-    private <T> void lockAndExecute(Runnable runnable) {
-        playerLock.lock();
-        try {
-            runnable.run();
-        } finally {
-            playerLock.unlock();
-        }
-    }
-
     public void start(CharSequence url) { this.start(url, new String[0]); }
 
     public void start(CharSequence url, String[] vlcArgs) {

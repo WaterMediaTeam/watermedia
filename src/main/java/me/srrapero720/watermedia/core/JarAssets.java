@@ -1,14 +1,13 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.tools.OsTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,17 +21,17 @@ public class JarAssets {
     private static boolean loaded = false;
 
     public static void init(IMediaLoader loader) throws Exception {
-        if (loaded) throw new ReloadingException(JarAssets.class.getSimpleName());
+        if (loaded) throw new ReInitException(JarAssets.class.getSimpleName());
 
         // STEP 1: EXTRACT VLC
         if (OsTool.getArch().wrapped) {
-            Path output = loader.getTmpDirectory().resolve("videolan/").resolve(OsTool.getArch().toString() + ".zip");
+            Path output = loader.tmpPath().resolve("videolan/").resolve(OsTool.getArch().toString() + ".zip");
             Path config = output.getParent().resolve("version.cfg");
             String source = "/videolan/"  + OsTool.getArch() + ".zip";
 
             try {
                 if (!VIDEOLAN_V.equals(FileTool.readString(config.toAbsolutePath()))) {
-                    if (JarTool.copyAsset(loader.getModuleClassLoader(), source, output)) {
+                    if (JarTool.copyAsset(loader.classLoader(), source, output)) {
                         FileTool.unzip(output, output.getParent());
                         Files.delete(output);
                     }
@@ -51,9 +50,9 @@ public class JarAssets {
         }
 
         // STEP 2: EXTRACT LOADING GIF (was extracted on process root folder)
-        Path loadingGif = loader.getProcessDirectory().resolve("config/watermedia/assets/loading.gif");
+        Path loadingGif = loader.processPath().resolve("config/watermedia/assets/loading.gif");
         if (!Files.exists(loadingGif)) {
-            JarTool.copyAsset(loader.getModuleClassLoader(), "/pictures/loading.gif", loadingGif);
+            JarTool.copyAsset(loader.classLoader(), "/pictures/loading.gif", loadingGif);
         }
 
         loaded = true;

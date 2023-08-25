@@ -18,7 +18,7 @@ public class LegacyLoader implements IEnvLoader {
 
     LegacyLoader() {
         if (client()) LOGGER.info(IT, "Minecraft version '{}'", Loader.MC_VERSION);
-        WaterMedia.getInstance().onEnvironmentInit(this);
+        WaterMedia.getInstance().envInit(this);
     }
 
     @EventHandler

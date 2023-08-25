@@ -13,7 +13,7 @@ public class ImageCache {
     private static final Marker IT = MarkerManager.getMarker("ImageCache");
     private static final Map<String, ImageCache> CACHE = new HashMap<>();
 
-    public static ImageCache findOrCreate(String originalURL, RenderThread runnable) {
+    public static ImageCache get(String originalURL, RenderThread runnable) {
         ImageCache image = CACHE.get(originalURL);
         image = (image == null) ? new ImageCache(originalURL, runnable) : image.use();
         CACHE.put(originalURL, image);
@@ -102,7 +102,7 @@ public class ImageCache {
             this.status = Status.WAITING;
             this.video.set(false);
             this.exception = null;
-            this.renderThread.askForExecution(() -> {
+            if (renderer != null) this.renderThread.askForExecution(() -> {
                 this.renderer.release();
                 // ENSURE IS THE SAME FUCKING RENDERER AND IF WAS RELEASED
                 synchronized (fetch) {
@@ -121,7 +121,7 @@ public class ImageCache {
             this.video.set(false);
             this.exception = null;
             this.uses.set(0);
-            this.renderThread.askForExecution(() -> {
+            if (renderer != null) this.renderThread.askForExecution(() -> {
                 this.renderer.release();
                 synchronized (this) { if ( renderer.textures[0] == -1) this.renderer = null; }
             });

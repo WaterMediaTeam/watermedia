@@ -23,24 +23,24 @@ public class ForgeModLoader implements IMediaLoader {
         LOGGER.info(IT, "Starting...");
 
         WaterMedia instance = WaterMedia.getInstance(this);
-        try { WaterMedia.getInstance().onEnvironmentInit(new LegacyLoader()); } catch (Throwable ignored) {}
-        try { WaterMedia.getInstance().onEnvironmentInit(new RusticLoader()); } catch (Throwable ignored) {}
-        try { WaterMedia.getInstance().onEnvironmentInit(new WideLoader()); } catch (Throwable ignored) {}
+        try { WaterMedia.getInstance().envInit(new LegacyLoader()); } catch (Throwable ignored) {}
+        try { WaterMedia.getInstance().envInit(new RusticLoader()); } catch (Throwable ignored) {}
+        try { WaterMedia.getInstance().envInit(new WideLoader()); } catch (Throwable ignored) {}
 
-        if (instance.getEnvLoader().client()) instance.init();
+        if (instance.getEnv().client()) instance.init();
     }
 
     @Override
-    public ClassLoader getModuleClassLoader() { return (CL != null) ? CL : (CL = Thread.currentThread().getContextClassLoader()); }
+    public ClassLoader classLoader() { return (CL != null) ? CL : (CL = Thread.currentThread().getContextClassLoader()); }
 
     @Override
-    public String getName() { return NAME; }
+    public String name() { return NAME; }
 
     @Override
-    public Path getProcessDirectory() { return (PS != null) ? PS : (PS = new File("").toPath()); }
+    public Path processPath() { return (PS != null) ? PS : (PS = new File("").toPath()); }
 
     @Override
-    public Path getTmpDirectory() {
+    public Path tmpPath() {
         return (TMP != null) ? TMP : (TMP = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia"));
     }
 }

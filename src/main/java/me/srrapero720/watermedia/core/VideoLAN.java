@@ -1,12 +1,10 @@
 package me.srrapero720.watermedia.core;
 
-
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
-import me.lib720.watermod.ThreadCore;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -25,20 +23,20 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class VideoLAN {
     public static final Marker IT = MarkerManager.getMarker(VideoLAN.class.getSimpleName());
     private static MediaPlayerFactory FACTORY;
-    public static MediaPlayerFactory getFactory() { return FACTORY; }
+    public static MediaPlayerFactory factory() { return FACTORY; }
 
     public static void init(IMediaLoader loader) throws Exception {
-        if (FACTORY != null) throw new ReloadingException(VideoLAN.class.getSimpleName());
+        if (FACTORY != null) throw new ReInitException(VideoLAN.class.getSimpleName());
 
         // SETUP PATHS
-        Path dir = loader.getTmpDirectory();
+        Path dir = loader.tmpPath();
         Path logs = dir.toAbsolutePath().resolve("logs/videolan.log");
 
         // LOGGER INIT
         if (!Files.exists(logs)) {
             if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
             else LOGGER.error(IT, "Failed to create logger dir");
-        } else compressAndDeleteLogFile(logs);
+        } else cleanupLogs(logs);
 
         // VLCJ INIT
         CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
@@ -51,18 +49,12 @@ public class VideoLAN {
     }
 
     private static String[] readArgsFile(IMediaLoader loader, Path loggerPath) {
-        // READ FROM JAR RESOURCES
-        String[] args = JarTool.readStringList(loader.getModuleClassLoader(), "/videolan/arguments.json").toArray(new String[0]);
-
-        // ADD LOGGER PATH
+        String[] args = JarTool.readStringList(loader.classLoader(), "/videolan/arguments.json").toArray(new String[0]);
         args[2] = loggerPath.toString();
-
-        // RETURN
         return  args;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static void compressAndDeleteLogFile(Path logFilePath) {
+    private static void cleanupLogs(Path logFilePath) {
         File logFile = logFilePath.toFile();
         if (!logFile.exists() || !logFile.isFile()) return;
 
@@ -80,6 +72,7 @@ public class VideoLAN {
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to compress {}", logFilePath, e);
         }
-        logFile.delete();
+
+        if (!logFile.delete()) LOGGER.error(IT, "Cannot delete logfile");
     }
 }

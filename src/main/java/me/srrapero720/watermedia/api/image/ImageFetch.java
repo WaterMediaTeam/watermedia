@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.tools.JarTool.USER_AGENT;
+import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
 
 public class ImageFetch {
     private static final Marker IT = MarkerManager.getMarker(ImageFetch.class.getSimpleName());

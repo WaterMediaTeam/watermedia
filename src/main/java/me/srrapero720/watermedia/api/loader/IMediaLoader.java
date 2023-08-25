@@ -4,9 +4,8 @@ import java.nio.file.Path;
 
 public interface IMediaLoader {
 
-    ClassLoader getModuleClassLoader();
-    String getName();
-    Path getProcessDirectory();
-    Path getTmpDirectory();
-
+    ClassLoader classLoader();
+    String name();
+    Path processPath();
+    Path tmpPath();
 }

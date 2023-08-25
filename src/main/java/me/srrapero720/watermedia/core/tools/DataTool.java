@@ -1,20 +1,5 @@
 package me.srrapero720.watermedia.core.tools;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DataTool {
-//    @SafeVarargs
-//    public static <T> T[] data(T[] array, T... values) {
-//        int size = array.length + values.length;
-//        List<T> t = new ArrayList<>(size);
-//        for (int i = 0; i < size; i++) {
-//            if (i < array.length) {
-//                t.add(array[i]);
-//            } else {
-//                t.add(values[i - array.length]);
-//            }
-//        }
-//        return t.;
-//    }
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
 }

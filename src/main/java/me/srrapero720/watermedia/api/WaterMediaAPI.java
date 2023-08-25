@@ -14,7 +14,7 @@ import me.srrapero720.watermedia.core.VideoLAN;
 import me.srrapero720.watermedia.core.tools.ReflectTool;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import me.srrapero720.watermedia.core.tools.annotations.Untested;
-import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -42,8 +42,8 @@ public final class WaterMediaAPI {
     private static ImageRenderer IMG_VLC_FAIL_LAND;
     public static ImageRenderer img_getLandFailedVLC() { return IMG_VLC_FAIL_LAND; }
 
-    public static void init(IMediaLoader loader) throws ReloadingException {
-        if (!URLFIXERS.isEmpty()) throw new ReloadingException(IT.getName());
+    public static void init(IMediaLoader loader) throws ReInitException {
+        if (!URLFIXERS.isEmpty()) throw new ReInitException(IT.getName());
 
         LOGGER.warn(IT,"Loading {}", URLFixer.class.getSimpleName());
         url_registerFixer(
@@ -56,19 +56,18 @@ public final class WaterMediaAPI {
                 new TwitterFixer()
         );
 
-
         ThreadCore.trySimple(() -> {
             if (IMG_LOADING != null) return;
 
             LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
-            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.getProcessDirectory().resolve("./config/watermedia/assets/loading.gif").toAbsolutePath()));
-            IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed.png"));
-            IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(loader.getModuleClassLoader(), "/pictures/videolan/failed-land.png"));
+            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.processPath().resolve("./config/watermedia/assets/loading.gif").toAbsolutePath()));
+            IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(loader.classLoader(), "/pictures/videolan/failed.png"));
+            IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(loader.classLoader(), "/pictures/videolan/failed-land.png"));
         }, e -> LOGGER.error(IT, "Failed to load image resources", e));
     }
 
     public static ImageRenderer img_getLoading(String modId) {
-        Path processDir = WaterMedia.getInstance().getLoader().getProcessDirectory();
+        Path processDir = WaterMedia.getInstance().getLoader().processPath();
         Path modConfig = processDir.resolve("./config/watermedia/assets" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) return new ImageRenderer(FileTool.readGif(modConfig.toAbsolutePath()));
@@ -217,7 +216,7 @@ public final class WaterMediaAPI {
     }
 
     public static MediaPlayerFactory vlc_getFactory() {
-        return VideoLAN.getFactory();
+        return VideoLAN.factory();
     }
 
     /**
@@ -248,7 +247,7 @@ public final class WaterMediaAPI {
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
-    public static boolean vlc_isReady() { return VideoLAN.getFactory() != null; }
+    public static boolean vlc_isReady() { return VideoLAN.factory() != null; }
 
     /**
      * Created by CreativeMD

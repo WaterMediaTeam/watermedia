@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.tools.exceptions.ReloadingException;
+import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -25,10 +25,10 @@ public class CacheStorage {
     private static boolean inited = false;
 
     public static void init(IMediaLoader modLoader) throws Exception {
-        if (inited) throw new ReloadingException(CacheStorage.class.getSimpleName());
+        if (inited) throw new ReInitException(CacheStorage.class.getSimpleName());
 
         // SETUP
-        dir = modLoader.getTmpDirectory().toAbsolutePath().resolve("cache/pictures").toFile();
+        dir = modLoader.tmpPath().toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "indexer");
 
         // LOGGER

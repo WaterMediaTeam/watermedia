@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.core.tools;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -27,21 +26,16 @@ public class FileTool {
     }
 
     public static GifDecoder readGif(Path path) {
-//        Path loadingGif = processRoot.resolve("./config/watermedia/assets/loading.gif");
-        try (ByteArrayInputStream in = new ByteArrayInputStream(IOUtils.toByteArray(new FileInputStream(path.toFile())))) {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(path.toFile()))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
+            if (status == GifDecoder.STATUS_OK) return gif;
 
-            if (status == GifDecoder.STATUS_OK) {
-                return gif;
-            } else {
-                LOGGER.error(IT, "Exception reading Gif from {}", path);
-                throw new IOException("Failed to read/process gif, status code " + status);
-            }
+            throw new IOException("Failed to process GIF - Decoder status: " + status);
         } catch (Exception e) {
             LOGGER.error(IT, "Failed loading GIF from WaterMedia resources", e);
-            return null;
         }
+        return null;
     }
 
     public static void unzip(Path zipFilePath, Path destDirectory) throws IOException {
@@ -67,12 +61,6 @@ public class FileTool {
         zipIn.close();
     }
 
-    /**
-     * Extracts a zip entry (file entry)
-     * @param zipIn
-     * @param filePath
-     * @throws IOException
-     */
     private static void unzip$extract(ZipInputStream zipIn, String filePath) throws IOException {
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
         byte[] bytesIn = new byte[4096];
