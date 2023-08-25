@@ -128,7 +128,7 @@ public final class WaterMediaAPI {
         names = null;
     }
 
-    public static String[] url_getFixerProviders() {
+    public static String[] url_getFixersPlatform() {
         String[] result = new String[URLFIXERS.size()];
         for (int i = 0; i < URLFIXERS.size(); i++) {
             result[i] = URLFIXERS.get(i).platform();
