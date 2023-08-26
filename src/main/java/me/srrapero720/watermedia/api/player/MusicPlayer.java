@@ -9,13 +9,14 @@ import me.srrapero720.watermedia.core.tools.annotations.Unstable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.Executor;
 
 @Unstable
 @Experimental
 public class MusicPlayer extends BasePlayer {
     WaterAudioCallback callback;
-    public MusicPlayer(MediaPlayerFactory factory, PlayerThread playerThread, WaterAudioCallback callback) {
-        super(factory, playerThread, null, null);
+    public MusicPlayer(MediaPlayerFactory factory, Executor playerThreadEx, WaterAudioCallback callback) {
+        super(factory, playerThreadEx, null, null);
         this.callback = callback;
         if (callback != null) this.raw().mediaPlayer().audio().callback("ogg", 44100, 2, callback);
     }

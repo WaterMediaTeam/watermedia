@@ -3,9 +3,9 @@ package me.srrapero720.watermedia.api.image;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,9 +13,9 @@ public class ImageCache {
     private static final Marker IT = MarkerManager.getMarker("ImageCache");
     private static final Map<String, ImageCache> CACHE = new HashMap<>();
 
-    public static ImageCache get(String originalURL, RenderThread runnable) {
+    public static ImageCache get(String originalURL, Executor renderThreadEx) {
         ImageCache image = CACHE.get(originalURL);
-        image = (image == null) ? new ImageCache(originalURL, runnable) : image.use();
+        image = (image == null) ? new ImageCache(originalURL, renderThreadEx) : image.use();
         CACHE.put(originalURL, image);
         return image;
     }
@@ -28,7 +28,7 @@ public class ImageCache {
     // INFO;
     public final String url;
     private final ImageFetch fetch;
-    private final RenderThread renderThread;
+    private final Executor renderThreadEx;
 
     // STATUS
     private final AtomicBoolean video = new AtomicBoolean(false);
@@ -38,9 +38,9 @@ public class ImageCache {
     private volatile ImageRenderer renderer;
     private volatile Exception exception;
 
-    public ImageCache(String url, RenderThread runnable) {
+    public ImageCache(String url, Executor runnable) {
         this.url = url;
-        this.renderThread = runnable;
+        this.renderThreadEx = runnable;
         this.fetch = new ImageFetch(url);
         CACHE.put(url, this);
     }
@@ -48,7 +48,7 @@ public class ImageCache {
     public ImageCache(ImageRenderer renderer) {
         this.url = null;
         this.fetch = null;
-        this.renderThread = null;
+        this.renderThreadEx = null;
         this.renderer = renderer;
     }
 
@@ -83,7 +83,7 @@ public class ImageCache {
                 }
             }).setOnFailedCallback(exception -> {
                 synchronized (this) { this.renderer = null; }
-                if (exception instanceof ImageFetch.VideoContentException) {
+                if (exception instanceof ImageFetch.NoPictureException) {
                     this.video.set(true);
                     this.exception = null;
                     this.status = Status.READY;
@@ -102,7 +102,7 @@ public class ImageCache {
             this.status = Status.WAITING;
             this.video.set(false);
             this.exception = null;
-            if (renderer != null) this.renderThread.askForExecution(() -> {
+            if (renderer != null) this.renderThreadEx.execute(() -> {
                 this.renderer.release();
                 // ENSURE IS THE SAME FUCKING RENDERER AND IF WAS RELEASED
                 synchronized (fetch) {
@@ -121,7 +121,7 @@ public class ImageCache {
             this.video.set(false);
             this.exception = null;
             this.uses.set(0);
-            if (renderer != null) this.renderThread.askForExecution(() -> {
+            if (renderer != null) this.renderThreadEx.execute(() -> {
                 this.renderer.release();
                 synchronized (this) { if ( renderer.textures[0] == -1) this.renderer = null; }
             });
@@ -130,5 +130,4 @@ public class ImageCache {
     }
 
     public enum Status { WAITING, LOADING, READY, FORGOTTEN, FAILED; }
-    public interface RenderThread { void askForExecution(Runnable runnable); }
 }

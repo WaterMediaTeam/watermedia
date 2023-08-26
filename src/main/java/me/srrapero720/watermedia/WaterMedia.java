@@ -4,9 +4,9 @@ import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.JarAssets;
-import me.srrapero720.watermedia.core.CacheStorage;
-import me.srrapero720.watermedia.core.VideoLAN;
+import me.srrapero720.watermedia.core.AssetsCore;
+import me.srrapero720.watermedia.core.CacheCore;
+import me.srrapero720.watermedia.core.VideoLanCore;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,20 +82,20 @@ public class WaterMedia {
 		if (env == null) LOGGER.warn(IT, "{} is starting without Environment, may cause problems", NAME);
 
 		// JAR ASSETS
-		LOGGER.info(IT, "Loading {}", JarAssets.class.getSimpleName());
-		TryCore.simple(() -> JarAssets.init(this.loader), e -> onFailed(JarAssets.class.getSimpleName(), e));
+		LOGGER.info(IT, "Loading {}", AssetsCore.class.getSimpleName());
+		TryCore.simple(() -> AssetsCore.init(this.loader), e -> onFailed(AssetsCore.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
 		TryCore.simple(() -> WaterMediaAPI.init(this.loader), e -> onFailed(WaterMediaAPI.class.getSimpleName(), e));
 
 		// PREPARE STORAGES
-		LOGGER.info(IT, "Loading {}", CacheStorage.class.getSimpleName());
-		TryCore.simple(() -> CacheStorage.init(this.loader), e -> onFailed(CacheStorage.class.getSimpleName(), e));
+		LOGGER.info(IT, "Loading {}", CacheCore.class.getSimpleName());
+		TryCore.simple(() -> CacheCore.init(this.loader), e -> onFailed(CacheCore.class.getSimpleName(), e));
 
 		// PREPARE VLC
-		LOGGER.info(IT, "Loading {}", VideoLAN.class.getSimpleName());
-		TryCore.simple(() -> VideoLAN.init(this.loader), e -> onFailed(VideoLAN.class.getSimpleName(), e));
+		LOGGER.info(IT, "Loading {}", VideoLanCore.class.getSimpleName());
+		TryCore.simple(() -> VideoLanCore.init(this.loader), e -> onFailed(VideoLanCore.class.getSimpleName(), e));
 
 		LOCK.unlock();
 		LOGGER.info(IT, "Startup finished");

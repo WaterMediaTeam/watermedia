@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,8 +27,8 @@ public class VideoPlayer extends BasePlayer {
     protected final AtomicBoolean updateFrame = new AtomicBoolean(false);
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
 
-    public VideoPlayer(MediaPlayerFactory factory, PlayerThread playerThread, MemoryAllocatorHelper memoryAllocatorHelper) {
-        super(playerThread);
+    public VideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, MemoryAllocatorHelper memoryAllocatorHelper) {
+        super(playerThreadEx);
         this.texture = GL11.glGenTextures();
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock();
@@ -76,7 +77,7 @@ public class VideoPlayer extends BasePlayer {
 
     @Override
     public void release() {
-        playerThread.askForExecution(() -> {
+        playerThreadEx.execute(() -> {
             GL11.glDeleteTextures(texture);
             texture = -1;
         });

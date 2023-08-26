@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class ReflectTool {
-    private static final Marker IT = MarkerManager.getMarker("Reflecting");
+    private static final Marker IT = MarkerManager.getMarker("Tools");
 
     public static void executeMethod(String name, Class<?> clazz, Object instance) {
         TryCore.simple(() -> {

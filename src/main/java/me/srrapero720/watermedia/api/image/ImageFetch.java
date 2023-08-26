@@ -4,7 +4,7 @@ import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.URLFixer;
-import me.srrapero720.watermedia.core.CacheStorage;
+import me.srrapero720.watermedia.core.CacheCore;
 import me.lib720.watermod.concurrent.ThreadCore;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
@@ -48,7 +48,7 @@ public class ImageFetch {
         try {
             URLFixer.Result result = WaterMediaAPI.url_fixURL(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
-            if (result.assumeVideo) throw new VideoContentException();
+            if (result.assumeVideo) throw new NoPictureException();
 
             byte[] data = load(url, result.url);
             String type = readType(data);
@@ -77,16 +77,16 @@ public class ImageFetch {
                 }
             }
         } catch (Exception e) {
-            if (!(e instanceof VideoContentException)) {
+            if (!(e instanceof NoPictureException)) {
                 LOGGER.error(IT, "An exception occurred while loading image", e);
             }
             if (failed != null) failed.run(e);
-            CacheStorage.deleteEntry(url);
+            CacheCore.deleteEntry(url);
         }
     }
 
-    private static byte[] load(String originalUrl, URL url) throws IOException, VideoContentException {
-        CacheStorage.Entry entry = CacheStorage.getEntry(originalUrl);
+    private static byte[] load(String originalUrl, URL url) throws IOException, NoPictureException {
+        CacheCore.Entry entry = CacheCore.getEntry(originalUrl);
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
 
@@ -103,11 +103,11 @@ public class ImageFetch {
         }
 
         try (InputStream in = request.getInputStream()) {
-            if (code == 400 || code == 403) throw new VideoContentException();
+            if (code == 400 || code == 403) throw new NoPictureException();
             if (code != HttpURLConnection.HTTP_NOT_MODIFIED) {
                 String type = request.getContentType();
                 if (type == null) throw new ConnectException();
-                if (!type.startsWith("image")) throw new VideoContentException();
+                if (!type.startsWith("image")) throw new NoPictureException();
             }
 
             String tag = request.getHeaderField("ETag");
@@ -139,14 +139,14 @@ public class ImageFetch {
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        CacheStorage.updateEntry(new CacheStorage.Entry(originalUrl, freshTag, lastTimestamp, expTimestamp));
+                        CacheCore.updateEntry(new CacheCore.Entry(originalUrl, freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
-            if (readType(data) == null) throw new VideoContentException();
-            CacheStorage.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
+            if (readType(data) == null) throw new NoPictureException();
+            CacheCore.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();
@@ -183,7 +183,7 @@ public class ImageFetch {
         return reader.getFormatName();
     }
 
-    public static final class VideoContentException extends Exception {}
+    public static final class NoPictureException extends Exception {}
     public static final class GifDecodingException extends Exception {}
     public interface TaskSuccessful { void run(ImageRenderer renderer); }
     public interface TaskFailed { void run(Exception e); }

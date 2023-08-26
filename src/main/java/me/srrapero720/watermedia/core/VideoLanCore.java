@@ -20,13 +20,13 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class VideoLAN {
-    public static final Marker IT = MarkerManager.getMarker(VideoLAN.class.getSimpleName());
+public class VideoLanCore {
+    public static final Marker IT = MarkerManager.getMarker(VideoLanCore.class.getSimpleName());
     private static MediaPlayerFactory FACTORY;
     public static MediaPlayerFactory factory() { return FACTORY; }
 
     public static void init(IMediaLoader loader) throws Exception {
-        if (FACTORY != null) throw new ReInitException(VideoLAN.class.getSimpleName());
+        if (FACTORY != null) throw new ReInitException(VideoLanCore.class.getSimpleName());
 
         // SETUP PATHS
         Path dir = loader.tmpPath();
@@ -36,25 +36,25 @@ public class VideoLAN {
         if (!Files.exists(logs)) {
             if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
             else LOGGER.error(IT, "Failed to create logger dir");
-        } else cleanupLogs(logs);
+        } else init$clearLogsFile(logs);
 
         // VLCJ INIT
         CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
 
         try {
-            FACTORY = WaterMediaAPI.vlc_createFactory(readArgsFile(loader, logs));
+            FACTORY = WaterMediaAPI.vlc_createFactory(init$readArguments(loader, logs));
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);
         }
     }
 
-    private static String[] readArgsFile(IMediaLoader loader, Path loggerPath) {
+    private static String[] init$readArguments(IMediaLoader loader, Path loggerPath) {
         String[] args = JarTool.readStringList(loader.classLoader(), "/videolan/arguments.json").toArray(new String[0]);
         args[2] = loggerPath.toString();
         return  args;
     }
 
-    private static void cleanupLogs(Path logFilePath) {
+    private static void init$clearLogsFile(Path logFilePath) {
         File logFile = logFilePath.toFile();
         if (!logFile.exists() || !logFile.isFile()) return;
 

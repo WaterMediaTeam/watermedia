@@ -20,6 +20,7 @@ import me.srrapero720.watermedia.core.tools.annotations.Unstable;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,9 +46,9 @@ public abstract class BasePlayer {
     protected volatile boolean live = false;
     protected volatile boolean started = false;
     protected final AtomicInteger volume = new AtomicInteger(100);
-    protected final PlayerThread playerThread;
+    protected final Executor playerThreadEx;
 
-    BasePlayer(MediaPlayerFactory factory, PlayerThread thread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+    BasePlayer(MediaPlayerFactory factory, Executor thread, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         this(thread);
         this.init(factory, renderCallback, bufferFormatCallback);
     }
@@ -57,7 +58,7 @@ public abstract class BasePlayer {
      * Intended to be used just in case you need to do some special implementations of {@link RenderCallback} or {@link SimpleBufferFormatCallback}
      * @param thread Async executor for any method executed outside main thread
      */
-    protected BasePlayer(PlayerThread thread) { this.playerThread = thread; }
+    protected BasePlayer(Executor thread) { this.playerThreadEx = thread; }
 
 
     /**
@@ -464,7 +465,7 @@ public abstract class BasePlayer {
         @Override
         public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThread.askForExecution(() -> {
+            playerThreadEx.execute(() -> {
                 setVolume(volume.get());
             });
         }
@@ -587,11 +588,9 @@ public abstract class BasePlayer {
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThread.askForExecution(() -> {
+            playerThreadEx.execute(() -> {
                 setVolume(volume.get());
             });
         }
     }
-
-    public interface PlayerThread { void askForExecution(Runnable runnable); }
 }

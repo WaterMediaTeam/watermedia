@@ -15,13 +15,13 @@ import java.nio.file.StandardOpenOption;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class JarAssets {
+public class AssetsCore {
     private static final String VIDEOLAN_V = "3.0.18a";
-    private static final Marker IT = MarkerManager.getMarker("ResourceManager");
+    private static final Marker IT = MarkerManager.getMarker(AssetsCore.class.getSimpleName());
     private static boolean loaded = false;
 
     public static void init(IMediaLoader loader) throws Exception {
-        if (loaded) throw new ReInitException(JarAssets.class.getSimpleName());
+        if (loaded) throw new ReInitException(AssetsCore.class.getSimpleName());
 
         // STEP 1: EXTRACT VLC
         if (OsTool.getArch().wrapped) {

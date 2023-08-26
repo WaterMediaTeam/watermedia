@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,28 +16,28 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
-public class CacheStorage {
-    private static final Marker IT = MarkerManager.getMarker(CacheStorage.class.getSimpleName());
+@SuppressWarnings({"ResultOfMethodCallIgnored", "PathCanBeConvertedToMethod"})
+public class CacheCore {
+    private static final Marker IT = MarkerManager.getMarker(CacheCore.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;
     private static File index;
-    private static boolean inited = false;
+    private static boolean init = false;
 
     public static void init(IMediaLoader modLoader) throws Exception {
-        if (inited) throw new ReInitException(CacheStorage.class.getSimpleName());
+        if (init) throw new ReInitException(CacheCore.class.getSimpleName());
 
         // SETUP
         dir = modLoader.tmpPath().toAbsolutePath().resolve("cache/pictures").toFile();
-        index = new File(dir, "indexer");
+        index = new File(dir, "index");
 
         // LOGGER
         LOGGER.info(IT, "Mounted on path '{}'", dir);
 
         if (!dir.exists()) dir.mkdirs();
         if (index.exists()) {
-            try (DataInputStream stream = new DataInputStream(new GZIPInputStream(new FileInputStream(index)))) {
+            try (DataInputStream stream = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())))) {
                 int length = stream.readInt();
 
                 for (int i = 0; i < length; i++) {
@@ -52,39 +53,11 @@ public class CacheStorage {
             }
         }
 
-        inited = true;
-    }
-
-    private static File getFile(String url) {
-        synchronized (ENTRIES) {
-            return new File(dir, Base64.getEncoder().encodeToString(url.getBytes()));
-        }
-    }
-
-    public static void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
-        synchronized (ENTRIES) {
-            Entry entry = new Entry(url, tag, time, expireTime);
-            boolean saved = false;
-            OutputStream out = null;
-            File file = getFile(entry.url);
-
-            try {
-                out = new FileOutputStream(file);
-                out.write(data);
-                saved = true;
-            } catch (Exception e) { LOGGER.error(IT, "Failed to save cache file {}", url, e);
-            } finally { IOUtils.closeQuietly(out); }
-
-            // SAVE INDEX FIST
-            if (saved && refreshAll()) ENTRIES.put(url, entry);
-            else if (file.exists()) file.delete();
-        }
+        init = true;
     }
 
     private static boolean refreshAll() {
-        DataOutputStream out = null;
-        try {
-            out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)));
+        try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(Files.newOutputStream(index.toPath())))) {
             out.writeInt(ENTRIES.size());
 
             for (Map.Entry<String, Entry> mapEntry : ENTRIES.entrySet()) {
@@ -96,10 +69,29 @@ public class CacheStorage {
             }
 
             return true;
-        } catch (IOException e) {
-            LOGGER.error(IT, "Failed to refresh cache index", e);
-            return false;
-        } finally { IOUtils.closeQuietly(out); }
+        } catch (IOException e) { LOGGER.error(IT, "Failed to refresh cache index", e); }
+        return false;
+    }
+
+    private static File entry$getFile(String url) {
+        return new File(dir, Base64.getEncoder().encodeToString(url.getBytes()));
+    }
+
+    public static void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
+        synchronized (ENTRIES) {
+            Entry entry = new Entry(url, tag, time, expireTime);
+            boolean saved = false;
+            File file = entry$getFile(entry.url);
+
+            try (OutputStream out = Files.newOutputStream(file.toPath())) {
+                out.write(data);
+                saved = true;
+            } catch (Exception e) { LOGGER.error(IT, "Failed to save cache file {}", url, e); }
+
+            // SAVE INDEX FIST
+            if (saved && refreshAll()) ENTRIES.put(url, entry);
+            else if (file.exists()) file.delete();
+        }
     }
 
     public static Entry getEntry(String url) {
@@ -107,15 +99,17 @@ public class CacheStorage {
             return ENTRIES.get(url);
         }
     }
+
     public static void updateEntry(Entry fresh) {
         synchronized (ENTRIES) {
             ENTRIES.put(fresh.url, fresh);
         }
     }
+
     public static void deleteEntry(String url) {
         synchronized (ENTRIES) {
             ENTRIES.remove(url);
-            File file = getFile(url);
+            File file = entry$getFile(url);
             if (file.exists()) file.delete();
         }
     }
@@ -140,6 +134,6 @@ public class CacheStorage {
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
-        public File getFile() { return CacheStorage.getFile(url); }
+        public File getFile() { return entry$getFile(url); }
     }
 }

@@ -10,7 +10,7 @@ import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.player.VideoPlayer;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
-import me.srrapero720.watermedia.core.VideoLAN;
+import me.srrapero720.watermedia.core.VideoLanCore;
 import me.srrapero720.watermedia.core.tools.ReflectTool;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import me.srrapero720.watermedia.core.tools.annotations.Untested;
@@ -216,7 +216,7 @@ public final class WaterMediaAPI {
     }
 
     public static MediaPlayerFactory vlc_getFactory() {
-        return VideoLAN.factory();
+        return VideoLanCore.factory();
     }
 
     /**
@@ -247,7 +247,7 @@ public final class WaterMediaAPI {
      * a new {@link MediaPlayerFactory} instance
      * @return if is reddy or not
      */
-    public static boolean vlc_isReady() { return VideoLAN.factory() != null; }
+    public static boolean vlc_isReady() { return VideoLanCore.factory() != null; }
 
     /**
      * Created by CreativeMD

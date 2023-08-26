@@ -18,7 +18,7 @@ import java.util.List;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class JarTool {
-    static final Marker IT = MarkerManager.getMarker("JarTool");
+    static final Marker IT = MarkerManager.getMarker("Tools");
 
     public static boolean copyAsset(ClassLoader loader, String origin, Path dest) {
         try (InputStream is = readResource(loader, origin)) {
