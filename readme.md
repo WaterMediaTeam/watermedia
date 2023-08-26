@@ -55,8 +55,8 @@ dependencies {
 - [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes)
 
 # Libraries used
-**Important:** All libraries are relocated and wrapped using shadowJar. You can skip our API and use
-directly all native libraries... highly no recommended. Find it all on``me.lib720.libraryname`` package
+**Important:** All libraries are relocated and wrapped using shadowJar. You can skip our API and directly use
+ all native libraries... highly no recommended. Find it all on``me.lib720.libraryname`` package
 - [VLCJ](https://github.com/caprica/vlcj/tree/vlcj-4.x)
 - [Java-youtube-downloader](https://github.com/sealedtx/java-youtube-downloader)
 - [Retrofit](https://square.github.io/retrofit/)
