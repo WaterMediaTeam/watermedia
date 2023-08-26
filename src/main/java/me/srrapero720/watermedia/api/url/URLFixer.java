@@ -26,7 +26,7 @@ public abstract class URLFixer {
         return null;
     }
 
-    public static final class FixingURLException extends Exception {
+    public static final class FixingURLException extends Throwable {
         public FixingURLException(String url, Throwable t) { super("Failed to fix URL " + url, t); }
         public FixingURLException(URL url, Throwable t) { super("Failed to fix URL " + url.toString(), t); }
     }

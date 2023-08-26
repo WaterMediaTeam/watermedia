@@ -194,11 +194,15 @@ public final class WaterMediaAPI {
     public static URL url_toURL(String stringUrl) {
         try {
             URL url = new URL(stringUrl);
-
-            return TryCore.withReturn(defaultVar -> {
-                for (URLFixer compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null).url;
-                return defaultVar;
-            }, e -> LOGGER.error(IT, "Exception occurred trying to patch URL", e), url);
+            try {
+                for (int i = 0; i < URLFIXERS.size(); i++) {
+                    URLFixer fixer = URLFIXERS.get(i);
+                    if (fixer.isValid(url)) return fixer.patch(url, null).url;
+                }
+            } catch (Throwable t) {
+                LOGGER.error(IT, "Exception occurred trying to patch URL", t);
+            }
+            return url;
         } catch (Exception e) {
             LOGGER.error(IT, "Exception occurred instancing URL", e);
         }
@@ -214,10 +218,15 @@ public final class WaterMediaAPI {
     public static URLFixer.Result url_fixURL(String str) {
         try {
             URL url = new URL(str);
-            return TryCore.withReturn(defaultVar -> {
-                for (URLFixer compat: URLFIXERS) if (compat.isValid(url)) return compat.patch(url, null);
-                return defaultVar;
-            }, e -> LOGGER.error(IT, "Exception occurred trying to fix URL", e), new URLFixer.Result(url, false, false));
+            try {
+                for (int i = 0; i < URLFIXERS.size(); i++) {
+                    URLFixer fixer = URLFIXERS.get(i);
+                    if (fixer.isValid(url)) return fixer.patch(url, null);
+                }
+                return new URLFixer.Result(url, false, false);
+            } catch (Throwable t) {
+                LOGGER.error(IT, "Exception occurred trying to fix URL", t);
+            }
         } catch (Exception e) {
             LOGGER.error(IT, "Exception occurred instancing URL", e);
         }

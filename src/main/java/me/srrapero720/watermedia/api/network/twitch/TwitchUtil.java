@@ -186,7 +186,6 @@ public class TwitchUtil {
     }
 
     public static class StreamNotFound extends Exception {
-
         public StreamNotFound(String message) {
             super(message);
         }
