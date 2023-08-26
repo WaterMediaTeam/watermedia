@@ -5,7 +5,7 @@ in Minecraft with MinecraftForge (NeoForge) and Fabric (Quilt)
 API adds a VideoPlayer layer on VLC MediaPlayer to render frames into OpenGL.
 Tool to fetch images from the internet and store it in cache,
 ``URLFixer``'s to give extra support to streaming platforms like Twitch,
-Kick.com, Youtube, Google Drive, One Drive, Dropbox and more
+Kick.com, YouTube, Google Drive, One Drive, Dropbox and more
 
 # INSTALLATION
 You can use two ways to install this mod in your project
