@@ -1,17 +1,22 @@
 # WATERMeDIA | MULTIMEDIA API
-Library and API to use VideoLAN in Java, specially designed to be used in Minecraft with MinecraftForge(NeoForge) and Fabric(Quilt)
+Library and API to use VideoLAN in Java, specially designed to be used 
+in Minecraft with MinecraftForge (NeoForge) and Fabric (Quilt)
 
-API adds a VideoPlayer layer on VLC MediaPlayer to render frames into OpenGL, Tool to fetch images from internet and store it in cache, URLFixers to give extra support to streaming platforms like Twitch, Kick.com, Youtube, Google Drive, One Drive, Dropbox and more
+API adds a VideoPlayer layer on VLC MediaPlayer to render frames into OpenGL.
+Tool to fetch images from the internet and store it in cache,
+``URLFixer``'s to give extra support to streaming platforms like Twitch,
+Kick.com, Youtube, Google Drive, One Drive, Dropbox and more
 
 # INSTALLATION
-You can use 2 ways to install this mod in your project
+You can use two ways to install this mod in your project
 
-### CURSEMAVEN
+## CURSEMAVEN
 CurseMaven uses CurseForge network to download any released version even if it wasn't approved
-this option doesn't include JavaDoc or Sources, so all stacktrace doesn't going to match with your decompiled bytecode
+this option doesn't include JavaDoc or Sources,
+so all stacktrace doesn't going to match with your decompiled bytecode
 checkout what is the latest version file ID here: https://www.curseforge.com/minecraft/mc-mods/watermedia
 
-**REPOSITORY**
+**SETUP IN YOUR GRADLE**
 ```gradle
 repositories {
     maven {
@@ -19,36 +24,49 @@ repositories {
         content { includeGroup "curse.maven" }
     }
 }
-```
 
-**DEPENDENCIES**
-```gradle
 dependencies {
     // doesn't require fg.debof() or any debofuscation tool
     implementation "curse.maven:watermedia-869524:latest-version-file-id"
 }
 ```
 
-### JITPACK.IO
+## JITPACK.IO
 JitPack.io is a third-party tool to build and distribute artifacts using direct github sources/tags
 This option includes JavaDoc and Sources
 
-**REPOSITORIES**
+**SETUP IN YOUR GRADLE**
 ```gradle
 repositories {
     maven { url 'https://jitpack.io' }
 }
-```
 
-**DEPENDENCIES**
-```gradle
 dependencies {
     // doesn't require fg.debof() or any debofuscation tool
     implementation 'com.github.SrRapero720.watermedia:build:master-SNAPSHOT'
 }
 ```
 
-# Other projects using WATERMeDIA
+# OS SUPPORT (VLC)
+Any other aspect of our API is supported... except VLC.
+We require LibVLC binaries to give video support, 
+depending on your OS and your system arch support can be full, limited or unsupported.
+
+| Operative System | Support status |
+|:----------------:|:--------------:|
+|   Windows x64    |       ✅        |
+|   Windows x32    |       ❎        |
+|   Windows ARM    |       🚫       |
+| MacOS (any Arch) |       ⛔        |
+|   Linux (x64)    |       ❎        |
+|   Linux (ARM)    |       🚫       |
+
+- ✅ **Supported**
+- ❎ **Limited:** Requires manually VLC install
+- 🚫 **Unsupported:** limitations (planned support)
+- ⛔ **Unsupported:** rejected support by us
+
+# Projects using WATERMeDIA
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes)
 - [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player)
 - [FancyMenu: Video Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-video)
