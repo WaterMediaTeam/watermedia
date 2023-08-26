@@ -31,7 +31,14 @@ public class TwitterVideoExtractor {
 
         for (String match : matches) {
             Matcher matcher = amplitudePattern.matcher(match);
-            if (matcher.find()) {
+
+            boolean find = matcher.find();
+            if (!find) {
+                matcher = extTwPattern.matcher(match);
+                find = matcher.find();
+            }
+
+            if (find) {
                 String url = matcher.group(1);
                 String tweetId = matcher.group(2);
                 String resolution = matcher.group(3);
