@@ -5,7 +5,7 @@ logoFile="pack.png" #optional
 issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
 [[mods]]
     modId="${modid}"
-    version="${modversion}"
+    version="${version}"
     displayName="${modname}"
     #updateJSONURL="https://change.me.example.invalid/updates.json"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia"
