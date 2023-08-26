@@ -10,6 +10,7 @@ You can use 2 ways to install this mod in your project
 CurseMaven uses CurseForge network to download any released version even if it wasn't approved
 this option doesn't include JavaDoc or Sources, so all stacktrace doesn't going to match with your decompiled bytecode
 checkout what is the latest version file ID here: https://www.curseforge.com/minecraft/mc-mods/watermedia
+
 **REPOSITORY**
 ```gradle
 repositories {
@@ -31,6 +32,7 @@ dependencies {
 ### JITPACK.IO
 JitPack.io is a third-party tool to build and distribute artifacts using direct github sources/tags
 This option includes JavaDoc and Sources
+
 **REPOSITORIES**
 ```gradle
 repositories {
