@@ -30,8 +30,12 @@ import java.util.concurrent.Executors;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
 
+/**
+ * Tool to fetch new images from internet
+ * stores all loaded pictures in our cache to skip downloading image 2 times
+ */
 public class ImageFetch {
-    private static final Marker IT = MarkerManager.getMarker(ImageFetch.class.getSimpleName());
+    private static final Marker IT = MarkerManager.getMarker("ImageAPI");
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("WATERMeDIA-if-Worker"));
 
@@ -40,9 +44,25 @@ public class ImageFetch {
     private TaskFailed failed;
 
     public ImageFetch(String url) { this.url = url; }
+
+    /**
+     * Adds a new success callback
+     * @param task callback
+     * @return current instance
+     */
     public ImageFetch setOnSuccessCallback(TaskSuccessful task) { successful = task; return this; }
+
+    /**
+     * Adds a new failed callback
+     * @param task callback
+     * @return current instance
+     */
     public ImageFetch setOnFailedCallback(TaskFailed task) { failed = task; return this; }
 
+    /**
+     * Starts image fetch
+     * result is fired on callbacks
+     */
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
@@ -160,26 +180,25 @@ public class ImageFetch {
     }
 
     private static String readType(InputStream input) throws IOException {
-        ImageInputStream stream = ImageIO.createImageInputStream(input);
-        Iterator<ImageReader> iterator = ImageIO.getImageReaders(stream);
+        ImageReader reader = null;
+        try(ImageInputStream stream = ImageIO.createImageInputStream(input)) {
+            Iterator<ImageReader> iterator = ImageIO.getImageReaders(stream);
 
-        if (!iterator.hasNext()) return null;
+            if (!iterator.hasNext()) return null;
 
-        ImageReader reader = iterator.next();
-        if (reader.getFormatName().equalsIgnoreCase("gif")) return "gif";
+            reader = iterator.next();
+            if (reader.getFormatName().equalsIgnoreCase("gif")) return "gif";
 
-        ImageReadParam param = reader.getDefaultReadParam();
-        reader.setInput(stream, true, true);
-
-        try {
+            ImageReadParam param = reader.getDefaultReadParam();
+            reader.setInput(stream, true, true);
             reader.read(0, param);
         } catch (IOException e) {
             LOGGER.error(IT, "Failed to parse input format", e);
         } finally {
-            reader.dispose();
-            IOUtils.closeQuietly(stream);
+            if (reader != null) reader.dispose();
         }
         input.reset();
+        if (reader == null) return null;
         return reader.getFormatName();
     }
 

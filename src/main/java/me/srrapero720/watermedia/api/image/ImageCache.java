@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageCache {
-    private static final Marker IT = MarkerManager.getMarker("ImageCache");
+    private static final Marker IT = MarkerManager.getMarker("ImageAPI");
     private static final Map<String, ImageCache> CACHE = new HashMap<>();
 
     public static ImageCache get(String originalURL, Executor renderThreadEx) {

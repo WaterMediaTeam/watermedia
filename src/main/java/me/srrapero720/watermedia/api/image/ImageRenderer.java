@@ -51,6 +51,13 @@ public class ImageRenderer {
         duration = time;
     }
 
+    /**
+     * gets texture id based on time in millis
+     * use API to calculate time
+     * @param time time in millis
+     * @return texture id usable on OpenGL
+     * @see WaterMediaAPI#math_textureTime(ImageRenderer, int, long, boolean)
+     */
     public int texture(long time) {
         if (textures == null) return -1;
         if (textures.length == 1) return texture(0);
@@ -62,6 +69,11 @@ public class ImageRenderer {
         return last;
     }
 
+    /**
+     * gets texture id from texture array
+     * @param index image index
+     * @return texture id usable on OpenGL
+     */
     public int texture(int index) {
         if (this.textures[index] == -1) {
             if (decoder != null) {

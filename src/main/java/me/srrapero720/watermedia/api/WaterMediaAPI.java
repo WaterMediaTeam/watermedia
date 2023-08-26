@@ -4,7 +4,9 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.api.image.ImageFetch;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.player.BasePlayer;
 import me.srrapero720.watermedia.api.url.*;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.player.VideoPlayer;
@@ -42,6 +44,11 @@ public final class WaterMediaAPI {
     private static ImageRenderer IMG_VLC_FAIL_LAND;
     public static ImageRenderer img_getLandFailedVLC() { return IMG_VLC_FAIL_LAND; }
 
+    /**
+     * DO NOT USE IT DIRECTLY
+     * @param loader instance of current environment
+     * @throws ReInitException If already was init
+     */
     public static void init(IMediaLoader loader) throws ReInitException {
         if (!URLFIXERS.isEmpty()) throw new ReInitException(IT.getName());
 
@@ -66,6 +73,13 @@ public final class WaterMediaAPI {
         }, e -> LOGGER.error(IT, "Failed to load image resources", e));
     }
 
+    /**
+     * Returns loading gif picture for a specific MODID
+     * to set up your custom loading gif you should store it on `/config/watermedia/assets/[modid]/loading.gif`
+     * IMPORTANT: this method doesn't cache your picture, ensure you are loading it in a static final context
+     * @param modId Identifier of third-party mod
+     * @return a {@link ImageRenderer} instance with the right loading gif, if gif cannot be readed then returns watermedia's default
+     */
     public static ImageRenderer img_getLoading(String modId) {
         Path processDir = WaterMedia.getInstance().getLoader().processPath();
         Path modConfig = processDir.resolve("./config/watermedia/assets" + modId + "/loading.gif");
@@ -111,16 +125,33 @@ public final class WaterMediaAPI {
         return time;
     }
 
+    /**
+     * Creates a hexadecimal color based on gave params
+     * All values needs to be in a range of 0 ~ 255
+     * @param a Alpha
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     * @return HEX color
+     */
     public static int math_colorARGB(int a, int r, int g, int b) { return (a << 24) | (r << 16) | (g << 8) | b; }
 
+    /**
+     * Shot-cut of using {@link ImageRenderer#texture(long)} with {@link #math_textureTime(ImageRenderer, int, long, boolean)}
+     * @param renderer instance of image
+     * @param tick number of ticks
+     * @param deltaTime scale time
+     * @param loop overtime resets picture
+     * @return texture ID usable on OpenGL
+     */
     public static int api_getTexture(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
         return renderer.texture(math_textureTime(renderer, tick, deltaTime, loop));
     }
 
 
     /**
-     * Check if any String is a valid URL
-     * @param url the URL in a string
+     * Check if String is a valid URL
+     * @param url string to check
      * @return if is valid.
      */
     public static boolean url_isValid(String url) { return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false); }
@@ -140,6 +171,10 @@ public final class WaterMediaAPI {
         names = null;
     }
 
+    /**
+     * List of all supported platforms by WATERMeDIA
+     * @return array of all platforms name unsorted
+     */
     public static String[] url_getFixersPlatform() {
         String[] result = new String[URLFIXERS.size()];
         for (int i = 0; i < URLFIXERS.size(); i++) {
@@ -153,7 +188,7 @@ public final class WaterMediaAPI {
      * Is not recommended external usages
      * @param stringUrl Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
-     * @deprecated use {@link #url_fixURL(String)} instead
+     * @deprecated use {@link #url_fixURL(String)} instead, this method is gonna be removed on 2.1.0
      */
     @Deprecated
     public static URL url_toURL(String stringUrl) {
@@ -170,6 +205,12 @@ public final class WaterMediaAPI {
         return null;
     }
 
+    /**
+     * Used by default internally in the API by {@link BasePlayer} and {@link ImageFetch}
+     * Recommended usage just in API custom abstraction
+     * @param str String to patch
+     * @return result data with URL and type of it
+     */
     public static URLFixer.Result url_fixURL(String str) {
         try {
             URL url = new URL(str);
@@ -184,10 +225,7 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * Fix URL string using URLFixers and returns a bundle data with the URL, type of and qualities
-     * @param str URL to fix and convert into URL
-     * @param ns This method should use NothingSpecialURLFixer!? be careful with this
-     * @return Bundle data with the URL and info
+     * warning: WIP method
      */
     @Experimental
     @Untested
@@ -215,6 +253,10 @@ public final class WaterMediaAPI {
         return queryParams;
     }
 
+    /**
+     * Gives you the default VLC MediaPlayerFactory created by API
+     * @return WATERMeDIA's default MediaPlayerFactory
+     */
     public static MediaPlayerFactory vlc_getFactory() {
         return VideoLanCore.factory();
     }
@@ -225,7 +267,7 @@ public final class WaterMediaAPI {
      * Suggestion: Use the same VLC arguments for logging but with other filename
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
      * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link VideoPlayer} can accept factory for new instances
+     * @return a PlayerFactory to create custom VLC players. {@link BasePlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory vlc_createFactory(String[] vlcArgs) {
         NativeDiscovery discovery = new NativeDiscovery();
@@ -243,18 +285,18 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * Check if VLC is loaded and ready to be used on {@link VideoPlayer} or to make
-     * a new {@link MediaPlayerFactory} instance
-     * @return if is reddy or not
+     * Check if VLC is loaded and ready to be used
+     * @return if VLC was loaded
      */
     public static boolean vlc_isReady() { return VideoLanCore.factory() != null; }
 
     /**
      * Created by CreativeMD
-     * @param image picture to process
-     * @param width picture width
-     * @param height picture height
-     * @return textureID
+     * Creates a new texture id based on a {@link BufferedImage} instance (used internally by {@link ImageRenderer}
+     * @param image image to process
+     * @param width buffer width (can be image width)
+     * @param height buffer height (can be image height)
+     * @return texture id for OpenGL
      */
     public static int gl_genTexture(BufferedImage image, int width, int height) {
         int[] pixels = new int[width * height];
@@ -305,6 +347,15 @@ public final class WaterMediaAPI {
         return textureID;
     }
 
+    /**
+     * Process a buffer to be used in a OpenGL texture id
+     * @param videoBuffer IntBuffer to be processed
+     * @param videoTexture texture ID from OpenGL
+     * @param videoWidth buffer width
+     * @param videoHeight buffer height
+     * @param firstFrame if was the first frame
+     * @return same texture ID gave first
+     */
     public static int gl_applyBuffer(IntBuffer videoBuffer, int videoTexture, int videoWidth, int videoHeight, boolean firstFrame) {
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
