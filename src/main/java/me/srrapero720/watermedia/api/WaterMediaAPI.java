@@ -67,7 +67,7 @@ public final class WaterMediaAPI {
             if (IMG_LOADING != null) return;
 
             LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
-            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.processPath().resolve("./config/watermedia/assets/loading.gif").toAbsolutePath()));
+            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif").toAbsolutePath()));
             IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(loader.classLoader(), "/pictures/videolan/failed.png"));
             IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(loader.classLoader(), "/pictures/videolan/failed-land.png"));
         }, e -> LOGGER.error(IT, "Failed to load image resources", e));
@@ -82,7 +82,7 @@ public final class WaterMediaAPI {
      */
     public static ImageRenderer img_getLoading(String modId) {
         Path processDir = WaterMedia.getInstance().getLoader().processPath();
-        Path modConfig = processDir.resolve("./config/watermedia/assets" + modId + "/loading.gif");
+        Path modConfig = processDir.resolve("config/watermedia/assets" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) return new ImageRenderer(FileTool.readGif(modConfig.toAbsolutePath()));
         if (modConfig.getParent().toFile().mkdirs()) LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
