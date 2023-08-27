@@ -82,8 +82,6 @@ processResources {
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]) {
         expand rootProject.properties
     }
-
-    exclude 'videolan/**'
 }
 
 // ShadowJar task (run this task to make a built JAR.
