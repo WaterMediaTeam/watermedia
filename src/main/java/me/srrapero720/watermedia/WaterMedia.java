@@ -85,13 +85,13 @@ public class WaterMedia {
 		LOGGER.info(IT, "Loading {}", AssetsCore.class.getSimpleName());
 		TryCore.simple(() -> AssetsCore.init(this.loader), e -> onFailed(AssetsCore.class.getSimpleName(), e));
 
-		// PREPARE API
-		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
-		TryCore.simple(() -> WaterMediaAPI.init(this.loader), e -> onFailed(WaterMediaAPI.class.getSimpleName(), e));
-
 		// PREPARE STORAGES
 		LOGGER.info(IT, "Loading {}", CacheCore.class.getSimpleName());
 		TryCore.simple(() -> CacheCore.init(this.loader), e -> onFailed(CacheCore.class.getSimpleName(), e));
+
+		// PREPARE API
+		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
+		TryCore.simple(() -> WaterMediaAPI.init(this.loader), e -> onFailed(WaterMediaAPI.class.getSimpleName(), e));
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLanCore.class.getSimpleName());

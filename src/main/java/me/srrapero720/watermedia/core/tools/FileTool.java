@@ -27,7 +27,7 @@ public class FileTool {
     }
 
     public static GifDecoder readGif(Path path) {
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(path.toFile()))) {
+        try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path.toFile().toPath()))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
             if (status == GifDecoder.STATUS_OK) return gif;

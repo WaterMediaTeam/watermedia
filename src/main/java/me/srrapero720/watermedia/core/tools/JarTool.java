@@ -24,7 +24,8 @@ public class JarTool {
         try (InputStream is = readResource(loader, origin)) {
             if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
 
-            Files.createDirectories(dest.getParent());
+            File destParent = dest.getParent().toFile();
+            if (!destParent.exists() && !destParent.mkdirs()) LOGGER.fatal(IT, "Cannot be created parent directories to {}", dest.toString());
             Files.copy(is, dest, StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (Exception e) {

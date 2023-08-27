@@ -50,8 +50,8 @@ public class AssetsCore {
         }
 
         // STEP 2: EXTRACT LOADING GIF (was extracted on process root folder)
-        Path loadingGif = loader.processPath().resolve("config/watermedia/assets/loading.gif");
-        if (!Files.exists(loadingGif)) {
+        Path loadingGif = loader.processPath().resolve("config/watermedia/assets/loading.gif").toAbsolutePath();
+        if (!loadingGif.toFile().exists()) {
             JarTool.copyAsset(loader.classLoader(), "/pictures/loading.gif", loadingGif);
         }
 
