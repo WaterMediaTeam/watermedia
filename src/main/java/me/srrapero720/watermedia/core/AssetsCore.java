@@ -16,7 +16,7 @@ import java.nio.file.StandardOpenOption;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class AssetsCore {
-    private static final String VIDEOLAN_V = "3.0.18a";
+    private static final String VIDEOLAN_V = "3.0.18b";
     private static final Marker IT = MarkerManager.getMarker(AssetsCore.class.getSimpleName());
     private static boolean loaded = false;
 
