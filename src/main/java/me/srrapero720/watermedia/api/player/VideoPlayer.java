@@ -10,6 +10,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.concurrent.Executor;
@@ -25,21 +26,29 @@ public class VideoPlayer extends BasePlayer {
     private volatile int texture;
     private volatile int width = 1;
     private volatile int height = 1;
-    private volatile IntBuffer buffer;
+    private volatile Buffer buffer;
     private volatile Throwable exception;
 
+    private final boolean intBuffer;
     protected final ReentrantLock renderLock = new ReentrantLock();
     protected final AtomicBoolean updateFrame = new AtomicBoolean(false);
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
 
-    public VideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, MemoryAllocatorHelper memoryAllocatorHelper) {
+    public VideoPlayer(MediaPlayerFactory factory, boolean intBuffer, Executor playerThreadEx, MemoryAllocatorHelper memoryAllocatorHelper) {
         super(playerThreadEx);
         this.texture = GL11.glGenTextures();
+        this.intBuffer = intBuffer;
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock();
             try {
-                buffer.put(nativeBuffers[0].asIntBuffer());
-                ReflectTool.executeMethod("rewind", IntBuffer.class, buffer);
+                if (this.intBuffer) {
+                    ((IntBuffer) buffer).put(nativeBuffers[0].asIntBuffer());
+                    ReflectTool.executeMethod("rewind", buffer.getClass(), buffer);
+                } else {
+                    ReflectTool.executeMethod("rewind", nativeBuffers[0].getClass(), nativeBuffers[0]);
+                    ((ByteBuffer) buffer).put(nativeBuffers[0]);
+                    ReflectTool.executeMethod("rewind", buffer.getClass(), buffer);
+                }
                 updateFrame.set(true);
             } catch (Throwable t) {
                 if (exception == null) {
@@ -54,7 +63,9 @@ public class VideoPlayer extends BasePlayer {
             try {
                 width = sourceWidth;
                 height = sourceHeight;
-                buffer = memoryAllocatorHelper.create(sourceWidth * sourceHeight * 4).asIntBuffer();
+                buffer = (intBuffer) ?
+                        memoryAllocatorHelper.create(sourceWidth * sourceHeight * 4).asIntBuffer() :
+                        memoryAllocatorHelper.create(sourceWidth * sourceHeight * 4);
                 updateFrame.set(true);
                 updateFirstFrame.set(true);
             } catch (Throwable t) {
@@ -74,7 +85,11 @@ public class VideoPlayer extends BasePlayer {
         renderLock.lock();
         try {
             if (updateFrame.compareAndSet(true, false))
-                WaterMediaAPI.gl_applyBuffer(buffer, texture, width, height, updateFirstFrame.compareAndSet(true, false));
+                if (this.intBuffer) {
+                    WaterMediaAPI.gl_applyBuffer((IntBuffer) buffer, texture, width, height, updateFirstFrame.compareAndSet(true, false));
+                } else {
+                    WaterMediaAPI.gl_applyBuffer((ByteBuffer) buffer, texture, width, height, updateFirstFrame.compareAndSet(true, false));
+                }
             return texture;
         } finally {
             renderLock.unlock();
