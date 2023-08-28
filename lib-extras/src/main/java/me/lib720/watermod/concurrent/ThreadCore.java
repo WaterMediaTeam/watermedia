@@ -62,6 +62,13 @@ public class ThreadCore {
         return thread;
     }
 
+    public static Thread thread(int priority, Runnable runnable) {
+        Thread thread = thread$basic(runnable);
+        thread.setPriority(priority);
+        thread.start();
+        return thread;
+    }
+
     public static Thread thread(Runnable runnable) {
         Thread thread = thread$basic(runnable);
         thread.start();

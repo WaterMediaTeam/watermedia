@@ -33,7 +33,6 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public abstract class BasePlayer {
     protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
     protected static final ClassLoader CL = Thread.currentThread().getContextClassLoader();
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.maxThreads() / 2, ThreadCore.factory("WATERMeDIA-bp-Worker"));
 
     // PLAYER
     protected String url;
@@ -96,7 +95,7 @@ public abstract class BasePlayer {
     public void start(CharSequence url) { this.start(url, new String[0]); }
 
     public void start(CharSequence url, String[] vlcArgs) {
-        EX.execute(() -> {
+        ThreadCore.thread(3, () -> {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
@@ -104,7 +103,7 @@ public abstract class BasePlayer {
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        EX.execute(() -> {
+        ThreadCore.thread(3, () -> {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
@@ -432,12 +431,13 @@ public abstract class BasePlayer {
             ThreadCore.sleep(3000);
             listener = null;
             ls.set(null);
+            ls = null;
         });
     }
 
     public void releaseAsync() {
         if (raw == null) return;
-        EX.execute(this::release);
+        ThreadCore.thread(3, this::release);
     }
 
     protected static void checkClassLoader() {
