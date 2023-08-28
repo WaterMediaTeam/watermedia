@@ -9,14 +9,15 @@ version = modversion
 group = modgroup
 base { archivesName = "${modid}" }
 
-/* SOURCE AND TARGET JAVA VERSION */
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
 
 /* JAVA CONFIG */
 java {
     withSourcesJar()
     withJavadocJar()
+
+    /* SOURCE AND TARGET JAVA VERSION */
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 println "Gradle Java: ${JavaVersion.current()}"
