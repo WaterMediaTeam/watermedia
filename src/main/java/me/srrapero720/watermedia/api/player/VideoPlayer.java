@@ -4,6 +4,7 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.core.tools.ReflectTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
@@ -15,6 +16,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 @SuppressWarnings("unused")
 public class VideoPlayer extends BasePlayer {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
@@ -23,6 +26,8 @@ public class VideoPlayer extends BasePlayer {
     private volatile int width = 1;
     private volatile int height = 1;
     private volatile IntBuffer buffer;
+    private volatile Throwable exception;
+
     protected final ReentrantLock renderLock = new ReentrantLock();
     protected final AtomicBoolean updateFrame = new AtomicBoolean(false);
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
@@ -34,8 +39,13 @@ public class VideoPlayer extends BasePlayer {
             renderLock.lock();
             try {
                 buffer.put(nativeBuffers[0].asIntBuffer());
-                buffer.rewind();
+                ReflectTool.executeMethod("rewind", IntBuffer.class, buffer);
                 updateFrame.set(true);
+            } catch (Throwable t) {
+                if (exception == null) {
+                    exception = t;
+                    LOGGER.fatal(IT, "Failed due process native buffers", t);
+                }
             } finally {
                 renderLock.unlock();
             }
@@ -47,6 +57,11 @@ public class VideoPlayer extends BasePlayer {
                 buffer = memoryAllocatorHelper.create(sourceWidth * sourceHeight * 4).asIntBuffer();
                 updateFrame.set(true);
                 updateFirstFrame.set(true);
+            } catch (Throwable t) {
+                if (exception == null) {
+                    exception = t;
+                    LOGGER.fatal(IT, "Failed due create ByteBuffer", t);
+                }
             } finally {
                 renderLock.unlock();
             }
@@ -66,6 +81,8 @@ public class VideoPlayer extends BasePlayer {
         }
     }
 
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
     public int getTexture() { return texture; }
 
     public Dimension getDimensions() {
