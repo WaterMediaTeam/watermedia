@@ -1,3 +1,10 @@
+[![](https://cf.way2muchnoise.eu/watermedia.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/watermedia)
+[![](https://cf.way2muchnoise.eu/versions/Supports_watermedia_all.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
+[![](https://img.shields.io/curseforge/v/869524?style=for-the-badge&labelColor=%232d2d2d&color=%23e04e14&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fwatermedia%2Ffiles)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
+
+[![](https://jitpack.io/v/SrRapero720/watermedia.svg?style=flat-square)](https://jitpack.io/#SrRapero720/watermedia)
+
+
 # WATERMeDIA | MULTIMEDIA API
 Library and API to use VideoLAN in Java, specially designed to be used 
 in Minecraft with MinecraftForge (NeoForge) and Fabric (Quilt)
@@ -77,5 +84,5 @@ depending on your OS and your system arch support can be full, limited or unsupp
  all native libraries... highly no recommended. Find it all on``me.lib720.libraryname`` package
 - [VLCJ](https://github.com/caprica/vlcj/tree/vlcj-4.x)
 - [Java-youtube-downloader](https://github.com/sealedtx/java-youtube-downloader)
-- [Retrofit](https://square.github.io/retrofit/)
+- [Retrofit2](https://square.github.io/retrofit/)
 - [Jackson Databind](https://github.com/FasterXML/jackson-databind)
