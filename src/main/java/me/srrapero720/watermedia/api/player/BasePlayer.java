@@ -315,6 +315,16 @@ public abstract class BasePlayer {
         });
     }
 
+    private void setVolumeForced() {
+        ThreadCore.executeLock(playerLock, () -> {
+            if (raw == null) return;
+            int volume = this.volume.get();
+            raw.mediaPlayer().audio().setVolume(volume);
+            if (volume == 0 && !raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(true);
+            else if (volume > 0 && raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(false);
+        });
+    }
+
     public int getVolume() {
         return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return volume.get();
@@ -459,15 +469,13 @@ public abstract class BasePlayer {
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
             checkClassLoader();
-            if (newCache >= 100) setVolume(volume.get());
+            if (newCache >= 100) setVolumeForced();
         }
 
         @Override
         public void playing(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThreadEx.execute(() -> {
-                setVolume(volume.get());
-            });
+            setVolumeForced();
         }
 
         @Override
@@ -588,9 +596,7 @@ public abstract class BasePlayer {
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             checkClassLoader();
-            playerThreadEx.execute(() -> {
-                setVolume(volume.get());
-            });
+            setVolumeForced();
         }
     }
 }
