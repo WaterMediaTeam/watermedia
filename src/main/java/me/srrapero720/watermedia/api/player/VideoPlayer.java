@@ -31,7 +31,9 @@ public class VideoPlayer extends BasePlayer {
     protected final ReentrantLock renderLock = new ReentrantLock();
     protected final AtomicBoolean updateFrame = new AtomicBoolean(false);
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
+    protected final AtomicBoolean forceFirstFrame = new AtomicBoolean(false);
 
+    public VideoPlayer(Executor playerThreadEx, MemoryAllocatorHelper memoryAllocatorHelper) { this(null, playerThreadEx, memoryAllocatorHelper); }
     public VideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, MemoryAllocatorHelper memoryAllocatorHelper) {
         super(playerThreadEx);
         this.texture = GL11.glGenTextures();
@@ -69,12 +71,20 @@ public class VideoPlayer extends BasePlayer {
         });
     }
 
+    /**
+     * Forces {@link WaterMediaAPI#gl_applyBuffer(IntBuffer, int, int, int, boolean)} to always use glTexImage2D instead of glTexSubImage2D
+     * By default for performance purposes we use glTexSubImage2D,
+     * but it may cause rendering issues on Minecraft Screens
+     * @param forced force always glTexImage2D
+     */
+    public void firstFrameMode(boolean forced) { this.forceFirstFrame.set(forced); }
+
     public int prepareTexture() {
         if (raw() == null) return -1;
         renderLock.lock();
         try {
             if (updateFrame.compareAndSet(true, false))
-                WaterMediaAPI.gl_applyBuffer(buffer, texture, width, height, updateFirstFrame.compareAndSet(true, false));
+                WaterMediaAPI.gl_applyBuffer(buffer, texture, width, height, updateFirstFrame.compareAndSet(true, forceFirstFrame.get()));
             return texture;
         } finally {
             renderLock.unlock();
