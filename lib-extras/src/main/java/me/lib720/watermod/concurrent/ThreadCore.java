@@ -101,6 +101,10 @@ public class ThreadCore {
         };
     }
 
+    public static void hasClassLoaderOrSet(ClassLoader classLoader) {
+        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(classLoader);
+    }
+
     @SuppressWarnings("InfiniteLoopStatement")
     public static void enableLoggerThreads() {
         stopLoggerThreads();

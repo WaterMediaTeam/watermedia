@@ -19,6 +19,8 @@
 
 package me.lib720.caprica.vlcj.player.base;
 
+import me.lib720.caprica.vlcj.VideoLan4J;
+
 /**
  * Event listener implementation that handles auto-repeat.
  * <p>
@@ -31,6 +33,7 @@ final class RepeatPlayEventHandler extends MediaPlayerEventAdapter {
     @Override
     public void finished(MediaPlayer mediaPlayer) {
         if (mediaPlayer.controls().getRepeat()) {
+            VideoLan4J.native$checkClassLoader();
             // It is not allowed to call back into LibVLC from this native thread, so offload to a task to repeat play
             mediaPlayer.submit(new ReplayMediaTask(mediaPlayer));
         }

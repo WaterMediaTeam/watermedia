@@ -19,6 +19,7 @@
 
 package me.lib720.caprica.vlcj.player.base;
 
+import me.lib720.caprica.vlcj.VideoLan4J;
 import me.lib720.caprica.vlcj.player.base.events.MediaPlayerEvent;
 import me.lib720.caprica.vlcj.media.MediaEventListener;
 
@@ -80,6 +81,7 @@ public final class EventApi extends BaseApi {
     }
 
     void raiseEvent(MediaPlayerEvent event) {
+        VideoLan4J.native$checkClassLoader();
         eventManager.raiseEvent(event);
     }
 

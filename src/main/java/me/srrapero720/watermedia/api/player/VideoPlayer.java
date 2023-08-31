@@ -33,8 +33,8 @@ public class VideoPlayer extends BasePlayer {
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
     protected final AtomicBoolean forceFirstFrame = new AtomicBoolean(false);
 
-    public VideoPlayer(Executor playerThreadEx, MemoryAllocatorHelper memoryAllocatorHelper) { this(null, playerThreadEx, memoryAllocatorHelper); }
-    public VideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, MemoryAllocatorHelper memoryAllocatorHelper) {
+    public VideoPlayer(Executor playerThreadEx, BufferHelper bufferHelper) { this(null, playerThreadEx, bufferHelper); }
+    public VideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, BufferHelper bufferHelper) {
         super(playerThreadEx);
         this.texture = GL11.glGenTextures();
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
@@ -56,7 +56,7 @@ public class VideoPlayer extends BasePlayer {
             try {
                 width = sourceWidth;
                 height = sourceHeight;
-                buffer = memoryAllocatorHelper.create(sourceWidth * sourceHeight * 4).asIntBuffer();
+                buffer = bufferHelper.create(sourceWidth * sourceHeight * 4).asIntBuffer();
                 updateFrame.set(true);
                 updateFirstFrame.set(true);
             } catch (Throwable t) {
@@ -111,5 +111,5 @@ public class VideoPlayer extends BasePlayer {
         super.release();
     }
 
-    public interface MemoryAllocatorHelper { ByteBuffer create(int size); }
+    public interface BufferHelper { ByteBuffer create(int size); }
 }

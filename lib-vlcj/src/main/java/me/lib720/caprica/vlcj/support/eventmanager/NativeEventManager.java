@@ -22,6 +22,7 @@ package me.lib720.caprica.vlcj.support.eventmanager;
 import com.sun.jna.CallbackThreadInitializer;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import me.lib720.caprica.vlcj.VideoLan4J;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_callback_t;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_event_e;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_event_manager_t;
@@ -174,6 +175,7 @@ abstract public class NativeEventManager<E,L> {
      * @param event event to raise, may be <code>null</code> and if so will be ignored
      */
     public final void raiseEvent(EventNotification<L> event) {
+        VideoLan4J.native$checkClassLoader();
         if (event != null && !eventListenerList.isEmpty()) {
             for (L listener : eventListenerList) {
                  event.notify(listener);
@@ -203,6 +205,7 @@ abstract public class NativeEventManager<E,L> {
 
         @Override
         public void callback(libvlc_event_t event, Pointer userData) {
+            VideoLan4J.native$checkClassLoader();
             raiseEvent(onCreateEvent(libvlcInstance, event, eventObject));
         }
 
