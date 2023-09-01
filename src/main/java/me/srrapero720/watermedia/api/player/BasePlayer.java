@@ -264,6 +264,7 @@ public abstract class BasePlayer {
 
     /**
      * Use {@link BasePlayer#seekTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
+     * @param ticks game ticks
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineTo(int ticks) {
@@ -276,6 +277,7 @@ public abstract class BasePlayer {
 
     /**
      * Use {@link BasePlayer#seekFastTo(long)} in conjunction with {@link WaterMediaAPI#math_ticksToMillis(int)}
+     * @param ticks game ticks
      * @deprecated is gonna being removed for 2.1.0
      */
     public void seekMineFastTo(int ticks) {
