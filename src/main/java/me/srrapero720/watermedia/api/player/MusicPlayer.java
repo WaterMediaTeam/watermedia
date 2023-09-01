@@ -2,17 +2,15 @@ package me.srrapero720.watermedia.api.player;
 
 import com.sun.jna.Pointer;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.player.base.callback.AudioCallback;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
-import me.srrapero720.watermedia.core.tools.annotations.Experimental;
-import me.srrapero720.watermedia.core.tools.annotations.Unstable;
+import me.lib720.caprica.vlcj.player.base.callback.AudioCallback;
+import me.srrapero720.watermedia.core.tools.annotations.Untested;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.Executor;
 
-@Unstable
-@Experimental
+@Untested
 public class MusicPlayer extends BasePlayer {
     WaterAudioCallback callback;
     public MusicPlayer(MediaPlayerFactory factory, Executor playerThreadEx, WaterAudioCallback callback) {
