@@ -101,6 +101,17 @@ public class WaterMedia {
 		LOGGER.info(IT, "Startup finished");
 	}
 
+
+	/**
+	 * TOOL FOR FORGE
+	 * MORE INFORMATION: <a href="https://github.com/MinecraftForge/MinecraftForge/issues/9570">MinecraftForge</a>
+	 * ONLY REQUIRED ON NATIVE THREADS
+	 */
+	public void validateClassLoader() {
+		Thread t = Thread.currentThread();
+		if (t.getContextClassLoader() == null) t.setContextClassLoader(loader.classLoader());
+	}
+
 	public void crash() {
 		LOCK.lock();
 		if (exception != null) throw new RuntimeException(exception);
