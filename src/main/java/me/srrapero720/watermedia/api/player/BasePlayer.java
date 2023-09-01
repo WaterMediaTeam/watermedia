@@ -91,7 +91,7 @@ public abstract class BasePlayer {
     public void start(CharSequence url) { this.start(url, new String[0]); }
 
     public void start(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(3, () -> {
+        ThreadCore.thread(() -> {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
@@ -99,7 +99,7 @@ public abstract class BasePlayer {
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(3, () -> {
+        ThreadCore.thread(() -> {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
