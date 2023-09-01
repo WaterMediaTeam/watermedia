@@ -31,7 +31,7 @@ public class WaterMedia {
 	private static volatile Exception exception;
 
 	public static WaterMedia getInstance() {
-		if (instance == null) throw new IllegalStateException("No instance found");
+		if (instance == null) throw new IllegalStateException("Instance wasn't created");
 		return instance;
 	}
 
