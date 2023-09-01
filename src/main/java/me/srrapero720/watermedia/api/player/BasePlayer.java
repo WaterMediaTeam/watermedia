@@ -3,11 +3,9 @@ package me.srrapero720.watermedia.api.player;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.media.InfoApi;
-import me.lib720.caprica.vlcj.media.MediaRef;
 import me.lib720.caprica.vlcj.media.MediaType;
-import me.lib720.caprica.vlcj.media.TrackType;
+import me.lib720.caprica.vlcj.player.base.EmbededMediaPlayerEventListener;
 import me.lib720.caprica.vlcj.player.base.MediaPlayer;
-import me.lib720.caprica.vlcj.player.base.MediaPlayerEventListener;
 import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
@@ -21,8 +19,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -190,7 +186,7 @@ public abstract class BasePlayer {
     public boolean isBroken() {
         return ThreadCore.executeLock(playerLock, () -> {
             if (raw == null) return true;
-            return raw.mediaPlayer().status().state().equals(me.lib720.caprica.vlcj.player.base.State.ERROR);
+            return raw.mediaPlayer().status().state().equals(State.ERROR);
         });
     }
 
@@ -218,9 +214,14 @@ public abstract class BasePlayer {
     public boolean isLive() {
         if (live) return true;
 
-        if (url.endsWith(".m3u8")) {
+        if (url.endsWith(".m3u8") || url.endsWith(".m3u")) {
             if (getMediaInfoDuration() == -1) return true;
             if (getTime() > getDuration()) return true;
+        }
+
+        InfoApi info = raw.mediaPlayer().media().info();
+        if (info != null) {
+            return info.type().equals(MediaType.STREAM);
         }
 
         return false;
@@ -455,147 +456,19 @@ public abstract class BasePlayer {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private final class WaterMediaPlayerEventListener implements MediaPlayerEventListener {
-        @Override
-        public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void opening(MediaPlayer mediaPlayer) {
-            checkClassLoader();
-        }
-
+    private final class WaterMediaPlayerEventListener extends EmbededMediaPlayerEventListener {
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
-            checkClassLoader();
             if (newCache >= 100) setVolumeForced();
         }
 
         @Override
         public void playing(MediaPlayer mediaPlayer) {
-            checkClassLoader();
             setVolumeForced();
         }
 
         @Override
-        public void paused(MediaPlayer mediaPlayer) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void stopped(MediaPlayer mediaPlayer) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void forward(MediaPlayer mediaPlayer) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void backward(MediaPlayer mediaPlayer) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void finished(MediaPlayer mediaPlayer) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void corked(MediaPlayer mediaPlayer, boolean corked) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void muted(MediaPlayer mediaPlayer, boolean muted) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {
-            checkClassLoader();
-        }
-
-        @Override
-        public void error(MediaPlayer mediaPlayer) {
-            checkClassLoader();
-        }
-
-        @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
-            checkClassLoader();
             setVolumeForced();
         }
     }
