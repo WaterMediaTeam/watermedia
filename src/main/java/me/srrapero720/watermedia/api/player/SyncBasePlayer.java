@@ -11,15 +11,12 @@ import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.lib720.watermod.concurrent.ThreadCore;
-import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.URLFixer;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import me.srrapero720.watermedia.core.tools.annotations.Untested;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -87,8 +84,7 @@ public class SyncBasePlayer {
     public void start(CharSequence url) { this.start(url, new String[0]); }
 
     public void start(CharSequence url, String[] vlcArgs) {
-        this.submit(() -> {
-            WaterMedia.getInstance().validateClassLoader();
+        ThreadCore.thread(() -> {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
@@ -96,8 +92,7 @@ public class SyncBasePlayer {
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        this.submit(() -> {
-            WaterMedia.getInstance().validateClassLoader();
+        ThreadCore.thread(() -> {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
@@ -137,7 +132,14 @@ public class SyncBasePlayer {
         raw.mediaPlayer().controls().stop();
     }
 
+    /**
+     * Check if any async task was active<br>
+     * method {@link #release()} is also async, but it deletes raw player,
+     * basically makes player instance useless.
+     * @return true if any async task was active
+     */
     public boolean isSafeUse() { return started; }
+
     public boolean isBuffering() {
         if (raw == null) return false;
         return raw.mediaPlayer().status().state().equals(State.BUFFERING);
@@ -225,6 +227,19 @@ public class SyncBasePlayer {
         raw.mediaPlayer().controls().setRate(rate);
     }
 
+    public int getVolume() {
+        if (raw == null) return 0;
+        return raw.mediaPlayer().audio().volume();
+    }
+
+    public void setVolume(int volume) {
+        if (raw == null) return;
+        raw.mediaPlayer().audio().setVolume(volume);
+
+        if (volume == 0 && !raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(true);
+        else if (volume > 0 && raw.mediaPlayer().audio().isMute()) raw.mediaPlayer().audio().setMute(false);
+    }
+
     public void mute() {
         if (raw == null) return;
         raw.mediaPlayer().audio().setMute(true);
@@ -276,13 +291,16 @@ public class SyncBasePlayer {
         if (raw == null) return;
         ThreadCore.thread(7, () -> {
             while (!started); // WAIT FOR PLAYER START WAS FINISHED
-            CallbackMediaPlayerComponent rawRef = raw;
-            raw = null;
 
-            // remove callbacks to prevent more blowup stuff
-            rawRef.mediaPlayer().events().removeMediaPlayerEventListener(LISTENER);
-            ThreadCore.sleep(250); // HACKY WAY TO ENSURE RAW IS NULL
-            rawRef.mediaPlayer().release();
+            synchronized (this) {
+                CallbackMediaPlayerComponent rawRef = raw;
+                raw = null;
+
+                // remove callbacks to prevent more blowup stuff
+                if (rawRef == null) return; // If for some reason is triggered 2 times.
+                rawRef.mediaPlayer().events().removeMediaPlayerEventListener(LISTENER);
+                rawRef.mediaPlayer().release();
+            }
         });
     }
 
