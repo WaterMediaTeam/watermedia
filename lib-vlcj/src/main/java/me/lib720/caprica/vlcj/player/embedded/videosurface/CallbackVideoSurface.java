@@ -22,15 +22,12 @@ package me.lib720.caprica.vlcj.player.embedded.videosurface;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import me.lib720.caprica.vlcj.VideoLan4J;
+import me.lib720.caprica.vlcj.binding.internal.*;
+import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_display_callback_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_lock_callback_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_unlock_callback_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_video_cleanup_cb;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_video_format_cb;
-import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 
 import static me.lib720.caprica.vlcj.binding.lib.LibVlc.libvlc_video_set_callbacks;
 import static me.lib720.caprica.vlcj.binding.lib.LibVlc.libvlc_video_set_format_callbacks;
@@ -176,6 +173,7 @@ public class CallbackVideoSurface extends VideoSurface {
 
         @Override
         public void display(Pointer opaque, Pointer picture) {
+            VideoLan4J.native$checkClassLoader();
             CallbackVideoSurface.this.renderCallback.display(mediaPlayer, nativeBuffers.buffers(), bufferFormat);
         }
 
