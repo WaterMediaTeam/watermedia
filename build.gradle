@@ -1,3 +1,5 @@
+import groovy.json.JsonOutput
+
 plugins {
     id 'java'
     id 'idea'
@@ -65,6 +67,9 @@ dependencies {
     // SUB-PROJECTS
     compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
 
+    // GROOVY
+    compileOnly group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9'
+
     // SUB-LIBRARIES
     library(project(":lib-vlcj"))
     library(project(":lib-extras"))
@@ -81,7 +86,13 @@ dependencies {
 // Process target resources with mod info
 processResources {
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]) {
-        expand rootProject.properties
+        def combinedMap = [:]
+        combinedMap.putAll(rootProject.properties)
+        combinedMap.putAll([
+                modauthorlist: JsonOutput.toJson(modauthor.trim().replaceAll(" ", "").split(","))
+        ])
+
+        expand(combinedMap)
     }
 }
 

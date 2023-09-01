@@ -2,15 +2,16 @@
   {
     "modid": "${modid}",
     "name": "${modname}",
-    "description": "${moddescription}",
     "version": "${modversion}",
     "mcversion": "1.12.2",
+    "description": "${moddescription}",
     "url": "https://www.curseforge.com/minecraft/mc-mods/watermedia",
     "updateUrl": "",
-    "authorList": ["SrRapero720", "nGoedix"],
+    "parent": "",
     "credits": "${modcredits}",
-    "logoFile": "pack.png",
+    "authorList": ${modauthorlist},
     "screenshots": [],
-    "dependencies": []
+    "dependencies": [],
+    "logoFile": "pack.png"
   }
 ]

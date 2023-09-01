@@ -16,10 +16,13 @@ pluginManagement {
     }
 }
 
-plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9'
+    }
 }
 
-include 'lib-vlcj'
-include 'lib-extras'
-include 'lib-forge'
+include 'lib-vlcj', 'lib-extras', 'lib-forge'
