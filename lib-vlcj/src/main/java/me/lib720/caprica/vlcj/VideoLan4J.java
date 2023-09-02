@@ -1,21 +1,18 @@
 package me.lib720.caprica.vlcj;
 
+import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
+
 import java.nio.file.Path;
 
 public class VideoLan4J {
-    private static final ClassLoader contextClasssLoader = Thread.currentThread().getContextClassLoader();
-    private static Path customDir;
+    private static final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
     public static void init(Path customDir) {
-        VideoLan4J.customDir = customDir;
+        CustomDirectoryProvider.init(customDir);
     }
 
     public static void native$checkClassLoader() {
         Thread t = Thread.currentThread();
-        if (t.getContextClassLoader() == null) t.setContextClassLoader(contextClasssLoader);
-    }
-
-    public static Path getCustomDir() {
-        return customDir;
+        if (t.getContextClassLoader() == null) t.setContextClassLoader(contextClassLoader);
     }
 }

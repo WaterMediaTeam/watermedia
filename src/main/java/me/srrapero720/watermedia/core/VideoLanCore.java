@@ -1,11 +1,11 @@
 package me.srrapero720.watermedia.core;
 
+import me.lib720.caprica.vlcj.VideoLan4J;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.factory.discovery.provider.CustomDirectoryProvider;
-import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
+import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.tools.JarTool;
+import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -39,7 +39,7 @@ public class VideoLanCore {
         } else init$clearLogsFile(logs);
 
         // VLCJ INIT
-        CustomDirectoryProvider.init(dir.toAbsolutePath().resolve("videolan/"));
+        VideoLan4J.init(dir.toAbsolutePath().resolve("videolan/"));
 
         try {
             FACTORY = WaterMediaAPI.vlc_createFactory(init$readArguments(loader, logs));
