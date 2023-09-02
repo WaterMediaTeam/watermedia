@@ -43,6 +43,12 @@ public class ImageFetch {
     private TaskSuccessful successful;
     private TaskFailed failed;
 
+    /**
+     * Creates a new Fetch instance.
+     * The Task is ASYNC by default.
+     * You should concern about concurrency on callbacks
+     * @param url
+     */
     public ImageFetch(String url) { this.url = url; }
 
     /**
@@ -60,7 +66,7 @@ public class ImageFetch {
     public ImageFetch setOnFailedCallback(TaskFailed task) { failed = task; return this; }
 
     /**
-     * Starts image fetch
+     * Start image fetch
      * result is fired on callbacks
      */
     public void start() { EX.execute(this::run); }

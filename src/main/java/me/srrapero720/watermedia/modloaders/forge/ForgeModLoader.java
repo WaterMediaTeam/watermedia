@@ -27,7 +27,7 @@ public class ForgeModLoader implements IMediaLoader {
         try { WaterMedia.getInstance().envInit(new RusticLoader()); } catch (Throwable ignored) {}
         try { WaterMedia.getInstance().envInit(new WideLoader()); } catch (Throwable ignored) {}
 
-        if (instance.getEnv().client()) instance.init();
+        if (instance.env().client()) instance.init();
     }
 
     @Override

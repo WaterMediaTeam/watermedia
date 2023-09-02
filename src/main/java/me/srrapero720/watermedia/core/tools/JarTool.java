@@ -9,6 +9,7 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -19,6 +20,15 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class JarTool {
     static final Marker IT = MarkerManager.getMarker("Tools");
+
+    public static String readString(ClassLoader loader, String from) {
+        try {
+            byte[] bytes = DataTool.readAllBytes(readResource(loader, from));
+            return new String(bytes, Charset.defaultCharset());
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public static boolean copyAsset(ClassLoader loader, String origin, Path dest) {
         try (InputStream is = readResource(loader, origin)) {

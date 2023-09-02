@@ -52,8 +52,8 @@ public class WaterMedia {
         else LOGGER.warn(IT, "Environment not detected, be careful about it");
 	}
 
-	public IEnvLoader getEnv() { return env; }
-	public IMediaLoader getLoader() { return loader; }
+	public IEnvLoader env() { return env; }
+	public IMediaLoader loader() { return loader; }
 
 
 	public void envInit(IEnvLoader loader) {
@@ -97,8 +97,8 @@ public class WaterMedia {
 		LOGGER.info(IT, "Loading {}", VideoLanCore.class.getSimpleName());
 		TryCore.simple(() -> VideoLanCore.init(this.loader), e -> onFailed(VideoLanCore.class.getSimpleName(), e));
 
-		LOCK.unlock();
 		LOGGER.info(IT, "Startup finished");
+		LOCK.unlock();
 	}
 
 
@@ -107,7 +107,7 @@ public class WaterMedia {
 	 * MORE INFORMATION: <a href="https://github.com/MinecraftForge/MinecraftForge/issues/9570">MinecraftForge</a>
 	 * ONLY REQUIRED ON NATIVE THREADS
 	 */
-	public void validateClassLoader() {
+	public void checkClassLoader() {
 		Thread t = Thread.currentThread();
 		if (t.getContextClassLoader() == null) t.setContextClassLoader(loader.classLoader());
 	}

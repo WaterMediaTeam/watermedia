@@ -21,7 +21,6 @@ import org.apache.logging.log4j.MarkerManager;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @Experimental
-@Untested
 public class SyncBasePlayer {
     protected static final Marker IT = MarkerManager.getMarker("SyncMediaPlayer");
     protected static final WaterMediaPlayerEventListener LISTENER = new WaterMediaPlayerEventListener();

@@ -4,6 +4,7 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.tools.ReflectTool;
+import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
@@ -17,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+@Experimental
 public class SyncVideoPlayer extends SyncBasePlayer {
     private static final Marker IT = MarkerManager.getMarker("SyncVideoPlayer");
 

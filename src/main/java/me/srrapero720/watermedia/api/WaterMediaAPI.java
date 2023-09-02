@@ -14,8 +14,6 @@ import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.VideoLanCore;
 import me.srrapero720.watermedia.core.tools.ReflectTool;
-import me.srrapero720.watermedia.core.tools.annotations.Experimental;
-import me.srrapero720.watermedia.core.tools.annotations.Untested;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -45,7 +43,7 @@ public final class WaterMediaAPI {
     public static ImageRenderer img_getLandFailedVLC() { return IMG_VLC_FAIL_LAND; }
 
     /**
-     * DO NOT USE IT DIRECTLY
+     * DO NOT USE IT
      * @param loader instance of current environment
      * @throws ReInitException If already was init
      */
@@ -82,7 +80,7 @@ public final class WaterMediaAPI {
      * @return a {@link ImageRenderer} instance with the right loading gif, if gif cannot be readed then returns watermedia's default
      */
     public static ImageRenderer img_getLoading(String modId) {
-        Path processDir = WaterMedia.getInstance().getLoader().processPath();
+        Path processDir = WaterMedia.getInstance().loader().processPath();
         Path modConfig = processDir.resolve("config/watermedia/assets" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) return new ImageRenderer(FileTool.readGif(modConfig.toAbsolutePath()));
@@ -173,13 +171,25 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * List of all supported platforms by WATERMeDIA
-     * @return array of all platforms name unsorted
+     * List of all supported platforms by WATERMeDIA.
+     * By default, this method doesn't include NothingSpecialFixers
+     * @return array of all platforms names unsorted
      */
     public static String[] url_getFixersPlatform() {
+        return url_getFixersPlatform(false);
+    }
+
+    /**
+     * List of all supported platforms by WATERMeDIA
+     * @param includeNS should list NothingSpecial fixers too?
+     * @return array of all platforms names unsorted
+     */
+    public static String[] url_getFixersPlatform(boolean includeNS) {
         String[] result = new String[URLFIXERS.size()];
         for (int i = 0; i < URLFIXERS.size(); i++) {
-            result[i] = URLFIXERS.get(i).platform();
+            URLFixer fixer = URLFIXERS.get(i);
+            if (fixer instanceof NSFixer && !includeNS) continue;
+            result[i] = fixer.platform();
         }
         return result;
     }

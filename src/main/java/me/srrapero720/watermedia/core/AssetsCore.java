@@ -16,7 +16,6 @@ import java.nio.file.StandardOpenOption;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class AssetsCore {
-    private static final String VIDEOLAN_V = "3.0.18b";
     private static final Marker IT = MarkerManager.getMarker(AssetsCore.class.getSimpleName());
     private static boolean loaded = false;
 
@@ -30,7 +29,7 @@ public class AssetsCore {
             String source = "/videolan/"  + OsTool.getArch() + ".zip";
 
             try {
-                if (!VIDEOLAN_V.equals(FileTool.readString(config.toAbsolutePath()))) {
+                if (!JarTool.readString(loader.classLoader(), "/videolan/version.cfg").equals(FileTool.readString(config.toAbsolutePath()))) {
                     if (JarTool.copyAsset(loader.classLoader(), source, output)) {
                         FileTool.unzip(output, output.getParent());
                         Files.delete(output);
@@ -38,12 +37,11 @@ public class AssetsCore {
 
                     // WRITE VERSION FILE
                     try {
-                        Files.write(config, VIDEOLAN_V.getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+                        JarTool.copyAsset(loader.classLoader(), "/videolan/version.cfg", config);
                     } catch (Exception e) {
                         LOGGER.error(IT, "Exception writing configuration file", e);
                     }
                 }
-
             } catch (Exception e) {
                 throw new IOException("Cannot perform extraction of VideoLAN", e);
             }
