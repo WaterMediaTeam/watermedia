@@ -60,7 +60,8 @@ public final class WaterMediaAPI {
                 new DriveFixer(),
                 new OnedriveFixer(),
                 new DropboxFixer(),
-                new TwitterFixer()
+                new TwitterFixer(),
+                new PornhubFixer()
         );
 
         TryCore.simple(() -> {
