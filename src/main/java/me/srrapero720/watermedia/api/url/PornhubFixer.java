@@ -6,7 +6,7 @@ import me.srrapero720.watermedia.api.network.pornhub.VideoQuality;
 import java.net.URL;
 import java.util.List;
 
-public class PornhubFixer extends URLFixer {
+public class PornhubFixer extends NSFixer {
 
     @Override
     public String platform() {
