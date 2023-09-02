@@ -40,6 +40,7 @@ public abstract class BasePlayer {
     // PLAYER THREAD
     protected volatile boolean live = false;
     protected volatile boolean started = false;
+    protected volatile boolean ns_fixer = false;
     protected final AtomicInteger volume = new AtomicInteger(100);
     protected final Executor playerThreadEx;
 
@@ -77,7 +78,7 @@ public abstract class BasePlayer {
     private boolean rpa(CharSequence url, String[] vlcArgs) {
         if (raw == null) return false;
         try {
-            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString());
+            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString(), ns_fixer);
             if (fixedURL == null) throw new NullPointerException("URL was invalid");
 
             this.url = fixedURL.url.toString();
@@ -89,7 +90,6 @@ public abstract class BasePlayer {
         return false;
     }
     public void start(CharSequence url) { this.start(url, new String[0]); }
-
     public void start(CharSequence url, String[] vlcArgs) {
         ThreadCore.thread(() -> {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().start(this.url, vlcArgs);
@@ -103,6 +103,15 @@ public abstract class BasePlayer {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
+    }
+
+    /**
+     * Enables NOTHING SPECIAL fixers of WATERMeDIA
+     * CAREFUL: This method can give you a big trouble.
+     * Keep it disabled by default and configurable by end user
+     */
+    public void enableNSFixers() {
+        ns_fixer = true;
     }
 
     @Unstable

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.network.pornhub;
+package me.srrapero720.watermedia.api.network.ph;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PornhubUtil {
+public class PHUtil {
 
     public static List<VideoQuality> getVideo(String url) throws Exception {
         String source = fetchSource(url);

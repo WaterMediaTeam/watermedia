@@ -32,6 +32,7 @@ public class SyncBasePlayer {
     public CallbackMediaPlayerComponent raw() { return raw; }
 
     // PLAYER THREAD
+    protected volatile boolean ns_fixer = false;
     protected volatile boolean live = false;
     protected volatile boolean started = false;
 
@@ -70,7 +71,7 @@ public class SyncBasePlayer {
     private boolean rpa(CharSequence url, String[] vlcArgs) {
         if (raw == null) return false;
         try {
-            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString());
+            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString(), ns_fixer);
             if (fixedURL == null) throw new NullPointerException("URL was invalid");
 
             this.url = fixedURL.url.toString();
@@ -96,6 +97,15 @@ public class SyncBasePlayer {
             if (rpa(url, vlcArgs)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
+    }
+
+    /**
+     * Enables NOTHING SPECIAL fixers of WATERMeDIA
+     * CAREFUL: This method can give you a big trouble.
+     * Keep it disabled by default and configurable by end user
+     */
+    public void enableNSFixers() {
+        ns_fixer = true;
     }
 
     public State getRawPlayerState() {

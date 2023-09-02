@@ -61,7 +61,7 @@ public final class WaterMediaAPI {
                 new OnedriveFixer(),
                 new DropboxFixer(),
                 new TwitterFixer(),
-                new PornhubFixer()
+                new PH_NSFixer()
         );
 
         TryCore.simple(() -> {
@@ -213,33 +213,38 @@ public final class WaterMediaAPI {
     /**
      * Used by default internally in the API by {@link BasePlayer} and {@link ImageFetch}
      * Recommended usage just in API custom abstraction
+     * IMPORTANT: NothingSpecialFixers are disabled on this method
      * @param str String to patch
      * @return result data with URL and type of it
      */
     public static URLFixer.Result url_fixURL(String str) {
+        return url_fixURL(str, false);
+    }
+
+
+    /**
+     * Used by default internally in the API by {@link BasePlayer} and {@link ImageFetch}
+     * Recommended usage just in API custom abstraction
+     * @param str String to patch
+     * @param ns Use NothingSpecial fixers too
+     * @return result data with URL and type of it
+     */
+    public static URLFixer.Result url_fixURL(String str, boolean ns) {
         try {
             URL url = new URL(str);
             try {
                 for (int i = 0; i < URLFIXERS.size(); i++) {
                     URLFixer fixer = URLFIXERS.get(i);
+                    if (fixer instanceof NSFixer && !ns) continue;
                     if (fixer.isValid(url)) return fixer.patch(url, null);
                 }
                 return new URLFixer.Result(url, false, false);
             } catch (Throwable t) {
-                LOGGER.error(IT, "Exception occurred trying to fix URL", t);
+                LOGGER.error(IT, "Exception occurred fixing URL", t);
             }
         } catch (Exception e) {
             LOGGER.error(IT, "Exception occurred instancing URL", e);
         }
-        return null;
-    }
-
-    /**
-     * warning: WIP method
-     */
-    @Experimental
-    @Untested
-    public static URLFixer.Result url_fixURL(String str, boolean ns) {
         return null;
     }
 
