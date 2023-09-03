@@ -360,7 +360,7 @@ public final class WaterMediaAPI {
 
         if (!alpha) GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, GL11.GL_ONE);
 
-        // prevents random crash, when values are too high it causes a jvm crash, caused weird behavior when game is paused
+        // prevents random crash; when values are too high it causes a jvm crash, caused weird behavior when game is paused
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
