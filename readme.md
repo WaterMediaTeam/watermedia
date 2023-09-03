@@ -22,6 +22,8 @@ Kick.com, YouTube, Google Drive, One Drive, Dropbox and more
 |  1.2.x  |   ⛔    |
 |  1.3.x  |   ⚠    |
 |  2.0.x  |   ✅    |
+
+
 **FLAGS**
 - ✅ **Latest**
 - ⚠ **Grace period**
