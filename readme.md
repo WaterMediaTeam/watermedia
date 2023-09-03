@@ -55,7 +55,8 @@ dependencies {
 
 ## JITPACK.IO
 JitPack.io is a third-party tool to build and distribute artifacts using direct github sources/tags
-This option includes JavaDoc and Sources
+This option includes JavaDoc and Sources <br>
+Check all available versions [here](https://github.com/SrRapero720/watermedia/tags)
 
 **SETUP IN YOUR GRADLE**
 ```gradle
@@ -65,7 +66,7 @@ repositories {
 
 dependencies {
     // doesn't require fg.debof() or any debofuscation tool
-    implementation 'com.github.SrRapero720.watermedia:build:master-SNAPSHOT'
+    implementation 'com.github.SrRapero720.watermedia:build:<version>'
 }
 ```
 
