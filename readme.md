@@ -14,6 +14,19 @@ Tool to fetch images from the internet and store it in cache,
 ``URLFixer``'s to give extra support to streaming platforms like Twitch,
 Kick.com, YouTube, Google Drive, One Drive, Dropbox and more
 
+## VERSION STATUS
+| Version | Status |
+|:-------:|:------:|
+|  1.0.0  |   ⛔    |
+|  1.1.0  |   ⛔    |
+|  1.2.x  |   ⛔    |
+|  1.3.x  |   ⚠    |
+|  2.0.x  |   ✅    |
+**FLAGS**
+- ✅ **Latest**
+- ⚠ **Grace period**
+- ⛔ **Unmaintained**
+
 # INSTALLATION
 You can use two ways to install this mod in your project
 
@@ -74,10 +87,10 @@ depending on your OS and your system arch support can be full, limited or unsupp
 - ⛔ **Unsupported:** rejected support by us
 
 # Projects using WATERMeDIA
-- [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes)
-- [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player)
-- [FancyMenu: Video Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-video)
-- [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes)
+- [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - Version using: 1.3.x
+- [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - Version using: 1.2.x, 1.3.x, 2.x
+- [FancyMenu: Video Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-video) - Version using: 1.3.x
+- [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - Version using: 1.3.x
 
 # Libraries used
 **Important:** All libraries are relocated and wrapped using shadowJar. You can skip our API and directly use
