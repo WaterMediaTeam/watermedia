@@ -118,7 +118,7 @@ public final class WaterMediaAPI {
      * @return texture time
      */
     public static long math_textureTime(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
-        long time = tick * 50L + deltaTime;
+        long time = (tick * 50L) + deltaTime;
         long duration = renderer.duration;
         if (duration > 0 && time > duration && loop) time %= duration;
         return time;

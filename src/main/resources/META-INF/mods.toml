@@ -13,5 +13,3 @@ issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
     credits="${modcredits}"
     authors="${modauthor}"
     description='''${moddescription}'''
-[features.${modid}]
-    javaVersion="[8,)"
