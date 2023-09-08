@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.lib720.watermod.reflect.ReflectTool;

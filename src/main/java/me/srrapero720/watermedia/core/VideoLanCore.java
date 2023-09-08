@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.core;
 
-import me.lib720.caprica.vlcj.VideoLan4J;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.VideoLan4J;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.tools.JarTool;

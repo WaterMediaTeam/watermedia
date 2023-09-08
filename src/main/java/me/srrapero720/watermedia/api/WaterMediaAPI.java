@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api;
 
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.image.ImageFetch;

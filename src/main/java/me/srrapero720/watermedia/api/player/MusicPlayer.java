@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia.api.player;
 
 import com.sun.jna.Pointer;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.player.base.MediaPlayer;
-import me.lib720.caprica.vlcj.player.base.callback.AudioCallback;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.callback.AudioCallback;
 import me.srrapero720.watermedia.core.tools.annotations.Untested;
 
 import java.util.ArrayList;
