@@ -7,14 +7,8 @@
 
   "--no-quiet",
 
-  "--file-caching",
-  "2000",
-
   "--aout",
   "directsound",
-
-  "--network-caching",
-  "2000",
 
   "--http-reconnect"
 ]
