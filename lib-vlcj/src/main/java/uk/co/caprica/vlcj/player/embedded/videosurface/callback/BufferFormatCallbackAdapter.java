@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
  * required in all cases.
  * @deprecated Deprecated by WATERMeDIA.<br>
  * Use instead {@link SimpleBufferFormatCallback}
+ * This class is keep it just for internal usages
  */
 @Deprecated // WATERMeDIA PATCH
 public abstract class BufferFormatCallbackAdapter implements BufferFormatCallback {
