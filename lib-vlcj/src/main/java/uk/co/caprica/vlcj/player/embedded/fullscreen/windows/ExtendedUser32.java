@@ -23,6 +23,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.win32.W32APIOptions;
+import me.lib720.watermod.reflect.ReflectTool;
 
 /**
  * Partial implementation of the Win32 User API.
@@ -32,7 +33,9 @@ interface ExtendedUser32 extends User32 {
     /**
      * Native library instance.
      */
-    ExtendedUser32 INSTANCE = Native.load("user32", ExtendedUser32.class, W32APIOptions.DEFAULT_OPTIONS);
+    // ExtendedUser32 INSTANCE = Native.load("user32", ExtendedUser32.class, W32APIOptions.DEFAULT_OPTIONS);
+    // ExtendedUser32 INSTANCE = Native.loadLibrary("user32", ExtendedUser32.class, W32APIOptions.DEFAULT_OPTIONS);
+    ExtendedUser32 INSTANCE = ReflectTool.findAndInvokeWithReturn(new String[]{"load", "loadLibrary"}, Native.class, null, "user32", ExtendedUser32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     int SC_RESTORE = 0x0000f120;
 
@@ -74,7 +77,7 @@ interface ExtendedUser32 extends User32 {
      * @param lpMonitorInfo structure to receive monitor information
      * @return <code>true</code> on success; <code>false</code> otherwise
      */
-    boolean GetMonitorInfoA(Pointer hMonitor, MONITORINFO lpMonitorInfo);
+//    boolean GetMonitorInfoA(Pointer hMonitor, MONITORINFO lpMonitorInfo);
 
     /**
      * Send a message to a native window.

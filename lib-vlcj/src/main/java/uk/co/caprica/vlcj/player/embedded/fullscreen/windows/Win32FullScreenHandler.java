@@ -27,7 +27,6 @@ import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinUser;
-import com.sun.jna.platform.win32.WinUser.MONITORINFO;
 
 import java.awt.*;
 
@@ -75,23 +74,23 @@ final class Win32FullScreenHandler {
      * @param fullScreen <code>true</code> to set full-screen; <code>false</code> to exit full-screen
      */
     void setFullScreen(boolean fullScreen) {
-        HWND hWnd = getHWND(Native.getComponentID(window));
-        if (fullScreen) {
-            windowState = getWindowState(hWnd);
-            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_STYLE, windowState.getStyle() & ~(WS_CAPTION | WS_THICKFRAME));
-            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_EXSTYLE, windowState.getExStyle() & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
-            MONITORINFO monitorInfo = getMonitorInfo(hWnd);
-            RECT rect = monitorInfo.rcMonitor;
-            ExtendedUser32.INSTANCE.SetWindowPos(hWnd, null, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-        }
-        else {
-            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_STYLE, windowState.getStyle());
-            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_EXSTYLE, windowState.getExStyle());
-            ExtendedUser32.INSTANCE.SetWindowPos(hWnd, null, windowState.getLeft(), windowState.getTop(), windowState.getRight() - windowState.getLeft(), windowState.getBottom() - windowState.getTop(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-            if (windowState.getMaximized()) {
-                ExtendedUser32.INSTANCE.SendMessage(hWnd, User32.WM_SYSCOMMAND, new WPARAM(WinUser.SC_MAXIMIZE), new LPARAM(0));
-            }
-        }
+//        HWND hWnd = getHWND(Native.getComponentID(window));
+//        if (fullScreen) {
+//            windowState = getWindowState(hWnd);
+//            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_STYLE, windowState.getStyle() & ~(WS_CAPTION | WS_THICKFRAME));
+//            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_EXSTYLE, windowState.getExStyle() & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+//            MONITORINFO monitorInfo = getMonitorInfo(hWnd);
+//            RECT rect = monitorInfo.rcMonitor;
+//            ExtendedUser32.INSTANCE.SetWindowPos(hWnd, null, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+//        }
+//        else {
+//            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_STYLE, windowState.getStyle());
+//            ExtendedUser32.INSTANCE.SetWindowLong(hWnd, GWL_EXSTYLE, windowState.getExStyle());
+//            ExtendedUser32.INSTANCE.SetWindowPos(hWnd, null, windowState.getLeft(), windowState.getTop(), windowState.getRight() - windowState.getLeft(), windowState.getBottom() - windowState.getTop(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+//            if (windowState.getMaximized()) {
+//                ExtendedUser32.INSTANCE.SendMessage(hWnd, User32.WM_SYSCOMMAND, new WPARAM(WinUser.SC_MAXIMIZE), new LPARAM(0));
+//            }
+//        }
     }
 
     /**
@@ -135,11 +134,10 @@ final class Win32FullScreenHandler {
      * @param hWnd native window handle
      * @return native monitor information
      */
-    private MONITORINFO getMonitorInfo(HWND hWnd) {
-        Pointer hMonitor = ExtendedUser32.INSTANCE.MonitorFromWindow(hWnd, ExtendedUser32.MONITOR_DEFAULTTONEAREST);
-        MONITORINFO monitorInfo = new MONITORINFO();
-        ExtendedUser32.INSTANCE.GetMonitorInfoA(hMonitor, monitorInfo);
-        return monitorInfo;
-    }
-
+//    private MONITORINFO getMonitorInfo(HWND hWnd) {
+//        Pointer hMonitor = ExtendedUser32.INSTANCE.MonitorFromWindow(hWnd, ExtendedUser32.MONITOR_DEFAULTTONEAREST);
+//        MONITORINFO monitorInfo = new MONITORINFO();
+//        ExtendedUser32.INSTANCE.GetMonitorInfoA(hMonitor, monitorInfo);
+//        return monitorInfo;
+//    }
 }
