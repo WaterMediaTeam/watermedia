@@ -2,6 +2,10 @@ package me.srrapero720.watermedia.core.tools;
 
 import com.sun.jna.Platform;
 import me.lib720.caprica.vlcj.binding.support.runtime.RuntimeUtil;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public enum OsTool {
     WIN_X32("win", "x32", ".dll", false),
@@ -19,6 +23,7 @@ public enum OsTool {
 
     DUMMY("dummy", "dummy", ".dummy", false);
 
+
     public final String os, arch, ext;
     public final boolean wrapped;
     OsTool(String os, String arch, String ext, boolean wrapped) {
@@ -27,33 +32,41 @@ public enum OsTool {
         this.ext = ext;
         this.wrapped = wrapped;
     }
-
     @Override
     public String toString() { return os + "-" + arch; }
 
+    // STATIC
+    private static final Marker IT = MarkerManager.getMarker("Tools");
     private static final OsTool ARCH = OsTool.getArch();
     public static OsTool getArch() {
         if (ARCH != null) return ARCH;
-        switch (Platform.ARCH) {
-            case "x86-64":
-            case "amd64":
-                if (RuntimeUtil.isWindows()) return WIN_X64;
-                if (RuntimeUtil.isMac()) return MAC_X64;
-                if (RuntimeUtil.isNix()) return NIX_X64;
-            case "arm64":
-                if (RuntimeUtil.isWindows()) return WIN_ARM64;
-                if (RuntimeUtil.isMac()) return MAC_ARM64;
-                if (RuntimeUtil.isNix()) return NIX_ARM64;
-            case "armel":
-            case "arm":
-                if (RuntimeUtil.isWindows()) return WIN_ARM;
-                if (RuntimeUtil.isMac()) return MAC_ARM;
-                if (RuntimeUtil.isNix()) return NIX_ARM;
-            case "x86":
-                if (RuntimeUtil.isWindows()) return WIN_X32;
-                throw new IllegalStateException("Detected x86 but begin non windows");
-            default:
-                return DUMMY;
+        try {
+            switch (Platform.ARCH) {
+                case "x86-64":
+                case "amd64":
+                    if (RuntimeUtil.isWindows()) return WIN_X64;
+                    if (RuntimeUtil.isMac()) return MAC_X64;
+                    if (RuntimeUtil.isNix()) return NIX_X64;
+                case "arm64":
+                    if (RuntimeUtil.isWindows()) return WIN_ARM64;
+                    if (RuntimeUtil.isMac()) return MAC_ARM64;
+                    if (RuntimeUtil.isNix()) return NIX_ARM64;
+                case "armel":
+                case "arm":
+                    if (RuntimeUtil.isWindows()) return WIN_ARM;
+                    if (RuntimeUtil.isMac()) return MAC_ARM;
+                    if (RuntimeUtil.isNix()) return NIX_ARM;
+                case "x86":
+                    if (RuntimeUtil.isWindows()) return WIN_X32;
+                    throw new IllegalStateException("Detected x86 but begin non windows");
+                default:
+                    return DUMMY;
+            }
+        } finally {
+            LOGGER.error(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
+            LOGGER.error(IT, "WATERMeDIA doesn't contain VLC binaries for your OS. You may need to manually install it");
+            LOGGER.error(IT, "Find out VLC 3 for your operative system and architecture here: https://www.videolan.org/vlc/");
+            LOGGER.error(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
         }
     }
 }
