@@ -85,7 +85,7 @@ dependencies {
 
 // Process target resources with mod info
 processResources {
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info"]) {
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info", "watermedia/version.cfg"]) {
         def combinedMap = [:]
         combinedMap.putAll(rootProject.properties)
         combinedMap.putAll([
