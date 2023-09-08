@@ -1,4 +1,5 @@
-# UPDATE 2.0.1
+# UPDATE 2.0.2
+just a update
 
 ## CHANGES
 - Added loggers for mod version and missing pre-installation of VLC
@@ -14,6 +15,9 @@
 - Deprecated entire URLApi inside WaterMediaAPI
 - Fixed custom loading gif API is broken in deprecated API
 - Now can be released ImageCache (please don't) even if it wasn't ready
+
+# UPDATE 2.0.1
+- Removed modfeatures (now can start on 1.19+)
 
 # BREAKING UPDATE 2.0.0
 This update breaks dependency mods, only update when all mods depending on it releases a compatibility update
