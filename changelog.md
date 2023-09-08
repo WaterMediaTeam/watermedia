@@ -5,6 +5,7 @@ just a update
 - Added loggers for mod version and missing pre-installation of VLC
 - Reduced async priority of image loading (slow loading, more fps)
 - Fixed some stun lag loading images if url is null or empty
+- Fixed Audio tracks get cut a few seconds before reaching the track end
 
 ## API: CHANGES
 - Deprecated BasePlayer (use SyncBasePlayer)
@@ -15,6 +16,7 @@ just a update
 - Deprecated entire URLApi inside WaterMediaAPI
 - Fixed custom loading gif API is broken in deprecated API
 - Now can be released ImageCache (please don't) even if it wasn't ready
+- Added SyncMusicPlayer
 
 # UPDATE 2.0.1
 - Removed modfeatures (now can start on 1.19+)
