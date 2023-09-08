@@ -7,6 +7,7 @@ import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.AssetsCore;
 import me.srrapero720.watermedia.core.CacheCore;
 import me.srrapero720.watermedia.core.VideoLanCore;
+import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,8 @@ public class WaterMedia {
 		instance = this;
 
 		this.loader = loader;
-		LOGGER.info(IT, "Running {} on {}", NAME, this.loader.name());
+		LOGGER.info(IT, "Running '{}' on '{}'", NAME, this.loader.name());
+		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString(loader.classLoader(), "/watermedia/version.cfg"));
 
 		if (loader instanceof IEnvLoader) envInit((IEnvLoader) loader);
         else LOGGER.warn(IT, "Environment not detected, be careful about it");
