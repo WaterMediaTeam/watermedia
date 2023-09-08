@@ -89,7 +89,7 @@ public class ImageRenderer {
     /**
      * This method just drains buffers but not releases OpenGL texture
      */
-    public synchronized void flush() {
+    public void flush() {
         if (image != null) image.flush();
         if (decoder != null) {
             for (int i = 0; i < decoder.getFrameCount(); i++) decoder.getFrame(i).flush();
@@ -99,7 +99,7 @@ public class ImageRenderer {
     /**
      * This method drain buffers and release OpenGL textures
      */
-    public synchronized void release() {
+    public void release() {
         for (int i: textures) if (i != -1) GL11.glDeleteTextures(i);
         flush();
     }
