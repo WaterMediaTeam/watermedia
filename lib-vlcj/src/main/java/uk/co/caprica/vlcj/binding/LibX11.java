@@ -22,6 +22,7 @@ package uk.co.caprica.vlcj.binding;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
+import me.lib720.watermod.reflect.ReflectTool;
 
 /**
  * JNA interface to the Xlib native library.
@@ -42,7 +43,9 @@ public interface LibX11 extends Library {
      * <p>
      * Conceivably Xlib could be present on Windows.
      */
-    LibX11 INSTANCE = Native.load("X11", LibX11.class);
+    // LibX11 INSTANCE = Native.load("X11", LibX11.class);
+    // LibX11 INSTANCE = Native.loadLibrary("X11", LibX11.class);
+    LibX11 INSTANCE = ReflectTool.findAndInvokeWithReturn(new String[]{"load", "loadLibrary"}, Native.class, null, "X11", LibX11.class);
 
     /**
      * Initialise Xlib support for concurrent threads.

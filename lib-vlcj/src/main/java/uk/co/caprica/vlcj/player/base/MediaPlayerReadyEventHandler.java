@@ -45,7 +45,7 @@ final class MediaPlayerReadyEventHandler extends MediaPlayerEventAdapter {
     /**
      * Flag if the event has fired since the media was last started or not.
      */
-    private boolean fired;
+    private volatile boolean fired;
 
     @Override
     public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {

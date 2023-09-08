@@ -19,19 +19,17 @@
 
 package uk.co.caprica.vlcj.binding;
 
-import uk.co.caprica.vlcj.binding.LibX11;
-
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * Private helper class to ensure the native libraries are properly initialised on Linux.
  * <p>
- * If there are any errors when executing this initialisation code there is little point in even reporting them as
- * nothing else can be done. The approach therefore is do a best-effort at running this initialisation and robustly
+ * If there are any errors when executing this initialization code, there is little point in even reporting them as
+ * nothing else can be done. The approach therefore is doing a best-effort at running this initialization and robustly
  * ignore errors.
  * <p>
- * The reality is that the nature of the initialisation code means errors simply should not occur.
+ * The reality is that the nature of the initialization code means errors simply should not occur.
  */
 public final class LinuxNativeInit {
 

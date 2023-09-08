@@ -63,7 +63,7 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
 
     @Override
     public final List<String> discoveryDirectories() {
-        List<String> directories = new ArrayList<String>();
+        List<String> directories = new ArrayList<>();
         for (DiscoveryDirectoryProvider provider : getSupportedProviders()) {
             directories.addAll(Arrays.asList(provider.directories()));
         }
@@ -71,7 +71,7 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
     }
 
     private List<DiscoveryDirectoryProvider> getSupportedProviders() {
-        List<DiscoveryDirectoryProvider> result = new ArrayList<DiscoveryDirectoryProvider>();
+        List<DiscoveryDirectoryProvider> result = new ArrayList<>();
         for (DiscoveryDirectoryProvider service : directoryProviders) {
             if (service.supported()) {
                 result.add(service);
@@ -81,12 +81,9 @@ abstract public class DirectoryProviderDiscoveryStrategy extends BaseNativeDisco
     }
 
     private List<DiscoveryDirectoryProvider> sort(List<DiscoveryDirectoryProvider> providers) {
-        Collections.sort(providers, new Comparator<DiscoveryDirectoryProvider>() {
-            @Override
-            public int compare(DiscoveryDirectoryProvider p1, DiscoveryDirectoryProvider p2) {
-                return p2.priority() - p1.priority();
-            }
-        });
+        // WATERMeDIA PATCH - start
+        providers.sort((p1, p2) -> p2.priority() - p1.priority());
+        // WATERMeDIA PATCH - end
         return providers;
     }
 

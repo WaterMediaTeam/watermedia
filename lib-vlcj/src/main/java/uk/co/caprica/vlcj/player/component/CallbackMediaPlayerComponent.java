@@ -19,6 +19,7 @@
 
 package uk.co.caprica.vlcj.player.component;
 
+import uk.co.caprica.vlcj.VideoLan4J;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
@@ -26,17 +27,14 @@ import uk.co.caprica.vlcj.player.component.callback.CallbackImagePainter;
 import uk.co.caprica.vlcj.player.component.callback.ScaledCallbackImagePainter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.fullscreen.FullScreenStrategy;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallbackAdapter;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallbackAdapter;
+import uk.co.caprica.vlcj.player.embedded.videosurface.callback.*;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.format.RV32BufferFormat;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.nio.ByteBuffer;
 
 /**
  * Implementation of a callback "direct-rendering" media player.
@@ -132,12 +130,26 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
             this.defaultRenderCallback = null;
             this.imagePainter          = null;
             this.videoSurfaceComponent = videoSurfaceComponent;
+
+            // WATERMeDIA PATCH - start
+
+            // Here we patch callbacks adding a forced check for classloader
+            // avoiding NPE on old versions of FORGE
+            renderCallback = init$buildClassLoaderSafeCallback(renderCallback);
+            // WATERMeDIA PATCH - end
         }
 
         this.mediaPlayer = this.mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
         this.mediaPlayer.fullScreen().strategy(fullScreenStrategy);
         this.mediaPlayer.events().addMediaPlayerEventListener(this);
         this.mediaPlayer.events().addMediaEventListener(this);
+
+        // WATERMeDIA PATCH - start
+
+        // Here we patch callbacks adding a forced check for classloader
+        // avoiding NPE on old versions of FORGE
+        bufferFormatCallback = init$buildClassLoaderSafeCallback(bufferFormatCallback);
+        // WATERMeDIA PATCH - end
 
         this.mediaPlayer.videoSurface().set(this.mediaPlayerFactory.videoSurfaces().newVideoSurface(bufferFormatCallback, renderCallback, lockBuffers));
 
@@ -151,6 +163,43 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
 
         onAfterConstruct();
     }
+
+    // WATERMeDIA PATCH - start
+    private BufferFormatCallback init$buildClassLoaderSafeCallback(BufferFormatCallback cb) {
+        return new BufferFormatCallback() {
+            @Override
+            public void allocatedBuffers(ByteBuffer[] buffers) {
+                VideoLan4J.native$checkClassLoader();
+                cb.allocatedBuffers(buffers);
+            }
+
+            @Override
+            public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
+                VideoLan4J.native$checkClassLoader();
+                return cb.getBufferFormat(sourceWidth, sourceHeight);
+            }
+        };
+    }
+
+    private RenderCallback init$buildClassLoaderSafeCallback(RenderCallback cb) {
+        return (mediaPlayer, nativeBuffers, bufferFormat) -> {
+            VideoLan4J.native$checkClassLoader();
+            cb.display(mediaPlayer, nativeBuffers, bufferFormat);
+        };
+    }
+
+    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, boolean lockBuffers, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+        this(mediaPlayerFactory, null, null, lockBuffers, null, renderCallback, bufferFormatCallback == null ? null : new BufferFormatCallback() {
+            @Override
+            public void allocatedBuffers(ByteBuffer[] buffers) {}
+
+            @Override
+            public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
+                return bufferFormatCallback.getBufferFormat(sourceWidth, sourceHeight);
+            }
+        }, null);
+    }
+    // WATERMeDIA PATCH - end
 
     /**
      * Construct a callback media list player component for intrinsic rendering (by this component).

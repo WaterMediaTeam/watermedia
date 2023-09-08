@@ -2,6 +2,10 @@ package uk.co.caprica.vlcj.factory.discovery;
 
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.StringArray;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import uk.co.caprica.vlcj.binding.internal.libvlc_instance_t;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -10,6 +14,11 @@ import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.factory.discovery.strategy.WindowsNativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.support.version.LibVlcVersion;
+
+import java.lang.ref.Reference;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
 
 import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_new;
 import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_release;
@@ -122,6 +131,11 @@ public class NativeDiscovery {
                             alreadyFound = true;
                             return true;
                         } else {
+                            // WATERMeDIA PATCH - start
+                            LOGGER.error(IT, "Failed loading VLC in '{}' using '{}' cleaning JNA", path, discoveryStrategy.getClass().getSimpleName());
+                            if (attemptFix()) continue;
+                            // WATERMeDIA PATCH - end
+
                             // We have to stop here, because we already added a search path for the native library and
                             // any further search paths we add will be tried AFTER the one that already failed - the
                             // subsequent directories we may like to try will never actually be tried
@@ -135,6 +149,36 @@ public class NativeDiscovery {
             return false;
         }
     }
+
+    // WATERMeDIA PATCH - start
+    private static Field searchPaths;
+    private static Field libraries;
+    public static final Logger LOGGER = LogManager.getLogger("VLCJ");
+    private static final Marker IT = MarkerManager.getMarker("NativeDiscovery");
+    @SuppressWarnings("unchecked")
+    public boolean attemptFix() {
+        try {
+            if (searchPaths == null) {
+                searchPaths = NativeLibrary.class.getDeclaredField("searchPaths");
+                searchPaths.setAccessible(true);
+
+                libraries = NativeLibrary.class.getDeclaredField("libraries");
+                libraries.setAccessible(true);
+            }
+
+            Map<String, Reference<NativeLibrary>> libs = (Map<String, Reference<NativeLibrary>>) libraries.get(null);
+            Map<String, List<String>> paths = (Map<String, List<String>>) searchPaths.get(null);
+            libs.remove(RuntimeUtil.getLibVlcCoreLibraryName());
+            paths.remove(RuntimeUtil.getLibVlcCoreLibraryName());
+            libs.remove(RuntimeUtil.getLibVlcLibraryName());
+            paths.remove(RuntimeUtil.getLibVlcLibraryName());
+            return true;
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
+            LOGGER.error(IT, "attemptFix failed", e);
+        }
+        return false;
+    }
+    // WATERMeDIA PATCH - end
 
     /**
      * Get the native discovery strategy instance that discovered the native library.
@@ -200,7 +244,7 @@ public class NativeDiscovery {
 
             // This message should display the reason the native library could not be bound, specifically if the library
             // binding failed due to an undefined symbol it should be displayed here
-            System.err.println(e.getMessage());
+            LOGGER.fatal(e.getMessage()); // WATERMeDIA PATCH
         }
         return false;
     }

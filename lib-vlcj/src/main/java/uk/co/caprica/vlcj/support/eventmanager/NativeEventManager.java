@@ -22,6 +22,7 @@ package uk.co.caprica.vlcj.support.eventmanager;
 import com.sun.jna.CallbackThreadInitializer;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import uk.co.caprica.vlcj.VideoLan4J;
 import uk.co.caprica.vlcj.binding.internal.libvlc_callback_t;
 import uk.co.caprica.vlcj.binding.internal.libvlc_event_e;
 import uk.co.caprica.vlcj.binding.internal.libvlc_event_manager_t;
@@ -174,6 +175,7 @@ abstract public class NativeEventManager<E,L> {
      * @param event event to raise, may be <code>null</code> and if so will be ignored
      */
     public final void raiseEvent(EventNotification<L> event) {
+        VideoLan4J.native$checkClassLoader(); // WATERMeDIA PATCH
         if (event != null && !eventListenerList.isEmpty()) {
             for (L listener : eventListenerList) {
                  event.notify(listener);
@@ -203,6 +205,7 @@ abstract public class NativeEventManager<E,L> {
 
         @Override
         public void callback(libvlc_event_t event, Pointer userData) {
+            VideoLan4J.native$checkClassLoader(); // WATERMeDIA PATCH
             raiseEvent(onCreateEvent(libvlcInstance, event, eventObject));
         }
 

@@ -26,6 +26,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+import me.lib720.watermod.reflect.ReflectTool;
 
 /**
  * Minimal interface to the standard "C" library.
@@ -35,7 +36,11 @@ public interface LibC extends Library {
     /**
      * Native library instance.
      */
-    LibC INSTANCE = Native.load((Platform.isWindows() ? "msvcrt" : "c"), LibC.class);
+    // WATERMeDIA PATCH - start
+//    LibC INSTANCE = Native.load((Platform.isWindows() ? "msvcrt" : "c"), LibC.class);
+//    LibC INSTANCE = Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"), LibC.class);
+    LibC INSTANCE = ReflectTool.findAndInvokeWithReturn(new String[]{"load", "loadLibrary"}, Native.class, null, (Platform.isWindows() ? "msvcrt" : "c"), LibC.class);
+    // WATERMeDIA PATCH - end
 
     /**
      * Format a string with a variable arguments list into a fixed size buffer.

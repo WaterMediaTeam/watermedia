@@ -21,8 +21,10 @@ package uk.co.caprica.vlcj.binding;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
+import me.lib720.watermod.reflect.ReflectTool;
 
 /**
  * JNA interface to the native LibDwm (Desktop Window Manager) library.
@@ -42,7 +44,11 @@ public interface LibDwmApi extends Library {
     /**
      * Native library instance.
      */
-    LibDwmApi INSTANCE = Native.load("dwmapi", LibDwmApi.class);
+    // WATERMeDIA PATCH - start
+//    LibDwmApi INSTANCE = Native.load("dwmapi", LibDwmApi.class);
+//    LibDwmApi INSTANCE = Native.loadLibrary("dwmapi", LibDwmApi.class);
+    LibDwmApi INSTANCE = ReflectTool.findAndInvokeWithReturn(new String[]{"load", "loadLibrary"}, Native.class, null, "dwmapi", LibDwmApi.class);
+    // WATERMeDIA PATCH - end
 
     /**
      * Disable composition.

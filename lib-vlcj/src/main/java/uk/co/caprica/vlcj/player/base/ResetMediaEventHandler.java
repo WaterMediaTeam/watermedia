@@ -19,6 +19,8 @@
 
 package uk.co.caprica.vlcj.player.base;
 
+import uk.co.caprica.vlcj.VideoLan4J;
+
 /**
  * Event listener implementation that "resets" the media after it has finished playing.
  * <p>
@@ -32,6 +34,7 @@ final class ResetMediaEventHandler extends MediaPlayerEventAdapter {
 
     @Override
     public void finished(MediaPlayer mediaPlayer) {
+        VideoLan4J.native$checkClassLoader(); // WATERMeDIA PATCH
         // It is not allowed to call back into LibVLC from this native thread, so offload to a task to repeat play
         mediaPlayer.submit(new ResetMediaTask(mediaPlayer));
     }
