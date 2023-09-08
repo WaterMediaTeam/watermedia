@@ -1,28 +1,34 @@
 package me.srrapero720.watermedia.api.image;
 
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageCache {
-    private static final Marker IT = MarkerManager.getMarker("ImageAPI");
-    private static final Map<String, ImageCache> CACHE = new HashMap<>();
+    static final Map<String, ImageCache> CACHE = new HashMap<>();
 
+    /**
+     * Gets a cache for a URL
+     * if no exists then creates an unready one
+     * @param originalURL url of the picture
+     * @param renderThreadEx concurrent executor
+     * @deprecated use instead {@link ImageAPI#getCache(String, Executor)}
+     * @return cache instance
+     */
+    @Deprecated
     public static ImageCache get(String originalURL, Executor renderThreadEx) {
-        ImageCache image = CACHE.get(originalURL);
-        image = (image == null) ? new ImageCache(originalURL, renderThreadEx) : image.use();
-        CACHE.put(originalURL, image);
-        return image;
+        return ImageAPI.getCache(originalURL, renderThreadEx);
     }
 
+    /**
+     * Reloads all ImageCache instanced
+     * This might cause lag
+     * @deprecated use instead {@link ImageAPI#reloadCache()}
+     */
+    @Deprecated
     public static void reloadAll() {
-        ImageCache[] loaded = CACHE.values().toArray(new ImageCache[0]);
-        for (ImageCache imageCache : loaded) { imageCache.reload(); }
+        for (ImageCache imageCache : CACHE.values()) { imageCache.reload(); }
     }
 
     // INFO;
@@ -31,13 +37,14 @@ public class ImageCache {
     private final Executor renderThreadEx;
 
     // STATUS
-    private final AtomicBoolean video = new AtomicBoolean(false);
+    private volatile boolean video = false;
     private final AtomicInteger uses = new AtomicInteger(1);
     private volatile Status status = Status.WAITING;
 
     private volatile ImageRenderer renderer;
     private volatile Exception exception;
 
+    @Deprecated
     public ImageCache(String url, Executor runnable) {
         this.url = url;
         this.renderThreadEx = runnable;
@@ -45,6 +52,7 @@ public class ImageCache {
         CACHE.put(url, this);
     }
 
+    @Deprecated
     public ImageCache(ImageRenderer renderer) {
         this.url = null;
         this.fetch = null;
@@ -52,7 +60,7 @@ public class ImageCache {
         this.renderer = renderer;
     }
 
-    public boolean isVideo() { return video.get(); }
+    public boolean isVideo() { return video; }
     public boolean isUsed() { return uses.get() > 0; }
     public ImageCache use() { uses.getAndIncrement(); return this; }
     public ImageCache deuse() {
@@ -76,20 +84,23 @@ public class ImageCache {
                         imageRenderer.release(); // IS SAFE DO THAT WHEN ANY TEX PICTURE ISN'T GENERATED
                         return;
                     }
-                    synchronized (this) { this.renderer = imageRenderer; }
-                    this.video.set(false);
+                    this.renderer = imageRenderer;
+                    this.video = false;
                     this.exception = null;
                     this.status = Status.READY;
                 }
             }).setOnFailedCallback(exception -> {
-                synchronized (this) { this.renderer = null; }
-                if (exception instanceof ImageFetch.NoPictureException) {
-                    this.video.set(true);
-                    this.exception = null;
-                    this.status = Status.READY;
-                } else {
-                    this.exception = exception;
-                    this.status = Status.FAILED;
+                synchronized (fetch) {
+                    this.renderer = null;
+                    if (!this.status.equals(Status.LOADING)) return;
+                    if (exception instanceof ImageFetch.NoPictureException) {
+                        this.video = true;
+                        this.exception = null;
+                        this.status = Status.READY;
+                    } else {
+                        this.exception = exception;
+                        this.status = Status.FAILED;
+                    }
                 }
             }).start();
         }
@@ -98,33 +109,27 @@ public class ImageCache {
     public void reload() {
         if (fetch == null) return;
         synchronized (fetch) {
-            if (!this.status.equals(Status.READY) && !this.status.equals(Status.FAILED)) return; // ONLY READY CACHE CAN BE RELOADED
+            if (!this.status.equals(Status.READY) && !this.status.equals(Status.FAILED)) return; // ONLY READY OR FAILED CACHE CAN BE RELOADED
             this.status = Status.WAITING;
-            this.video.set(false);
+            this.video = false;
             this.exception = null;
-            if (renderer != null) this.renderThreadEx.execute(() -> {
-                this.renderer.release();
-                // ENSURE IS THE SAME FUCKING RENDERER AND IF WAS RELEASED
-                synchronized (fetch) {
-                    if (status.equals(Status.FORGOTTEN))
-                        synchronized (this) { if ( renderer.textures[0] == -1) this.renderer = null; }
-                }
-            });
+
+            ImageRenderer imageRenderer = this.renderer;
+            this.renderer = null;
+            if (imageRenderer != null) this.renderThreadEx.execute(imageRenderer::release);
         }
     }
 
     public void release() {
         if (fetch == null) return;
         synchronized (fetch) {
-            if (!this.status.equals(Status.READY)) return; // ONLY READY CACHE CAN BE RELEASED
             this.status = Status.FORGOTTEN;
-            this.video.set(false);
+            this.video = false;
             this.exception = null;
-            this.uses.set(0);
-            if (renderer != null) this.renderThreadEx.execute(() -> {
-                this.renderer.release();
-                synchronized (this) { if ( renderer.textures[0] == -1) this.renderer = null; }
-            });
+
+            ImageRenderer imageRenderer = this.renderer;
+            this.renderer = null;
+            if (renderer != null) this.renderThreadEx.execute(imageRenderer::release);
             CACHE.remove(url);
         }
     }

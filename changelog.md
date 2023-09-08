@@ -2,6 +2,8 @@
 
 ## CHANGES
 - Added loggers for mod version and missing pre-installation of VLC
+- Reduced async priority of image loading (slow loading, more fps)
+- Fixed some stun lag loading images if url is null or empty
 
 ## API: CHANGES
 - Deprecated BasePlayer (use SyncBasePlayer)
@@ -11,6 +13,7 @@
 - Deprecated entire ImageAPI inside WaterMediaAPI
 - Deprecated entire URLApi inside WaterMediaAPI
 - Fixed custom loading gif API is broken in deprecated API
+- Now can be released ImageCache (please don't) even if it wasn't ready
 
 # BREAKING UPDATE 2.0.0
 This update breaks dependency mods, only update when all mods depending on it releases a compatibility update
