@@ -89,16 +89,20 @@ public class ThreadCore {
         return thread;
     }
 
-    public static ThreadFactory factory(String name) {
+    public static ThreadFactory factory(String name, int priority) {
         AtomicInteger count = new AtomicInteger();
         return r -> {
             Thread t = new Thread(r);
             t.setName(name + "-" + count.incrementAndGet());
             t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
             t.setDaemon(true);
-            t.setPriority(7);
+            t.setPriority(priority);
             return t;
         };
+    }
+
+    public static ThreadFactory factory(String name) {
+        return factory(name, 3);
     }
 
     public static void hasClassLoaderOrSet(ClassLoader classLoader) {

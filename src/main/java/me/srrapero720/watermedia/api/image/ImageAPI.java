@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -21,7 +22,7 @@ public class ImageAPI {
     private static final Marker IT = MarkerManager.getMarker("ImageAPI");
 
     // IMAGE STORAGE
-    private static final Map<String, ImageRenderer> CACHE = new HashMap<>();
+    private static final Map<String, ImageRenderer> LOADING_CACHE = new HashMap<>();
     private static ImageRenderer IMG_LOADING;
     private static ImageRenderer IMG_VLC_FAIL;
     private static ImageRenderer IMG_VLC_FAIL_LAND;
@@ -44,15 +45,40 @@ public class ImageAPI {
         Path modConfig = processDir.resolve("config/watermedia/assets/" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) {
-            ImageRenderer renderer = CACHE.get(modId);
+            ImageRenderer renderer = LOADING_CACHE.get(modId);
             if (renderer != null) return renderer;
 
             renderer = imageRenderer(FileTool.readGif(modConfig.toAbsolutePath()));
-            CACHE.put(modId, renderer);
+            LOADING_CACHE.put(modId, renderer);
         }
         if (modConfig.getParent().toFile().mkdirs()) LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
         else LOGGER.error(IT, "Custom loading gif not found, directories cannot be created");
         return IMG_LOADING;
+    }
+
+    /**
+     * Gets a cache for a URL
+     * if no exists then creates an unready one
+     * @param originalURL url of the picture
+     * @param renderThreadEx concurrent executor
+     * @throws IllegalArgumentException if url was null or empty
+     * @return cache instance
+     */
+    public static ImageCache getCache(String originalURL, Executor renderThreadEx) {
+        if (originalURL == null || originalURL.isEmpty()) throw new IllegalArgumentException("url cannot be null or empty");
+
+        ImageCache image = ImageCache.CACHE.get(originalURL);
+        image = (image == null) ? new ImageCache(originalURL, renderThreadEx) : image.use();
+        ImageCache.CACHE.put(originalURL, image);
+        return image;
+    }
+
+    /**
+     * Reloads all ImageCache instanced
+     * This might cause lag
+     */
+    public static void reloadCache() {
+        for (ImageCache imageCache : ImageCache.CACHE.values()) { imageCache.reload(); }
     }
 
     /**
