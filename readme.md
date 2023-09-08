@@ -15,19 +15,24 @@ Tool to fetch images from the internet and store it in cache,
 Kick.com, YouTube, Google Drive, One Drive, Dropbox and more
 
 ## VERSION STATUS
-| Version | Status |
-|:-------:|:------:|
-|  1.0.0  |   ⛔    |
-|  1.1.0  |   ⛔    |
-|  1.2.x  |   ⛔    |
-|  1.3.x  |   ⚠    |
-|  2.0.x  |   ✅    |
+List of each WATERMeDIA version compatible with each LTS Minecraft version
+Non-listed versions = NO SUPPORT
+
+| Version | 1.12.2 | 1.16.5 | 1.18.2 | 1.19.2 | 1.20.x | 1.21.x |
+|:-------:|:------:|:------:|:------:|:------:|:------:|:------:|
+|  1.0.0  |   ⛔    |   ⛔    |   ✅    |   ✅    |   🚫   |   🚫   |
+|  1.1.0  |   ⛔    |   ⛔    |   ✅    |   ✅    |   🚫   |   🚫   |
+|  1.2.x  |   ⛔    |   ⛔    |   ✅    |   ✅    |   ✅    |   🚫   |
+|  1.3.x  |   ⛔    |   ⚠    |   ✅    |   ✅    |   ✅    |   🚫   |
+|  2.0.x  |   ✅    |   ✅    |   ✅    |   ✅    |   ✅    |   🚫   |
+|  2.1.x  |        |        |        |        |        |        |
 
 
 **FLAGS**
-- ✅ **Latest**
-- ⚠ **Grace period**
-- ⛔ **Unmaintained**
+- ✅ **Full support:** Can be used
+- ⚠ **Partial support:** Requires special actions to be used
+- 🚫 **Unknown:** Untested
+- ⛔ **Unsupported:** Cannot be used
 
 # INSTALLATION
 You can use two ways to install this mod in your project
@@ -71,6 +76,7 @@ dependencies {
 ```
 
 # OS SUPPORT (VLC)
+**IMPORTANT: This section is only about VLC pre-install support**<br>
 Any other aspect of our API is supported... except VLC.
 We require LibVLC binaries to give video support, 
 depending on your OS and your system arch support can be full, limited or unsupported.
@@ -87,13 +93,14 @@ depending on your OS and your system arch support can be full, limited or unsupp
 - ✅ **Supported**
 - ❎ **Limited:** Requires manually VLC install
 - 🚫 **Unsupported:** limitations (planned support)
-- ⛔ **Unsupported:** rejected support by us
+- ⛔ **Unsupported:** we do not provide support
 
 # Projects using WATERMeDIA
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - Version using: 1.3.x
 - [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - Version using: 1.2.x, 1.3.x, 2.x
-- [FancyMenu: Video Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-video) - Version using: 1.3.x
-- [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - Version using: 1.3.x
+- [FancyMenu: Video Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-video) (obsolete) - Version using: 1.3.x
+- [FancyMenu: Multimedia Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-multimedia) - Version using: 2.0.x
+- [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - Version using: 2.0.x
 
 # Libraries used
 **Important:** All libraries are relocated and wrapped using shadowJar. You can skip our API and directly use
