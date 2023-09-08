@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.url;
+package me.srrapero720.watermedia.api.url.fixers;
 
 import com.google.gson.Gson;
 import me.srrapero720.watermedia.api.network.twitter.TweetScrapper;

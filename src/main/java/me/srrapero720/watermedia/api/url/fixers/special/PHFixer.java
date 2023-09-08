@@ -1,12 +1,12 @@
-package me.srrapero720.watermedia.api.url;
+package me.srrapero720.watermedia.api.url.fixers.special;
 
-import me.srrapero720.watermedia.api.network.ph.PHUtil;
+import me.srrapero720.watermedia.api.network.ph.PHubAPI;
 import me.srrapero720.watermedia.api.network.ph.VideoQuality;
 
 import java.net.URL;
 import java.util.List;
 
-public class PH_NSFixer extends NSFixer {
+public class PHFixer extends SpecialFixer {
 
     @Override
     public String platform() {
@@ -22,7 +22,7 @@ public class PH_NSFixer extends NSFixer {
     public Result patch(URL url, Quality prefQuality) throws FixingURLException {
         super.patch(url, prefQuality);
         try {
-            List<VideoQuality> videos = PHUtil.getVideo(url.toString());
+            List<VideoQuality> videos = PHubAPI.getVideo(url.toString());
             return new Result(new URL(videos.get(0).getUri()), true, false);
         } catch (Exception e) {
             throw new FixingURLException(url.toString(), e);

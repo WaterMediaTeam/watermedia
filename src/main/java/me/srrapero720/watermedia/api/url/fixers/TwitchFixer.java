@@ -1,6 +1,6 @@
-package me.srrapero720.watermedia.api.url;
+package me.srrapero720.watermedia.api.url.fixers;
 
-import me.srrapero720.watermedia.api.network.twitch.TwitchUtil;
+import me.srrapero720.watermedia.api.network.twitch.TwitchAPI;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -28,10 +28,10 @@ public class TwitchFixer extends URLFixer {
         try {
             String path = url.getPath();
             if (path.startsWith("/videos/")) {
-                return new Result(new URL(TwitchUtil.getVod(path.substring(8)).get(0).getUrl()), true, false);
+                return new Result(new URL(TwitchAPI.getVod(path.substring(8)).get(0).getUrl()), true, false);
             }
 
-            return new Result(new URL(TwitchUtil.getStream(path.substring(1)).get(0).getUrl()), true, true);
+            return new Result(new URL(TwitchAPI.getStream(path.substring(1)).get(0).getUrl()), true, true);
         } catch (Exception e) {
             throw new FixingURLException(url, e);
         }

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.url;
+package me.srrapero720.watermedia.api.url.fixers;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
 import com.github.kiulian.downloader.downloader.request.RequestVideoInfo;

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PHUtil {
+public class PHubAPI {
 
     public static List<VideoQuality> getVideo(String url) throws Exception {
         String source = fetchSource(url);

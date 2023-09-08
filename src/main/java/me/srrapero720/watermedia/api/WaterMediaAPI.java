@@ -7,9 +7,11 @@ import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.image.ImageFetch;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.player.BasePlayer;
-import me.srrapero720.watermedia.api.url.*;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.player.VideoPlayer;
+import me.srrapero720.watermedia.api.url.fixers.*;
+import me.srrapero720.watermedia.api.url.fixers.special.SpecialFixer;
+import me.srrapero720.watermedia.api.url.fixers.special.PHFixer;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.VideoLanCore;
@@ -59,7 +61,7 @@ public final class WaterMediaAPI {
                 new OnedriveFixer(),
                 new DropboxFixer(),
                 new TwitterFixer(),
-                new PH_NSFixer()
+                new PHFixer()
         );
 
         TryCore.simple(() -> {
@@ -188,7 +190,7 @@ public final class WaterMediaAPI {
         String[] result = new String[URLFIXERS.size()];
         for (int i = 0; i < URLFIXERS.size(); i++) {
             URLFixer fixer = URLFIXERS.get(i);
-            if (fixer instanceof NSFixer && !includeNS) continue;
+            if (fixer instanceof SpecialFixer && !includeNS) continue;
             result[i] = fixer.platform();
         }
         return result;
@@ -245,7 +247,7 @@ public final class WaterMediaAPI {
             try {
                 for (int i = 0; i < URLFIXERS.size(); i++) {
                     URLFixer fixer = URLFIXERS.get(i);
-                    if (fixer instanceof NSFixer && !ns) continue;
+                    if (fixer instanceof SpecialFixer && !ns) continue;
                     if (fixer.isValid(url)) return fixer.patch(url, null);
                 }
                 return new URLFixer.Result(url, false, false);

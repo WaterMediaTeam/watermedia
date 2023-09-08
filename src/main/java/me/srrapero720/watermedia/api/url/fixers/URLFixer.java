@@ -1,6 +1,5 @@
-package me.srrapero720.watermedia.api.url;
+package me.srrapero720.watermedia.api.url.fixers;
 
-import java.awt.*;
 import java.net.URL;
 
 public abstract class URLFixer {

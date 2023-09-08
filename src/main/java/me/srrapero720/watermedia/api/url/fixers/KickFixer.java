@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.url;
+package me.srrapero720.watermedia.api.url.fixers;
 
 import me.srrapero720.watermedia.api.network.kick.KickAPI;
 import me.srrapero720.watermedia.api.network.kick.models.KickChannel;
