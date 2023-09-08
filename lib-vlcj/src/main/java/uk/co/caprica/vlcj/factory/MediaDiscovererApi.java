@@ -22,6 +22,7 @@ package uk.co.caprica.vlcj.factory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
+import me.lib720.watermod.reflect.ReflectTool;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_discoverer_description_t;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_discoverer_t;
 import uk.co.caprica.vlcj.binding.support.size_t;
@@ -62,7 +63,10 @@ public final class MediaDiscovererApi extends BaseApi {
             if (count > 0) {
                 Pointer[] pointers = ref.getValue().getPointerArray(0, count);
                 for (Pointer pointer : pointers) {
-                    libvlc_media_discoverer_description_t description = Structure.newInstance(libvlc_media_discoverer_description_t.class, pointer);
+                    // WATERMeDIA PATCH - start
+                    // libvlc_media_discoverer_description_t description = Structure.newInstance(libvlc_media_discoverer_description_t.class, pointer);
+                    libvlc_media_discoverer_description_t description = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_media_discoverer_description_t.class, pointer);
+                    // WATERMeDIA PATCH - end
                     description.read();
                     result.add(new MediaDiscovererDescription(description.psz_name, description.psz_longname, MediaDiscovererCategory.mediaDiscovererCategory(description.i_cat)));
                 }
