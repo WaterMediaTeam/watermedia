@@ -4,7 +4,7 @@ import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.core.tools.ReflectTool;
+import me.lib720.watermod.reflect.ReflectTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
@@ -41,7 +41,7 @@ public class VideoPlayer extends BasePlayer {
             renderLock.lock();
             try {
                 buffer.put(nativeBuffers[0].asIntBuffer());
-                ReflectTool.executeMethod("rewind", IntBuffer.class, buffer);
+                ReflectTool.invoke("rewind", IntBuffer.class, buffer);
                 updateFrame.set(true);
             } catch (Throwable t) {
                 if (exception == null) {

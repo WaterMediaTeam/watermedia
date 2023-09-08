@@ -15,7 +15,7 @@ import me.srrapero720.watermedia.api.url.fixers.special.PHFixer;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.VideoLanCore;
-import me.srrapero720.watermedia.core.tools.ReflectTool;
+import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -347,7 +347,7 @@ public final class WaterMediaAPI {
 
         // FLIP method changes what class type returns in new JAVA versions, in runtime causes a JVM crash by that
         // THIS EXECUTES ByteBuffer#flip
-        ReflectTool.executeMethod("flip", buffer.getClass(), buffer);
+        ReflectTool.invoke("flip", buffer.getClass(), buffer);
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
