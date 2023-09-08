@@ -100,7 +100,7 @@ processResources {
 shadowJar {
 
     // Add relocation rules for each dependency
-    relocate 'com.github', 'me.lib720.github'
+    relocate 'com.github', 'me.lib720'
     relocate 'com.alibaba', 'me.lib720.alibaba'
     relocate 'com.mpatric', 'me.lib720.mpatric'
     relocate 'org.mozilla', 'me.lib720.mozilla'
@@ -108,6 +108,7 @@ shadowJar {
     relocate 'okio', 'me.lib720.okio'
     relocate 'com.fasterxml', 'me.lib720'
     relocate 'retrofit2', 'me.lib720.retrofit2'
+    relocate 'uk.co', 'me.lib720'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
