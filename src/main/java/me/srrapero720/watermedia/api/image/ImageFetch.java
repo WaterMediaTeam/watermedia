@@ -3,6 +3,7 @@ package me.srrapero720.watermedia.api.image;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.api.url.URLApi;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.CacheCore;
 import me.lib720.watermod.concurrent.ThreadCore;
@@ -47,7 +48,7 @@ public class ImageFetch {
      * Creates a new Fetch instance.
      * The Task is ASYNC by default.
      * You should concern about concurrency on callbacks
-     * @param url
+     * @param url string url to fetch
      */
     public ImageFetch(String url) { this.url = url; }
 
@@ -72,7 +73,7 @@ public class ImageFetch {
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            URLFixer.Result result = WaterMediaAPI.url_fixURL(url);
+            URLFixer.Result result = URLApi.fixURL(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
             if (result.assumeVideo) throw new NoPictureException();
 
