@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@SuppressWarnings("unused")
+@Deprecated
 public class VideoPlayer extends BasePlayer {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
 

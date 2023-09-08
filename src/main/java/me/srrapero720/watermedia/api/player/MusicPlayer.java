@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.concurrent.Executor;
 
 @Untested
+@Deprecated
 public class MusicPlayer extends BasePlayer {
     WaterAudioCallback callback;
     public MusicPlayer(MediaPlayerFactory factory, Executor playerThreadEx, WaterAudioCallback callback) {

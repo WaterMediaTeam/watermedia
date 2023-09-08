@@ -12,16 +12,15 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallba
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.URLFixer;
+import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
-import me.srrapero720.watermedia.core.tools.annotations.Untested;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @Experimental
-public class SyncBasePlayer {
+public abstract class SyncBasePlayer {
     protected static final Marker IT = MarkerManager.getMarker("SyncMediaPlayer");
     protected static final WaterMediaPlayerEventListener LISTENER = new WaterMediaPlayerEventListener();
 
@@ -31,7 +30,7 @@ public class SyncBasePlayer {
     public CallbackMediaPlayerComponent raw() { return raw; }
 
     // PLAYER THREAD
-    protected volatile boolean ns_fixer = false;
+    protected volatile boolean sfixer = false;
     protected volatile boolean live = false;
     protected volatile boolean started = false;
 
@@ -70,7 +69,7 @@ public class SyncBasePlayer {
     private boolean rpa(CharSequence url, String[] vlcArgs) {
         if (raw == null) return false;
         try {
-            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString(), ns_fixer);
+            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString(), sfixer);
             if (fixedURL == null) throw new NullPointerException("URL was invalid");
 
             this.url = fixedURL.url.toString();
@@ -104,7 +103,7 @@ public class SyncBasePlayer {
      * Keep it disabled by default and configurable by end user
      */
     public void enableNSFixers() {
-        ns_fixer = true;
+        sfixer = true;
     }
 
     public State getRawPlayerState() {

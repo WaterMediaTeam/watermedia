@@ -12,7 +12,7 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallba
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.URLFixer;
+import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import me.srrapero720.watermedia.core.tools.annotations.Unstable;
 import org.apache.logging.log4j.Marker;
@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@SuppressWarnings("unused")
+@Deprecated
 public abstract class BasePlayer {
     protected static final Marker IT = MarkerManager.getMarker("MediaPlayer");
     protected static final ClassLoader CL = Thread.currentThread().getContextClassLoader();
