@@ -1,28 +1,26 @@
 package me.srrapero720.watermedia.api;
 
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
+import me.lib720.watermod.reflect.ReflectTool;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.image.ImageFetch;
+import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.player.BasePlayer;
-import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.player.VideoPlayer;
-import me.srrapero720.watermedia.api.url.fixers.*;
-import me.srrapero720.watermedia.api.url.fixers.special.SpecialFixer;
-import me.srrapero720.watermedia.api.url.fixers.special.PHFixer;
-import me.srrapero720.watermedia.core.tools.FileTool;
-import me.srrapero720.watermedia.core.tools.JarTool;
+import me.srrapero720.watermedia.api.url.URLApi;
+import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.VideoLanCore;
-import me.lib720.watermod.reflect.ReflectTool;
+import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -30,49 +28,41 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public final class WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker("API");
-    private static final List<URLFixer> URLFIXERS = new ArrayList<>();
 
-    // RESOURCES
-    private static ImageRenderer IMG_LOADING;
-    public static ImageRenderer img_getLoading() { return IMG_LOADING; }
-    private static ImageRenderer IMG_VLC_FAIL;
-    public static ImageRenderer img_getFailedVLC() { return IMG_VLC_FAIL; }
-    private static ImageRenderer IMG_VLC_FAIL_LAND;
-    public static ImageRenderer img_getLandFailedVLC() { return IMG_VLC_FAIL_LAND; }
+    /**
+     * Use instead {@link ImageAPI#loadingGif()}
+     * @return Loading gif instanced in a renderer.
+     */
+    @Deprecated
+    public static ImageRenderer img_getLoading() { return ImageAPI.loadingGif(); }
+
+    /**
+     * Use instead {@link ImageAPI#failedVLC()}
+     * @return image of failed vlc instanced in a renderer.
+     */
+    @Deprecated
+    public static ImageRenderer img_getFailedVLC() { return ImageAPI.failedVLC(); }
+
+    /**
+     * Use instead {@link ImageAPI#failedVLCLandscape()}
+     * @return image in 16:9 of failed vlc instanced in a renderer.
+     */
+    @Deprecated
+    public static ImageRenderer img_getLandFailedVLC() { return ImageAPI.failedVLCLandscape(); }
 
     /**
      * DO NOT USE IT
      * @param loader instance of current environment
      * @throws ReInitException If already was init
      */
-    public static void init(IMediaLoader loader) throws ReInitException {
-        if (!URLFIXERS.isEmpty()) throw new ReInitException(IT.getName());
-
-        LOGGER.warn(IT,"Loading {}", URLFixer.class.getSimpleName());
-        url_registerFixer(
-                new YoutubeFixer(),
-                new TwitchFixer(),
-                new KickFixer(),
-                new DriveFixer(),
-                new OnedriveFixer(),
-                new DropboxFixer(),
-                new TwitterFixer(),
-                new PHFixer()
-        );
-
-        TryCore.simple(() -> {
-            if (IMG_LOADING != null) return;
-
-            LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
-            IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif").toAbsolutePath()));
-            IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(WaterMediaAPI.class.getClassLoader(), "/pictures/videolan/failed.png"));
-            IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(WaterMediaAPI.class.getClassLoader(), "/pictures/videolan/failed-land.png"));
-        }, e -> LOGGER.error(IT, "Failed to load image resources", e));
-    }
+    public static void init(IMediaLoader loader) throws ReInitException {}
 
     /**
      * Returns loading gif picture for a specific MODID
@@ -80,15 +70,17 @@ public final class WaterMediaAPI {
      * IMPORTANT: this method doesn't cache your picture, ensure you are loading it in a static final context
      * @param modId Identifier of third-party mod
      * @return a {@link ImageRenderer} instance with the right loading gif, if gif cannot be readed then returns watermedia's default
+     * @deprecated Use {@link ImageAPI#loadingGif(String)} instead
      */
+    @Deprecated
     public static ImageRenderer img_getLoading(String modId) {
         Path processDir = WaterMedia.getInstance().loader().processPath();
-        Path modConfig = processDir.resolve("config/watermedia/assets" + modId + "/loading.gif");
+        Path modConfig = processDir.resolve("config/watermedia/assets/" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) return new ImageRenderer(FileTool.readGif(modConfig.toAbsolutePath()));
         if (modConfig.getParent().toFile().mkdirs()) LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
         else LOGGER.error(IT, "Custom loading gif not found, directories cannot be created");
-        return IMG_LOADING;
+        return ImageAPI.loadingGif();
     }
 
     /**
@@ -118,7 +110,9 @@ public final class WaterMediaAPI {
      * @param deltaTime time scale
      * @param loop if tick reach max gif duration should restart it or keep last frame
      * @return texture time
+     * @deprecated use instead {@link ImageRenderer#texture(int, long, boolean)}
      */
+    @Deprecated
     public static long math_textureTime(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
         long time = (tick * 50L) + deltaTime;
         long duration = renderer.duration;
@@ -144,7 +138,9 @@ public final class WaterMediaAPI {
      * @param deltaTime scale time
      * @param loop overtime resets picture
      * @return texture ID usable on OpenGL
+     * @deprecated use instead {@link ImageRenderer#texture(int, long, boolean)}
      */
+    @Deprecated
     public static int api_getTexture(ImageRenderer renderer, int tick, long deltaTime, boolean loop) {
         return renderer.texture(math_textureTime(renderer, tick, deltaTime, loop));
     }
@@ -160,65 +156,44 @@ public final class WaterMediaAPI {
 
     /**
      * Creates your own URLPatch and register it to WaterMediaAPI
-     * @param patch All patches you want to Use
+     * @param patch All patches you want to use
+     * @deprecated Use services instead. For more information, go to {@link URLFixer}
+     * CLASS IS OBSOLETE and not works
      */
+    @Deprecated
     public static void url_registerFixer(URLFixer...patch) {
-        String[] names = new String[patch.length];
-        for (int i = 0; i < patch.length; i++) {
-            URLFIXERS.add(patch[i]);
-            names[i] = patch[i].name();
-        }
-        LOGGER.warn(IT, "Fixers registered: {}", Arrays.toString(names));
-        names = null;
+        for (URLFixer f: patch) LOGGER.error(IT, "Custom fixer '{}' cannot be registered", f.name());
     }
 
     /**
      * List of all supported platforms by WATERMeDIA.
      * By default, this method doesn't include NothingSpecialFixers
      * @return array of all platforms names unsorted
+     * @deprecated use instead {@link URLApi#getFixersPlatforms()}
      */
-    public static String[] url_getFixersPlatform() {
-        return url_getFixersPlatform(false);
-    }
+    @Deprecated
+    public static String[] url_getFixersPlatform() {return URLApi.getFixersPlatforms(false); }
 
     /**
      * List of all supported platforms by WATERMeDIA
-     * @param includeNS should list NothingSpecial fixers too?
+     * @param includeSpecials should list Special fixers too?
      * @return array of all platforms names unsorted
+     * @deprecated use instead {@link URLApi#getFixersPlatforms(boolean)}
      */
-    public static String[] url_getFixersPlatform(boolean includeNS) {
-        String[] result = new String[URLFIXERS.size()];
-        for (int i = 0; i < URLFIXERS.size(); i++) {
-            URLFixer fixer = URLFIXERS.get(i);
-            if (fixer instanceof SpecialFixer && !includeNS) continue;
-            result[i] = fixer.platform();
-        }
-        return result;
-    }
+    @Deprecated
+    public static String[] url_getFixersPlatform(boolean includeSpecials) { return URLApi.getFixersPlatforms(includeSpecials); }
 
     /**
      * This method is used by default on {@link VideoPlayer#start(CharSequence, String[])}
      * Is not recommended external usages
      * @param stringUrl Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
-     * @deprecated use {@link #url_fixURL(String)} instead, this method is gonna be removed on 2.1.0
+     * @deprecated use {@link URLApi#fixURL(String)} instead, this method is going to be removed on 2.1.0
      */
     @Deprecated
     public static URL url_toURL(String stringUrl) {
-        try {
-            URL url = new URL(stringUrl);
-            try {
-                for (int i = 0; i < URLFIXERS.size(); i++) {
-                    URLFixer fixer = URLFIXERS.get(i);
-                    if (fixer.isValid(url)) return fixer.patch(url, null).url;
-                }
-            } catch (Throwable t) {
-                LOGGER.error(IT, "Exception occurred trying to patch URL", t);
-            }
-            return url;
-        } catch (Exception e) {
-            LOGGER.error(IT, "Exception occurred instancing URL", e);
-        }
+        URLFixer.Result result = URLApi.fixURL(stringUrl);
+        if (result != null) return result.url;
         return null;
     }
 
@@ -228,7 +203,9 @@ public final class WaterMediaAPI {
      * IMPORTANT: NothingSpecialFixers are disabled on this method
      * @param str String to patch
      * @return result data with URL and type of it
+     * @deprecated Use instead {@link URLApi#fixURL(String)}
      */
+    @Deprecated
     public static URLFixer.Result url_fixURL(String str) {
         return url_fixURL(str, false);
     }
@@ -240,24 +217,11 @@ public final class WaterMediaAPI {
      * @param str String to patch
      * @param ns Use NothingSpecial fixers too
      * @return result data with URL and type of it
+     * @deprecated Use instead {@link URLApi#fixURL(String, boolean)}
      */
+    @Deprecated
     public static URLFixer.Result url_fixURL(String str, boolean ns) {
-        try {
-            URL url = new URL(str);
-            try {
-                for (int i = 0; i < URLFIXERS.size(); i++) {
-                    URLFixer fixer = URLFIXERS.get(i);
-                    if (fixer instanceof SpecialFixer && !ns) continue;
-                    if (fixer.isValid(url)) return fixer.patch(url, null);
-                }
-                return new URLFixer.Result(url, false, false);
-            } catch (Throwable t) {
-                LOGGER.error(IT, "Exception occurred fixing URL", t);
-            }
-        } catch (Exception e) {
-            LOGGER.error(IT, "Exception occurred instancing URL", e);
-        }
-        return null;
+        return URLApi.fixURL(str, ns);
     }
 
     /**
@@ -265,19 +229,11 @@ public final class WaterMediaAPI {
      * Only supports queries from {@link URL#getQuery()}
      * @param query query string
      * @return map with all values
+     * @deprecated use instead {@link URLApi#parseQuery(String)}
      */
+    @Deprecated
     public static Map<String, String> url_parseQuery(String query) {
-        Map<String, String> queryParams = new HashMap<>();
-        String[] params = query.split("&");
-        for (String param : params) {
-            String[] keyValue = param.split("=");
-            if (keyValue.length == 2) {
-                String key = keyValue[0];
-                String value = keyValue[1];
-                queryParams.put(key, value);
-            }
-        }
-        return queryParams;
+        return URLApi.parseQuery(query);
     }
 
     /**

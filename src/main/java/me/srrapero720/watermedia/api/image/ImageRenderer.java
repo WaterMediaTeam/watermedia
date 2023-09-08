@@ -18,6 +18,11 @@ public class ImageRenderer {
 
     public int remaining;
 
+    /**
+     * Use instead {@link ImageAPI#imageRenderer(BufferedImage, boolean...)}
+     * @param image picture to use
+     */
+    @Deprecated
     public ImageRenderer(BufferedImage image) {
         this.image = image;
         if (image == null) throw new NullPointerException();
@@ -29,6 +34,11 @@ public class ImageRenderer {
         this.decoder = null;
     }
 
+    /**
+     * Use instead {@link ImageAPI#imageRenderer(GifDecoder, boolean...)}
+     * @param decoder picture to use
+     */
+    @Deprecated
     public ImageRenderer(GifDecoder decoder) {
         this.decoder = decoder;
         if (decoder == null) throw new NullPointerException();
@@ -84,6 +94,20 @@ public class ImageRenderer {
             }
         }
         return textures[index];
+    }
+
+    /**
+     * Calculate texture based on tick time (1s/20t) plus deltaTime (missing seconds on ticks)
+     * make tick count by yourself
+     * @param tick Tick count
+     * @param deltaTime extra ms to add
+     * @param loop enable looping if tick count overflows duration
+     * @return OpenGL texture ID
+     */
+    public int texture(int tick, long deltaTime, boolean loop) {
+        long time = (tick * 50L) + deltaTime;
+        if (duration > 0 && time > duration && loop) time %= duration;
+        return texture(time);
     }
 
     /**

@@ -85,7 +85,7 @@ public class ImageFetch {
                     int status = gif.read(in);
 
                     if (status == GifDecoder.STATUS_OK) {
-                        if (successful != null) successful.run(new ImageRenderer(gif));
+                        if (successful != null) successful.run(ImageAPI.imageRenderer(gif));
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
                         throw new GifDecodingException();
@@ -94,7 +94,7 @@ public class ImageFetch {
                     try {
                         BufferedImage image = ImageIO.read(in);
                         if (image != null) {
-                            if (successful != null) successful.run(new ImageRenderer(image));
+                            if (successful != null) successful.run(ImageAPI.imageRenderer(image));
                         }
                     } catch (IOException e1) {
                         LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);
