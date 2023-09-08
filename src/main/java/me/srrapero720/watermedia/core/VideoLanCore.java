@@ -49,7 +49,7 @@ public class VideoLanCore {
     }
 
     private static String[] init$readArguments(IMediaLoader loader, Path loggerPath) {
-        String[] args = JarTool.readStringList(loader.classLoader(), "/videolan/arguments.json").toArray(new String[0]);
+        String[] args = JarTool.readStringList(VideoLanCore.class.getClassLoader(), "/videolan/arguments.json").toArray(new String[0]);
         args[2] = loggerPath.toString();
         return  args;
     }

@@ -69,8 +69,8 @@ public final class WaterMediaAPI {
 
             LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
             IMG_LOADING = new ImageRenderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif").toAbsolutePath()));
-            IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(loader.classLoader(), "/pictures/videolan/failed.png"));
-            IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(loader.classLoader(), "/pictures/videolan/failed-land.png"));
+            IMG_VLC_FAIL = new ImageRenderer(JarTool.readImage(WaterMediaAPI.class.getClassLoader(), "/pictures/videolan/failed.png"));
+            IMG_VLC_FAIL_LAND = new ImageRenderer(JarTool.readImage(WaterMediaAPI.class.getClassLoader(), "/pictures/videolan/failed-land.png"));
         }, e -> LOGGER.error(IT, "Failed to load image resources", e));
     }
 

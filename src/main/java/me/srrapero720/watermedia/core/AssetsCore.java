@@ -29,15 +29,16 @@ public class AssetsCore {
             String source = "/videolan/"  + OsTool.getArch() + ".zip";
 
             try {
-                if (!JarTool.readString(loader.classLoader(), "/videolan/version.cfg").equals(FileTool.readString(config.toAbsolutePath()))) {
-                    if (JarTool.copyAsset(loader.classLoader(), source, output)) {
+                ClassLoader cl = AssetsCore.class.getClassLoader();
+                if (!JarTool.readString(cl, "/videolan/version.cfg").equals(FileTool.readString(config.toAbsolutePath()))) {
+                    if (JarTool.copyAsset(cl, source, output)) {
                         FileTool.unzip(output, output.getParent());
                         Files.delete(output);
                     }
 
                     // WRITE VERSION FILE
                     try {
-                        JarTool.copyAsset(loader.classLoader(), "/videolan/version.cfg", config);
+                        JarTool.copyAsset(cl, "/videolan/version.cfg", config);
                     } catch (Exception e) {
                         LOGGER.error(IT, "Exception writing configuration file", e);
                     }
@@ -50,7 +51,7 @@ public class AssetsCore {
         // STEP 2: EXTRACT LOADING GIF (was extracted on process root folder)
         Path loadingGif = loader.processPath().resolve("config/watermedia/assets/loading.gif").toAbsolutePath();
         if (!loadingGif.toFile().exists()) {
-            JarTool.copyAsset(loader.classLoader(), "/pictures/loading.gif", loadingGif);
+            JarTool.copyAsset(AssetsCore.class.getClassLoader(), "/pictures/loading.gif", loadingGif);
         }
 
         loaded = true;

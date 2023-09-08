@@ -48,7 +48,7 @@ public class WaterMedia {
 
 		this.loader = loader;
 		LOGGER.info(IT, "Running '{}' on '{}'", NAME, this.loader.name());
-		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString(loader.classLoader(), "/watermedia/version.cfg"));
+		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString(WaterMedia.class.getClassLoader(), "/watermedia/version.cfg"));
 
 		if (loader instanceof IEnvLoader) envInit((IEnvLoader) loader);
         else LOGGER.warn(IT, "Environment not detected, be careful about it");
@@ -101,17 +101,6 @@ public class WaterMedia {
 
 		LOGGER.info(IT, "Startup finished");
 		LOCK.unlock();
-	}
-
-
-	/**
-	 * TOOL FOR FORGE
-	 * MORE INFORMATION: <a href="https://github.com/MinecraftForge/MinecraftForge/issues/9570">MinecraftForge</a>
-	 * ONLY REQUIRED ON NATIVE THREADS
-	 */
-	public void checkClassLoader() {
-		Thread t = Thread.currentThread();
-		if (t.getContextClassLoader() == null) t.setContextClassLoader(loader.classLoader());
 	}
 
 	public void crash() {

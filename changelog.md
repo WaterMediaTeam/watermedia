@@ -5,6 +5,9 @@
 
 ## API: CHANGES
 - Deprecated BasePlayer (use SyncBasePlayer)
+- Downgrade and re-patched VLCJ library to 4.7.x
+- Deprecated IMediaLoader#classLoader() method
+- 
 
 # BREAKING UPDATE 2.0.0
 This update breaks dependency mods, only update when all mods depending on it releases a compatibility update
