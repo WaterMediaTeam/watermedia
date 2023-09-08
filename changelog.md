@@ -1,10 +1,13 @@
+# UPDATE 2.0.1
+
+## CHANGES
+- Added loggers for mod version and missing pre-installation of VLC
+
+## API: CHANGES
+- Deprecated BasePlayer (use SyncBasePlayer)
+
 # BREAKING UPDATE 2.0.0
 This update breaks dependency mods, only update when all mods depending on it releases a compatibility update
-
-### IMPORTANT ADVICE
-Since NeoForge is menacing, i am considering DROP the entire FABRIC SUPPORT for next versions. Big fabric modders are making (Neo)Forge ports (Like CaffeineMC).
-I am keeping support for old and new (neo)Forge versions. But fabric is useless if the same alternative exists on NeoForge.
-LET FABRIC REST IN PEACE.
 
 ## FEATURES
 - Code ported to JAVA 8
