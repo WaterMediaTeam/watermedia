@@ -2,9 +2,29 @@ package me.srrapero720.watermedia.api.url.fixers;
 
 import java.net.URL;
 
+
+/**
+ * Base class for URL Fixing...
+ * To make your own fixer you should use services.<br>
+ * Create a file in:
+ * <code>resources/META-INF/services/</code><br>
+ * named:
+ * <code>me.srrapero720.watermedia.api.url.fixers.URLFixer</code>
+ * and put inside the entire package to your fixer.
+ * WATERMeDIA loads it by yourself ;)
+ */
 public abstract class URLFixer {
+
+    /**
+     * used for loggers
+     * @return class name
+     */
     public String name() { return this.getClass().getSimpleName(); }
 
+    /**
+     * Name of the platform used for this fixer
+     * @return platform name
+     */
     public abstract String platform();
 
     /**
@@ -25,7 +45,12 @@ public abstract class URLFixer {
         return null;
     }
 
-    public static final class FixingURLException extends Throwable {
+    @Override
+    public String toString() {
+        return name();
+    }
+
+    public static final class FixingURLException extends Exception {
         public FixingURLException(String url, Throwable t) { super("Failed to fix URL " + url, t); }
         public FixingURLException(URL url, Throwable t) { super("Failed to fix URL " + url.toString(), t); }
     }
