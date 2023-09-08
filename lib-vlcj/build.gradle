@@ -8,6 +8,11 @@ base {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 repositories {
     mavenCentral()
 }
