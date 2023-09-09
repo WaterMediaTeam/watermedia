@@ -1,3 +1,7 @@
+# UPDATE 2.0.3
+- Fixed NPE when url is null or empty
+- Reduced arguments for VLC and make console output quiet
+
 # UPDATE 2.0.2
 just a update
 
