@@ -39,6 +39,7 @@ public class FileTool {
         return null;
     }
 
+    public static void unzip(Path zipFilePath) throws IOException { unzip(zipFilePath, zipFilePath.getParent()); }
     public static void unzip(Path zipFilePath, Path destDirectory) throws IOException {
         File destDir = destDirectory.toFile();
         if (!destDir.exists()) destDir.mkdir();

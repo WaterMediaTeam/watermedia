@@ -82,4 +82,69 @@ public class JarTool {
         if (is == null && source.startsWith("/")) is = loader.getResourceAsStream(source.substring(1));
         return is;
     }
+
+    // WITHOUT CLASSLOADER OPTIONS
+
+    public static String readString(String from) {
+        try {
+            byte[] bytes = DataTool.readAllBytes(readResource(from));
+            return new String(bytes, Charset.defaultCharset());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean copyAsset(String origin, Path dest) {
+        try (InputStream is = readResource(origin)) {
+            if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
+
+            File destParent = dest.getParent().toFile();
+            if (!destParent.exists() && !destParent.mkdirs()) LOGGER.fatal(IT, "Cannot be created parent directories to {}", dest.toString());
+            Files.copy(is, dest, StandardCopyOption.REPLACE_EXISTING);
+            return true;
+        } catch (Exception e) {
+            LOGGER.fatal(IT, "Failed to extract from (JAR) {} to {} due to unexpected error", origin, dest, e);
+        }
+        return false;
+    }
+
+    public static List<String> readStringList(String path) {
+        List<String> result = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResource(path)))) {
+            result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
+        } catch (Exception e) {
+            LOGGER.fatal(IT, "Exception trying to read JSON from {}", path, e);
+        }
+
+        return result;
+    }
+
+    public static BufferedImage readImage(String path) {
+        try (InputStream in = readResource(path)) {
+            BufferedImage image = ImageIO.read(in);
+            if (image != null) return image;
+            else throw new FileNotFoundException("result of BufferedImage was null");
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed loading BufferedImage from resources", e);
+        }
+    }
+
+    public static GifDecoder readGif(String path) {
+        try (BufferedInputStream in = new BufferedInputStream(readResource(path))) {
+            GifDecoder gif = new GifDecoder();
+            int status = gif.read(in);
+            if (status == GifDecoder.STATUS_OK) return gif;
+
+            throw new IOException("Failed to process GIF - Decoder status: " + status);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed loading GIF from resources", e);
+        }
+    }
+
+    public static InputStream readResource(String source) {
+        ClassLoader loader = JarTool.class.getClassLoader();
+        InputStream is = loader.getResourceAsStream(source);
+        if (is == null && source.startsWith("/")) is = loader.getResourceAsStream(source.substring(1));
+        return is;
+    }
 }
