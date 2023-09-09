@@ -61,11 +61,10 @@ public class ImageAPI {
      * if no exists then creates an unready one
      * @param originalURL url of the picture
      * @param renderThreadEx concurrent executor
-     * @throws IllegalArgumentException if url was null or empty
-     * @return cache instance
+     * @return cache instance, if url was null or empty then returns an empty instance
      */
     public static ImageCache getCache(String originalURL, Executor renderThreadEx) {
-        if (originalURL == null || originalURL.isEmpty()) throw new IllegalArgumentException("url cannot be null or empty");
+        if (originalURL == null || originalURL.isEmpty()) return ImageCache.EMPTY_INSTANCE;
 
         ImageCache image = ImageCache.CACHE.get(originalURL);
         image = (image == null) ? new ImageCache(originalURL, renderThreadEx) : image.use();

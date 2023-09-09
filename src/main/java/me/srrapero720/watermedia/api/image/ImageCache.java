@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageCache {
     static final Map<String, ImageCache> CACHE = new HashMap<>();
+    static final ImageCache EMPTY_INSTANCE = new ImageCache(null);
 
     /**
      * Gets a cache for a URL
