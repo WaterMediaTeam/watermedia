@@ -1,11 +1,14 @@
 # UPDATE 2.0.4
 - API: Mitosis on ImageAPI#imageRenderer() and renamed to renderer()
+- Reduced MediaPlayer#release priority
+- Renamed MediaPlayer#enableSpecialFixer()
+- Fixed audio resets to 100% after loop
+- Removed IMediaLoader#classLoader() from bootstrap
+- Deprecated WaterMediaAPI#url_isValid()
 
 # UPDATE 2.0.3
 - Fixed NPE when url is null or empty
 - Reduced arguments for VLC and make console output quiet
-- Reduced MediaPlayer#release priority
-- Renamed MediaPlayer#enableSpecialFixer()
 
 # UPDATE 2.0.2
 - Added loggers for mod version and missing pre-installation of VLC
