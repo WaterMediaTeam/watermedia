@@ -22,17 +22,7 @@ public interface IMediaLoader {
     /**
      * Absolute path to current process directory
      * normally is enough just use `new File("")` but is better do not assume is always it
-     * @return Path instance to process directyr
+     * @return Path instance to process directory
      */
     Path processPath();
-
-    /**
-     * Classloader for this module
-     * The main purpose is help to bootstrap find their own JAR resources
-     * @deprecated It was designed to avoid fabric issues getting resources
-     * these issues was fixed already, so is not longer needed a "classloader getter"
-     * @return ClassLoader instance, preferred it was the JAR classloader
-     */
-    @Deprecated
-    ClassLoader classLoader();
 }

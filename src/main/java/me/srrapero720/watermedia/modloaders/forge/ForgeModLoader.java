@@ -19,19 +19,26 @@ public class ForgeModLoader implements IMediaLoader {
     private Path PS;
     private Path TMP;
     private ClassLoader CL;
+
     public ForgeModLoader() {
         LOGGER.info(IT, "Starting...");
 
         WaterMedia instance = WaterMedia.getInstance(this);
-        try { WaterMedia.getInstance().envInit(new LegacyLoader()); } catch (Throwable ignored) {}
-        try { WaterMedia.getInstance().envInit(new RusticLoader()); } catch (Throwable ignored) {}
-        try { WaterMedia.getInstance().envInit(new WideLoader()); } catch (Throwable ignored) {}
+        try {
+            WaterMedia.getInstance().envInit(new LegacyLoader());
+        } catch (Throwable ignored) {
+        }
+        try {
+            WaterMedia.getInstance().envInit(new RusticLoader());
+        } catch (Throwable ignored) {
+        }
+        try {
+            WaterMedia.getInstance().envInit(new WideLoader());
+        } catch (Throwable ignored) {
+        }
 
         if (instance.env().client()) instance.init();
     }
-
-    @Override
-    public ClassLoader classLoader() { return (CL != null) ? CL : (CL = Thread.currentThread().getContextClassLoader()); }
 
     @Override
     public String name() { return NAME; }
