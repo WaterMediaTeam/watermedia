@@ -4,6 +4,8 @@
 # UPDATE 2.0.3
 - Fixed NPE when url is null or empty
 - Reduced arguments for VLC and make console output quiet
+- Reduced MediaPlayer#release priority
+- Renamed MediaPlayer#enableSpecialFixer()
 
 # UPDATE 2.0.2
 - Added loggers for mod version and missing pre-installation of VLC

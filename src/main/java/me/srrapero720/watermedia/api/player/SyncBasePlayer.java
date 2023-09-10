@@ -1,5 +1,7 @@
 package me.srrapero720.watermedia.api.player;
 
+import me.lib720.watermod.safety.TryCore;
+import me.srrapero720.watermedia.api.url.URLApi;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.InfoApi;
@@ -34,6 +36,12 @@ public abstract class SyncBasePlayer {
     protected volatile boolean live = false;
     protected volatile boolean started = false;
 
+    /**
+     * Submit async task, specially when you want to run vlc task on a vlc callback
+     * @param r runnable to run
+     */
+    public void submit(Runnable r) { if (raw != null) raw.mediaPlayer().submit(r); }
+
     protected SyncBasePlayer(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         this.init(factory, renderCallback, bufferFormatCallback);
     }
@@ -44,9 +52,8 @@ public abstract class SyncBasePlayer {
      */
     protected SyncBasePlayer() {}
 
-
     /**
-     * Creates raw player and makes this works normally
+     * Creates a raw player and makes this works normally
      * @param factory MediaPlayerFactory to create raw player, can be null
      * @param renderCallback this is executed when buffer loads media info (first time)
      * @param bufferFormatCallback creates a buffer for the frame
@@ -62,29 +69,22 @@ public abstract class SyncBasePlayer {
         }
     }
 
-    public void submit(Runnable r) {
-        raw.mediaPlayer().submit(r);
-    }
-
-    private boolean rpa(CharSequence url, String[] vlcArgs) {
+    private boolean rpa(CharSequence url) {
         if (raw == null) return false;
-        try {
-            URLFixer.Result fixedURL = WaterMediaAPI.url_fixURL(url.toString(), sfixer);
-            if (fixedURL == null) throw new NullPointerException("URL was invalid");
+        return TryCore.withReturn(defaultVar -> {
+            URLFixer.Result result = URLApi.fixURL(url.toString(), sfixer);
+            if (result == null) throw new IllegalArgumentException("Invalid URL");
 
-            this.url = fixedURL.url.toString();
-            live = fixedURL.assumeStream;
+            this.url = result.url.toString();
+            live = result.assumeStream;
             return true;
-        } catch (Exception e) {
-            LOGGER.error(IT, "Failed to load player", e);
-        }
-        return false;
+        }, e -> LOGGER.error(IT, "Failed to load player"), false);
     }
-    public void start(CharSequence url) { this.start(url, new String[0]); }
 
+    public void start(CharSequence url) { this.start(url, new String[0]); }
     public void start(CharSequence url, String[] vlcArgs) {
         ThreadCore.thread(() -> {
-            if (rpa(url, vlcArgs)) raw.mediaPlayer().media().start(this.url, vlcArgs);
+            if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
     }
@@ -92,7 +92,7 @@ public abstract class SyncBasePlayer {
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
         ThreadCore.thread(() -> {
-            if (rpa(url, vlcArgs)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
+            if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
     }
@@ -102,7 +102,7 @@ public abstract class SyncBasePlayer {
      * CAREFUL: This method can give you a big trouble.
      * Keep it disabled by default and configurable by end user
      */
-    public void enableNSFixers() {
+    public void enableSpecialFixers() {
         sfixer = true;
     }
 
@@ -297,7 +297,7 @@ public abstract class SyncBasePlayer {
 
     public void release() {
         if (raw == null) return;
-        ThreadCore.thread(7, () -> {
+        ThreadCore.thread(3, () -> {
             while (!started); // WAIT FOR PLAYER START WAS FINISHED
 
             synchronized (this) {
@@ -306,7 +306,6 @@ public abstract class SyncBasePlayer {
 
                 // remove callbacks to prevent more blowup stuff
                 if (rawRef == null) return; // If for some reason is triggered 2 times.
-                rawRef.mediaPlayer().events().removeMediaPlayerEventListener(LISTENER);
                 rawRef.mediaPlayer().release();
             }
         });
