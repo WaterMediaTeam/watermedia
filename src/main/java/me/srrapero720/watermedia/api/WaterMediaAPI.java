@@ -150,7 +150,9 @@ public final class WaterMediaAPI {
      * Check if String is a valid URL
      * @param url string to check
      * @return if is valid.
+     * @deprecated use instead {@link URLApi#isValid(String)}
      */
+    @Deprecated
     public static boolean url_isValid(String url) { return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false); }
 
 
