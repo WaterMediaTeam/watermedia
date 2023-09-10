@@ -19,7 +19,7 @@ public class ImageRenderer {
     public int remaining;
 
     /**
-     * Use instead {@link ImageAPI#imageRenderer(BufferedImage, boolean...)}
+     * Use instead {@link ImageAPI#renderer(BufferedImage)}
      * @param image picture to use
      */
     @Deprecated
@@ -35,7 +35,7 @@ public class ImageRenderer {
     }
 
     /**
-     * Use instead {@link ImageAPI#renderer(GifDecoder, boolean...)}
+     * Use instead {@link ImageAPI#renderer(GifDecoder)}
      * @param decoder picture to use
      */
     @Deprecated
@@ -66,7 +66,7 @@ public class ImageRenderer {
      * use API to calculate time
      * @param time time in millis
      * @return texture id usable on OpenGL
-     * @see WaterMediaAPI#math_textureTime(ImageRenderer, int, long, boolean)
+     * @see ImageRenderer#texture(int, long, boolean) too
      */
     public int texture(long time) {
         if (textures == null) return -1;

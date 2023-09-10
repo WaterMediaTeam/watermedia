@@ -106,14 +106,20 @@ public class ImageAPI {
     /**
      * Creates an instance of an ImageRenderer only for gifs
      * @param image image to use
-     * @param absolute disabled flush and release methods, by default false
-     *                 this param uses a hacky to make it "optional".
-     *                 The first value is relevant.
-     *                 By default, false
      * @return built instance
      */
-    public static ImageRenderer renderer(GifDecoder image, boolean ...absolute) {
-        if (absolute.length != 0 && absolute[0]) return new ImageRenderer(image);
+    public static ImageRenderer renderer(GifDecoder image) {
+        return renderer(image, false);
+    }
+
+    /**
+     * Creates an instance of an ImageRenderer only for gifs
+     * @param image image to use
+     * @param absolute disabled flush and release methods, by default false
+     * @return built instance
+     */
+    public static ImageRenderer renderer(GifDecoder image, boolean absolute) {
+        if (absolute) return new ImageRenderer(image);
         return new ImageRenderer(image) {
             @Override public void flush() {}
             @Override public void release() {}
