@@ -18,7 +18,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@Experimental
 public class SyncVideoPlayer extends SyncBasePlayer {
     private static final Marker IT = MarkerManager.getMarker("SyncVideoPlayer");
 
