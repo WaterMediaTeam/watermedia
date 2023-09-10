@@ -52,9 +52,10 @@ import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_audio_toggle_mute;
 import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_player_set_equalizer;
 
 /**
- * Behaviour pertaining to media player audio.
+ * Behavior pertaining to media player audio.
  */
 public final class AudioApi extends BaseApi implements EqualizerListener {
+    private volatile int masterVolume = 100; // WATERMeDIA PATCH
 
     /**
      * Audio callbacks component.
@@ -178,6 +179,16 @@ public final class AudioApi extends BaseApi implements EqualizerListener {
         return libvlc_audio_get_volume(mediaPlayerInstance);
     }
 
+    // WATERMeDIA PATCH - start
+    public boolean enforceVolume() {
+        return setVolume(masterVolume);
+    }
+
+    public int masterVolume() {
+        return masterVolume;
+    }
+    // WATERMeDIA PATCH - end
+
     /**
      * Set the volume.
      * <p>
@@ -188,6 +199,7 @@ public final class AudioApi extends BaseApi implements EqualizerListener {
      * @return <code>true</code> if successful; <code>false</code> on error
      */
     public boolean setVolume(int volume) {
+        this.masterVolume = volume; // WATERMeDIA PATCH
         return libvlc_audio_set_volume(mediaPlayerInstance, volume) == 0;
     }
 
@@ -364,6 +376,7 @@ public final class AudioApi extends BaseApi implements EqualizerListener {
 
     @Override
     protected void release() {
+        masterVolume = 0;
         setEqualizer(null);
     }
 

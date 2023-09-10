@@ -315,9 +315,9 @@ public abstract class SyncBasePlayer {
         @Override
         public void buffering(MediaPlayer mediaPlayer, float newCache) {
             if (newCache >= 100) mediaPlayer.submit(() -> {
-                int volume = mediaPlayer.audio().volume();
+                mediaPlayer.audio().enforceVolume();
 
-                mediaPlayer.audio().setVolume(volume);
+                int volume = mediaPlayer.audio().masterVolume();
                 if (volume == 0 && !mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(true);
                 else if (volume > 0 && mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(false);
             });
@@ -326,9 +326,9 @@ public abstract class SyncBasePlayer {
         @Override
         public void playing(MediaPlayer mediaPlayer) {
             mediaPlayer.submit(() -> {
-                int volume = mediaPlayer.audio().volume();
+                mediaPlayer.audio().enforceVolume();
 
-                mediaPlayer.audio().setVolume(volume);
+                int volume = mediaPlayer.audio().masterVolume();
                 if (volume == 0 && !mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(true);
                 else if (volume > 0 && mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(false);
             });
@@ -337,9 +337,9 @@ public abstract class SyncBasePlayer {
         @Override
         public void paused(MediaPlayer mediaPlayer) {
             mediaPlayer.submit(() -> {
-                int volume = mediaPlayer.audio().volume();
+                mediaPlayer.audio().enforceVolume();
 
-                mediaPlayer.audio().setVolume(volume);
+                int volume = mediaPlayer.audio().masterVolume();
                 if (volume == 0 && !mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(true);
                 else if (volume > 0 && mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(false);
             });
@@ -348,9 +348,9 @@ public abstract class SyncBasePlayer {
         @Override
         public void mediaPlayerReady(MediaPlayer mediaPlayer) {
             mediaPlayer.submit(() -> {
-                int volume = mediaPlayer.audio().volume();
+                mediaPlayer.audio().enforceVolume();
 
-                mediaPlayer.audio().setVolume(volume);
+                int volume = mediaPlayer.audio().masterVolume();
                 if (volume == 0 && !mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(true);
                 else if (volume > 0 && mediaPlayer.audio().isMute()) mediaPlayer.audio().setMute(false);
             });
