@@ -48,7 +48,7 @@ public class ImageAPI {
             ImageRenderer renderer = LOADING_CACHE.get(modId);
             if (renderer != null) return renderer;
 
-            renderer = imageRenderer(FileTool.readGif(modConfig.toAbsolutePath()));
+            renderer = renderer(FileTool.readGif(modConfig.toAbsolutePath()));
             LOADING_CACHE.put(modId, renderer);
         }
         if (modConfig.getParent().toFile().mkdirs()) LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
@@ -83,14 +83,20 @@ public class ImageAPI {
     /**
      * Creates an instance of an ImageRenderer only for static pictures
      * @param image image to use
-     * @param absolute disabled flush and release methods, by default false
-     *                 this param uses a hacky to make it "optional".
-     *                 The first value is relevant.
-     *                 By default, false
      * @return built instance
      */
-    public static ImageRenderer imageRenderer(BufferedImage image, boolean ...absolute) {
-        if (absolute.length != 0 && absolute[0]) return new ImageRenderer(image);
+    public static ImageRenderer renderer(BufferedImage image) {
+        return renderer(image, false);
+    }
+
+    /**
+     * Creates an instance of an ImageRenderer only for static pictures
+     * @param image image to use
+     * @param absolute disabled flush and release methods, by default false
+     * @return built instance
+     */
+    public static ImageRenderer renderer(BufferedImage image, boolean absolute) {
+        if (absolute) return new ImageRenderer(image);
         return new ImageRenderer(image) {
             @Override public void flush() {}
             @Override public void release() {}
@@ -106,7 +112,7 @@ public class ImageAPI {
      *                 By default, false
      * @return built instance
      */
-    public static ImageRenderer imageRenderer(GifDecoder image, boolean ...absolute) {
+    public static ImageRenderer renderer(GifDecoder image, boolean ...absolute) {
         if (absolute.length != 0 && absolute[0]) return new ImageRenderer(image);
         return new ImageRenderer(image) {
             @Override public void flush() {}
@@ -120,8 +126,8 @@ public class ImageAPI {
         LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
         ClassLoader cl = ImageAPI.class.getClassLoader();
 
-        IMG_LOADING = imageRenderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif")), true);
-        IMG_VLC_FAIL = imageRenderer(JarTool.readImage(cl, "/pictures/videolan/failed.png"), true);
-        IMG_VLC_FAIL_LAND = imageRenderer(JarTool.readImage(cl, "/pictures/videolan/failed-land.png"), true);
+        IMG_LOADING = renderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif")), true);
+        IMG_VLC_FAIL = renderer(JarTool.readImage(cl, "/pictures/videolan/failed.png"), true);
+        IMG_VLC_FAIL_LAND = renderer(JarTool.readImage(cl, "/pictures/videolan/failed-land.png"), true);
     }
 }

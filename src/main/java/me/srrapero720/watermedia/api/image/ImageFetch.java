@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.lib720.watermod.safety.TryCore;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.URLApi;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.CacheCore;
@@ -86,7 +85,7 @@ public class ImageFetch {
                     int status = gif.read(in);
 
                     if (status == GifDecoder.STATUS_OK) {
-                        if (successful != null) successful.run(ImageAPI.imageRenderer(gif));
+                        if (successful != null) successful.run(ImageAPI.renderer(gif));
                     } else {
                         LOGGER.error(IT, "Failed to read gif: {}", status);
                         throw new GifDecodingException();
@@ -95,7 +94,7 @@ public class ImageFetch {
                     try {
                         BufferedImage image = ImageIO.read(in);
                         if (image != null) {
-                            if (successful != null) successful.run(ImageAPI.imageRenderer(image));
+                            if (successful != null) successful.run(ImageAPI.renderer(image));
                         }
                     } catch (IOException e1) {
                         LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);

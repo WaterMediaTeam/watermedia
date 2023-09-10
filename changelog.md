@@ -1,41 +1,40 @@
+# UPDATE 2.0.4
+- API: Mitosis on ImageAPI#imageRenderer() and renamed to renderer()
+
 # UPDATE 2.0.3
 - Fixed NPE when url is null or empty
 - Reduced arguments for VLC and make console output quiet
 
 # UPDATE 2.0.2
-just a update
-
-## CHANGES
 - Added loggers for mod version and missing pre-installation of VLC
 - Reduced async priority of image loading (slow loading, more fps)
 - Fixed some stun lag loading images if url is null or empty
 - Fixed Audio tracks get cut a few seconds before reaching the track end
-
-## API: CHANGES
-- Deprecated BasePlayer (use SyncBasePlayer)
-- Downgrade and re-patched VLCJ library to 4.7.x
-- Deprecated IMediaLoader#classLoader() method
-- Deprecated WaterMediaAPI#url_registerFixer()
-- Deprecated entire ImageAPI inside WaterMediaAPI
-- Deprecated entire URLApi inside WaterMediaAPI
-- Fixed custom loading gif API is broken in deprecated API
-- Now can be released ImageCache (please don't) even if it wasn't ready
-- Added SyncMusicPlayer
+- API: Deprecated BasePlayer (use SyncBasePlayer)
+- API: Downgrade and re-patched VLCJ library to 4.7.x
+- API: Deprecated IMediaLoader#classLoader() method
+- API: Deprecated WaterMediaAPI#url_registerFixer()
+- API: Deprecated entire ImageAPI inside WaterMediaAPI
+- API: Deprecated entire URLApi inside WaterMediaAPI
+- API: Fixed custom loading gif API is broken in deprecated API
+- API: Now can be released ImageCache (please don't) even if it wasn't ready
+- API: Added SyncMusicPlayer
 
 # UPDATE 2.0.1
-- Removed modfeatures (now can start on 1.19+)
+- Removed mod features (now can start on forge 1.19+)
 
 # BREAKING UPDATE 2.0.0
-This update breaks dependency mods, only update when all mods depending on it releases a compatibility update
+This update breaks dependency mods, 
+only update when all mods depending on it releases a compatibility update
 
 ## FEATURES
 - Code ported to JAVA 8
 - Extended support of old versions of Minecraft (Now supported versions are on MinecraftForge 1.12.2 ~ 1.20.x AND FABRIC 1.16.5 ~ 1.20.x)
 - FABRIC support is back (but this time 100%)
-- Enhanced Boostrap
+- Enhanced Bootstrap
 
 ## API: FEATURES
-- Rewrite of Image API
+- Rewrite of ImageAPI
   - ImageCache: friendly cache system for already loaded pictures.
   - ImageFetch: Async class to fetch pictures from internet. now uses ExecutorServices to avoid any kind of sync bug
   - ImageRenderer: container of a picture, can be a gif or just a picture.
@@ -46,10 +45,10 @@ This update breaks dependency mods, only update when all mods depending on it re
     - SyncVideoPlayer: Extends SyncBasePlayer; includes GL rendering tools to process IntBuffers
 - WaterMediaAPI: Renamed all methods. Now all starts with category_action(arguments)
 - Removed special VLC failed pictures for Windows users
-- URLFixers: Added NothingSpecialFixers
-  - NSFixers are "nothing special." These are disabled by default in our API and other modders should add the capability to enable it by the end user
-  - NSFixers can be enabled on PlayerAPI but is restricted on ImageAPI
-  - These fixers add compatibility to pages with a not much acceptance by the people. BE AWARE
+- URLApi: Added Special Fixers
+  - Special Fixers are "nothing special." These are disabled by default in our API, and other modders should add the capability to enable it by the end user
+  - Special Fixers can be enabled on PlayerAPI but are restricted on ImageAPI
+  - These fixers add compatibility to pages with not much acceptance by the people. BE AWARE
 
 ## CHANGES
 - Added more VLC binaries

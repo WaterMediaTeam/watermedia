@@ -35,7 +35,7 @@ public class ImageRenderer {
     }
 
     /**
-     * Use instead {@link ImageAPI#imageRenderer(GifDecoder, boolean...)}
+     * Use instead {@link ImageAPI#renderer(GifDecoder, boolean...)}
      * @param decoder picture to use
      */
     @Deprecated
