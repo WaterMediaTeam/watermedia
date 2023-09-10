@@ -5,7 +5,7 @@ import java.net.URL;
 
 /**
  * Base class for URL Fixing...
- * To make your own fixer you should use services.<br>
+ * To make your own fixer, you should use services.<br>
  * Create a file in:
  * <code>resources/META-INF/services/</code><br>
  * named:
