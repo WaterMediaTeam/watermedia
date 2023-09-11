@@ -55,7 +55,7 @@ public class ImageCache {
 
     @Deprecated
     public ImageCache(ImageRenderer renderer) {
-        this.url = null;
+        this.url = "";
         this.fetch = null;
         this.renderThreadEx = null;
         this.renderer = renderer;

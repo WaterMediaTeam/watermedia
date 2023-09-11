@@ -1,3 +1,6 @@
+# UPDATE 2.0.5
+- Fixed NPE trying to access to url var in some dependant mods
+
 # UPDATE 2.0.4
 - API: Mitosis on ImageAPI#imageRenderer() and renamed to renderer()
 - Reduced MediaPlayer#release priority
