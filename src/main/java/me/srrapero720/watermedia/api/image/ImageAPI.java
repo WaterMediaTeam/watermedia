@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -50,9 +51,16 @@ public class ImageAPI {
 
             renderer = renderer(FileTool.readGif(modConfig.toAbsolutePath()));
             LOADING_CACHE.put(modId, renderer);
+            return renderer;
+        } else {
+            File modConfigParent = modConfig.getParent().toFile();
+            if (!modConfigParent.exists()) {
+                LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
+                if (!modConfigParent.mkdirs()) LOGGER.error("Cannot create dir '{}'", modConfigParent.toString());
+            } else {
+                LOGGER.error(IT, "Founded directories but custom loading gif is missing");
+            }
         }
-        if (modConfig.getParent().toFile().mkdirs()) LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
-        else LOGGER.error(IT, "Custom loading gif not found, directories cannot be created");
         return IMG_LOADING;
     }
 

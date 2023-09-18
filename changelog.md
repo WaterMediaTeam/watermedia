@@ -1,5 +1,9 @@
+# UPDATE 2.0.6
+- Fixed "missing vlc binaries" logger message is always thrown even if binaries are included
+- Fixed "cannot create directories" for custom loading gif API
+
 # UPDATE 2.0.5
-- Fixed NPE trying to access to url var in some dependant mods
+- Fixed NPE trying to access to url var in some dependent mods
 
 # UPDATE 2.0.4
 - API: Mitosis on ImageAPI#imageRenderer() and renamed to renderer()

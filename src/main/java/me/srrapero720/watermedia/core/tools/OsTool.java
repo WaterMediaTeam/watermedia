@@ -38,6 +38,8 @@ public enum OsTool {
     // STATIC
     private static final Marker IT = MarkerManager.getMarker("Tools");
     private static final OsTool ARCH = OsTool.getArch();
+
+    @SuppressWarnings("DataFlowIssue")
     public static OsTool getArch() {
         if (ARCH != null) return ARCH;
         try {
@@ -63,10 +65,12 @@ public enum OsTool {
                     return DUMMY;
             }
         } finally {
-            LOGGER.error(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
-            LOGGER.error(IT, "WATERMeDIA doesn't contain VLC binaries for your OS. You may need to manually install it");
-            LOGGER.error(IT, "Find out VLC 3 for your operative system and architecture here: https://www.videolan.org/vlc/");
-            LOGGER.error(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
+            if (!ARCH.wrapped) {
+                LOGGER.error(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
+                LOGGER.error(IT, "WATERMeDIA doesn't contain VLC binaries for your OS. You may need to manually install it");
+                LOGGER.error(IT, "Find out VLC 3 for your operative system and architecture here: https://www.videolan.org/vlc/");
+                LOGGER.error(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
+            }
         }
     }
 }
