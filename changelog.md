@@ -1,3 +1,6 @@
+# UPDATE 2.0.7
+- Fixed crash on startup trying to get OS
+
 # UPDATE 2.0.6
 - Fixed "missing vlc binaries" logger message is always thrown even if binaries are included
 - Fixed "cannot create directories" for custom loading gif API
