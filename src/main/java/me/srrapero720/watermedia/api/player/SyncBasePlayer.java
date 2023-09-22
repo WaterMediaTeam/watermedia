@@ -21,7 +21,6 @@ import org.apache.logging.log4j.MarkerManager;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@Experimental
 public abstract class SyncBasePlayer {
     protected static final Marker IT = MarkerManager.getMarker("SyncMediaPlayer");
     protected static final WaterMediaPlayerEventListener LISTENER = new WaterMediaPlayerEventListener();
@@ -83,7 +82,7 @@ public abstract class SyncBasePlayer {
 
     public void start(CharSequence url) { this.start(url, new String[0]); }
     public void start(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(() -> {
+        ThreadCore.thread(3, () -> {
             if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
@@ -91,7 +90,7 @@ public abstract class SyncBasePlayer {
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(() -> {
+        ThreadCore.thread(3, () -> {
             if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
