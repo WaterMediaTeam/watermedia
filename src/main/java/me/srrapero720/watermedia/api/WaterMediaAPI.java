@@ -7,6 +7,7 @@ import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.image.ImageFetch;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.player.SyncBasePlayer;
 import me.srrapero720.watermedia.api.player.SyncVideoPlayer;
 import me.srrapero720.watermedia.api.url.URLApi;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
@@ -199,7 +200,7 @@ public final class WaterMediaAPI {
     }
 
     /**
-     * Used by default internally in the API by {@link BasePlayer} and {@link ImageFetch}
+     * Used by default internally in the API by {@link SyncBasePlayer} and {@link ImageFetch}
      * Recommended usage just in API custom abstraction
      * IMPORTANT: NothingSpecialFixers are disabled on this method
      * @param str String to patch
@@ -213,7 +214,7 @@ public final class WaterMediaAPI {
 
 
     /**
-     * Used by default internally in the API by {@link BasePlayer} and {@link ImageFetch}
+     * Used by default internally in the API by {@link SyncBasePlayer} and {@link ImageFetch}
      * Recommended usage just in API custom abstraction
      * @param str String to patch
      * @param ns Use NothingSpecial fixers too
@@ -251,7 +252,7 @@ public final class WaterMediaAPI {
      * Suggestion: Use the same VLC arguments for logging but with other filename
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
      * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link BasePlayer} can accept factory for new instances
+     * @return a PlayerFactory to create custom VLC players. {@link SyncBasePlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory vlc_createFactory(String[] vlcArgs) {
         NativeDiscovery discovery = new NativeDiscovery();
