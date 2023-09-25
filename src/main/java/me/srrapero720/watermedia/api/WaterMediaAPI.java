@@ -7,8 +7,7 @@ import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.image.ImageFetch;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.api.player.BasePlayer;
-import me.srrapero720.watermedia.api.player.VideoPlayer;
+import me.srrapero720.watermedia.api.player.SyncVideoPlayer;
 import me.srrapero720.watermedia.api.url.URLApi;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.VideoLanCore;
@@ -186,7 +185,7 @@ public final class WaterMediaAPI {
     public static String[] url_getFixersPlatform(boolean includeSpecials) { return URLApi.getFixersPlatforms(includeSpecials); }
 
     /**
-     * This method is used by default on {@link VideoPlayer#start(CharSequence, String[])}
+     * This method is used by default on {@link SyncVideoPlayer#start(CharSequence, String[])}
      * Is not recommended external usages
      * @param stringUrl Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
