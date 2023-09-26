@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.lib720.watermod.safety.TryCore;
-import me.srrapero720.watermedia.api.url.URLApi;
+import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.CacheCore;
 import me.lib720.watermod.concurrent.ThreadCore;
@@ -72,7 +72,7 @@ public class ImageFetch {
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            URLFixer.Result result = URLApi.fixURL(url);
+            URLFixer.Result result = UrlAPI.fixURL(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
             if (result.assumeVideo) throw new NoPictureException();
 

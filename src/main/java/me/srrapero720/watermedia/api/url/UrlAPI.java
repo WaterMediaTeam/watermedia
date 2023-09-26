@@ -15,7 +15,7 @@ import java.util.*;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class URLApi {
+public class UrlAPI {
     private static final Marker IT = MarkerManager.getMarker("URLApi");
     private static final List<URLFixer> FIXERS = new ArrayList<>();
 

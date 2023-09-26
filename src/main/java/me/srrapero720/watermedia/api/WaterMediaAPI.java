@@ -7,9 +7,12 @@ import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.image.ImageFetch;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.math.MathAPI;
+import me.srrapero720.watermedia.api.player.PlayerAPI;
 import me.srrapero720.watermedia.api.player.SyncBasePlayer;
 import me.srrapero720.watermedia.api.player.SyncVideoPlayer;
-import me.srrapero720.watermedia.api.url.URLApi;
+import me.srrapero720.watermedia.api.rendering.RenderAPI;
+import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.VideoLanCore;
 import me.srrapero720.watermedia.core.tools.FileTool;
@@ -33,8 +36,9 @@ import java.util.Map;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+@Deprecated
 public final class WaterMediaAPI {
-    private static final Marker IT = MarkerManager.getMarker("API");
+    public static final Marker IT = MarkerManager.getMarker("API");
 
     /**
      * Use instead {@link ImageAPI#loadingGif()}
@@ -89,7 +93,9 @@ public final class WaterMediaAPI {
      *
      * @param ticks Minecraft Tick count
      * @return ticks converted to MS
+     * @deprecated use instead {@link MathAPI#tickToMs(int)}
      */
+    @Deprecated
     public static long math_ticksToMillis(int ticks) { return ticks * 50L; }
 
     /**
@@ -98,7 +104,9 @@ public final class WaterMediaAPI {
      *
      * @param ms Time in milliseconds
      * @return Milliseconds converted to Ticks
+     * @deprecated Use instead {@link MathAPI#msToTick(long)}
      */
+    @Deprecated
     public static int math_millisToTicks(long ms) { return (int) (ms / 50L); }
 
     /**
@@ -127,8 +135,10 @@ public final class WaterMediaAPI {
      * @param r Red
      * @param g Green
      * @param b Blue
+     * @deprecated Use instead {@link MathAPI#getColorARGB(int, int, int, int)}
      * @return HEX color
      */
+    @Deprecated
     public static int math_colorARGB(int a, int r, int g, int b) { return (a << 24) | (r << 16) | (g << 8) | b; }
 
     /**
@@ -150,7 +160,7 @@ public final class WaterMediaAPI {
      * Check if String is a valid URL
      * @param url string to check
      * @return if is valid.
-     * @deprecated use instead {@link URLApi#isValid(String)}
+     * @deprecated use instead {@link UrlAPI#isValid(String)}
      */
     @Deprecated
     public static boolean url_isValid(String url) { return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false); }
@@ -171,30 +181,30 @@ public final class WaterMediaAPI {
      * List of all supported platforms by WATERMeDIA.
      * By default, this method doesn't include NothingSpecialFixers
      * @return array of all platforms names unsorted
-     * @deprecated use instead {@link URLApi#getFixersPlatforms()}
+     * @deprecated use instead {@link UrlAPI#getFixersPlatforms()}
      */
     @Deprecated
-    public static String[] url_getFixersPlatform() {return URLApi.getFixersPlatforms(false); }
+    public static String[] url_getFixersPlatform() {return UrlAPI.getFixersPlatforms(false); }
 
     /**
      * List of all supported platforms by WATERMeDIA
      * @param includeSpecials should list Special fixers too?
      * @return array of all platforms names unsorted
-     * @deprecated use instead {@link URLApi#getFixersPlatforms(boolean)}
+     * @deprecated use instead {@link UrlAPI#getFixersPlatforms(boolean)}
      */
     @Deprecated
-    public static String[] url_getFixersPlatform(boolean includeSpecials) { return URLApi.getFixersPlatforms(includeSpecials); }
+    public static String[] url_getFixersPlatform(boolean includeSpecials) { return UrlAPI.getFixersPlatforms(includeSpecials); }
 
     /**
      * This method is used by default on {@link SyncVideoPlayer#start(CharSequence, String[])}
      * Is not recommended external usages
      * @param stringUrl Media URL to patch
      * @return Media URL patched to be fully compatible with VLC (static resource)
-     * @deprecated use {@link URLApi#fixURL(String)} instead, this method is going to be removed on 2.1.0
+     * @deprecated use {@link UrlAPI#fixURL(String)} instead, this method is going to be removed on 2.1.0
      */
     @Deprecated
     public static URL url_toURL(String stringUrl) {
-        URLFixer.Result result = URLApi.fixURL(stringUrl);
+        URLFixer.Result result = UrlAPI.fixURL(stringUrl);
         if (result != null) return result.url;
         return null;
     }
@@ -205,7 +215,7 @@ public final class WaterMediaAPI {
      * IMPORTANT: NothingSpecialFixers are disabled on this method
      * @param str String to patch
      * @return result data with URL and type of it
-     * @deprecated Use instead {@link URLApi#fixURL(String)}
+     * @deprecated Use instead {@link UrlAPI#fixURL(String)}
      */
     @Deprecated
     public static URLFixer.Result url_fixURL(String str) {
@@ -219,11 +229,11 @@ public final class WaterMediaAPI {
      * @param str String to patch
      * @param ns Use NothingSpecial fixers too
      * @return result data with URL and type of it
-     * @deprecated Use instead {@link URLApi#fixURL(String, boolean)}
+     * @deprecated Use instead {@link UrlAPI#fixURL(String, boolean)}
      */
     @Deprecated
     public static URLFixer.Result url_fixURL(String str, boolean ns) {
-        return URLApi.fixURL(str, ns);
+        return UrlAPI.fixURL(str, ns);
     }
 
     /**
@@ -231,17 +241,19 @@ public final class WaterMediaAPI {
      * Only supports queries from {@link URL#getQuery()}
      * @param query query string
      * @return map with all values
-     * @deprecated use instead {@link URLApi#parseQuery(String)}
+     * @deprecated use instead {@link UrlAPI#parseQuery(String)}
      */
     @Deprecated
     public static Map<String, String> url_parseQuery(String query) {
-        return URLApi.parseQuery(query);
+        return UrlAPI.parseQuery(query);
     }
 
     /**
      * Gives you the default VLC MediaPlayerFactory created by API
      * @return WATERMeDIA's default MediaPlayerFactory
+     * @deprecated Use instead {@link PlayerAPI#getVLCFactory()}
      */
+    @Deprecated
     public static MediaPlayerFactory vlc_getFactory() {
         return VideoLanCore.factory();
     }
@@ -253,6 +265,8 @@ public final class WaterMediaAPI {
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
      * @param vlcArgs arguments to make another VLC instance
      * @return a PlayerFactory to create custom VLC players. {@link SyncBasePlayer} can accept factory for new instances
+     * @deprecated No replacement, is better to use WaterMedia's default VLC factory
+     *
      */
     public static MediaPlayerFactory vlc_createFactory(String[] vlcArgs) {
         NativeDiscovery discovery = new NativeDiscovery();
@@ -272,7 +286,9 @@ public final class WaterMediaAPI {
     /**
      * Check if VLC is loaded and ready to be used
      * @return if VLC was loaded
+     * @deprecated Use instead {@link PlayerAPI#isReady()}
      */
+    @Deprecated
     public static boolean vlc_isReady() { return VideoLanCore.factory() != null; }
 
     /**
@@ -281,8 +297,10 @@ public final class WaterMediaAPI {
      * @param image image to process
      * @param width buffer width (can be image width)
      * @param height buffer height (can be image height)
+     * @deprecated use instead {@link RenderAPI#applyBuffer(BufferedImage, int, int)}
      * @return texture id for OpenGL
      */
+    @Deprecated
     public static int gl_genTexture(BufferedImage image, int width, int height) {
         int[] pixels = new int[width * height];
         image.getRGB(0, 0, width, height, pixels, 0, width);
@@ -339,8 +357,10 @@ public final class WaterMediaAPI {
      * @param videoWidth buffer width
      * @param videoHeight buffer height
      * @param firstFrame if was the first frame
+     * @deprecated use instead {@link RenderAPI#applyBuffer(IntBuffer, int, int, int, boolean)}
      * @return same texture ID gave first
      */
+    @Deprecated
     public static int gl_applyBuffer(IntBuffer videoBuffer, int videoTexture, int videoWidth, int videoHeight, boolean firstFrame) {
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
@@ -359,8 +379,10 @@ public final class WaterMediaAPI {
      * @param videoWidth buffer width
      * @param videoHeight buffer height
      * @param firstFrame if was the first frame
+     * @deprecated use instead {@link RenderAPI#applyBuffer(ByteBuffer, int, int, int, boolean)}
      * @return same texture ID gave first
      */
+    @Deprecated
     public static int gl_applyBuffer(ByteBuffer videoBuffer, int videoTexture, int videoWidth, int videoHeight, boolean firstFrame) {
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);

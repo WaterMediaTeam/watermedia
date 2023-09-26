@@ -5,7 +5,7 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.api.url.URLApi;
+import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.core.AssetsCore;
 import me.srrapero720.watermedia.core.CacheCore;
 import me.srrapero720.watermedia.core.VideoLanCore;
@@ -98,8 +98,8 @@ public class WaterMedia {
 		TryCore.simple(() -> ImageAPI.init(this.loader), e -> onFailed(ImageAPI.class.getSimpleName(), e));
 
 		// URL API
-		LOGGER.info(IT, "Loading {}", URLApi.class.getSimpleName());
-		TryCore.simple(() -> URLApi.init(this.loader), e -> onFailed(URLApi.class.getSimpleName(), e));
+		LOGGER.info(IT, "Loading {}", UrlAPI.class.getSimpleName());
+		TryCore.simple(() -> UrlAPI.init(this.loader), e -> onFailed(UrlAPI.class.getSimpleName(), e));
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());

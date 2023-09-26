@@ -1,7 +1,12 @@
 package me.srrapero720.watermedia.api.player;
 
+import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
-import me.srrapero720.watermedia.api.url.URLApi;
+import me.srrapero720.watermedia.api.url.UrlAPI;
+import me.srrapero720.watermedia.api.url.fixers.URLFixer;
+import me.srrapero720.watermedia.core.tools.annotations.Experimental;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.InfoApi;
@@ -12,12 +17,6 @@ import uk.co.caprica.vlcj.player.base.State;
 import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
-import me.lib720.watermod.concurrent.ThreadCore;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.core.tools.annotations.Experimental;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -58,8 +57,8 @@ public abstract class SyncBasePlayer {
      * @param bufferFormatCallback creates a buffer for the frame
      */
     protected void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        if (WaterMediaAPI.vlc_isReady() && raw == null) {
-            if (factory == null) factory = WaterMediaAPI.vlc_getFactory();
+        if (PlayerAPI.isReady() && raw == null) {
+            if (factory == null) factory = PlayerAPI.getVLCFactory();
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(LISTENER);
         } else {
@@ -71,7 +70,7 @@ public abstract class SyncBasePlayer {
     private boolean rpa(CharSequence url) {
         if (raw == null) return false;
         return TryCore.withReturn(defaultVar -> {
-            URLFixer.Result result = URLApi.fixURL(url.toString(), sfixer);
+            URLFixer.Result result = UrlAPI.fixURL(url.toString(), sfixer);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
             this.url = result.url.toString();
@@ -166,6 +165,10 @@ public abstract class SyncBasePlayer {
     public boolean isEnded() {
         if (raw == null) return false;
         return raw.mediaPlayer().status().state().equals(State.ENDED);
+    }
+    public boolean isMuted() {
+        if (raw == null) return false;
+        return raw.mediaPlayer().audio().isMute();
     }
     public boolean isBroken() {
         if (raw == null) return true;

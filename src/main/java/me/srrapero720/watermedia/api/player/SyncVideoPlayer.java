@@ -1,13 +1,13 @@
 package me.srrapero720.watermedia.api.player;
 
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.lib720.watermod.reflect.ReflectTool;
-import me.srrapero720.watermedia.core.tools.annotations.Experimental;
+import me.srrapero720.watermedia.api.rendering.RenderAPI;
+import me.srrapero720.watermedia.api.rendering.memory.MemoryTracking;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -33,7 +33,12 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
     protected final AtomicBoolean forceFirstFrame = new AtomicBoolean(false);
 
+    public SyncVideoPlayer(Executor playerThreadEx) { this(null, playerThreadEx, MemoryTracking::create); }
+    public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(null, playerThreadEx, MemoryTracking::create); }
+
+    @Deprecated
     public SyncVideoPlayer(Executor playerThreadEx, BufferHelper bufferHelper) { this(null, playerThreadEx, bufferHelper); }
+    @Deprecated
     public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, BufferHelper bufferHelper) {
         super();
         this.playerThreadEx = playerThreadEx;
@@ -73,7 +78,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     }
 
     /**
-     * Forces {@link WaterMediaAPI#gl_applyBuffer(IntBuffer, int, int, int, boolean)} to always use glTexImage2D instead of glTexSubImage2D
+     * Forces {@link RenderAPI#applyBuffer(ByteBuffer, int, int, int, boolean)} to always use glTexImage2D instead of glTexSubImage2D
      * By default for performance purposes we use glTexSubImage2D,
      * but it may cause rendering issues on Minecraft Screens
      * @param forced force always glTexImage2D
@@ -85,7 +90,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         renderLock.lock();
         try {
             if (updateFrame.compareAndSet(true, false))
-                WaterMediaAPI.gl_applyBuffer(buffer, texture, width, height, updateFirstFrame.compareAndSet(true, forceFirstFrame.get()));
+                RenderAPI.applyBuffer(buffer, texture, width, height, updateFirstFrame.compareAndSet(true, forceFirstFrame.get()));
             return texture;
         } finally {
             renderLock.unlock();
@@ -110,5 +115,6 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         super.release();
     }
 
-    public interface BufferHelper { ByteBuffer create(int size); }
+    @Deprecated
+    public interface BufferHelper { @Deprecated ByteBuffer create(int size); }
 }

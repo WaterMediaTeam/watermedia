@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -87,10 +87,10 @@ public class ImageRenderer {
     public int texture(int index) {
         if (this.textures[index] == -1) {
             if (decoder != null) {
-                this.textures[index] = WaterMediaAPI.gl_genTexture(this.decoder.getFrame(index), width, height);
+                this.textures[index] = RenderAPI.applyBuffer(this.decoder.getFrame(index), width, height);
                 if (--this.remaining <= 0) decoder = null;
             } else if (image != null) {
-                this.textures[index] = WaterMediaAPI.gl_genTexture(this.image, width, height);
+                this.textures[index] = RenderAPI.applyBuffer(this.image, width, height);
             }
         }
         return textures[index];

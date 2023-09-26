@@ -1,5 +1,14 @@
 # UPDATE 2.0.7
-- Fixed crash on startup trying to get OS
+- Fixed: Crash on startup trying to get OS (from archived version 2.0.6)
+- Change: Deprecated entire WaterMediaAPI class (all replacements are documented in class methods)
+- Breaking Change: Renamed URLApi to UrlAPI
+- Change: Enhanced JavaDoc for IEnvLoader
+- Feature: RenderAPI - Provides a cross-version rendering tool for OpenGL (from WaterMediaAPI) ``[EXPERIMENTAL]``
+  - Includes a basic MemoryTracker for ByteBuffers
+  - Deprecates BufferHelper on SyncVideoPlayer
+- Feature: MathAPI - Provides shortcuts for any special calculation (from WaterMediaAPI)
+- Feature: PlayerAPI - Provides all tools for MediaPlayer management (from WaterMediaAPI)
+- Feature: isMute() added in SyncBasePlayer
 
 # UPDATE 2.0.6
 - Fixed "missing vlc binaries" logger message is always thrown even if binaries are included

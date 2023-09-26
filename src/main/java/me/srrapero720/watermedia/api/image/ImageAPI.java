@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class ImageAPI {
-    private static final Marker IT = MarkerManager.getMarker("ImageAPI");
+    public static final Marker IT = MarkerManager.getMarker("API");
 
     // IMAGE STORAGE
     private static final Map<String, ImageRenderer> LOADING_CACHE = new HashMap<>();

@@ -1,13 +1,14 @@
 package me.srrapero720.watermedia.core;
 
-import uk.co.caprica.vlcj.VideoLan4J;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.player.SyncBasePlayer;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import uk.co.caprica.vlcj.VideoLan4J;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -42,7 +44,7 @@ public class VideoLanCore {
         VideoLan4J.init(dir.toAbsolutePath().resolve("videolan/"));
 
         try {
-            FACTORY = WaterMediaAPI.vlc_createFactory(init$readArguments(loader, logs));
+            FACTORY = init$createFactory(init$readArguments(loader, logs));
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);
         }
@@ -74,5 +76,28 @@ public class VideoLanCore {
         }
 
         if (!logFile.delete()) LOGGER.error(IT, "Cannot delete logfile");
+    }
+
+    /**
+     * Use your own VLCArgs at your own risk
+     * By default this method makes a ReleaseHook to release everything after close Minecraft
+     * Suggestion: Use the same VLC arguments for logging but with other filename
+     * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
+     * @param vlcArgs arguments to make another VLC instance
+     * @return a PlayerFactory to create custom VLC players. {@link SyncBasePlayer} can accept factory for new instances
+     */
+    public static MediaPlayerFactory init$createFactory(String[] vlcArgs) {
+        NativeDiscovery discovery = new NativeDiscovery();
+        if (discovery.discover()) {
+            MediaPlayerFactory factory = new MediaPlayerFactory(discovery, vlcArgs);
+            LOGGER.info(IT, "New instance of VLC loaded from '{}' with the next args:\n{}", discovery.discoveredPath(), Arrays.toString(vlcArgs));
+            Runtime.getRuntime().addShutdownHook(new Thread(factory::release));
+            return factory;
+        } else {
+            LOGGER.error(IT, "VLC was not found on your system.");
+        }
+
+        LOGGER.fatal(IT, "Cannot create MediaPlayerFactory instance");
+        return null;
     }
 }
