@@ -1,8 +1,9 @@
 # UPDATE 2.0.7
 - Fixed: Crash on startup trying to get OS (from archived version 2.0.6)
 - Change: Deprecated entire WaterMediaAPI class (all replacements are documented in class methods)
-- Breaking Change: Renamed URLApi to UrlAPI
 - Change: Enhanced JavaDoc for IEnvLoader
+- Change: Reduced Thread priority to SyncBasePlayer#start()
+- Breaking Change: Renamed URLApi to UrlAPI
 - Feature: RenderAPI - Provides a cross-version rendering tool for OpenGL (from WaterMediaAPI) ``[EXPERIMENTAL]``
   - Includes a basic MemoryTracker for ByteBuffers
   - Deprecates BufferHelper on SyncVideoPlayer
