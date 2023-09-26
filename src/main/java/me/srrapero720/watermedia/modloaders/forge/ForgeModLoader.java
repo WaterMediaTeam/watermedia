@@ -18,7 +18,6 @@ public class ForgeModLoader implements IMediaLoader {
 
     private Path PS;
     private Path TMP;
-    private ClassLoader CL;
 
     public ForgeModLoader() {
         LOGGER.info(IT, "Starting...");
