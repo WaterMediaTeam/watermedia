@@ -35,7 +35,6 @@ public class ImgurFixerV3 extends URLFixer {
             String tag = ps[ps.length - 2];
 
             if (path.startsWith("/gallery/") || path.startsWith("/a/")) {
-                System.out.println("Id is:" + id + " and tag is " + tag);
                 Response<ImgurData<ImgurAlbumTagData>> res = ImgurAPIv3.NET.getImageFromAlbum(id).execute();
                 ImgurAlbumTagData data;
                 if (res.isSuccessful() && res.body() != null && (data = res.body().data) != null && !data.images.isEmpty()) {
