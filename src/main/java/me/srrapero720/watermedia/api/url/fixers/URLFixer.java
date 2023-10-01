@@ -67,6 +67,16 @@ public abstract class URLFixer {
             this.assumeVideo = assumeVideo;
             this.assumeStream = assumeStream;
         }
+
+        @Override
+        public String toString() {
+            return "Result{" +
+                    "url=" + url +
+                    ", quality=" + quality +
+                    ", assumeStream=" + assumeStream +
+                    ", assumeVideo=" + assumeVideo +
+                    '}';
+        }
     }
 
     public enum Quality {
