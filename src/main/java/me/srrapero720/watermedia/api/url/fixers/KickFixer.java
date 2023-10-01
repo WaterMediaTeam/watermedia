@@ -25,16 +25,16 @@ public class KickFixer extends URLFixer {
         super.patch(url, preferQuality);
 
         if (url.getPath().contains("/video/")) {
-             Call<KickVideo> call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));
              try {
+                 Call<KickVideo> call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));
                  Response<KickVideo> res = call.execute();
                  if (res.isSuccessful() && res.body() != null) return new Result(new URL(res.body().url), true, false);
              } catch (Exception e) {
                  throw new FixingURLException(url.toString(), e);
              }
         } else {
-            Call<KickChannel> call = KickAPI.NET.getChannelInfo(url.getPath().replace("/", ""));
             try {
+                Call<KickChannel> call = KickAPI.NET.getChannelInfo(url.getPath().replace("/", ""));
                 Response<KickChannel> res = call.execute();
                 if (res.isSuccessful() && res.body() != null) return new Result(new URL(res.body().url), true, true);
             } catch (Exception e) {
