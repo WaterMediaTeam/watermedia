@@ -268,6 +268,7 @@ public final class WaterMediaAPI {
      * @deprecated No replacement, is better to use WaterMedia's default VLC factory
      *
      */
+    @Deprecated
     public static MediaPlayerFactory vlc_createFactory(String[] vlcArgs) {
         NativeDiscovery discovery = new NativeDiscovery();
         if (discovery.discover()) {
