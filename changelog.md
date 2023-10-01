@@ -10,6 +10,7 @@
 - Feature: MathAPI - Provides shortcuts for any special calculation (from WaterMediaAPI)
 - Feature: PlayerAPI - Provides all tools for MediaPlayer management (from WaterMediaAPI)
 - Feature: isMute() added in SyncBasePlayer
+- Feature: added URLFixer for Imgur.com (direct imgur support)
 
 # UPDATE 2.0.6
 - Fixed "missing vlc binaries" logger message is always thrown even if binaries are included

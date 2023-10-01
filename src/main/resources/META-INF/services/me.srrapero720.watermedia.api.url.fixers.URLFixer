@@ -1,4 +1,5 @@
 # NORMAL FIXERS
+me.srrapero720.watermedia.api.url.fixers.ImgurFixerV3
 me.srrapero720.watermedia.api.url.fixers.OnedriveFixer
 me.srrapero720.watermedia.api.url.fixers.DriveFixer
 me.srrapero720.watermedia.api.url.fixers.YoutubeFixer
