@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.network.ph;
+package me.srrapero720.watermedia.api.network.pornhub;
 
 public class VideoQuality {
 

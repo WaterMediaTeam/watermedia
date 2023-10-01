@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.url.fixers.special;
 
-import me.srrapero720.watermedia.api.network.ph.PHubAPI;
-import me.srrapero720.watermedia.api.network.ph.VideoQuality;
+import me.srrapero720.watermedia.api.network.pornhub.PornHubAPI;
+import me.srrapero720.watermedia.api.network.pornhub.VideoQuality;
 
 import java.net.URL;
 import java.util.List;
@@ -22,7 +22,7 @@ public class PHFixer extends SpecialFixer {
     public Result patch(URL url, Quality prefQuality) throws FixingURLException {
         super.patch(url, prefQuality);
         try {
-            List<VideoQuality> videos = PHubAPI.getVideo(url.toString());
+            List<VideoQuality> videos = PornHubAPI.getVideo(url.toString());
             return new Result(new URL(videos.get(0).getUri()), true, false);
         } catch (Exception e) {
             throw new FixingURLException(url.toString(), e);
