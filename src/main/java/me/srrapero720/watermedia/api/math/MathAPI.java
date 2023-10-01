@@ -69,7 +69,7 @@ public class MathAPI {
 
     public static int floorMod(long x, int y) {
         // Result cannot overflow the range of int.
-        return (int)floorMod(x, (long)y);
+        return (int) floorMod(x, (long)y);
     }
 
     /**
