@@ -34,10 +34,11 @@ public class ImageAPI {
 
     // LOADING GIFs
     public static ImageRenderer loadingGif() { return IMG_LOADING; }
+
     /**
      * Search for a custom loading gif for a mod, using mod id for unique storage.<br><br>
-     * Your picture is stored in memory CACHE, but is preferred to save it in a static and constant
-     * variable to skip all method logic
+     * Your picture is stored in memory CACHE, but is preferred to save it in a static constant
+     * variable to skip all IO logic
      * @param modId unique identifier (preferred of a mod)
      * @return instance of the picture in a renderer
      */
@@ -47,7 +48,10 @@ public class ImageAPI {
 
         if (Files.exists(modConfig)) {
             ImageRenderer renderer = LOADING_CACHE.get(modId);
-            if (renderer != null) return renderer;
+            if (renderer != null) {
+                LOGGER.warn(IT, "Founded cached reference of '{}' loading gif, consider storing it in a STATIC param", modId);
+                return renderer;
+            }
 
             renderer = renderer(FileTool.readGif(modConfig.toAbsolutePath()));
             LOADING_CACHE.put(modId, renderer);
