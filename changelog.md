@@ -1,17 +1,20 @@
 # UPDATE 2.0.7
-NOTE: Support for NeoForge 1.20.2 is not planned until they got into a more stable development
-- Fixed: Crash on startup trying to get OS (from archived version 2.0.6)
+NOTE: Support for NeoForge 1.20.2 is not planned until they got into a more stable build
+- Fixed [#26](https://github.com/SrRapero720/watermedia/issues/23): Crash on startup trying to get OS (from archived version 2.0.6)
+- Fixed: new instances of MediaPlayerFactory doesn't log from where it is loaded
+- Breaking Change: Renamed URLApi to UrlAPI
 - Change: Deprecated entire WaterMediaAPI class (all replacements are documented in class methods)
+- Change: Deprecated SyncMediaPlayer constructors
 - Change: Enhanced JavaDoc for IEnvLoader
 - Change: Reduced Thread priority to SyncBasePlayer#start()
-- Breaking Change: Renamed URLApi to UrlAPI
 - Feature: RenderAPI - Provides a cross-version rendering tool for OpenGL (from WaterMediaAPI) ``[EXPERIMENTAL]``
   - Includes a basic MemoryTracker for ByteBuffers
   - Deprecates BufferHelper argument on SyncVideoPlayer
 - Feature: MathAPI - Provides shortcuts for any special calculation (from WaterMediaAPI)
 - Feature: PlayerAPI - Provides all tools for MediaPlayer management (from WaterMediaAPI)
-- Feature: isMute() added in SyncBasePlayer
-- Feature: added URLFixer for Imgur.com (direct imgur support)
+- Feature: isMute() added to SyncBasePlayer
+- Feature: added URLFixer for Imgur.com. Now supports github galleries and tag galleries using
+browser url
 
 # UPDATE 2.0.6 - ([ARCHIVED](https://github.com/SrRapero720/watermedia/issues/23))
 - Fixed "missing vlc binaries" logger message is always thrown even if binaries are included

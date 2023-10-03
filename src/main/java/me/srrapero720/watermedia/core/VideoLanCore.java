@@ -25,6 +25,7 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class VideoLanCore {
     public static final Marker IT = MarkerManager.getMarker(VideoLanCore.class.getSimpleName());
     private static MediaPlayerFactory FACTORY;
+    private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     public static MediaPlayerFactory factory() { return FACTORY; }
 
     public static void init(IMediaLoader loader) throws Exception {
@@ -87,14 +88,13 @@ public class VideoLanCore {
      * @return a PlayerFactory to create custom VLC players. {@link SyncBasePlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory init$createFactory(String[] vlcArgs) {
-        NativeDiscovery discovery = new NativeDiscovery();
-        if (discovery.discover()) {
-            MediaPlayerFactory factory = new MediaPlayerFactory(discovery, vlcArgs);
-            LOGGER.info(IT, "New instance of VLC loaded from '{}' with the next args:\n{}", discovery.discoveredPath(), Arrays.toString(vlcArgs));
+        if (DISCOVERY.discover()) {
+            MediaPlayerFactory factory = new MediaPlayerFactory(DISCOVERY, vlcArgs);
+            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", DISCOVERY.discoveredPath(), Arrays.toString(vlcArgs));
             Runtime.getRuntime().addShutdownHook(new Thread(factory::release));
             return factory;
         } else {
-            LOGGER.error(IT, "VLC was not found on your system.");
+            LOGGER.error(IT, "VLC was not found on your system");
         }
 
         LOGGER.fatal(IT, "Cannot create MediaPlayerFactory instance");

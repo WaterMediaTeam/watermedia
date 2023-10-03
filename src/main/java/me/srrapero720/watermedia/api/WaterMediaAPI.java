@@ -270,18 +270,7 @@ public final class WaterMediaAPI {
      */
     @Deprecated
     public static MediaPlayerFactory vlc_createFactory(String[] vlcArgs) {
-        NativeDiscovery discovery = new NativeDiscovery();
-        if (discovery.discover()) {
-            MediaPlayerFactory factory = new MediaPlayerFactory(discovery, vlcArgs);
-            LOGGER.info(IT, "New instance of VLC loaded from '{}' with the next args:\n{}", discovery.discoveredPath(), Arrays.toString(vlcArgs));
-            Runtime.getRuntime().addShutdownHook(new Thread(factory::release));
-            return factory;
-        } else {
-            LOGGER.error(IT, "VLC was not found on your system.");
-        }
-
-        LOGGER.fatal(IT, "Cannot create MediaPlayerFactory instance");
-        return null;
+        return VideoLanCore.init$createFactory(vlcArgs);
     }
 
     /**
