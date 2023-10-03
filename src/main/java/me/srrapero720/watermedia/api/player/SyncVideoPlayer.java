@@ -33,11 +33,42 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     protected final AtomicBoolean updateFirstFrame = new AtomicBoolean(false);
     protected final AtomicBoolean forceFirstFrame = new AtomicBoolean(false);
 
+    /**
+     * Creates a player instance
+     * @param playerThreadEx executor of render thread for an async task (normally <code>Minecraft.getInstance()</code>)
+     * @deprecated Future replacement is a static method inside {@link PlayerAPI}.
+     * PlayerAPI (including all Players) are intended to be rewrited in 2.1.0
+     */
+    @Deprecated
     public SyncVideoPlayer(Executor playerThreadEx) { this(null, playerThreadEx, MemoryTracking::create); }
-    public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(null, playerThreadEx, MemoryTracking::create); }
 
+
+    /**
+     * Creates a player instance
+     * @param factory custom MediaPlayerFactory instance
+     * @param playerThreadEx executor of render thread for an async task (normally <code>Minecraft.getInstance()</code>)
+     * @deprecated Future replacement is a static method inside {@link PlayerAPI}.
+     * PlayerAPI (including all Players) are intended to be rewrited in 2.1.0
+     */
+    @Deprecated
+    public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(factory, playerThreadEx, MemoryTracking::create); }
+
+    /**
+     * Creates a player instance
+     * @param playerThreadEx executor of render thread for an async task (normally <code>Minecraft.getInstance()</code>)
+     * @param bufferHelper helper to create IntBuffers
+     * @deprecated mod now integrates an own MemoryTracker with a BufferAlloc
+     */
     @Deprecated
     public SyncVideoPlayer(Executor playerThreadEx, BufferHelper bufferHelper) { this(null, playerThreadEx, bufferHelper); }
+
+    /**
+     * Creates a player instance
+     * @param factory custom MediaPlayerFactory instance
+     * @param playerThreadEx executor of render thread for an async task (normally <code>Minecraft.getInstance()</code>)
+     * @param bufferHelper helper to create IntBuffers
+     * @deprecated mod now integrates an own MemoryTracker with a BufferAlloc
+     */
     @Deprecated
     public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, BufferHelper bufferHelper) {
         super();
@@ -75,6 +106,10 @@ public class SyncVideoPlayer extends SyncBasePlayer {
             }
             return new BufferFormat("RGBA", sourceWidth, sourceHeight, new int[]{sourceWidth * 4}, new int[]{sourceHeight});
         });
+        if (raw() == null) {
+            GL11.glDeleteTextures(texture);
+            texture = -1;
+        }
     }
 
     /**
@@ -82,30 +117,90 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * By default for performance purposes we use glTexSubImage2D,
      * but it may cause rendering issues on Minecraft Screens
      * @param forced force always glTexImage2D
+     * @deprecated renamed to {@link #texSubMode(boolean)}
      */
+    @Deprecated
     public void firstFrameMode(boolean forced) { this.forceFirstFrame.set(forced); }
 
+    /**
+     * Forces {@link RenderAPI#applyBuffer(ByteBuffer, int, int, int, boolean)} to always use glTexImage2D instead of glTexSubImage2D
+     * By default for performance purposes we use glTexSubImage2D,
+     * but it may cause rendering issues on Minecraft Screens
+     * @param mode force always glTexImage2D
+     */
+    public void texSubMode(boolean mode) { this.forceFirstFrame.set(mode); }
+
+    /**
+     * Send texture buffer to OpenGL
+     * always run this on render thread, and before use texture id
+     * @deprecated use instead {@link #preRender()} and {@link #getTexture()}
+     * @return gl texture ID
+     */
+    @Deprecated
     public int prepareTexture() {
-        if (raw() == null) return -1;
+        this.preRender();
+        return texture;
+    }
+
+    /**
+     * Send texture buffer to OpenGL
+     * always run this on render thread, and before use texture id
+     */
+    public void preRender() {
+        if (raw() == null) return;
         renderLock.lock();
         try {
             if (updateFrame.compareAndSet(true, false))
                 RenderAPI.applyBuffer(buffer, texture, width, height, updateFirstFrame.compareAndSet(true, forceFirstFrame.get()));
-            return texture;
         } finally {
             renderLock.unlock();
         }
     }
 
+
+    /**
+     * Media Buffer width
+     * @return Buffer texture width in px
+     */
     public int getWidth() { return width; }
-    public int getHeight() { return height; }
+
+    /**
+     * Media Buffer height
+     * @return Buffer texture height in px
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * Texture for OpenGL
+     * @return texture id, if MediaPlayer is broken returns -1
+     */
     public int getTexture() { return texture; }
 
+
+    /**
+     * Returns a Dimension instance with current byffer size
+     * values are obtained after build IntBuffer first time
+     * @return current buffer dimensions, null if raw player isn't created
+     */
     public Dimension getDimensions() {
+        if (raw() == null) return null;
+        return new Dimension(width, height);
+    }
+
+    /**
+     * Returns a Dimension instance by VLC
+     * @return current buffer dimensions, null if raw player isn't created or by any internal VLC error
+     */
+    public Dimension getMediaDimensions() {
         if (raw() == null) return null;
         return raw().mediaPlayer().video().videoDimension();
     }
 
+    /**
+     * Releases all resources of the player
+     */
     @Override
     public void release() {
         playerThreadEx.execute(() -> {
