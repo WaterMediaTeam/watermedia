@@ -6,33 +6,34 @@
 
 
 # WATERMeDIA | MULTIMEDIA API
-Library and API to use VideoLAN in Java, specially designed to be used 
-in Minecraft with MinecraftForge (NeoForge) and Fabric (Quilt)
+Library and API to provide multimedia support using VLC for other mods like VideoPlayer, 
+designed to be used in Minecraft with MinecraftForge (NeoForge) and Fabric (Quilt), 
+but can be used in any other environment (no tested)
 
-API adds a VideoPlayer layer on VLC MediaPlayer to render frames into OpenGL.
-Tool to fetch images from the internet and store it in cache,
-``URLFixer``'s to give extra support to streaming platforms like Twitch,
-Kick.com, YouTube, Google Drive, One Drive, Dropbox and more
+API provides an extra layer of VLCJ MediaPlayers making easier player management,
+async task and concurrency.
+Custom ``URLFixers`` to provide support of platforms like Youtube, Twitch,
+Kick.com, Google Drive, OneDrive, Dropbox, Imgur, Twitter and PornHub.
 
 ## VERSION STATUS
-List of each WATERMeDIA version compatible with each LTS Minecraft version
-Non-listed versions = NO SUPPORT
+### WARNING for MODDERS: WATERMeDIA 1.3.x is becoming OBSOLETE, switch to 2.0.0
+List of each WATERMeDIA version compatible with each LTS Minecraft version.
+Technically can be loaded in ANY MC version in range of 1.12.2 ~ 1.20.x and next. 
+But we ONLY provide support to most used MC versions (in MOD environments).
+<br><br>NOT LISTED = NO SUPPORT
 
 | Version | 1.12.2 | 1.16.5 | 1.18.2 | 1.19.2 | 1.20.x | 1.21.x |
 |:-------:|:------:|:------:|:------:|:------:|:------:|:------:|
-|  1.0.0  |   ⛔    |   ⛔    |   ✅    |   ✅    |   🚫   |   🚫   |
-|  1.1.0  |   ⛔    |   ⛔    |   ✅    |   ✅    |   🚫   |   🚫   |
-|  1.2.x  |   ⛔    |   ⛔    |   ✅    |   ✅    |   ✅    |   🚫   |
-|  1.3.x  |   ⛔    |   ⚠    |   ✅    |   ✅    |   ✅    |   🚫   |
+|  1.3.x  |   ⛔    |   ⛔    |   ✅    |   ✅    |   ✅    |   🚫   |
 |  2.0.x  |   ✅    |   ✅    |   ✅    |   ✅    |   ✅    |   🚫   |
 |  2.1.x  |        |        |        |        |        |        |
 
 
-**FLAGS**
-- ✅ **Full support:** Can be used
-- ⚠ **Partial support:** Requires special actions to be used
-- 🚫 **Unknown:** Untested
-- ⛔ **Unsupported:** Cannot be used
+### FLAGS
+- ✅ **Supported**
+- ⚠ **Limited Support**
+- 🚫 **Unknown**
+- ⛔ **Unsupported**
 
 # INSTALLATION
 You can use two ways to install this mod in your project
