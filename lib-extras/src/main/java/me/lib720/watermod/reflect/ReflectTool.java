@@ -35,20 +35,26 @@ public class ReflectTool {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T findAndInvokeWithReturn(String[] name, Class<?> clazz, Object instance, Object ...args) {
+    public static <T> T findAndInvokeWithReturn(String[] methodNames, Class<?> classFrom, Object instance, Object ...arguments) {
         return TryCore.withReturn(defaultVar -> {
-            for (int i = 0; i < name.length; i++) {
-                try {
-                    List<Class<?>> argClazz = new ArrayList<>();
-                    for (Object cl: args) argClazz.add(cl.getClass());
+            Class<?>[] classes = new Class<?>[arguments.length];
+            String[] classesNames = new String[arguments.length];
+            for (int i = 0; i < arguments.length; i++) {
+                classes[i] = arguments[i].getClass();
+                classesNames[i] = classes[i].getSimpleName();
+            }
 
-                    Method method = clazz.getMethod(name[i], argClazz.toArray(new Class[0]));
+            for (int i = 0; i < methodNames.length; i++) {
+                try {
+                    Method method = classFrom.getMethod(methodNames[i], classes);
                     method.setAccessible(true);
-                    return (T) method.invoke(instance, args);
+                    return (T) method.invoke(instance, arguments);
                 } catch (NoSuchMethodException e) {
-                    LOGGER.error(IT, "Cannot execute any method of '{}: {}' caused by '{}' things may not work well", e.getClass().getSimpleName(), Arrays.toString(name), e.getMessage(), e);
+                    LOGGER.error(IT, "Failed to execute '{}.{}({})' caused by {}", classFrom.getSimpleName(), methodNames[i], Arrays.toString(classesNames), e.getMessage());
+                    continue;
                 }
             }
+            LOGGER.fatal(IT, "Cannot execute any method of '{}: {}', things may not work well", classFrom.getSimpleName(), Arrays.toString(methodNames));
             return defaultVar;
         }, null);
     }
