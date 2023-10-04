@@ -13,7 +13,7 @@ NOTE: Support for NeoForge 1.20.2 is not planned until they got into a more stab
 - Feature: MathAPI - Provides shortcuts for any special calculation (from WaterMediaAPI)
 - Feature: PlayerAPI - Provides all tools for MediaPlayer management (from WaterMediaAPI)
 - Feature: isMute() added to SyncBasePlayer
-- Feature: added URLFixer for Imgur.com. Now supports github galleries and tag galleries using
+- Feature: added URLFixer for Imgur.com. Now supports Imgur galleries and tag galleries using
 browser url
 
 # UPDATE 2.0.6 - ([ARCHIVED](https://github.com/SrRapero720/watermedia/issues/23))
