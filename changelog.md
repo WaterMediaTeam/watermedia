@@ -1,3 +1,6 @@
+# UPDATE 2.0.8
+- Feature: added tickToMs variant for Float (partial ticks)
+
 # UPDATE 2.0.7
 NOTE: Support for NeoForge 1.20.2 is not planned until they got into a more stable build
 - Fixed [#26](https://github.com/SrRapero720/watermedia/issues/23): Crash on startup trying to get OS (from archived version 2.0.6)

@@ -10,6 +10,16 @@ public class MathAPI {
      * @return ticks converted to MS
      */
     public static long tickToMs(int ticks) { return ticks * 50L; }
+
+    /**
+     * 1 seconds in Minecraft equals 20 ticks
+     * 20x50 equals 1000ms (1 sec)
+     *
+     * @param partialTicks Minecraft Partial tick count
+     * @return ticks converted to MS
+     */
+    public static long tickToMs(float partialTicks) { return (long) (partialTicks * 50L); }
+
     /**
      * 1000ms (1 sec) equals 20 ms in Minecraft
      * 1000/50 equals 20 Ticks (1 sec)
