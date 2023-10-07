@@ -36,6 +36,7 @@ public class ImageAPI {
 
     // LOADING GIFs
     public static ImageRenderer loadingGif() { return IMG_LOADING; }
+    public static ImageRenderer blackPicture() { return IMG_BLACK; }
 
     /**
      * Search for a custom loading gif for a mod, using mod id for unique storage.<br><br>
