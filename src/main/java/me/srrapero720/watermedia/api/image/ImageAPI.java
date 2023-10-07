@@ -3,6 +3,7 @@ package me.srrapero720.watermedia.api.image;
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
@@ -27,6 +28,7 @@ public class ImageAPI {
     private static ImageRenderer IMG_LOADING;
     private static ImageRenderer IMG_VLC_FAIL;
     private static ImageRenderer IMG_VLC_FAIL_LAND;
+    private static ImageRenderer IMG_BLACK;
 
     // VLC
     public static ImageRenderer failedVLC() { return IMG_VLC_FAIL; }
@@ -147,5 +149,9 @@ public class ImageAPI {
         IMG_LOADING = renderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif")), true);
         IMG_VLC_FAIL = renderer(JarTool.readImage(cl, "/pictures/videolan/failed.png"), true);
         IMG_VLC_FAIL_LAND = renderer(JarTool.readImage(cl, "/pictures/videolan/failed-land.png"), true);
+
+        IMG_BLACK = renderer(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+        IMG_BLACK.image.setRGB(0, 0, MathAPI.getColorARGB(255, 0, 0, 0));
+
     }
 }
