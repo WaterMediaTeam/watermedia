@@ -133,7 +133,9 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     /**
      * Send texture buffer to OpenGL
      * always run this on render thread, and before use texture id
-     * @deprecated use instead {@link #preRender()} and {@link #getTexture()}
+     * @deprecated in rendering, doesn't have sense just get texture without pre-render.
+     * Now pre-render is collapsed in one method
+     * Use instead {@link #getTexture()}, ensure you store texture ID after execute
      * @return gl texture ID
      */
     @Deprecated
@@ -145,7 +147,11 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     /**
      * Send texture buffer to OpenGL
      * always run this on render thread, and before use texture id
+     * @deprecated in rendering, doesn't have sense just get texture without pre-render.
+     * Now pre-render is collapsed in one method
+     * Use instead {@link #getTexture()}, ensure you store texture ID after execute
      */
+    @Deprecated
     public void preRender() {
         if (raw() == null) return;
         renderLock.lock();
@@ -176,7 +182,10 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * Texture for OpenGL
      * @return texture id, if MediaPlayer is broken returns -1
      */
-    public int getTexture() { return texture; }
+    public int getTexture() {
+        this.preRender();
+        return texture;
+    }
 
 
     /**
