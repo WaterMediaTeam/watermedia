@@ -131,7 +131,7 @@ public class ImageAPI {
      * @return built instance
      */
     public static ImageRenderer renderer(GifDecoder image, boolean absolute) {
-        if (absolute) return new ImageRenderer(image);
+        if (!absolute) return new ImageRenderer(image);
         return new ImageRenderer(image) {
             @Override public void flush() {}
             @Override public void release() {}
