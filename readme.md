@@ -32,7 +32,7 @@ listed here and most important mod loaders (except Fabric and Quilt)<br><br>
 | 1.19.2  |   ✅   |   ✅    |   ✅   |    🚫    |
 | 1.20.x  |   ✅   |   ✅    |   ✅   |    ⛔     |
 
-[✅] **SUPPORTED** | [⚠] **PLANNED** | [⛔] | **NOT SUPPORT** | [🚫] **N/A**
+✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A**
 
 # INSTALLATION
 You can use two ways to install this mod in your project
