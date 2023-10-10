@@ -27,12 +27,13 @@ import uk.co.caprica.vlcj.binding.RuntimeUtil;
 public class LinuxWellKnownDirectoryProvider extends WellKnownDirectoryProvider {
 
     private static final String[] DIRECTORIES = {
-        "/usr/lib/x86_64-linux-gnu",
-        "/usr/lib64",
-        "/usr/local/lib64",
-        "/usr/lib/i386-linux-gnu",
-        "/usr/lib",
-        "/usr/local/lib"
+            "/usr/lib/x86_64-linux-gnu",
+            "/usr/lib64",
+            "/usr/local/lib64",
+            "/usr/lib/i386-linux-gnu",
+            "/usr/lib",
+            "/usr/local/lib",
+            "/bin" // WATERMeDIA PATCH - Adds pacman dir support
     };
 
     @Override
@@ -44,5 +45,4 @@ public class LinuxWellKnownDirectoryProvider extends WellKnownDirectoryProvider 
     public boolean supported() {
         return RuntimeUtil.isNix();
     }
-
 }
