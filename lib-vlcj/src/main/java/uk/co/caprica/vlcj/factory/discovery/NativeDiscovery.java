@@ -110,7 +110,7 @@ public class NativeDiscovery {
      * <p>
      * If this component has already discovered the native libraries, calling this method again will have no effect.
      *
-     * @return
+     * @return if was discovered successfully // WATERMeDIA Patch
      */
     public final boolean discover() {
         if (alreadyFound) {
@@ -154,7 +154,7 @@ public class NativeDiscovery {
     private static Field searchPaths;
     private static Field libraries;
     public static final Logger LOGGER = LogManager.getLogger("VLCJ");
-    private static final Marker IT = MarkerManager.getMarker("NativeDiscovery");
+    public static final Marker IT = MarkerManager.getMarker("NativeDiscovery");
     @SuppressWarnings("unchecked")
     public boolean attemptFix() {
         try {
@@ -214,7 +214,7 @@ public class NativeDiscovery {
      */
     private void tryPluginPath(String path, NativeDiscoveryStrategy discoveryStrategy) {
         String env = System.getenv(PLUGIN_ENV_NAME);
-        if (env == null || env.length() == 0) {
+        if (env == null || env.isEmpty()) {
             // The return value from onSetPluginPath is currently not used (it would imply that the API call to set the
             // process environment variable failed, which is somewhat of a stretch that it would ever occur)
             discoveryStrategy.onSetPluginPath(path);
@@ -244,7 +244,7 @@ public class NativeDiscovery {
 
             // This message should display the reason the native library could not be bound, specifically if the library
             // binding failed due to an undefined symbol it should be displayed here
-            LOGGER.fatal(e.getMessage()); // WATERMeDIA PATCH
+            LOGGER.fatal(IT, "Attempt to load a VLC instance was failed", e); // WATERMeDIA PATCH
         }
         return false;
     }
