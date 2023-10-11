@@ -1,3 +1,8 @@
+# UPDATE 2.0.9
+- Fixed VLC is not loaded on ArchLinux using pacman (added /bin/ directory)
+- Improved loggers on NativeDiscovery
+- PlayerAPI: deprecated SyncVideoPlayer#preRender() and SyncVideoPlayer#getTexture()
+
 # UPDATE 2.0.8
 - Feature: added tickToMs variant for Float (partial ticks)
 
