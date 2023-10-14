@@ -32,6 +32,7 @@ listed here and most important mod loaders (except Fabric and Quilt)<br><br>
 | 1.18.2  |   ✅   |   ✅    |   ✅   |    🚫    |
 | 1.19.2  |   ✅   |   ✅    |   ✅   |    🚫    |
 | 1.20.x  |   ✅   |   ✅    |   ✅   |    ⛔     |
+| 1.21.x  |   !   |   !    |   !   |    ⚠     |
 
 ✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A**
 
