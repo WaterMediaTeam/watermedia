@@ -1,5 +1,6 @@
 # UPDATE 2.0.9
 - Fixed VLC is not loaded on ArchLinux using pacman (added /bin/ directory)
+- Fixed sourceJar includes a copy of VLC binaries (only built jar contains it)
 - Improved loggers on NativeDiscovery
 - PlayerAPI: deprecated SyncVideoPlayer#preRender() and SyncVideoPlayer#getTexture()
 
