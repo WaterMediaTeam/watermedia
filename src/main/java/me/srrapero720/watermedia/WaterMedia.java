@@ -61,8 +61,9 @@ public class WaterMedia {
 
 
 	public void envInit(IEnvLoader loader) {
-		this.env = loader;
 		if (this.env != null) LOGGER.warn(IT, "Override environment is a deprecated feature");
+
+		this.env = loader;
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)
 		if (!this.loader.name().equalsIgnoreCase("fabric") && !loader.client() && !loader.development()) {
 			exception = new IllegalStateException("Cannot run WATERMeDIA on a server");

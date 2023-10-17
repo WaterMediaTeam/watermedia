@@ -1,6 +1,8 @@
 # UPDATE 2.0.9
 - Fixed VLC is not loaded on ArchLinux using pacman (added /bin/ directory)
 - Fixed sourceJar includes a copy of VLC binaries (only built jar contains it)
+- Fixed warnings on old versions attempting to load environment first time
+- Fixed RusticLoader doesn't show what MC version is (broken mocked)
 - Improved loggers on NativeDiscovery
 - PlayerAPI: deprecated SyncVideoPlayer#preRender() and SyncVideoPlayer#getTexture()
 - UrlAPI: added support for file paths

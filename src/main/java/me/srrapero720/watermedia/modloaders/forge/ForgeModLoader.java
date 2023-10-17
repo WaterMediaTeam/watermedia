@@ -1,6 +1,7 @@
 package me.srrapero720.watermedia.modloaders.forge;
 
 import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
@@ -24,17 +25,38 @@ public class ForgeModLoader implements IMediaLoader {
 
         WaterMedia instance = WaterMedia.getInstance(this);
         try {
-            WaterMedia.getInstance().envInit(new LegacyLoader());
-        } catch (Throwable ignored) {
-        }
+            IEnvLoader loader = new RusticLoader();
+            
+            // Stress test
+            loader.client();
+            loader.installed("jei");
+            loader.development();
+            loader.tlauncher();
+
+            instance.envInit(loader);
+        } catch (Throwable ignored) {}
         try {
-            WaterMedia.getInstance().envInit(new RusticLoader());
-        } catch (Throwable ignored) {
-        }
+            IEnvLoader loader = new CurrentLoader();
+            
+            // Stress test
+            loader.client();
+            loader.installed("jei");
+            loader.development();
+            loader.tlauncher();
+
+            instance.envInit(loader);
+        } catch (Throwable ignored) {}
         try {
-            WaterMedia.getInstance().envInit(new WideLoader());
-        } catch (Throwable ignored) {
-        }
+            IEnvLoader loader = new FutureLoader();
+
+            // Stress test
+            loader.client();
+            loader.installed("jei");
+            loader.development();
+            loader.tlauncher();
+
+            instance.envInit(loader);
+        } catch (Throwable ignored) {}
 
         if (instance.env().client()) instance.init();
     }

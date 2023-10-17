@@ -1,23 +1,31 @@
 package me.srrapero720.watermedia.modloaders.forge;
 
+import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.network.FMLNetworkConstants;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+
 public class RusticLoader implements IEnvLoader {
+    private static final Marker IT = MarkerManager.getMarker("LegacyForge");
+
     RusticLoader() {
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST,
-                () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (incoming, isNetwork) -> true));
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLCommonSetupEvent event) -> WaterMedia.getInstance(null).crash());
+        String MC_VERSION = ReflectTool.getValue("MC_VERSION", Loader.class, null);
+        if (client()) LOGGER.info(IT, "Minecraft version '{}'", MC_VERSION);
+    }
+
+    @EventHandler
+    public void init(FMLPostInitializationEvent event) {
+        WaterMedia.getInstance(null).crash();
     }
 
     @Override
@@ -27,17 +35,16 @@ public class RusticLoader implements IEnvLoader {
 
     @Override
     public boolean development() {
-        return !FMLLoader.isProduction();
+        return false;
     }
 
     @Override
     public boolean client() {
-        return FMLLoader.getDist().isClient();
+        return FMLCommonHandler.instance().getSide().isClient();
     }
 
     @Override
     public boolean installed(String modId) {
-        if (ModList.get() != null) return ModList.get().isLoaded(modId);
-        else return FMLLoader.getLoadingModList().getModFileById(modId) != null;
+        return Loader.isModLoaded(modId);
     }
 }
