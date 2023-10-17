@@ -49,10 +49,15 @@ public class ImgurFixerV3 extends URLFixer {
             } else if (path.startsWith("/t/")) {
                 Response<ImgurData<ImgurAlbumTagData>> res = ImgurAPIv3.NET.getImageFromTagGallery(tag, id).execute();
                 ImgurAlbumTagData data;
-                if (res.isSuccessful() && res.body() != null && (data = res.body().data) != null && !data.images.isEmpty()) {
-                    for (ImgurImage image: data.images) {
-                        // TODO: add support for multiple entries
-                        return new Result(new URL(image.link), image.type.startsWith("video"), false);
+                if (res.isSuccessful() && res.body() != null && (data = res.body().data) != null) {
+                    if (data.images != null && !data.images.isEmpty()) {
+                        for (ImgurImage image: data.images) {
+                            // TODO: add support for multiple entries
+                            return new Result(new URL(image.link), image.type.startsWith("video"), false);
+                        }
+                    } else {
+                        LOGGER.debug(IT, "Imgur responses with status code '{}' but with a empty image list", res.code());
+                        throw new Exception("Cannot load imgur data, empty list");
                     }
                 } else {
                     LOGGER.debug(IT, "Imgur responses with status code: {}", res.code());

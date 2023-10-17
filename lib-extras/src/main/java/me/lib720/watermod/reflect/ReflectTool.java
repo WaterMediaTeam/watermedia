@@ -4,6 +4,7 @@ import me.lib720.watermod.safety.TryCore;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +14,15 @@ import static me.lib720.watermod.WaterMod.LOGGER;
 
 public class ReflectTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getValue(String name, Class<?> clazz, Object instance) {
+        return TryCore.withReturn(defaultVar -> {
+           Field f = clazz.getField(name);
+           f.setAccessible(true);
+           return (T) f.get(instance);
+        }, null);
+    }
 
     public static void invoke(String name, Class<?> clazz, Object instance) {
         TryCore.simple(() -> {

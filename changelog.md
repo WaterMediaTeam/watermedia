@@ -3,6 +3,7 @@
 - Fixed sourceJar includes a copy of VLC binaries (only built jar contains it)
 - Improved loggers on NativeDiscovery
 - PlayerAPI: deprecated SyncVideoPlayer#preRender() and SyncVideoPlayer#getTexture()
+- UrlAPI: added support for file paths
 
 # UPDATE 2.0.8
 - Feature: added tickToMs variant for Float (partial ticks)

@@ -10,6 +10,7 @@ import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 
@@ -46,9 +47,15 @@ public class UrlAPI {
                 }
                 return new URLFixer.Result(url, false, false);
             }, e -> LOGGER.error(IT, "Exception occurred fixing URL", e), null);
+        } else if (isValidPathUrl(strUrl)) { // nothing to FIX
+            return TryCore.withReturn(defaultVar -> {
+                File f = new File(strUrl);
+                if (!f.exists()) throw new IllegalArgumentException("File path cannot be readed or be used in a URL");
+                return new URLFixer.Result(new File(strUrl).toURI().toURL(), false, false);
+            }, e -> LOGGER.error(IT, "Exception occurred converting file path to URL", e), null);
         }
 
-        LOGGER.error(IT, "URL is not valid");
+        LOGGER.error(IT, "URL doesn't have a valid syntax, cannot be fixed");
         return null;
     }
 
@@ -80,6 +87,13 @@ public class UrlAPI {
      */
     public static boolean isValid(String url) {
         return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false);
+    }
+
+    public static boolean isValidPathUrl(String path) {
+        return TryCore.withReturn(defaultVar -> {
+            new File(path).toURI().toURL();
+            return true;
+        }, false);
     }
 
     /**

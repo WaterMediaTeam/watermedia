@@ -11,6 +11,9 @@ public class FixerTester {
         URLFixer.Result result = UrlAPI.fixURL("https://imgur.com/t/rick_roll/kGy6J8J");
         WaterMedia.LOGGER.info("Result is: {}", result);
 
+        result = UrlAPI.fixURL("D:\\Videos\\Grabaciones\\2023-10-16 00-19-11.mp4");
+        WaterMedia.LOGGER.info("Result is: {}", result);
+
         result = UrlAPI.fixURL("https://imgur.com/4JMVauZ");
         WaterMedia.LOGGER.info("Result is: {}", result);
 
