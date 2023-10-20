@@ -142,9 +142,15 @@ public class JarTool {
     }
 
     public static InputStream readResource(String source) {
-        ClassLoader loader = JarTool.class.getClassLoader();
-        InputStream is = loader.getResourceAsStream(source);
-        if (is == null && source.startsWith("/")) is = loader.getResourceAsStream(source.substring(1));
+        InputStream is = readResource$byClassLoader(source, JarTool.class.getClassLoader());
+        if (is == null) is = readResource$byClassLoader(source, Thread.currentThread().getContextClassLoader());
+        if (is == null) is = readResource$byClassLoader(source, ClassLoader.getSystemClassLoader());
+        return is;
+    }
+
+    private static InputStream readResource$byClassLoader(String source, ClassLoader classLoader) {
+        InputStream is = classLoader.getResourceAsStream(source);
+        if (is == null && source.startsWith("/")) is = classLoader.getResourceAsStream(source.substring(1));
         return is;
     }
 }
