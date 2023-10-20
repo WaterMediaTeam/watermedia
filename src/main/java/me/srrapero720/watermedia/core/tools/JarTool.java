@@ -145,7 +145,7 @@ public class JarTool {
         InputStream is = readResource$byClassLoader(source, JarTool.class.getClassLoader());
         if (is == null) is = readResource$byClassLoader(source, Thread.currentThread().getContextClassLoader());
         if (is == null) is = readResource$byClassLoader(source, ClassLoader.getSystemClassLoader());
-        return is;
+        return is; // InputStream still can be null
     }
 
     private static InputStream readResource$byClassLoader(String source, ClassLoader classLoader) {
