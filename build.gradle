@@ -22,13 +22,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-sourceSets {
-    main {
-        resources {
-            exclude 'videolan/**'
-        }
-    }
+sourcesJar {
+    exclude("videolan/**.zip")
 }
+
 println "Gradle Java: ${JavaVersion.current()}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 

@@ -1,4 +1,7 @@
-# UPDATE 2.0.9
+# UPDATE 2.0.10
+- Fixed: buildJar doesn't include VLC binaries.
+
+# UPDATE 2.0.9 ([ARCHIVED](https://discord.com/channels/256109634769780737/1164746686019670097))
 - Fixed VLC is not loaded on ArchLinux using pacman (added /bin/ directory)
 - Fixed sourceJar includes a copy of VLC binaries (only built jar contains it)
 - Fixed warnings on old versions attempting to load environment first time
