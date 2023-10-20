@@ -148,8 +148,8 @@ public class ImageAPI {
         ClassLoader cl = ImageAPI.class.getClassLoader();
 
         IMG_LOADING = renderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif")), true);
-        IMG_VLC_FAIL = renderer(JarTool.readImage(cl, "/pictures/videolan/failed.png"), true);
-        IMG_VLC_FAIL_LAND = renderer(JarTool.readImage(cl, "/pictures/videolan/failed-land.png"), true);
+        IMG_VLC_FAIL = renderer(JarTool.readGif(cl, "/pictures/videolan/failed.gif"), true);
+        IMG_VLC_FAIL_LAND = renderer(JarTool.readGif(cl, "/pictures/videolan/failed-land.gif"), true);
 
         IMG_BLACK = renderer(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
         IMG_BLACK.image.setRGB(0, 0, MathAPI.getColorARGB(255, 0, 0, 0));

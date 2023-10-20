@@ -19,8 +19,10 @@ public class ImageRenderer {
     public int remaining;
 
     /**
-     * Use instead {@link ImageAPI#renderer(BufferedImage)}
+     * creates a new instance of an ImageRenderer
      * @param image picture to use
+     * @deprecated Use instead {@link ImageAPI#renderer(BufferedImage)}
+     * method is going to begin package-protected
      */
     @Deprecated
     public ImageRenderer(BufferedImage image) {
@@ -35,8 +37,10 @@ public class ImageRenderer {
     }
 
     /**
-     * Use instead {@link ImageAPI#renderer(GifDecoder)}
+     * creates a new instance of an ImageRenderer
      * @param decoder picture to use
+     * @deprecated Use instead {@link ImageAPI#renderer(GifDecoder)}
+     * method is going to begin package-protected
      */
     @Deprecated
     public ImageRenderer(GifDecoder decoder) {
