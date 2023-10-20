@@ -1,5 +1,6 @@
 # UPDATE 2.0.10
 - Fixed: buildJar doesn't include VLC binaries.
+- Updated VLC failed pictures with a brand-new gif
 
 # UPDATE 2.0.9 ([ARCHIVED](https://discord.com/channels/256109634769780737/1164746686019670097))
 - Fixed VLC is not loaded on ArchLinux using pacman (added /bin/ directory)
