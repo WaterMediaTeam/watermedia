@@ -52,7 +52,7 @@ public final class RuntimeUtil {
      * @return true if the runtime OS is Windows
      */
     public static boolean isWindows() {
-        return OS_NAME.contains("win"); // WATERMeDIA PATCH - start
+        return OS_NAME.contains("win"); // WATERMeDIA PATCH
     }
 
     /**
@@ -61,7 +61,7 @@ public final class RuntimeUtil {
      * @return true if the runtime OS is Mac
      */
     public static boolean isMac() {
-        return OS_NAME.contains("mac"); // WATERMeDIA PATCH - start
+        return OS_NAME.contains("mac"); // WATERMeDIA PATCH
     }
 
     /**
