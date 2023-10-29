@@ -12,6 +12,9 @@ public @interface Mod {
     String value();
     String acceptableRemoteVersions();
 
+    boolean clientSideOnly() default false;
+    boolean serverSideOnly() default false;
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @interface EventHandler{}
