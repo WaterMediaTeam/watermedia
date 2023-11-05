@@ -56,7 +56,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
     /**
      * Flag true if this component created the media player factory, or false if it was supplied by the caller.
      */
-    private boolean ownFactory;
+    private final boolean ownFactory;
 
     /**
      * Media player factory.
@@ -122,7 +122,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         if (renderCallback == null) {
             this.defaultRenderCallback = new DefaultRenderCallback();
             this.imagePainter          = imagePainter == null ? new ScaledCallbackImagePainter() : imagePainter;
-            this.videoSurfaceComponent = new DefaultVideoSurfaceComponent();
+            this.videoSurfaceComponent = null;
             bufferFormatCallback       = new DefaultBufferFormatCallback();
             renderCallback             = this.defaultRenderCallback;
         } else {
@@ -325,17 +325,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         return mediaPlayer;
     }
 
-    /**
-     * Get the video surface {@link Canvas} component.
-     * <p>
-     * An application may want to add key/mouse listeners to the video surface component.
-     *
-     * @return video surface component
-     */
-    public final JComponent videoSurfaceComponent() {
-        return videoSurfaceComponent;
-    }
-
+    // WATERMeDIA Patch - removed JComponent getter
     /**
      * Release the media player component and the associated native media player resources.
      */
@@ -365,31 +355,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         return mediaPlayerFactory;
     }
 
-    /**
-     * Default implementation of a video surface component that uses a {@link CallbackImagePainter} to render the video
-     * image.
-     */
-    private class DefaultVideoSurfaceComponent extends JPanel {
-
-        private DefaultVideoSurfaceComponent() {
-            setBackground(Color.black);
-            setIgnoreRepaint(true);
-            // Set a reasonable default size for the video surface component in case the client application does
-            // something like using pack() rather than setting a specific size
-            setPreferredSize(new Dimension(640, 360));
-        }
-
-        @Override
-        public void paint(Graphics g) {
-            Graphics2D g2 = (Graphics2D)g;
-
-            imagePainter.prepare(g2, this);
-            imagePainter.paint(g2, this, image);
-
-            onPaintOverlay(g2);
-        }
-    }
-
+    // WATERMeDIA Patch - Removed JPanel VideoSurface
     /**
      * Default implementation of a buffer format callback that returns a buffer format suitable for rendering into a
      * {@link BufferedImage}.
