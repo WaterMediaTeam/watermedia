@@ -43,19 +43,19 @@ public class YoutubeFixer extends URLFixer {
                 if (videoDetails.isLive()) {
                     // LIVE STREAM
                     String ytLivePlaylist = fetchLivePlaylist(videoDetails.liveUrl());
-                    if (ytLivePlaylist != null) return new Result(new URL(StreamQuality.parse(ytLivePlaylist).get(0).getUrl()), true, true);
+                    if (ytLivePlaylist != null) return new Result(StreamQuality.parse(ytLivePlaylist).get(0).getUrl(), true, true);
                 } else {
                     // BEST WITH AUDIO
                     VideoFormat bestWithAudio = videoInfo.bestVideoWithAudioFormat();
-                    if (bestWithAudio != null) return new Result(new URL(bestWithAudio.url()), true, false);
+                    if (bestWithAudio != null) return new Result(bestWithAudio.url(), true, false);
 
                     // WITHOUT AUDIO
                     VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
-                    if (bestWithoutAudio != null) return new Result(new URL(bestWithoutAudio.url()), true, false);
+                    if (bestWithoutAudio != null) return new Result(bestWithoutAudio.url(), true, false);
 
                     // WITHOUT VIDEO
                     AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
-                    if (bestWithoutVideo != null) return new Result(new URL(bestWithoutVideo.url()), true, false);
+                    if (bestWithoutVideo != null) return new Result(bestWithoutVideo.url(), true, false);
                 }
 
                 // VLC shouldn't use LUAC

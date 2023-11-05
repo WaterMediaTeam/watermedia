@@ -45,13 +45,13 @@ public class UrlAPI {
                     if (fixer instanceof SpecialFixer && !specials) continue;
                     if (fixer.isValid(url)) return fixer.patch(url, null);
                 }
-                return new URLFixer.Result(url, false, false);
+                return new URLFixer.Result(url.toString(), false, false);
             }, e -> LOGGER.error(IT, "Exception occurred fixing URL", e), null);
         } else if (isValidPathUrl(strUrl)) { // nothing to FIX
             return TryCore.withReturn(defaultVar -> {
                 File f = new File(strUrl);
                 if (!f.exists()) throw new IllegalArgumentException("File path cannot be readed or be used in a URL");
-                return new URLFixer.Result(new File(strUrl).toURI().toURL(), false, false);
+                return new URLFixer.Result(strUrl, false, false);
             }, e -> LOGGER.error(IT, "Exception occurred converting file path to URL", e), null);
         }
 

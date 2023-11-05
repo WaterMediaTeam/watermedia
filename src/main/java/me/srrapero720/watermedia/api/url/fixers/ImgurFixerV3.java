@@ -40,7 +40,7 @@ public class ImgurFixerV3 extends URLFixer {
                 if (res.isSuccessful() && res.body() != null && (data = res.body().data) != null && !data.images.isEmpty()) {
                     for (ImgurImage image: data.images) {
                         // TODO: add support for multiple entries
-                        return new Result(new URL(image.link), image.type.startsWith("video"), false);
+                        return new Result(image.link, image.type.startsWith("video"), false);
                     }
                 } else {
                     LOGGER.debug(IT, "Imgur responses with status code: {}", res.code());
@@ -53,7 +53,7 @@ public class ImgurFixerV3 extends URLFixer {
                     if (data.images != null && !data.images.isEmpty()) {
                         for (ImgurImage image: data.images) {
                             // TODO: add support for multiple entries
-                            return new Result(new URL(image.link), image.type.startsWith("video"), false);
+                            return new Result(image.link, image.type.startsWith("video"), false);
                         }
                     } else {
                         LOGGER.debug(IT, "Imgur responses with status code '{}' but with a empty image list", res.code());
@@ -67,7 +67,7 @@ public class ImgurFixerV3 extends URLFixer {
                 Response<ImgurData<ImgurImage>> res = ImgurAPIv3.NET.getImage(id).execute();
                 ImgurImage data;
                 if (res.isSuccessful() && res.body() != null && (data = res.body().data) != null) {
-                    return new Result(new URL(data.link), data.type.startsWith("video"), false);
+                    return new Result(data.link, data.type.startsWith("video"), false);
                 } else {
                     LOGGER.debug(IT, "Imgur responses with status code: {}", res.code());
                     throw new Exception("Cannot load imgur data, " + res.message());

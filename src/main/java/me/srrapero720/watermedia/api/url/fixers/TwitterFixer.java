@@ -30,7 +30,7 @@ public class TwitterFixer extends URLFixer {
     public Result patch(URL url, Quality preferQuality) throws FixingURLException {
         super.patch(url, preferQuality);
         try {
-            return new Result(new URL(new TweetScrapper(gson).extractVideo(String.valueOf(url)).get(0)), true, false);
+            return new Result(new TweetScrapper(gson).extractVideo(String.valueOf(url)).get(0), true, false);
         } catch (Exception e) {
             throw new FixingURLException(url.toString(), e);
         }

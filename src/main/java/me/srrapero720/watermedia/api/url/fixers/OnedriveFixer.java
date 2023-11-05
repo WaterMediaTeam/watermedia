@@ -23,7 +23,7 @@ public class OnedriveFixer extends URLFixer {
     public Result patch(URL url, Quality preferQuality) throws FixingURLException {
         super.patch(url, preferQuality);
         try {
-            return new Result(new URL(OneDriveUtil.getDownloableItem(url.toString()).getUrl()), false, false);
+            return new Result(OneDriveUtil.getDownloableItem(url.toString()).getUrl(), false, false);
         } catch (Exception e) {
             throw new FixingURLException(url.toString(), e);
         }

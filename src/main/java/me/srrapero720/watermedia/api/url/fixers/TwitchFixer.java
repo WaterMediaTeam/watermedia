@@ -28,10 +28,10 @@ public class TwitchFixer extends URLFixer {
         try {
             String path = url.getPath();
             if (path.startsWith("/videos/")) {
-                return new Result(new URL(TwitchAPI.getVod(path.substring(8)).get(0).getUrl()), true, false);
+                return new Result(TwitchAPI.getVod(path.substring(8)).get(0).getUrl(), true, false);
             }
 
-            return new Result(new URL(TwitchAPI.getStream(path.substring(1)).get(0).getUrl()), true, true);
+            return new Result(TwitchAPI.getStream(path.substring(1)).get(0).getUrl(), true, true);
         } catch (Exception e) {
             throw new FixingURLException(url, e);
         }

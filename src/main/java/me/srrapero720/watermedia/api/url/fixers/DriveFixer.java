@@ -27,7 +27,7 @@ public class DriveFixer extends URLFixer {
             if (end == -1) end = url.getPath().length();
             String fileID = url.getPath().substring(start, end);
 
-            return new Result(new URL(String.format(API_URL, fileID, API_KEY)), false, false);
+            return new Result(String.format(API_URL, fileID, API_KEY), false, false);
         } catch (Exception e) {
             throw new FixingURLException(url, e);
         }
