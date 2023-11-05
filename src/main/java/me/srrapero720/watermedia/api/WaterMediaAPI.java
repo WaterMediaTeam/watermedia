@@ -196,20 +196,6 @@ public final class WaterMediaAPI {
     public static String[] url_getFixersPlatform(boolean includeSpecials) { return UrlAPI.getFixersPlatforms(includeSpecials); }
 
     /**
-     * This method is used by default on {@link SyncVideoPlayer#start(CharSequence, String[])}
-     * Is not recommended external usages
-     * @param stringUrl Media URL to patch
-     * @return Media URL patched to be fully compatible with VLC (static resource)
-     * @deprecated use {@link UrlAPI#fixURL(String)} instead, this method is going to be removed on 2.1.0
-     */
-    @Deprecated
-    public static URL url_toURL(String stringUrl) {
-        URLFixer.Result result = UrlAPI.fixURL(stringUrl);
-        if (result != null) return result.url;
-        return null;
-    }
-
-    /**
      * Used by default internally in the API by {@link SyncBasePlayer} and {@link ImageFetch}
      * Recommended usage just in API custom abstraction
      * IMPORTANT: NothingSpecialFixers are disabled on this method
