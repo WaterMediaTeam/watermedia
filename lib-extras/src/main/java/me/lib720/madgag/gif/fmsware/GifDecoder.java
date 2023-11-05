@@ -249,7 +249,7 @@ public class GifDecoder {
      * @param is
      *            BufferedInputStream containing GIF file.
      * @return read status code (0 = no errors) */
-    public int read(BufferedInputStream is) {
+    public GifDecoder read(BufferedInputStream is) {
         init();
         if (is != null) {
             in = is;
@@ -266,7 +266,18 @@ public class GifDecoder {
         try {
             is.close();
         } catch (IOException e) {}
-        return status;
+        return this;
+    }
+
+    /** Reads GIF image from stream
+     * WATERMeDIA Patch
+     * @param is
+     *            BufferedInputStream containing GIF file.
+     * @return read status code (0 = no errors) */
+    public GifDecoder readOrThrow(InputStream is) throws IOException {
+        read(is);
+        if (status != 0) throw new IOException("Gif decoding failed");
+        return this;
     }
     
     /** Reads GIF image from stream
@@ -312,13 +323,19 @@ public class GifDecoder {
             } else {
                 in = new BufferedInputStream(new FileInputStream(name));
             }
-            status = read(in);
+            read(in);
         } catch (IOException e) {
             status = STATUS_OPEN_ERROR;
         }
         
         return status;
     }
+
+    // WATERMeDIA PATCH - start
+    public int getStatus() {
+        return status;
+    }
+    // WATERMeDIA PATCH - end
     
     /** Decodes LZW image data into pixel array.
      * Adapted from John Cristy's ImageMagick. */

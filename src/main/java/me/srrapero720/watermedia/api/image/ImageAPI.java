@@ -2,11 +2,11 @@ package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
+import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
 import me.srrapero720.watermedia.api.math.MathAPI;
-import me.srrapero720.watermedia.core.tools.FileTool;
-import me.srrapero720.watermedia.core.tools.JarTool;
-import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
+import me.srrapero720.watermedia.tools.IOTool;
+import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class ImageAPI {
+public class ImageAPI extends IModuleBootstrap {
     public static final Marker IT = MarkerManager.getMarker("API");
 
     // IMAGE STORAGE
@@ -46,7 +46,7 @@ public class ImageAPI {
      * @return instance of the picture in a renderer
      */
     public static ImageRenderer loadingGif(String modId) {
-        Path processDir = WaterMedia.getInstance().loader().processPath();
+        Path processDir = WaterMedia.getInstance().getBootstrap().processDir();
         Path modConfig = processDir.resolve("config/watermedia/assets/" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) {
@@ -56,9 +56,13 @@ public class ImageAPI {
                 return renderer;
             }
 
-            renderer = renderer(FileTool.readGif(modConfig.toAbsolutePath()));
-            LOADING_CACHE.put(modId, renderer);
-            return renderer;
+            try {
+                renderer = renderer(IOTool.readGif(IT, modConfig.toAbsolutePath()));
+                LOADING_CACHE.put(modId, renderer);
+                return renderer;
+            } catch (Exception e) {
+                LOGGER.error(IT, "Exception trying to read gif file", e);
+            }
         } else {
             File modConfigParent = modConfig.getParent().toFile();
             if (!modConfigParent.exists()) {
@@ -141,18 +145,35 @@ public class ImageAPI {
         };
     }
 
-    public static void init(IMediaLoader loader) throws ReInitException {
-        if (IMG_LOADING != null) throw new ReInitException("ImageAPI");
+    Path loadingGifPath;
+    ImageAPI() {
+        super();
+        IBootstrap bootstrap = WaterMedia.getInstance().getBootstrap();
+        loadingGifPath = bootstrap.processDir().resolve("config/watermedia/assets/loading.gif");
+    }
 
-        LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
-        ClassLoader cl = ImageAPI.class.getClassLoader();
+    @Override
+    public Priority priority() {
+        return null;
+    }
 
-        IMG_LOADING = renderer(FileTool.readGif(loader.processPath().resolve("config/watermedia/assets/loading.gif")), true);
-        IMG_VLC_FAIL = renderer(JarTool.readGif(cl, "/pictures/videolan/failed.gif"), true);
-        IMG_VLC_FAIL_LAND = renderer(JarTool.readGif(cl, "/pictures/videolan/failed-land.gif"), true);
+    @Override
+    public boolean prepare() throws Exception {
+        return false;
+    }
+
+    @Override
+    public void start() throws Exception {
+        IMG_LOADING = renderer(IOTool.readGif(IT, loadingGifPath), true);
+        IMG_VLC_FAIL = renderer(JarTool.readGif("/pictures/videolan/failed.gif"), true);
+        IMG_VLC_FAIL_LAND = renderer(JarTool.readGif("/pictures/videolan/failed-land.gif"), true);
 
         IMG_BLACK = renderer(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
         IMG_BLACK.image.setRGB(0, 0, MathAPI.getColorARGB(255, 0, 0, 0));
+    }
 
+    @Override
+    public void release() {
+        // no-op
     }
 }

@@ -1,11 +1,12 @@
 package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
+import me.srrapero720.watermedia.api.cache.CacheAPI;
+import me.srrapero720.watermedia.api.cache.CacheEntry;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.core.CacheCore;
-import me.lib720.watermod.concurrent.ThreadCore;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -28,7 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
+import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
 
 /**
  * Tool to fetch new images from internet
@@ -107,12 +108,12 @@ public class ImageFetch {
                 LOGGER.error(IT, "An exception occurred while loading image", e);
             }
             if (failed != null) failed.run(e);
-            CacheCore.deleteEntry(url);
+            CacheAPI.deleteEntry(url);
         }
     }
 
     private static byte[] load(String originalUrl, URL url) throws IOException, NoPictureException {
-        CacheCore.Entry entry = CacheCore.getEntry(originalUrl);
+        CacheEntry entry = CacheAPI.getEntry(originalUrl);
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
 
@@ -165,14 +166,14 @@ public class ImageFetch {
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        CacheCore.updateEntry(new CacheCore.Entry(originalUrl, freshTag, lastTimestamp, expTimestamp));
+                        CacheAPI.updateEntry(new CacheEntry(originalUrl, freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
             if (readType(data) == null) throw new NoPictureException();
-            CacheCore.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
+            CacheAPI.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();

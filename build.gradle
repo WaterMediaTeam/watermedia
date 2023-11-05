@@ -70,6 +70,7 @@ dependencies {
     }
     // SUB-PROJECTS
     compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
+    compileOnly(project(":lib-neoforge")) // MOCKED NEOFORGE CLASSES- REMOVED ON JAR
 
     // GROOVY
     compileOnly group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9'
@@ -82,6 +83,7 @@ dependencies {
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     library 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     library 'com.squareup.retrofit2:retrofit:2.6.4'
+    library 'org.apache.commons:commons-compress:1.23.0'
     library ('com.squareup.retrofit2:converter-gson:2.9.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }

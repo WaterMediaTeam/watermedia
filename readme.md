@@ -91,20 +91,21 @@ and others aren't supported by VLC limitations.
 Ensure your OS is supported in this list.<br>
 Linux users: check https://www.videolan.org/vlc/#download
 
-|   Operative System    | Support status |
-|:---------------------:|:--------------:|
-| Windows 7 ~ 11 (x64)  |       ✅        |
-| Windows 7 ~ 11 (x32)  |       ❎        |
-| Windows 10 ~ 11 (ARM) |       🚫       |
-|      MacOS (x64)      |       ❎        |
-| MacOS (Apple Silicon) |       ❎        |
-|      Linux (x64)      |       ❎        |
-|      Linux (ARM)      |       ⛔        |
+|      Operative System       | Support status |
+|:---------------------------:|:--------------:|
+|    Windows 7 ~ 11 (x64)     |       ✅        |
+|    Windows 7 ~ 11 (x32)     |       ❎        |
+|    Windows 10 ~ 11 (ARM)    |       🚫       |
+|         MacOS (x64)         |       ❎        |
+|    MacOS (Apple Silicon)    |       ❎        |
+|         Linux (x64)         |       ❎        |
+|         Linux (ARM)         |       ❎        |
+| Linux (x64 or ARM via SNAP) |       ⛔        |
 
 - ✅ **SUPPORTED**
-- ❎ **LIMITED:** Needs manually VLC 3 installation
-- 🚫 **NOT COMPATIBLE:** Only in VLC 4 (support planned in 3.x)
-- ⛔ **UNSUPPORTED:** we do not provide support
+- ❎ **LIMITED:** Needs to manually install VLC 3
+- 🚫 **RESTRICTED:** Missing VLC 3 binaries (support planned in 3.x)
+- ⛔ **UNSUPPORTED:** Definitely NOT supported
 
 # Projects using WATERMeDIA
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - Version using: 1.3.x, 2.0.x

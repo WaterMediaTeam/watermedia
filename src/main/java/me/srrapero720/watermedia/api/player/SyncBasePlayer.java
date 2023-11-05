@@ -4,7 +4,6 @@ import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
@@ -190,7 +189,6 @@ public abstract class SyncBasePlayer {
      * that is supplied with our API but isn't enough, because another type of streams cannot be handled
      * @return if mrl was a livestream
      */
-    @Experimental
     public boolean isLive() {
         if (live) return true;
 

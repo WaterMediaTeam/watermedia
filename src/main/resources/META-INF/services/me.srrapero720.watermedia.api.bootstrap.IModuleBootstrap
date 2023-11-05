@@ -1,0 +1,5 @@
+me.srrapero720.watermedia.AssetsModule
+me.srrapero720.watermedia.api.player.PlayerAPI
+me.srrapero720.watermedia.api.cache.CacheAPI
+me.srrapero720.watermedia.api.url.UrlAPI
+me.srrapero720.watermedia.api.rendering.RenderAPI

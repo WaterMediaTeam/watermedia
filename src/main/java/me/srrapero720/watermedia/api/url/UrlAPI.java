@@ -2,11 +2,10 @@ package me.srrapero720.watermedia.api.url;
 
 
 import me.lib720.watermod.safety.TryCore;
-import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
+import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.api.url.fixers.special.SpecialFixer;
-import me.srrapero720.watermedia.core.tools.DataTool;
-import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -16,9 +15,9 @@ import java.util.*;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class UrlAPI {
-    public static final Marker IT = MarkerManager.getMarker("UrlAPI");
-    private static final List<URLFixer> FIXERS = new ArrayList<>();
+public class UrlAPI extends IModuleBootstrap {
+    public static final Marker IT = MarkerManager.getMarker(UrlAPI.class.getSimpleName());
+    private static final ServiceLoader<URLFixer> FX = ServiceLoader.load(URLFixer.class);
 
     /**
      * Fixes string url to be stored in a URL and begin usable on VLC<br>
@@ -40,8 +39,7 @@ public class UrlAPI {
         if (isValid(strUrl)) {
             return TryCore.withReturn(defaultVar -> {
                 URL url = new URL(strUrl);
-                for (int i = 0; i < FIXERS.size(); i++) {
-                    URLFixer fixer = FIXERS.get(i);
+                for (URLFixer fixer: FX) {
                     if (fixer instanceof SpecialFixer && !specials) continue;
                     if (fixer.isValid(url)) return fixer.patch(url, null);
                 }
@@ -71,13 +69,12 @@ public class UrlAPI {
      * @return array of current fixer platforms.
      */
     public static String[] getFixersPlatforms(boolean specials) {
-        String[] result = new String[FIXERS.size()];
-        for (int i = 0; i < FIXERS.size(); i++) {
-            URLFixer fixer = FIXERS.get(i);
+        List<String> result = new ArrayList<>();
+        for (URLFixer fixer: FX) {
             if (fixer instanceof SpecialFixer && !specials) continue;
-            result[i] = fixer.platform();
+            result.add(fixer.platform());
         }
-        return result;
+        return result.toArray(new String[0]);
     }
 
     /**
@@ -115,10 +112,21 @@ public class UrlAPI {
         return queryParams;
     }
 
-    public static void init(IMediaLoader loader) throws ReInitException {
-        if (!FIXERS.isEmpty()) throw new ReInitException(IT.getName());
-
-        LOGGER.info(IT,"Loading {}'s", URLFixer.class.getSimpleName());
-        FIXERS.addAll(DataTool.toList(ServiceLoader.load(URLFixer.class)));
+    public UrlAPI() {
+        super();
     }
+
+    @Override
+    public Priority priority() {
+        return Priority.NORMAL;
+    }
+
+    @Override
+    public boolean prepare() { return false; }
+
+    @Override
+    public void start() throws Exception {}
+
+    @Override
+    public void release() {}
 }

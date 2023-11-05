@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import uk.co.caprica.vlcj.binding.internal.libvlc_instance_t;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -177,6 +178,10 @@ public class NativeDiscovery {
             LOGGER.error(IT, "attemptFix failed", e);
         }
         return false;
+    }
+
+    public void release() {
+        throw new NotImplementedException();
     }
     // WATERMeDIA PATCH - end
 

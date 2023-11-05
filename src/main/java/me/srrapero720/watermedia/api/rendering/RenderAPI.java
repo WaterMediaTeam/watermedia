@@ -1,6 +1,8 @@
 package me.srrapero720.watermedia.api.rendering;
 
 import me.lib720.watermod.reflect.ReflectTool;
+import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
+import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -13,7 +15,7 @@ import java.nio.IntBuffer;
 /**
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
  */
-public class RenderAPI {
+public class RenderAPI extends IModuleBootstrap {
 
     /**
      * Created by CreativeMD
@@ -109,5 +111,29 @@ public class RenderAPI {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, glTexture);
         if (firstFrame) {GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, videoWidth, videoHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, videoBuffer);
         } else GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, videoWidth, videoHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, videoBuffer);
+    }
+
+    public RenderAPI() {
+        super();
+    }
+
+    @Override
+    public Priority priority() {
+        return Priority.LOW;
+    }
+
+    @Override
+    public boolean prepare() throws Exception {
+        return false;
+    }
+
+    @Override
+    public void start() throws Exception {
+
+    }
+
+    @Override
+    public void release() {
+
     }
 }

@@ -1,11 +1,11 @@
-package me.srrapero720.watermedia.api.loader;
+package me.srrapero720.watermedia.api.bootstrap;
 
 import java.nio.file.Path;
 
 /**
  * Required for Bootstrap
  */
-public interface IMediaLoader {
+public interface IBootstrap {
     /**
      * Name should be without spaces or number and with capital letters
      * @return loader name
@@ -17,12 +17,12 @@ public interface IMediaLoader {
      * Just in case you need it (for cleaning or something else)
      * @return Path instance to tmp directory
      */
-    Path tmpPath();
+    Path tempDir();
 
     /**
      * Absolute path to current process directory
      * normally is enough just use `new File("")` but is better do not assume is always it
      * @return Path instance to process directory
      */
-    Path processPath();
+    Path processDir();
 }

@@ -1,10 +1,10 @@
-package me.srrapero720.watermedia.core;
+package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.api.loader.IModuleBootstrap;
-import me.srrapero720.watermedia.core.tools.FileTool;
-import me.srrapero720.watermedia.core.tools.JarTool;
-import me.srrapero720.watermedia.core.tools.OsTool;
+import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
+import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
+import me.srrapero720.watermedia.tools.IOTool;
+import me.srrapero720.watermedia.tools.JarTool;
+import me.srrapero720.watermedia.tools.OsTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -17,7 +17,7 @@ public class AssetsModule extends IModuleBootstrap {
     // CONSTANTS
     private static final Marker IT = MarkerManager.getMarker(AssetsModule.class.getSimpleName());
     private static final String VIDEOLAN_CFG_NAME = "version.cfg";
-    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OsTool.getArch() + ".zip";
+    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OsTool.ARCH + ".zip";
     private static final String VIDEOLAN_VER_ASSET = "/videolan/" + VIDEOLAN_CFG_NAME;
     private static final String LOADING_GIF = "config/watermedia/assets/loading.gif";
 
@@ -25,44 +25,46 @@ public class AssetsModule extends IModuleBootstrap {
     private final Path configOutputFile;
 
     private final Path loadingGif;
-    public AssetsModule(IMediaLoader loader) {
-        super(loader);
-        this.zipOutputFile = loader.tmpPath().resolve(VIDEOLAN_BIN_ASSET);
+
+    public AssetsModule() {
+        super();
+        IBootstrap bootstrap = WaterMedia.getInstance().getBootstrap();
+        this.zipOutputFile = bootstrap.tempDir().resolve(VIDEOLAN_BIN_ASSET);
         this.configOutputFile = zipOutputFile.getParent().resolve(VIDEOLAN_CFG_NAME);
 
-        this.loadingGif = loader.processPath().resolve(LOADING_GIF);
+        this.loadingGif = bootstrap.processDir().resolve(LOADING_GIF);
     }
 
     @Override
-    public boolean boot() {
-        LOGGER.info(IT, "Booting Module");
+    public Priority priority() {
+        return Priority.HIGHEST;
+    }
 
+    @Override
+    public boolean prepare() throws Exception {
         String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
-        String versionInFile = FileTool.readString(configOutputFile);
-        boolean wrapped = !OsTool.getArch().wrapped;
+        String versionInFile = IOTool.readString(configOutputFile);
+        boolean wrapped = !OsTool.ARCH.wrapped;
         boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
         if (!wrapped && !versionMatch) return true;
 
-        LOGGER.warn(IT, "Booting aborted, binaries are {} and version file {}", wrapped ? "wrapped" : "NOT wrapped", versionMatch ? "MATCH" : "DOESN'T MATCH");
+        LOGGER.error(IT, "Binaries are {} and version file {}", wrapped ? "wrapped" : "NOT wrapped", versionMatch ? "match" : "DOESN'T match");
         return false;
     }
 
     @Override
-    public void init() throws Exception {
-        LOGGER.info(IT, "Executing module...");
+    public void start() throws Exception {
         init$videolan$extract();
         init$assets$extract();
-        LOGGER.info(IT, "Execution successfully");
     }
 
     @Override
     public void release() {}
 
-
     public void init$videolan$extract() throws Exception {
         LOGGER.info(IT, "Extracting VideoLAN binaries...");
         if (JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile)) {
-            FileTool.unzip(zipOutputFile);
+            IOTool.unzip(IT, zipOutputFile);
             Files.delete(zipOutputFile);
         }
 
@@ -70,7 +72,7 @@ public class AssetsModule extends IModuleBootstrap {
         LOGGER.info(IT, "VideoLAN binaries extracted successfully");
     }
 
-    public void init$assets$extract() {
+    public void init$assets$extract() throws RuntimeException {
         LOGGER.info(IT, "Extracting Assets...");
         if (!loadingGif.toFile().exists()) JarTool.copyAsset("/pictures/loading.gif", loadingGif);
         LOGGER.info(IT, "Assets extracted successfully");

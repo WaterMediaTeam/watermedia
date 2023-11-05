@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.core.tools;
+package me.srrapero720.watermedia.tools;
 
 import com.sun.jna.Platform;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
@@ -32,14 +32,12 @@ public enum OsTool {
         this.ext = ext;
         this.wrapped = wrapped;
     }
-    @Override
-    public String toString() { return os + "-" + arch; }
+    @Override public String toString() { return os + "-" + arch; }
 
     // STATIC
     private static final Marker IT = MarkerManager.getMarker("Tools");
-    private static final OsTool ARCH;
+    public static final OsTool ARCH = getArch();
     static {
-        ARCH = OsTool.getArch();
         if (!ARCH.wrapped) {
             LOGGER.warn(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
             LOGGER.warn(IT, "WATERMeDIA doesn't contain VLC binaries for your OS. You need to manually download and install it");
@@ -48,9 +46,7 @@ public enum OsTool {
         }
     }
 
-    public static OsTool getArch() {
-        if (ARCH != null) return ARCH;
-
+    private static OsTool getArch() {
         switch (Platform.ARCH) {
             case "x86-64":
             case "amd64":

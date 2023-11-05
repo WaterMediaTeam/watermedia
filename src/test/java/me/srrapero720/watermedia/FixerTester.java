@@ -5,9 +5,6 @@ import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 
 public class FixerTester {
     public static void main(String[] args) {
-        // SAFETY API INIT
-        try { UrlAPI.init(null); } catch (Exception e) {}
-
         URLFixer.Result result = UrlAPI.fixURL("https://imgur.com/t/rick_roll/kGy6J8J");
         WaterMedia.LOGGER.info("Result is: {}", result);
 

@@ -1,16 +1,16 @@
-package me.srrapero720.watermedia.api.loader;
+package me.srrapero720.watermedia.modloaders;
 
 /**
  * This is specially designed for modded environments.
  * In vanilla Java or another type of modlauncher is not required
  */
-public interface IEnvLoader {
+public interface IModLoader {
     /**
      * Check if the current environment was a client
      * this is important to prevent run on clients and load any client-side class like GL11
      * @return if was client-side
      */
-    boolean client();
+    boolean clientSide();
 
     /**
      * Checks if the current environment was a development environment
@@ -18,15 +18,21 @@ public interface IEnvLoader {
      * Is necessary search any special trigger like forge
      * @return if was a development env
      */
-    boolean development();
+    boolean developerMode();
 
     /**
-     * Checks if a mod is installed using the mod id
-     * This can be addressed using FML or FabricLoader
-     * @param modId id of the mod
-     * @return if was installed
+     * Should crash when is on server-side<br>
+     * This method only exists by the stupid Fabric
+     * @return if was a development env
      */
-    boolean installed(String modId);
+    boolean enforceCrash();
+
+    /**
+     * Attempt to find a mod on the environment
+     * @param modId id of the mod
+     * @return true when find it, otherwise false.
+     */
+    boolean modPresent(String modId);
 
     /**
      * Aggressive trigger for TLauncher
@@ -34,5 +40,5 @@ public interface IEnvLoader {
      * Please DO NOT bypass
      * @return if the current environment is using TLauncher
      */
-    boolean tlauncher();
+    boolean tlcheck();
 }
