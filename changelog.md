@@ -1,3 +1,7 @@
+# UPDATE 2.0.11
+- workaround: UrlAPI cannot load local file sources
+- fixed: crash on Linux by JPanel
+
 # UPDATE 2.0.10
 - Fixed: buildJar doesn't include VLC binaries.
 - Updated VLC failed pictures with a brand-new gif
