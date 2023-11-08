@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.api.player;
 
 import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
-import me.srrapero720.watermedia.api.rendering.memory.MemoryTracking;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
@@ -11,7 +10,6 @@ import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,7 +22,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     private volatile int texture;
     private volatile int width = 1;
     private volatile int height = 1;
-    private volatile IntBuffer buffer;
+    private volatile ByteBuffer buffer;
     private volatile Throwable exception;
 
     protected final Executor playerThreadEx;
@@ -40,7 +38,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * PlayerAPI (including all Players) are intended to be rewrited in 2.1.0
      */
     @Deprecated
-    public SyncVideoPlayer(Executor playerThreadEx) { this(null, playerThreadEx, MemoryTracking::create); }
+    public SyncVideoPlayer(Executor playerThreadEx) { this(null, playerThreadEx, RenderAPI::createByteBuffer); }
 
 
     /**
@@ -51,7 +49,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * PlayerAPI (including all Players) are intended to be rewrited in 2.1.0
      */
     @Deprecated
-    public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(factory, playerThreadEx, MemoryTracking::create); }
+    public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(factory, playerThreadEx, RenderAPI::createByteBuffer); }
 
     /**
      * Creates a player instance
@@ -77,8 +75,8 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock();
             try {
-                buffer.put(nativeBuffers[0].asIntBuffer());
-                ReflectTool.invoke("rewind", IntBuffer.class, buffer);
+                buffer.put(nativeBuffers[0]);
+                ReflectTool.invoke("rewind", ByteBuffer.class, buffer);
                 updateFrame.set(true);
             } catch (Throwable t) {
                 if (exception == null) {
@@ -93,7 +91,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
             try {
                 width = sourceWidth;
                 height = sourceHeight;
-                buffer = bufferHelper.create(sourceWidth * sourceHeight * 4).asIntBuffer();
+                buffer = bufferHelper.create(sourceWidth * sourceHeight * 4);
                 updateFrame.set(true);
                 updateFirstFrame.set(true);
             } catch (Throwable t) {

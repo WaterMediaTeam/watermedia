@@ -2,18 +2,52 @@ package me.srrapero720.watermedia.api.rendering;
 
 import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
+import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
+import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
 /**
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
  */
 public class RenderAPI {
+
+    /**
+     * Creates a DirectByteBuffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
+     *
+     * <p>In case class was missing uses instead {@link java.nio.DirectByteBuffer#allocateDirect(int) DirectByteBuffer#allocateDirect(int)}</p>
+     * @param size size of the buffer
+     * @return DirectByteBuffer
+     */
+    public static ByteBuffer createByteBuffer(int size) {
+        try {
+            return MemoryAlloc.create(size);
+        } catch (Throwable t) {
+            return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+        }
+    }
+
+    /**
+     * Resizes direct buffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
+     *
+     * <p>In case class was missing causes a {@link NotImplementedException}</p>
+     * @param buffer buffer to be resized
+     * @param newSize new size of the buffer
+     * @return resized DirectByteBuffer
+     */
+    public static ByteBuffer resizeByteBuffer(ByteBuffer buffer, int newSize) {
+        try {
+            return MemoryAlloc.resize(buffer, newSize);
+        } catch (Throwable t) {
+            throw new NotImplementedException("Not available on LWJGL 2.9.x or below");
+        }
+    }
 
     /**
      * Created by CreativeMD
