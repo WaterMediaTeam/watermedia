@@ -24,11 +24,17 @@ public class TryCore {
     }
 
     public static void simple(ActionSimple runnable) {
-        ThreadCore.simple(runnable, null, null);
+        try {
+            runnable.run();
+        } catch (Exception ignored) {}
     }
 
     public static void simple(ActionSimple runnable, CatchSimple catchSimple) {
-        ThreadCore.simple(runnable, catchSimple, null);
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            catchSimple.run(e);
+        }
     }
 
     public interface ActionWithReturn<T> {
