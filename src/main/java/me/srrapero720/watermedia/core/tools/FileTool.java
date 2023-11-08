@@ -52,11 +52,15 @@ public class FileTool {
             SevenZArchiveEntry entry = sevenZFile.getNextEntry();
 
             while (entry != null) {
-                String filePath = destDirectory + File.separator + entry.getName();
-                if (entry.isDirectory()) {
-                    new File(filePath).mkdirs();
+                File outputFile = new File(destDirectory + File.separator + entry.getName());
+                if (!outputFile.exists()) {
+                    if (entry.isDirectory()) {
+                        if (outputFile.mkdirs()) LOGGER.error(IT, "Cannot create directories of '{}'", entry.getName());
+                    } else {
+                        un7zip$extract(sevenZFile, outputFile.toPath());
+                    }
                 } else {
-                    un7zip$extract(sevenZFile, filePath);
+                    LOGGER.warn(IT, "Cancelled un7zip attempt of '{}', file already exists", entry.getName());
                 }
 
                 entry = sevenZFile.getNextEntry();
@@ -64,9 +68,9 @@ public class FileTool {
         }
     }
 
-    private static void un7zip$extract(SevenZFile sevenZFile, String filePath) throws IOException {
-        try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
-            byte[] content = new byte[4096];
+    private static void un7zip$extract(SevenZFile sevenZFile, Path filePath) throws IOException {
+        try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(filePath))) {
+            byte[] content = new byte[4096 * 4]; // MEMORY AHEAD
             int read;
             while ((read = sevenZFile.read(content)) != -1) bos.write(content, 0, read);
         }

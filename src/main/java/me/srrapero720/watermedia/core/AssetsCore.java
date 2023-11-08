@@ -9,8 +9,8 @@ import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,23 +39,23 @@ public class AssetsCore {
         if (!OsTool.getArch().wrapped) return;
         LOGGER.info(IT, "Extracting VLC...");
 
-        Path zipOutput = loader.tmpPath().resolve(VLC_BIN_RES); // <tmp>\watermedia\videolan\<os-arch>.zip
-        Path configOutput = zipOutput.getParent().resolve(VLC_V_FILE); // <tmp>\watermedia\videolan\version.cfg
+        File zipOutput = loader.tmpPath().resolve(VLC_BIN_RES).toFile(); // <tmp>\watermedia\videolan\<os-arch>.zip
+        Path configOutput = zipOutput.toPath().getParent().resolve(VLC_V_FILE); // <tmp>\watermedia\videolan\version.cfg
 
         try {
             String versionInJar = JarTool.readString(VLC_V_RES);
             String versionInFile = FileTool.readString(configOutput);
 
             // SKIP EXTRACTION IF MATCH
-            if (versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar)) {
+            if (versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar) && !zipOutput.exists()) {
                 LOGGER.info(IT, "Extraction cancelled, config file matches with JAR config file");
                 return;
             }
 
             // EXTRACT ZIP FROM JAR AND UNZIP
-            if (JarTool.copyAsset(VLC_BIN_RES, zipOutput)) {
-                FileTool.un7zip(zipOutput);
-                Files.delete(zipOutput);
+            if ((!zipOutput.exists() && JarTool.copyAsset(VLC_BIN_RES, zipOutput.toPath())) || zipOutput.exists()) {
+                FileTool.un7zip(zipOutput.toPath());
+                zipOutput.deleteOnExit();
 
                 TryCore.simple(() -> JarTool.copyAsset(VLC_V_RES, configOutput), LOGGER::error);
             }
