@@ -55,7 +55,7 @@ public class FileTool {
                 File outputFile = new File(destDirectory + File.separator + entry.getName());
                 if (!outputFile.exists()) {
                     if (entry.isDirectory()) {
-                        if (outputFile.mkdirs()) LOGGER.error(IT, "Cannot create directories of '{}'", entry.getName());
+                        if (!outputFile.mkdirs()) LOGGER.error(IT, "Cannot create directories of '{}'", entry.getName());
                     } else {
                         un7zip$extract(sevenZFile, outputFile.toPath());
                     }
