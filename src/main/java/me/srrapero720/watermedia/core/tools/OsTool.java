@@ -41,10 +41,10 @@ public enum OsTool {
     static {
         ARCH = OsTool.getArch();
         if (!ARCH.wrapped) {
-            LOGGER.warn(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
+            LOGGER.warn(IT, "################### THIS IS NOT AN ERROR - VLC IS NOT PRE-INSTALLED  ###########################");
             LOGGER.warn(IT, "WATERMeDIA doesn't contain VLC binaries for your OS. You need to manually download and install it");
             LOGGER.warn(IT, "Find out VLC 3 for your operative system and architecture here: https://www.videolan.org/vlc/");
-            LOGGER.warn(IT, "###########################  VLC IS NOT PRE-INSTALLED  ###################################");
+            LOGGER.warn(IT, "################### THIS IS NOT AN ERROR - VLC IS NOT PRE-INSTALLED  ###########################");
         }
     }
 
