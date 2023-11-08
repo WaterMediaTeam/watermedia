@@ -4,6 +4,8 @@
 - Feature: Reduced build size by 50%
   - Compresed picture resources by ~60%
   - Compressed pre-installed binaries to ~75%
+- RenderAPI: Added methods to create and resize DirectByteBuffers
+  - SyncVideoPlayer now uses internally a ByteBuffer instead of a ported IntBuffer
 
 # UPDATE 2.0.10
 - Fixed: buildJar doesn't include VLC binaries.
