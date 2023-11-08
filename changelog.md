@@ -6,6 +6,7 @@
   - Compressed pre-installed binaries to ~75%
 - RenderAPI: Added methods to create and resize DirectByteBuffers
   - SyncVideoPlayer now internally uses a ByteBuffer instead of a ported IntBuffer
+- Feature: Boostrap on 1.12.2 is now ASYNC (leading in a fast loading times)
 
 # UPDATE 2.0.10
 - Fixed: buildJar doesn't include VLC binaries.
