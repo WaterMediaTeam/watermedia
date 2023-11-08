@@ -20,7 +20,7 @@ public class AssetsCore {
     private static final AtomicBoolean loaded = new AtomicBoolean(false);
 
     // VLC
-    private static final String VLC_BIN_RES = ("videolan/" + OsTool.getArch()).concat(".zip");
+    private static final String VLC_BIN_RES = ("videolan/" + OsTool.getArch()).concat(".7z");
     private static final String VLC_V_FILE = "version.cfg";
     private static final String VLC_V_RES = "/videolan/".concat(VLC_V_FILE);
 
@@ -53,7 +53,7 @@ public class AssetsCore {
 
             // EXTRACT ZIP FROM JAR AND UNZIP
             if (JarTool.copyAsset(VLC_BIN_RES, zipOutput)) {
-                FileTool.unzip(zipOutput);
+                FileTool.un7zip(zipOutput);
                 Files.delete(zipOutput);
             }
 
