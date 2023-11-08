@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.core;
 
+import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
@@ -55,13 +56,8 @@ public class AssetsCore {
             if (JarTool.copyAsset(VLC_BIN_RES, zipOutput)) {
                 FileTool.un7zip(zipOutput);
                 Files.delete(zipOutput);
-            }
 
-            // WRITE VERSION FILE
-            try {
-                JarTool.copyAsset(VLC_V_RES, configOutput);
-            } catch (Exception e) {
-                LOGGER.error(IT, "Exception writing configuration file", e);
+                TryCore.simple(() -> JarTool.copyAsset(VLC_V_RES, configOutput), LOGGER::error);
             }
         } catch (Exception e) {
             throw new IOException("Cannot perform extraction of VideoLAN", e);
