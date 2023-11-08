@@ -2,12 +2,12 @@
 - workaround: UrlAPI cannot load local file sources
 - Fixed: crash on Linux by JPanel
 - Fixed: Bootstrap was unintentional ASYNC
-  - If you notice sometimes first booting is buggy or broken states of the API, well that isn't normal
-  - By accident, all bootstrap methods become ASYNC; that means offthread, that means a lot of bugs
+  - If you notice sometimes first booting is buggy or broken states of the API; well that isn't normal
+  - By accident, all bootstrap methods become ASYNC; that means off-thread, that means a lot of bugs
   - This update may reduce booting times for the first time, after that booting times are "exact same"
 - Feature: Reduced build size by 50%
   - Compresed picture resources by ~60%
-  - Compressed pre-installed binaries to ~75%
+  - Compressed pre-installed binaries to ~40%
 - RenderAPI: Added methods to create and resize DirectByteBuffers
   - SyncVideoPlayer now internally uses a ByteBuffer instead of a ported IntBuffer
 - Feature: Boostrap on 1.12.2 is now ASYNC (leading in a fast loading times)
