@@ -1,6 +1,8 @@
 package me.srrapero720.watermedia.core.tools;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -39,6 +41,36 @@ public class FileTool {
         return null;
     }
 
+    public static void un7zip(Path zipFilePath) throws IOException { un7zip(zipFilePath, zipFilePath.getParent()); }
+
+    public static void un7zip(Path zipFilePath, Path destDirectory) throws IOException {
+        File destDir = destDirectory.toFile();
+        if (!destDir.exists()) destDir.mkdir();
+
+        try (SevenZFile sevenZFile = new SevenZFile(zipFilePath.toFile())) {
+            SevenZArchiveEntry entry = sevenZFile.getNextEntry();
+
+            while (entry != null) {
+                String filePath = destDirectory + File.separator + entry.getName();
+                if (entry.isDirectory()) {
+                    new File(filePath).mkdirs();
+                } else {
+                    un7zip$extract(sevenZFile, filePath);
+                }
+
+                entry = sevenZFile.getNextEntry();
+            }
+        }
+    }
+
+    private static void un7zip$extract(SevenZFile sevenZFile, String filePath) throws IOException {
+        try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
+            byte[] content = new byte[4096];
+            int read;
+            while ((read = sevenZFile.read(content)) != -1) bos.write(content, 0, read);
+        }
+    }
+
     public static void unzip(Path zipFilePath) throws IOException { unzip(zipFilePath, zipFilePath.getParent()); }
     public static void unzip(Path zipFilePath, Path destDirectory) throws IOException {
         File destDir = destDirectory.toFile();
@@ -62,7 +94,6 @@ public class FileTool {
             }
         }
     }
-
     private static void unzip$extract(ZipInputStream zipIn, String filePath) throws IOException {
         try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
             byte[] bytesIn = new byte[4096];

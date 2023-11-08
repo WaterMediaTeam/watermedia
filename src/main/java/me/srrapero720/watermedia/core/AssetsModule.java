@@ -17,7 +17,7 @@ public class AssetsModule extends IModuleBootstrap {
     // CONSTANTS
     private static final Marker IT = MarkerManager.getMarker(AssetsModule.class.getSimpleName());
     private static final String VIDEOLAN_CFG_NAME = "version.cfg";
-    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OsTool.getArch() + ".zip";
+    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OsTool.getArch() + ".7z";
     private static final String VIDEOLAN_VER_ASSET = "/videolan/" + VIDEOLAN_CFG_NAME;
     private static final String LOADING_GIF = "config/watermedia/assets/loading.gif";
 
@@ -62,7 +62,7 @@ public class AssetsModule extends IModuleBootstrap {
     public void init$videolan$extract() throws Exception {
         LOGGER.info(IT, "Extracting VideoLAN binaries...");
         if (JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile)) {
-            FileTool.unzip(zipOutputFile);
+            FileTool.un7zip(zipOutputFile);
             Files.delete(zipOutputFile);
         }
 

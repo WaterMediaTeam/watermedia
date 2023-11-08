@@ -1,6 +1,9 @@
 # UPDATE 2.0.11
 - workaround: UrlAPI cannot load local file sources
-- fixed: crash on Linux by JPanel
+- Fixed: crash on Linux by JPanel
+- Feature: Reduced build size by 50%
+  - Compresed picture resources by ~60%
+  - Compressed pre-installed binaries to ~75%
 
 # UPDATE 2.0.10
 - Fixed: buildJar doesn't include VLC binaries.
