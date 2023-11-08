@@ -1,7 +1,5 @@
 package me.lib720.watermod.safety;
 
-import me.lib720.watermod.concurrent.ThreadCore;
-
 public class TryCore {
     public static <T> T withReturn(ActionWithReturn<T> runnable, T defaultVar) {
         return withReturn(runnable, null, defaultVar);
