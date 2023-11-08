@@ -47,6 +47,7 @@ public class FileTool {
         File destDir = destDirectory.toFile();
         if (!destDir.exists()) destDir.mkdir();
 
+//        try (SevenZFile sevenZFile = new SevenZFile(zipFilePath.toFile(), "watermedia-is-my-lord".getBytes(StandardCharsets.UTF_16LE))) {
         try (SevenZFile sevenZFile = new SevenZFile(zipFilePath.toFile())) {
             SevenZArchiveEntry entry = sevenZFile.getNextEntry();
 

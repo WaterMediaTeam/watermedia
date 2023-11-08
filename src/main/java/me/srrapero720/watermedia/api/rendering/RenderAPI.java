@@ -45,7 +45,7 @@ public class RenderAPI {
         try {
             return MemoryAlloc.resize(buffer, newSize);
         } catch (Throwable t) {
-            throw new NotImplementedException("Not available on LWJGL 2.9.x or below");
+            throw new NoSuchMethodError("resizeByteBuffer is not available on LWJGL 2.x");
         }
     }
 

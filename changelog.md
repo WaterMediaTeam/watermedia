@@ -1,6 +1,10 @@
 # UPDATE 2.0.11
 - workaround: UrlAPI cannot load local file sources
 - Fixed: crash on Linux by JPanel
+- Fixed: Bootstrap was unintentional ASYNC
+  - If you notice sometimes first booting is buggy or broken states of the API, well that isn't normal
+  - By accident, all bootstrap methods become ASYNC; that means offthread, that means a lot of bugs
+  - This update may reduce booting times for the first time, after that booting times are "exact same"
 - Feature: Reduced build size by 50%
   - Compresed picture resources by ~60%
   - Compressed pre-installed binaries to ~75%
