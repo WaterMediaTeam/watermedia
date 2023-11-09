@@ -75,7 +75,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock();
             try {
-                buffer.put(nativeBuffers[0]);
+                buffer = nativeBuffers[0];
                 ReflectTool.invoke("rewind", ByteBuffer.class, buffer);
                 updateFrame.set(true);
             } catch (Throwable t) {
