@@ -1,12 +1,15 @@
 # UPDATE 2.0.11
-- workaround: UrlAPI cannot load local file sources
+**IMPORTANT ADVICE:** This version contains a lot of potential breaking changes, if mod or any dependent mod
+crashes consider downgrading to 2.0.10 (and report it quickly to the authors of the mod)
+
+- Fixed: UrlAPI cannot load local file sources (workaround)
 - Fixed: crash on Linux by JPanel
 - Fixed: Bootstrap was unintentional ASYNC
   - If you notice sometimes first booting is buggy or broken states of the API; well that isn't normal
   - By accident, all bootstrap methods become ASYNC; that means off-thread, that means a lot of bugs
   - This update may reduce booting times for the first time, after that booting times are "exact same"
 - Feature: Reduced build size by 50%
-  - Compresed picture resources by ~60%
+  - Compressed picture resources by ~60%
   - Compressed pre-installed binaries to ~40%
 - RenderAPI: Added methods to create and resize DirectByteBuffers
   - SyncVideoPlayer now internally uses a ByteBuffer instead of a ported IntBuffer
