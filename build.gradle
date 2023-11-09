@@ -4,6 +4,8 @@ plugins {
     id 'java'
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'com.matthewprenger.cursegradle' version '1.4+'
 }
 
 /* JAR INFO */
@@ -168,4 +170,57 @@ jar {
     from(configurations.library.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude 'META-INF', 'META-INF/**'
     }
+}
+
+tasks.modrinth.enabled = System.getenv("MODRINTH_TOKEN") != null
+tasks.modrinth.group = 'publishing'
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = project.modrinth_id
+    versionNumber = project.mod_version
+    versionType = project.release_type
+    uploadFile = jar
+    gameVersions = [ project.minecraft_version ]
+    changelog = getCurrentChanges()
+    loaders = [ "forge", "neoforge" ]
+    dependencies {
+        required.project "watermedia"
+    }
+}
+
+tasks.curseforge.enabled = System.getenv("CURSEFORGE_TOKEN") != null
+tasks.curseforge.group = 'publishing'
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_TOKEN")
+    project {
+        id = project.curse_id
+        changelog = getCurrentChanges() + "\n" + getChangesHistory()
+        changelogType = "markdown"
+        addGameVersion project.minecraft_version
+        addGameVersion "Forge"
+        addGameVersion "NeoForge"
+        releaseType = project.release_type
+        mainArtifact(jar) {
+        }
+        relations {
+            requiredLibrary "creativecore"
+            requiredLibrary "watermedia"
+            optionalLibrary "littletiles"
+        }
+    }
+}
+
+String getCurrentChanges() {
+    return file('changelog.txt').readLines()
+}
+
+String getChangesHistory() {
+    return file('changelog-history.txt').readLines()
+}
+
+task publishToModPages(type: GradleBuild) {
+    description 'Publish buld version to CurseForge and Modrinth'
+    group = 'publishing'
+    tasks = ['modrinth', 'curseforge']
 }
