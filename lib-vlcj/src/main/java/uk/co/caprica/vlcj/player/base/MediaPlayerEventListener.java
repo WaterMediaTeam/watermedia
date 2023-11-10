@@ -22,13 +22,11 @@ package uk.co.caprica.vlcj.player.base;
 import uk.co.caprica.vlcj.media.MediaRef;
 import uk.co.caprica.vlcj.media.TrackType;
 
-import javax.swing.*;
-
 /**
  * Specification for a component that is interested in receiving event notifications from the media player.
  * <p>
  * Events are <em>not</em> raised on the Swing Event Dispatch thread so if updating user interface components in
- * response to these events care must be taken to use {@link SwingUtilities#invokeLater(Runnable)}.
+ * response to these events care must be taken to use {@link javax.swing.SwingUtilities#invokeLater(Runnable) SwingUtilities#invokeLater(Runnable)}.
  * <p>
  * Equally, care must be taken not to call back into LibVLC from the event handling thread - if an event handler needs
  * to call back into LibVLC it should use the {@link MediaPlayer#submit(Runnable)} method to submit a task for

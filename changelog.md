@@ -1,4 +1,7 @@
-# UPDATE 2.0.11
+# UPDATE 2.0.12
+- Fixed: crash on Linux by JPanel natives (again)
+
+# UPDATE 2.0.11 (ARCHIVED)
 **IMPORTANT ADVICE:** This version contains a lot of potential breaking changes, if mod or any dependent mod
 crashes consider downgrading to 2.0.10 (and report it quickly to the authors of the mod)
 
