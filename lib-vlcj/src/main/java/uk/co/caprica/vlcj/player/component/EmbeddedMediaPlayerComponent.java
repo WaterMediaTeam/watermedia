@@ -86,9 +86,7 @@ public class EmbeddedMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         this.mediaPlayer.events().addMediaPlayerEventListener(this);
         this.mediaPlayer.events().addMediaEventListener(this);
 
-        setBackground(Color.black);
-        setLayout(new BorderLayout());
-        add(this.videoSurfaceComponent, BorderLayout.CENTER);
+        // WATERMeDIA Patch - REMOVED JPanel impl
 
         initInputEvents(inputEvents);
 

@@ -152,11 +152,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
 
         this.mediaPlayer.videoSurface().set(this.mediaPlayerFactory.videoSurfaces().newVideoSurface(bufferFormatCallback, renderCallback, lockBuffers));
 
-        setBackground(Color.black);
-        setLayout(new BorderLayout());
-        if (this.videoSurfaceComponent != null) {
-            add(this.videoSurfaceComponent, BorderLayout.CENTER);
-        }
+        // WATERMeDIA Patch - REMOVED JPanel impl
 
         initInputEvents(inputEvents);
 

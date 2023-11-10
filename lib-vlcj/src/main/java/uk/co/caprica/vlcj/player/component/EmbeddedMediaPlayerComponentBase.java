@@ -19,40 +19,20 @@
 
 package uk.co.caprica.vlcj.player.component;
 
-import uk.co.caprica.vlcj.media.Media;
-import uk.co.caprica.vlcj.media.MediaEventListener;
-import uk.co.caprica.vlcj.media.MediaParsedStatus;
-import uk.co.caprica.vlcj.media.MediaRef;
-import uk.co.caprica.vlcj.media.Meta;
-import uk.co.caprica.vlcj.media.Picture;
-import uk.co.caprica.vlcj.media.TrackType;
+import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.base.State;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
+import java.awt.event.*;
 
 /**
  * Base implementation of an embedded media player.
  * <p>
  * This class serves to keep the {@link EmbeddedMediaPlayerComponent} concrete implementation clean and un-cluttered.
  */
-@SuppressWarnings("serial")
-abstract class EmbeddedMediaPlayerComponentBase extends JPanel implements MediaPlayerEventListener, MediaEventListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener  {
-
-    /**
-     * Blank cursor to use when the cursor is disabled.
-     */
-    private Cursor blankCursor;
+// WATERMeDIA PATCH - Removed extends JPanel
+abstract class EmbeddedMediaPlayerComponentBase implements MediaPlayerEventListener, MediaEventListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener  {
 
     /**
      * Create a media player component.
@@ -60,34 +40,7 @@ abstract class EmbeddedMediaPlayerComponentBase extends JPanel implements MediaP
     protected EmbeddedMediaPlayerComponentBase() {
     }
 
-    /**
-     * Enable or disable the mouse cursor when it is over the component.
-     * <p>
-     * Note that you may see glitchy behaviour if you try and disable the cursor <em>after</em> you
-     * show the window/frame that contains your video surface.
-     * <p>
-     * If you want to disable the cursor for this component you should do so before you show the
-     * window.
-     *
-     * @param enabled <code>true</code> to enable (show) the cursor; <code>false</code> to disable (hide) it
-     */
-    public final void setCursorEnabled(boolean enabled) {
-        setCursor(enabled ? null : getBlankCursor());
-    }
-
-    /**
-     * Create a blank 1x1 image to use when the cursor is disabled.
-     *
-     * @return cursor
-     */
-    private Cursor getBlankCursor() {
-        if(blankCursor == null) {
-            Image blankImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-            blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankImage, new Point(0, 0), "");
-        }
-        return blankCursor;
-    }
-
+    // WATERMeDIA Patcn - removed getBlankCursor and setCursorEnabled
     /**
      * Template method invoked at the end of the media player constructor.
      */
