@@ -1,11 +1,5 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.image.ImageAPI;
-import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
-
-import java.io.File;
-import java.nio.file.Path;
-
 public class Testo {
     public static void main(String[] args) {
 //        new ImageAPI(new IBootstrap() {

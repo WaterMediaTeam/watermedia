@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.cache;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
-import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
+import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -16,7 +16,7 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class CacheAPI extends IModuleBootstrap {
+public class CacheAPI extends WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker(CacheAPI.class.getSimpleName());
     private static final Map<String, CacheEntry> ENTRIES = new HashMap<>();
 
@@ -26,7 +26,7 @@ public class CacheAPI extends IModuleBootstrap {
 
     CacheAPI() {
         super();
-        IBootstrap bootstrap = WaterMedia.getInstance().getBootstrap();
+        IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
         dir = bootstrap.tempDir().toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "index");
     }

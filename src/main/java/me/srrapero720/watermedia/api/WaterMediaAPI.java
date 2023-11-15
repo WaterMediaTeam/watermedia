@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.bootstrap;
+package me.srrapero720.watermedia.api;
 
 
 /**
@@ -6,9 +6,7 @@ package me.srrapero720.watermedia.api.bootstrap;
  * Only for internal usage, do not use it to mock/load external modules.
  * Consider using MIXIN for that
  */
-public abstract class IModuleBootstrap {
-    public IModuleBootstrap() {}
-
+public abstract class WaterMediaAPI {
     /**
      * Get the priority of the module
      * @return priority level

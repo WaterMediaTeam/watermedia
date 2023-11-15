@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
-import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
+import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.tools.OsTool;
@@ -13,7 +13,8 @@ import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class AssetsModule extends IModuleBootstrap {
+@Deprecated
+public class AssetsModule extends WaterMediaAPI {
     // CONSTANTS
     private static final Marker IT = MarkerManager.getMarker(AssetsModule.class.getSimpleName());
     private static final String VIDEOLAN_CFG_NAME = "version.cfg";
@@ -28,7 +29,7 @@ public class AssetsModule extends IModuleBootstrap {
 
     public AssetsModule() {
         super();
-        IBootstrap bootstrap = WaterMedia.getInstance().getBootstrap();
+        IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
         this.zipOutputFile = bootstrap.tempDir().resolve(VIDEOLAN_BIN_ASSET);
         this.configOutputFile = zipOutputFile.getParent().resolve(VIDEOLAN_CFG_NAME);
 

@@ -2,8 +2,7 @@ package me.srrapero720.watermedia.api.url;
 
 
 import me.lib720.watermod.safety.TryCore;
-import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
-import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.api.url.fixers.special.SpecialFixer;
 import org.apache.logging.log4j.Marker;
@@ -15,7 +14,7 @@ import java.util.*;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class UrlAPI extends IModuleBootstrap {
+public class UrlAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker(UrlAPI.class.getSimpleName());
     private static final ServiceLoader<URLFixer> FX = ServiceLoader.load(URLFixer.class);
 

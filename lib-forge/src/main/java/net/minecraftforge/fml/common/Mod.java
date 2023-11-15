@@ -15,6 +15,8 @@ public @interface Mod {
     boolean clientSideOnly() default false;
     boolean serverSideOnly() default false;
 
+    String dependencies() default "";
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @interface EventHandler{}

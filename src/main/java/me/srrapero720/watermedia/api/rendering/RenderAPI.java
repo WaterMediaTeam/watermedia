@@ -1,8 +1,7 @@
 package me.srrapero720.watermedia.api.rendering;
 
 import me.lib720.watermod.reflect.ReflectTool;
-import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
-import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -15,7 +14,7 @@ import java.nio.IntBuffer;
 /**
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
  */
-public class RenderAPI extends IModuleBootstrap {
+public class RenderAPI extends WaterMediaAPI {
 
     /**
      * Created by CreativeMD

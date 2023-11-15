@@ -2,8 +2,8 @@ package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
-import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
+import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class ImageAPI extends IModuleBootstrap {
+public class ImageAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker("API");
 
     // IMAGE STORAGE
@@ -46,7 +46,7 @@ public class ImageAPI extends IModuleBootstrap {
      * @return instance of the picture in a renderer
      */
     public static ImageRenderer loadingGif(String modId) {
-        Path processDir = WaterMedia.getInstance().getBootstrap().processDir();
+        Path processDir = WaterMedia.getInstance().getBootCore().processDir();
         Path modConfig = processDir.resolve("config/watermedia/assets/" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) {
@@ -148,7 +148,7 @@ public class ImageAPI extends IModuleBootstrap {
     Path loadingGifPath;
     ImageAPI() {
         super();
-        IBootstrap bootstrap = WaterMedia.getInstance().getBootstrap();
+        IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
         loadingGifPath = bootstrap.processDir().resolve("config/watermedia/assets/loading.gif");
     }
 

@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.player;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.bootstrap.IBootstrap;
-import me.srrapero720.watermedia.api.bootstrap.IModuleBootstrap;
+import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -19,7 +19,7 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class PlayerAPI extends IModuleBootstrap {
+public class PlayerAPI extends WaterMediaAPI {
     private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());
     private static MediaPlayerFactory FACTORY;
@@ -75,7 +75,7 @@ public class PlayerAPI extends IModuleBootstrap {
     private final Path logs;
     public PlayerAPI() {
         super();
-        IBootstrap bootstrap = WaterMedia.getInstance().getBootstrap();
+        IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
         this.dir = bootstrap.tempDir();
         this.logs = dir.toAbsolutePath().resolve("logs/videolan.log");
     }

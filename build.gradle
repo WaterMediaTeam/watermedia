@@ -172,55 +172,58 @@ jar {
     }
 }
 
-tasks.modrinth.enabled = System.getenv("MODRINTH_TOKEN") != null
-tasks.modrinth.group = 'publishing'
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = project.modrinth_id
-    versionNumber = project.mod_version
-    versionType = project.release_type
-    uploadFile = jar
-    gameVersions = [ project.minecraft_version ]
-    changelog = getCurrentChanges()
-    loaders = [ "forge", "neoforge" ]
-    dependencies {
-        required.project "watermedia"
-    }
-}
-
-tasks.curseforge.enabled = System.getenv("CURSEFORGE_TOKEN") != null
-tasks.curseforge.group = 'publishing'
-
-curseforge {
-    apiKey = System.getenv("CURSEFORGE_TOKEN")
-    project {
-        id = project.curse_id
-        changelog = getCurrentChanges() + "\n" + getChangesHistory()
-        changelogType = "markdown"
-        addGameVersion project.minecraft_version
-        addGameVersion "Forge"
-        addGameVersion "NeoForge"
-        releaseType = project.release_type
-        mainArtifact(jar) {
-        }
-        relations {
-            requiredLibrary "creativecore"
-            requiredLibrary "watermedia"
-            optionalLibrary "littletiles"
-        }
-    }
-}
+//tasks.modrinth.enabled = System.getenv("MODRINTH_TOKEN") != null
+//tasks.modrinth.group = 'publishing'
+//modrinth {
+//    token = System.getenv("MODRINTH_TOKEN")
+//    projectId = modrinthid
+//    versionNumber = modversion
+//    versionType = modversiontype
+//    uploadFile = shadowJar
+//    gameVersions = [ "1.20.2", "1.20.1", "1.19.2", "1.18.2", "1.16.5", "1.12.2" ]
+//    changelog = getCurrentChanges()
+//    loaders = [ "forge", "neoforge", "fabric", "quilt" ]
+//}
+//
+//tasks.curseforge.enabled = System.getenv("CURSEFORGE_TOKEN") != null
+//tasks.curseforge.group = 'publishing'
+//
+//curseforge {
+//    apiKey = System.getenv("CURSEFORGE_TOKEN")
+//    project {
+//        id = curseforgeid
+//        changelog = getCurrentChanges() + "\n" + getChangesHistory()
+//        changelogType = "markdown"
+//        addGameVersion "1.20.2"
+//        addGameVersion "1.20.1"
+//        addGameVersion "1.19.2"
+//        addGameVersion "1.18.2"
+//        addGameVersion "1.16.5"
+//        addGameVersion "1.12.2"
+//        addGameVersion "Forge"
+//        addGameVersion "NeoForge"
+//        addGameVersion "Fabric"
+//        addGameVersion "Quilt"
+//        addGameVersion "Java 18"
+//        addGameVersion "Java 17"
+//        addGameVersion "Java 11"
+//        addGameVersion "Java 8"
+//        releaseType = modversiontype
+//        mainArtifact(shadowJar) {
+//        }
+//    }
+//}
 
 String getCurrentChanges() {
-    return file('changelog.txt').readLines()
+    return file('changelog.md').readLines()
 }
 
 String getChangesHistory() {
-    return file('changelog-history.txt').readLines()
+    return file('changelog-history.md').readLines()
 }
 
-task publishToModPages(type: GradleBuild) {
-    description 'Publish buld version to CurseForge and Modrinth'
-    group = 'publishing'
-    tasks = ['modrinth', 'curseforge']
-}
+//task publishToModPages(type: GradleBuild) {
+//    description 'Publish buld version to CurseForge and Modrinth'
+//    group = 'publishing'
+//    tasks = ['modrinth', 'curseforge']
+//}

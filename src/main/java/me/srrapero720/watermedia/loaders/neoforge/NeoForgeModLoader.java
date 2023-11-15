@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.modloaders.neoforge;
+package me.srrapero720.watermedia.loaders.neoforge;
 
 import me.srrapero720.watermedia.WaterMedia;
 import net.neoforge.fml.common.Mod;
