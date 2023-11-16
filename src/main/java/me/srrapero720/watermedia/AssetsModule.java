@@ -4,7 +4,6 @@ import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
-import me.srrapero720.watermedia.tools.OsTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -18,7 +17,7 @@ public class AssetsModule extends WaterMediaAPI {
     // CONSTANTS
     private static final Marker IT = MarkerManager.getMarker(AssetsModule.class.getSimpleName());
     private static final String VIDEOLAN_CFG_NAME = "version.cfg";
-    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OsTool.ARCH + ".zip";
+    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OperativeSystem.getFile();
     private static final String VIDEOLAN_VER_ASSET = "/videolan/" + VIDEOLAN_CFG_NAME;
     private static final String LOADING_GIF = "config/watermedia/assets/loading.gif";
 
@@ -45,7 +44,7 @@ public class AssetsModule extends WaterMediaAPI {
     public boolean prepare() throws Exception {
         String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
         String versionInFile = IOTool.readString(configOutputFile);
-        boolean wrapped = !OsTool.ARCH.wrapped;
+        boolean wrapped = !OperativeSystem.isWrapped();
         boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
         if (!wrapped && !versionMatch) return true;
 
