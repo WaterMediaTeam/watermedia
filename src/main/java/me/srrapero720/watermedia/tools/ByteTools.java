@@ -7,9 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 
-public class BufferTool {
+public class ByteTools {
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 
+    @Deprecated
     public static <T> List<T> toList(ServiceLoader<T> s) {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);
@@ -17,15 +18,10 @@ public class BufferTool {
     }
 
     public static byte[] readAllBytes(InputStream stream) throws IOException {
-        int len = Integer.MAX_VALUE;
-        if (len < 0) {
-            throw new IllegalArgumentException("len < 0");
-        }
-
         List<byte[]> bufs = null;
         byte[] result = null;
         int total = 0;
-        int remaining = len;
+        int remaining = Integer.MAX_VALUE;
         int n;
         do {
             byte[] buf = new byte[Math.min(remaining, 8192)];

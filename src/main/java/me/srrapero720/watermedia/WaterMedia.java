@@ -2,7 +2,7 @@ package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.tools.BufferTool;
+import me.srrapero720.watermedia.tools.ByteTools;
 import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +43,7 @@ public class WaterMedia {
 	public IBootCore getBootCore() { return this.bootCore; }
 
 	public void init() throws Exception {
-		List<WaterMediaAPI> modules = BufferTool.toList(ServiceLoader.load(WaterMediaAPI.class));
+		List<WaterMediaAPI> modules = ByteTools.toList(ServiceLoader.load(WaterMediaAPI.class));
 		modules.sort(Comparator.comparingInt(e -> e.priority().ordinal()));
 
 		for (WaterMediaAPI m: modules) {

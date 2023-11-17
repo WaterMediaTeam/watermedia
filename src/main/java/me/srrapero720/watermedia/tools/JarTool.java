@@ -22,7 +22,7 @@ public class JarTool {
     static final Marker IT = MarkerManager.getMarker("Tools");
 
     public static String readString(String from) throws IOException {
-        byte[] bytes = BufferTool.readAllBytes(getResourceInputStream(from));
+        byte[] bytes = ByteTools.readAllBytes(getResourceInputStream(from));
         return new String(bytes, Charset.defaultCharset());
     }
 
