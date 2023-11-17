@@ -145,11 +145,11 @@ public class ImageAPI extends WaterMediaAPI {
         };
     }
 
-    Path loadingGifPath;
+    private final Path loadingGifPath;
     ImageAPI() {
         super();
         IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
-        loadingGifPath = bootstrap.processDir().resolve("config/watermedia/assets/loading.gif");
+        this.loadingGifPath = bootstrap.processDir().resolve("config/watermedia/assets/loading.gif");
     }
 
     @Override
@@ -164,6 +164,13 @@ public class ImageAPI extends WaterMediaAPI {
 
     @Override
     public void start() throws Exception {
+        if (!loadingGifPath.toFile().exists()) {
+            LOGGER.info(IT, "Extracting picture resources...");
+            JarTool.copyAsset("/pictures/loading.gif", loadingGifPath);
+            LOGGER.info(IT, "Extracted successfully");
+        }
+
+        LOGGER.info(IT, "Loading core resources...");
         IMG_LOADING = renderer(IOTool.readGif(IT, loadingGifPath), true);
         IMG_VLC_FAIL = renderer(JarTool.readGif("/pictures/videolan/failed.gif"), true);
         IMG_VLC_FAIL_LAND = renderer(JarTool.readGif("/pictures/videolan/failed-land.gif"), true);

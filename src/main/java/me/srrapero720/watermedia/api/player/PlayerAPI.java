@@ -1,8 +1,11 @@
 package me.srrapero720.watermedia.api.player;
 
+import me.lib720.watermod.safety.TryCore;
+import me.srrapero720.watermedia.OperativeSystem;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -13,6 +16,7 @@ import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
@@ -22,6 +26,10 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class PlayerAPI extends WaterMediaAPI {
     private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());
+    private static final String VIDEOLAN_CFG_NAME = "version.cfg";
+    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OperativeSystem.getFile();
+    private static final String VIDEOLAN_VER_ASSET = "/videolan/" + VIDEOLAN_CFG_NAME;
+
     private static MediaPlayerFactory FACTORY;
 
     private static MediaPlayerFactory FACTORY_VMEM_AWAVEOUT;
@@ -73,11 +81,17 @@ public class PlayerAPI extends WaterMediaAPI {
 
     private final Path dir;
     private final Path logs;
+
+    private final File zipOutputFile;
+    private final File configOutputFile;
     public PlayerAPI() {
         super();
         IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
         this.dir = bootstrap.tempDir();
         this.logs = dir.toAbsolutePath().resolve("logs/videolan.log");
+
+        this.zipOutputFile = bootstrap.tempDir().resolve(VIDEOLAN_BIN_ASSET).toFile();
+        this.configOutputFile = zipOutputFile.toPath().getParent().resolve(VIDEOLAN_CFG_NAME).toFile();
     }
 
     @Override
@@ -86,13 +100,32 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare() {
-        return FACTORY == null;
+    public boolean prepare() throws Exception {
+        String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
+        String versionInFile = IOTool.readString(configOutputFile.toPath());
+        boolean wrapped = !OperativeSystem.isWrapped();
+        boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
+        if (!wrapped && !versionMatch) return true;
+
+        LOGGER.error(IT, "Binaries are {} and version file {}", wrapped ? "wrapped" : "NOT wrapped", versionMatch ? "match" : "DOESN'T match");
+
+        return false;
     }
 
     @Override
     public void start() throws Exception {
+        LOGGER.info(IT, "Extracting VideoLAN binaries...");
+        if ((!zipOutputFile.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile.toPath())) || zipOutputFile.exists()) {
+            IOTool.unzip(IT, zipOutputFile.toPath());
+            zipOutputFile.deleteOnExit();
+
+            TryCore.simple(() -> JarTool.copyAsset(VIDEOLAN_VER_ASSET, configOutputFile.toPath()), LOGGER::error);
+
+            LOGGER.info(IT, "VideoLAN binaries extracted successfully");
+        }
+
         // LOGGER INIT
+        LOGGER.info(IT, "Processing VideoLAN log files...");
         if (!Files.exists(logs)) {
             if (logs.getParent().toFile().mkdirs()) LOGGER.info(IT, "Logger dir created");
             else LOGGER.error(IT, "Failed to create logger dir");
@@ -107,15 +140,15 @@ public class PlayerAPI extends WaterMediaAPI {
             int count = 0;
             while (new File(compressedFilePath).exists()) compressedFilePath = logFile.getParent() + "/" + date + "-" + (++count) + ".log.gz";
 
-            try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(new FileOutputStream(compressedFilePath)); InputStream inputStream = new FileInputStream(logFile)) {
+            try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(Files.newOutputStream(Paths.get(compressedFilePath))); InputStream inputStream = new FileInputStream(logFile)) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = inputStream.read(buffer)) != -1) gzipOutputStream.write(buffer, 0, bytesRead);
             } catch (Exception e) {
-                LOGGER.error(IT, "Failed to compress {}", logs, e);
+                LOGGER.error(IT, "Failed to compress log file from '{}'", logs, e);
             }
 
-            if (!logFile.delete()) LOGGER.error(IT, "Cannot delete logfile");
+            if (!logFile.delete()) LOGGER.error(IT, "Cannot delete log file");
         }
 
         // VLCJ INIT
@@ -130,6 +163,8 @@ public class PlayerAPI extends WaterMediaAPI {
 
     @Override
     public void release() {
-        throw new NoSuchMethodError("No executed");
+        FACTORY_VMEM_ADIRECTSOUND.release();
+        FACTORY_VMEM_AMEM.release();
+        FACTORY_VMEM_AWAVEOUT.release();
     }
 }
