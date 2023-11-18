@@ -1,9 +1,11 @@
 package me.srrapero720.watermedia.loaders;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
- * Required for Bootstrap
+ * Required interface to boot instance of {@link me.srrapero720.watermedia.WaterMedia WaterMedia}
+ * some instances was pre-made for Minecraft mod loaders like MinecraftForge, NeoForge, Fabric and Quilt.
  */
 public interface IBootCore {
     /**
@@ -48,4 +50,43 @@ public interface IBootCore {
      * @return if was a development env
      */
     boolean developerMode();
+
+    /**
+     * Default {@link IBootCore} instance to be used in non-minecraft instances
+     * @see IBootCore
+     */
+    IBootCore DEFAULT = new IBootCore() {
+        private final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
+        private final Path processPath = new File("").toPath().toAbsolutePath();
+
+        @Override
+        public String name() {
+            return "Default";
+        }
+
+        @Override
+        public Path tempDir() {
+            return tmpPath;
+        }
+
+        @Override
+        public Path processDir() {
+            return processPath;
+        }
+
+        @Override
+        public boolean tlcheck() {
+            return false;
+        }
+
+        @Override
+        public boolean clientSide() {
+            return true;
+        }
+
+        @Override
+        public boolean developerMode() {
+            return false;
+        }
+    };
 }
