@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import uk.co.caprica.vlcj.binding.internal.libvlc_instance_t;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -68,7 +67,7 @@ public class NativeDiscovery {
      * If the discovery failed before, then running it again may work e.g. if the client application took some remedial
      * steps to make the native libraries available.
      */
-    private static boolean alreadyFound;
+    public static boolean alreadyFound; // WATERMeDIA Patch
 
     /**
      * The native discovery strategy instance that discovered the native library path.
@@ -181,7 +180,7 @@ public class NativeDiscovery {
     }
 
     public void release() {
-        throw new NotImplementedException();
+        throw new IllegalStateException();
     }
     // WATERMeDIA PATCH - end
 
