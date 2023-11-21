@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia;
+package me.srrapero720.watermedia.tests.uncannonical;
 
 import java.io.*;
 import java.net.HttpURLConnection;

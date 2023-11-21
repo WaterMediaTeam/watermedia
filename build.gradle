@@ -91,6 +91,8 @@ dependencies {
     }
 
     // TEST
+    testImplementation 'net.java.dev.jna:jna:4.4.0'
+    testImplementation 'net.java.dev.jna:platform:3.4.0'
     testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
     testImplementation 'org.apache.commons:commons-lang3:3.12.0'
