@@ -95,6 +95,9 @@ public class ThreadCore {
             Thread t = new Thread(r);
             t.setName(name + "-" + count.incrementAndGet());
             t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+            t.setUncaughtExceptionHandler((t1, e) -> {
+                LOGGER.error("Exception on thread {}", t1, e);
+            });
             t.setDaemon(true);
             t.setPriority(priority);
             return t;
