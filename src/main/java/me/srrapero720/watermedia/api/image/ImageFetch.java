@@ -20,7 +20,6 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,7 +76,7 @@ public class ImageFetch {
             if (result == null) throw new IllegalArgumentException("Invalid URL");
             if (result.assumeVideo) throw new NoPictureException();
 
-            byte[] data = UrlAPI.isValidPathUrl(result.url) ? load(url, Paths.get(result.url).toFile().toURI().toURL()) : load(url, new URL(result.url));
+            byte[] data = UrlAPI.isValidPathUrl(result.url) ? load(url, new File(result.url).toURI().toURL()) : load(url, new URL(result.url));
             String type = readType(data);
 
             try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
