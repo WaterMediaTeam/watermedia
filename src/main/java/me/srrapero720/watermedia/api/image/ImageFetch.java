@@ -1,12 +1,12 @@
 package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.CacheCore;
-import me.lib720.watermod.concurrent.ThreadCore;
-import org.apache.commons.io.IOUtils;
+import me.srrapero720.watermedia.core.tools.DataTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -163,14 +163,15 @@ public class ImageFetch {
                     File file = entry.getFile();
 
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
-                        return IOUtils.toByteArray(fileStream);
+                        return DataTool.readAllBytes(fileStream);
                     } finally {
                         CacheCore.updateEntry(new CacheCore.Entry(originalUrl, freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
-            byte[] data = IOUtils.toByteArray(in);
+
+            byte[] data = DataTool.readAllBytes(in);
             if (readType(data) == null) throw new NoPictureException();
             CacheCore.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
             return data;
