@@ -127,7 +127,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare() throws Exception {
+    public boolean prepare(IBootCore bootCore) throws Exception {
         String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
         String versionInFile = IOTool.readString(configOutputFile.toPath());
         boolean wrapped = OperativeSystem.isWrapped();
@@ -141,7 +141,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start(IBootCore bootCore) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutputFile.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile.toPath())) || zipOutputFile.exists()) {

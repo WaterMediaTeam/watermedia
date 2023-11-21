@@ -5,6 +5,7 @@ import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.api.url.fixers.special.SpecialFixer;
+import me.srrapero720.watermedia.loaders.IBootCore;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -121,10 +122,10 @@ public class UrlAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare() { return false; }
+    public boolean prepare(IBootCore bootCore) { return false; }
 
     @Override
-    public void start() throws Exception {}
+    public void start(IBootCore bootCore) throws Exception {}
 
     @Override
     public void release() {}

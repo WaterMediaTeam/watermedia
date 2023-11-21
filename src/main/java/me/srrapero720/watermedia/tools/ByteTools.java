@@ -17,6 +17,14 @@ public class ByteTools {
         return r;
     }
 
+    public static Integer parseInt(String s) {
+        try {
+            return Integer.valueOf(s.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     public static byte[] readAllBytes(InputStream stream) throws IOException {
         List<byte[]> bufs = null;
         byte[] result = null;

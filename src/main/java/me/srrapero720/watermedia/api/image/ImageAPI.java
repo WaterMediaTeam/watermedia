@@ -158,12 +158,12 @@ public class ImageAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare() throws Exception {
+    public boolean prepare(IBootCore bootCore) throws Exception {
         return false;
     }
 
     @Override
-    public void start() throws Exception {
+    public void start(IBootCore bootCore) throws Exception {
         if (!loadingGifPath.toFile().exists()) {
             LOGGER.info(IT, "Extracting picture resources...");
             JarTool.copyAsset("/pictures/loading.gif", loadingGifPath);

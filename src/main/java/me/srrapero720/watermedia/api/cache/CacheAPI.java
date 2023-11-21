@@ -37,7 +37,7 @@ public class CacheAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare() {
+    public boolean prepare(IBootCore bootCore) {
         if (!released) {
             LOGGER.error(IT, "Failed due boot API while is not released, boot cancelled");
             return false;
@@ -51,7 +51,7 @@ public class CacheAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start(IBootCore bootCore) throws Exception {
         LOGGER.info(IT, "Mounted on path '{}'", dir);
         if (index.exists()) {
             try (DataInputStream stream = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())))) {

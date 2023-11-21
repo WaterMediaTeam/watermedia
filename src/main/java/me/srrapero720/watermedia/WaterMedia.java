@@ -48,11 +48,11 @@ public class WaterMedia {
 
 		for (WaterMediaAPI m: modules) {
 			LOGGER.info(IT, "Starting {}", m.getClass().getSimpleName());
-			if (!m.prepare()) {
+			if (!m.prepare(bootCore)) {
 				LOGGER.warn(IT, "Module {} refuses to be loaded, skipping", m.getClass().getSimpleName());
 				continue;
 			}
-			m.start();
+			m.start(bootCore);
 			LOGGER.info(IT, "Module {} loaded successfully", m.getClass().getSimpleName());
 		}
 		LOGGER.info(IT, "Startup finished");
