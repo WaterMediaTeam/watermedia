@@ -56,12 +56,12 @@ public abstract class URLFixer {
     }
 
     public static class Result {
-        public final String url;
+        public final URL url;
         public final Quality quality;
         public final boolean assumeStream;
         public final boolean assumeVideo;
 
-        public Result(String url, boolean assumeVideo, boolean assumeStream) {
+        public Result(URL url, boolean assumeVideo, boolean assumeStream) {
             this.url = url;
             this.quality = null;
             this.assumeVideo = assumeVideo;

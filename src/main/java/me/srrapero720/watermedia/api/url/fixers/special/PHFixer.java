@@ -23,7 +23,7 @@ public class PHFixer extends SpecialFixer {
         super.patch(url, prefQuality);
         try {
             List<VideoQuality> videos = PornHubAPI.getVideo(url.toString());
-            return new Result(videos.get(0).getUri(), true, false);
+            return new Result(new URL(videos.get(0).getUri()), true, false);
         } catch (Exception e) {
             throw new FixingURLException(url.toString(), e);
         }

@@ -18,7 +18,7 @@ public class DropboxFixer extends URLFixer {
     public Result patch(URL url, Quality preferQuality) throws FixingURLException {
         super.patch(url, preferQuality);
         try {
-            return new Result(url.toString().replace("dl=0", "dl=1"), false, false);
+            return new Result(new URL(url.toString().replace("dl=0", "dl=1")), false, false);
         } catch (Exception e) {
             throw new FixingURLException(url, e);
         }

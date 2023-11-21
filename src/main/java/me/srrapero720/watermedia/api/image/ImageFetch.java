@@ -76,7 +76,7 @@ public class ImageFetch {
             if (result == null) throw new IllegalArgumentException("Invalid URL");
             if (result.assumeVideo) throw new NoPictureException();
 
-            byte[] data = UrlAPI.isValidPathUrl(result.url) ? load(url, new File(result.url).toURI().toURL()) : load(url, new URL(result.url));
+            byte[] data = load(url, result.url);
             String type = readType(data);
 
             try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
