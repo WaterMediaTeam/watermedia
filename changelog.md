@@ -1,7 +1,8 @@
 # UPDATE 2.0.20
 - Reverted all changes related through UrlAPI
   - This fixes all issues on WATERFrAMES and VideoPlayer with loading local/online resources
-  - Mods needs to do some special handling arround ``url:///path/to/file.mp4`` until a real solution was implemented on UrlAPI
+  - Mods needs to do some special handling arround ``file:///path/to/file.mp4`` until a real solution was implemented on UrlAPI
+- Addressed ``file:///`` protocol on PlayerAPI (VLC wasn't able to understand it)
 
 # UPDATE 2.0.12 (ARCHIVED)
 - Fixed: crash on Linux by JPanel natives (again)

@@ -70,6 +70,11 @@ public abstract class SyncBasePlayer {
     private boolean rpa(CharSequence url) {
         if (raw == null) return false;
         return TryCore.withReturn(defaultVar -> {
+            if (url.toString().startsWith("file:///")) {
+                this.url = url.toString().replace("file:///", "");
+                this.live = false;
+                return true;
+            }
             URLFixer.Result result = UrlAPI.fixURL(url.toString(), sfixer);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
