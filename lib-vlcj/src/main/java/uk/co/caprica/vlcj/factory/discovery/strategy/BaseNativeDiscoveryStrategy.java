@@ -26,8 +26,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static uk.co.caprica.vlcj.VideoLan4J.LOGGER;
 import static uk.co.caprica.vlcj.factory.discovery.NativeDiscovery.IT;
-import static uk.co.caprica.vlcj.factory.discovery.NativeDiscovery.LOGGER;
 
 /**
  * Base implementation of a native discovery strategy that searches a list of directories for a list of files.
