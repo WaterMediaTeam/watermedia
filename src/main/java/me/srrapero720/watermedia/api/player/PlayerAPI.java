@@ -3,6 +3,7 @@ package me.srrapero720.watermedia.api.player;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.OperativeSystem;
 import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
 import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.tools.IOTool;
@@ -19,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -30,13 +33,11 @@ public class PlayerAPI extends WaterMediaAPI {
     private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OperativeSystem.getFile();
     private static final String VIDEOLAN_VER_ASSET = "/videolan/" + VIDEOLAN_CFG_NAME;
 
-    private static MediaPlayerFactory FACTORY;
+    private static final Map<String, String> ARGVARS = new HashMap<>();
 
     private static MediaPlayerFactory FACTORY_VMEM_AWAVEOUT;
     private static MediaPlayerFactory FACTORY_VMEM_ADIRECTSOUND;
     private static MediaPlayerFactory FACTORY_VMEM_AMEM;
-
-    public static MediaPlayerFactory factory() { return FACTORY; }
 
     /**
      * Check if PlayerAPI and/or VLC is loaded and ready to be used.
@@ -44,29 +45,52 @@ public class PlayerAPI extends WaterMediaAPI {
      * keep still working
      * @return if PlayerAPI and/or VLC was loaded
      */
-    public static boolean isReady() { return factory() != null; }
+    public static boolean isReady() {
+        return NativeDiscovery.alreadyFound;
+    }
 
     /**
-     * Gives you the default VLC MediaPlayerFactory created by API
-     * @return WATERMeDIA's default MediaPlayerFactory
+     * Returns default WATERMeDIA's MediaPlayer factory instance with audio output variant
+     * uses DirectSound by default, witch provides an individual volume for each player
+     * by default uses on video output "mem"
+     * @return default factory
      */
-    public static MediaPlayerFactory getVLCFactory() { return factory(); }
+    public static MediaPlayerFactory getFactoryDirectsound() {
+        return FACTORY_VMEM_ADIRECTSOUND;
+    }
 
-    private static String[] init$readArguments(Path loggerPath) throws IOException {
-        String[] args = JarTool.readArray("/videolan/arguments.json");
-        for (int i =0; i < args.length; i++) args[i] = args[i].replace("{logfile}", loggerPath.toString());
-        return  args;
+    /**
+     * Returns default WATERMeDIA's MediaPlayer factory instance with audio output variant
+     * uses WaveOut by default, this has an issue and is audio output always being bound to process volume.
+     * So if you need, for example, use individual players with individual volume, this is not the right option
+     * by default uses on video output "mem"
+     * @return default factory
+     */
+    public static MediaPlayerFactory getFactoryWaveout() {
+        return FACTORY_VMEM_AWAVEOUT;
+    }
+
+    /**
+     * Returns default WATERMeDIA's MediaPlayer factory instance with audio output variant
+     * uses output on mem by default, you need to handle audio output by your own adding a callback for it
+     * by default uses on video output "mem"
+     * @see uk.co.caprica.vlcj.player.base.AudioApi AudioAPI from VLCJ
+     * @return default factory
+     */
+    public static MediaPlayerFactory getFactoryMem() {
+        return FACTORY_VMEM_AMEM;
     }
 
     /**
      * Use your own VLCArgs at your own risk
-     * By default this method makes a ReleaseHook to release everything after close Minecraft
-     * Suggestion: Use the same VLC arguments for logging but with other filename
+     * By default this method makes a ReleaseHook to release factory on process shutdown
+     * Suggestion: Use the same VLC arguments for logging but with another filename
      * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
+     * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
      * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link SyncBasePlayer} can accept factory for new instances
+     * @return a PlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
      */
-    public static MediaPlayerFactory init$createFactory(String[] vlcArgs) {
+    public static MediaPlayerFactory customFactory(String[] vlcArgs) {
         MediaPlayerFactory factory = null;
         if (DISCOVERY.discover()) {
             factory = new MediaPlayerFactory(DISCOVERY, vlcArgs);
@@ -79,11 +103,14 @@ public class PlayerAPI extends WaterMediaAPI {
         return factory;
     }
 
+    // LOADING
     private final Path dir;
     private final Path logs;
 
     private final File zipOutputFile;
     private final File configOutputFile;
+
+    private boolean extract;
     public PlayerAPI() {
         super();
         IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
@@ -103,25 +130,28 @@ public class PlayerAPI extends WaterMediaAPI {
     public boolean prepare() throws Exception {
         String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
         String versionInFile = IOTool.readString(configOutputFile.toPath());
-        boolean wrapped = !OperativeSystem.isWrapped();
+        boolean wrapped = OperativeSystem.isWrapped();
         boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
-        if (!wrapped && !versionMatch) return true;
+        extract = wrapped && !versionMatch;
 
-        LOGGER.error(IT, "Binaries are {} and version file {}", wrapped ? "wrapped" : "NOT wrapped", versionMatch ? "match" : "DOESN'T match");
+        if (!extract)
+            LOGGER.warn(IT, "VLC binaries extraction skipped, {}", !wrapped ? "binaries are not wrapped" : "extracted binaries version match");
 
-        return false;
+        return true;
     }
 
     @Override
     public void start() throws Exception {
-        LOGGER.info(IT, "Extracting VideoLAN binaries...");
-        if ((!zipOutputFile.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile.toPath())) || zipOutputFile.exists()) {
-            IOTool.unzip(IT, zipOutputFile.toPath());
-            zipOutputFile.deleteOnExit();
+        if (extract) {
+            LOGGER.info(IT, "Extracting VideoLAN binaries...");
+            if ((!zipOutputFile.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile.toPath())) || zipOutputFile.exists()) {
+                IOTool.unzip(IT, zipOutputFile.toPath());
+                zipOutputFile.deleteOnExit();
 
-            TryCore.simple(() -> JarTool.copyAsset(VIDEOLAN_VER_ASSET, configOutputFile.toPath()), LOGGER::error);
+                TryCore.simple(() -> JarTool.copyAsset(VIDEOLAN_VER_ASSET, configOutputFile.toPath()), LOGGER::error);
 
-            LOGGER.info(IT, "VideoLAN binaries extracted successfully");
+                LOGGER.info(IT, "VideoLAN binaries extracted successfully");
+            }
         }
 
         // LOGGER INIT
@@ -154,8 +184,20 @@ public class PlayerAPI extends WaterMediaAPI {
         // VLCJ INIT
         VideoLan4J.init(dir.toAbsolutePath().resolve("videolan/"));
 
+        // VLC INIT, this need to be soft-crashed because api and game can still work without VLC
         try {
-            FACTORY = init$createFactory(init$readArguments(logs));
+            if (ARGVARS.isEmpty()) {
+                ARGVARS.put("logfile", logs.toString());
+            }
+
+            String[] args = JarTool.readArrayAndParse("/videolan/args-vmem-adirect.json", ARGVARS);
+            FACTORY_VMEM_ADIRECTSOUND = customFactory(args);
+
+            args = JarTool.readArrayAndParse("/videolan/args-vmem-amem.json", ARGVARS);
+            FACTORY_VMEM_AMEM = customFactory(args);
+
+            args = JarTool.readArrayAndParse("/videolan/args-vmem-awaveout.json", ARGVARS);
+            FACTORY_VMEM_AWAVEOUT = customFactory(args);
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);
         }

@@ -53,7 +53,7 @@ public final class TaskExecutor {
      * this thread, if you do either the call will be ineffective, strange behaviour will happen, or a fatal JVM crash
      * may occur.
      * <p>
-     * To mitigate this, tasks can be serialised and executed using this service.
+     * To mitigate this, tasks can be serialized and executed using this service.
      * <p>
      * See {@link #submit(Runnable)}.
      */

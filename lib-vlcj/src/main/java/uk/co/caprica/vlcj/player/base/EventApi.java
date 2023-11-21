@@ -19,6 +19,9 @@
 
 package uk.co.caprica.vlcj.player.base;
 
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import uk.co.caprica.vlcj.VideoLan4J;
 import uk.co.caprica.vlcj.media.MediaEventListener;
 import uk.co.caprica.vlcj.player.base.events.MediaPlayerEvent;
 
@@ -46,6 +49,15 @@ public final class EventApi extends BaseApi {
      * @param listener component to notify
      */
     public void addMediaPlayerEventListener(MediaPlayerEventListener listener) {
+        // WATERMeDIA's PATCH - start
+        // This is needed because using events can be a pain in the ass
+        if (!listener.getClass().getSimpleName().equals("WaterMediaPlayerEventListener")) {
+            final Marker it = MarkerManager.getMarker("WATERMeDIA");
+            VideoLan4J.LOGGER.warn(it,
+                    "Adding custom events without know about concurrency can lead in unexpected behaviors and JVM crashes or deadlocks");
+            VideoLan4J.LOGGER.warn(it, "consider use WATERMeDIA to avoid any issue.");
+        }
+        // WATERMeDIA's PATCH - end
         eventManager.addEventListener(listener);
     }
 

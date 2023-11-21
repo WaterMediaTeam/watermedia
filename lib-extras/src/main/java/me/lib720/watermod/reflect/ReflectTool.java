@@ -60,8 +60,7 @@ public class ReflectTool {
                     method.setAccessible(true);
                     return (T) method.invoke(instance, arguments);
                 } catch (NoSuchMethodException e) {
-                    LOGGER.error(IT, "Failed to execute '{}.{}({})' caused by {}", classFrom.getSimpleName(), methodNames[i], Arrays.toString(classesNames), e.getMessage());
-                    continue;
+                    LOGGER.warn(IT, "Failed to execute '{}.{}({})' caused by {}", classFrom.getSimpleName(), methodNames[i], Arrays.toString(classesNames), e.getMessage());
                 }
             }
             LOGGER.fatal(IT, "Cannot execute any method of '{}: {}', things may not work well", classFrom.getSimpleName(), Arrays.toString(methodNames));

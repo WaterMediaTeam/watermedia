@@ -1,0 +1,12 @@
+[
+  "--no-quiet",
+
+  "--file-logging",
+  "--logmode=text",
+  "--logfile={logfile}",
+  "--verbose=2",
+
+  "--aout=mem",
+
+  "--http-reconnect"
+]

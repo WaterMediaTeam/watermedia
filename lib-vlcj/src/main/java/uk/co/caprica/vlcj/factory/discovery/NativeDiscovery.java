@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
+import static uk.co.caprica.vlcj.VideoLan4J.LOGGER;
 import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_new;
 import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_release;
 
@@ -153,7 +154,6 @@ public class NativeDiscovery {
     // WATERMeDIA PATCH - start
     private static Field searchPaths;
     private static Field libraries;
-    public static final Logger LOGGER = LogManager.getLogger("VLCJ");
     public static final Marker IT = MarkerManager.getMarker("NativeDiscovery");
     @SuppressWarnings("unchecked")
     public boolean attemptFix() {

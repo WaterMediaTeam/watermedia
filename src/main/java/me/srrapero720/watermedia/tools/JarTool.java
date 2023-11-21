@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
+import java.util.Map;
 import java.util.jar.Manifest;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -28,7 +28,23 @@ public class JarTool {
 
     public static String[] readArray(String path) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getResourceInputStream(path)))) {
-            return new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType());
+            return new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
+        }
+    }
+
+    public static String[] readArrayAndParse(String path, Map<String, String> values) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getResourceInputStream(path)))) {
+            String[] keyset = values.keySet().toArray(new String[0]);
+            String[] str = new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
+
+            String v;
+            for (int i = 0; i < str.length; i++) {
+                v = str[i];
+                for (int j = 0; j < keyset.length; j++) {
+                    str[i] = v.replace("{" + keyset[j] + "}", values.get(keyset[j]));
+                }
+            }
+            return str;
         }
     }
 
