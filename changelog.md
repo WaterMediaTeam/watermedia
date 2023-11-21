@@ -1,5 +1,11 @@
-# UPDATE 2.0.12
+# UPDATE 2.0.20
+- Reverted all changes related through UrlAPI
+  - This fixes all issues on WATERFrAMES and VideoPlayer with loading local/online resources
+  - Mods needs to do some special handling arround ``url:///path/to/file.mp4`` until a real solution was implemented on UrlAPI
+
+# UPDATE 2.0.12 (ARCHIVED)
 - Fixed: crash on Linux by JPanel natives (again)
+- Fixed: Online files aren't loaded by ImageFetch
 
 # UPDATE 2.0.11 (ARCHIVED)
 **IMPORTANT ADVICE:** This version contains a lot of potential breaking changes, if mod or any dependent mod
@@ -18,7 +24,7 @@ crashes consider downgrading to 2.0.10 (and report it quickly to the authors of 
   - SyncVideoPlayer now internally uses a ByteBuffer instead of a ported IntBuffer
 - Feature: Boostrap on 1.12.2 is now ASYNC (leading in a fast loading times)
 
-# UPDATE 2.0.10
+# UPDATE 2.0.10 (ARCHIVED)
 - Fixed: buildJar doesn't include VLC binaries.
 - Updated VLC failed pictures with a brand-new gif
 
