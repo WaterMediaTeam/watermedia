@@ -12,9 +12,6 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -92,9 +89,11 @@ public class UrlAPI {
         return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false);
     }
 
-    public static boolean isValidPathUrl(String str) {
-        Path path = Paths.get(str);
-        return Files.isDirectory(path);
+    public static boolean isValidPathUrl(String path) {
+        return TryCore.withReturn(defaultVar -> {
+            new File(path).toURI().toURL();
+            return true;
+        }, false);
     }
 
     /**
