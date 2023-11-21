@@ -24,7 +24,7 @@ public class CacheAPI extends WaterMediaAPI {
     private static File index;
     private static boolean released = true;
 
-    CacheAPI() {
+    public CacheAPI() {
         super();
         IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
         dir = bootstrap.tempDir().toAbsolutePath().resolve("cache/pictures").toFile();
