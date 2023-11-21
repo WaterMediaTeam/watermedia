@@ -40,6 +40,7 @@ public class UrlAPI {
         if (isValid(strUrl)) {
             return TryCore.withReturn(defaultVar -> {
                 URL url = new URL(strUrl);
+                if (strUrl.startsWith("file:///")) return new URLFixer.Result(url, false, false);
                 for (int i = 0; i < FIXERS.size(); i++) {
                     URLFixer fixer = FIXERS.get(i);
                     if (fixer instanceof SpecialFixer && !specials) continue;
@@ -47,12 +48,6 @@ public class UrlAPI {
                 }
                 return new URLFixer.Result(url, false, false);
             }, e -> LOGGER.error(IT, "Exception occurred fixing URL", e), null);
-        } else if (isValidPathUrl(strUrl)) { // nothing to FIX
-            return TryCore.withReturn(defaultVar -> {
-                File f = new File(strUrl);
-                if (!f.exists()) throw new IllegalArgumentException("File path cannot be readed or be used in a URL");
-                return new URLFixer.Result(new File(strUrl).toURI().toURL(), false, false);
-            }, e -> LOGGER.error(IT, "Exception occurred converting file path to URL", e), null);
         }
 
         LOGGER.error(IT, "URL doesn't have a valid syntax, cannot be fixed");
