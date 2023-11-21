@@ -73,7 +73,7 @@ public abstract class SyncBasePlayer {
             URLFixer.Result result = UrlAPI.fixURL(url.toString(), sfixer);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
-            this.url = result.url;
+            this.url = result.url.toString();
             live = result.assumeStream;
             return true;
         }, e -> LOGGER.error(IT, "Failed to load player"), false);

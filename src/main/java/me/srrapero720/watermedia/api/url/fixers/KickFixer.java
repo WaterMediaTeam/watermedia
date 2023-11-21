@@ -28,7 +28,7 @@ public class KickFixer extends URLFixer {
              try {
                  Call<KickVideo> call = KickAPI.NET.getVideoInfo(url.getPath().replace("/video/", ""));
                  Response<KickVideo> res = call.execute();
-                 if (res.isSuccessful() && res.body() != null) return new Result(res.body().url, true, false);
+                 if (res.isSuccessful() && res.body() != null) return new Result(new URL(res.body().url), true, false);
              } catch (Exception e) {
                  throw new FixingURLException(url.toString(), e);
              }
@@ -36,7 +36,7 @@ public class KickFixer extends URLFixer {
             try {
                 Call<KickChannel> call = KickAPI.NET.getChannelInfo(url.getPath().replace("/", ""));
                 Response<KickChannel> res = call.execute();
-                if (res.isSuccessful() && res.body() != null) return new Result(res.body().url, true, true);
+                if (res.isSuccessful() && res.body() != null) return new Result(new URL(res.body().url), true, true);
             } catch (Exception e) {
                 throw new FixingURLException(url.toString(), e);
             }
