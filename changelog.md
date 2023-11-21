@@ -1,4 +1,10 @@
-# UPDATE 2.0.20
+# UPDATE 2.0.21
+- Fixed pictures are infinite loading
+  - For some reason, IOUtils soft-crashes ImageFetch without throwing any error, it just
+stops working.
+  - IOUtils was replaced with our byte reader. doing that fixes loading, idk why it happens but yeah finally a freaking fix
+
+# UPDATE 2.0.20 (ARCHIVED)
 - Reverted all changes related through UrlAPI
   - This fixes all issues on WATERFrAMES and VideoPlayer with loading local/online resources
   - Mods needs to do some special handling arround ``file:///path/to/file.mp4`` until a real solution was implemented on UrlAPI
