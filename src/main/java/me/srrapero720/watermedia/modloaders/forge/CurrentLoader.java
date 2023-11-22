@@ -8,7 +8,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.network.FMLNetworkConstants;
+import net.minecraftforge.fml.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
