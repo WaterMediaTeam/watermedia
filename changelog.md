@@ -1,3 +1,6 @@
+# UPDATE 2.0.22
+- Fixed crash on 1.16.5
+
 # UPDATE 2.0.21
 - Fixed pictures are infinite loading
   - For some reason, IOUtils soft-crashes ImageFetch without throwing any error, it just
