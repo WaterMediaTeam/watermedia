@@ -15,7 +15,6 @@ import java.io.File;
 
 public class FutureLoader implements IEnvLoader {
     FutureLoader() {
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
         FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLCommonSetupEvent event) -> WaterMedia.getInstance(null).crash());
     }
 
