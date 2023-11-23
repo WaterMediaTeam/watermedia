@@ -1,6 +1,6 @@
 # UPDATE 2.0.23
 - Removed DisplayTest on 1.18.2
-- Removed server-only pair system of DisplayTest (fixes crashes on 1.1.6.5)
+- Removed server-only pair system of DisplayTest (fixes crashes on 1.16.5)
 
 # UPDATE 2.0.22
 - Fixed crash on 1.16.5
