@@ -1,8 +1,11 @@
+# UPDATE 2.0.24
+- Fixed wrong DisplayTest, causing WATERMeDIA to be required on server by FORGE
+
 # UPDATE 2.0.23
 - Removed DisplayTest on 1.18.2
 - Removed server-only pair system of DisplayTest (fixes crashes on 1.16.5)
 
-# UPDATE 2.0.22
+# UPDATE 2.0.22 (ARCHIVED)
 - Fixed crash on 1.16.5
 
 # UPDATE 2.0.21
