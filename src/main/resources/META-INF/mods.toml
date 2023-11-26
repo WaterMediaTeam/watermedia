@@ -3,10 +3,12 @@ loaderVersion="${fgrange}"
 license="${modlicense}"
 logoFile="pack.png" #optional
 issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
+displayTest="IGNORE_SERVER_VERSION"
 [[mods]]
     modId="${modid}"
     version="${version}"
     displayName="${modname}"
+    displayTest="IGNORE_SERVER_VERSION"
     #updateJSONURL="https://change.me.example.invalid/updates.json"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia"
     logoFile="pack.png" #optional
