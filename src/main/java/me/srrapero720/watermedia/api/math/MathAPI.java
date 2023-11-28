@@ -30,6 +30,47 @@ public class MathAPI {
     public static int msToTick(long ms) { return (int) (ms / 50); }
 
     /**
+     * Missing docs
+     * @param start
+     * @param end
+     * @param time
+     * @return
+     */
+    public static double scaleTempo(long start, long end, long time) {
+        if (start < 0 || end < 0 || time < 0) throw new IllegalArgumentException("Invalid negative value");
+        try {
+            double result = ((double) start + time) / end;
+            if (time > Long.MAX_VALUE - (start - end)) throw new IllegalArgumentException("You stupid bastard");
+            if (time > end - start) result %= end - start;
+            return  result;
+        } catch (ArithmeticException ignored) {
+            return 0;
+        }
+    }
+
+    /**
+     * missing docs
+     * @param startTick
+     * @param endTick
+     * @param timeTick
+     * @return
+     */
+    public static double scaleTempoOfTicks(int startTick, int endTick, int timeTick) {
+        if (startTick < 0 || endTick < 0 || timeTick < 0) throw new IllegalArgumentException("Invalid negative value");
+        try {
+            long start = MathAPI.tickToMs(startTick);
+            long end = MathAPI.tickToMs(endTick);
+            long time = MathAPI.tickToMs(timeTick);
+            double result = ((double) start + time) / end;
+            if (time > Long.MAX_VALUE - (start - end)) throw new IllegalArgumentException("You stupid bastard");
+            if (time > end - start) result %= end - start;
+            return  result;
+        } catch (ArithmeticException ignored) {
+            return 0;
+        }
+    }
+
+    /**
      * Returns the floor modulus of the {@code long} arguments.
      * <p>
      * The floor modulus is {@code r = x - (floorDiv(x, y) * y)},
