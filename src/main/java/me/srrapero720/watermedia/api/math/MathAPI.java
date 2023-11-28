@@ -92,4 +92,81 @@ public class MathAPI {
      * @return HEX color
      */
     public static int getColorARGB(int a, int r, int g, int b) { return (a << 24) | (r << 16) | (g << 8) | b; }
+
+    /**
+     * Converts arguments into an ease-in value usable on animations
+     * @param start begin of the result across time
+     * @param end end of the result across time
+     * @param t time from 0.0 ~ 1.0
+     * @return calculated result of ease-in
+     */
+    public static double easeIn(double start, double end, double t) {
+        return start + (end - start) * t * t;
+    }
+
+    /**
+     * Converts arguments into an ease-out value usable on animations
+     * @param start begin of the result across time
+     * @param end end of the result across time
+     * @param t time from 0.0 ~ 1.0
+     * @return calculate result of ease-out
+     */
+    public static double easeOut(double start, double end, double t) {
+        return start + (end - start) * (1 - Math.pow(1 - t, 2));
+    }
+
+    /**
+     * Converts arguments into an ease-in-out value usable on animations
+     * @param start begin of the result across time
+     * @param end end of the result across time
+     * @param t time from 0.0 ~ 1.0
+     * @return calculate result of ease-in-out
+     */
+    public static double easeInOut(double start, double end, double t) {
+        return t < 0.5 ? easeIn(start, end / 2, t * 2) : easeOut(start + (end / 2), end, (t - 0.5) * 2);
+    }
+
+    /**
+     * Converts arguments into an ease-out-in value usable on animations
+     * @param start begin of the result across time
+     * @param end end of the result across time
+     * @param t time from 0.0 ~ 1.0
+     * @return calculate result of ease-out-in
+     */
+    public static double easeOutIn(double start, double end, double t) {
+        return t < 0.5 ? easeOut(start, end / 2, t * 2) : easeIn(start + (end / 2), end, (t - 0.5) * 2);
+    }
+
+    /**
+     * Converts arguments into an ease-in-circle value usable on animations
+     * @param start begin of the result across time
+     * @param end end of the result across time
+     * @param t time from 0.0 ~ 1.0
+     * @return calculate result of ease-in-circle
+     */
+    public static double easeInCircle(double start, double end, double t) {
+        return start + (end - start) * (1 - Math.sqrt(1 - t * t));
+    }
+
+    /**
+     * Converts arguments into an ease-out-circle value usable on animations
+     * @param start begin of the result across time
+     * @param end end of the result across time
+     * @param t time from 0.0 ~ 1.0
+     * @return calculate result of ease-out-circle
+     */
+    public static double easeOutCircle(double start, double end, double t) {
+        return start + (end - start) * Math.sqrt(1 - Math.pow(t - 1, 2));
+    }
+
+    /**
+     * Converts arguments into an easy-ease value usable on animations
+     * @param start begin of the result across time
+     * @param end end of the result across time
+     * @param t time from 0.0 ~ 1.0
+     * @return calculate result of easy-ease
+     */
+    public static double easyEase(double start, double end, double t) {
+        return start + (end - start) * ((t < 0.5) ? 2 * t * t : -1 + 2 * t * (2 - t));
+    }
 }
