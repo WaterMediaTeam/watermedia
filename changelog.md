@@ -1,5 +1,6 @@
 # UPDATE 2.0.25
 - Added ease mathematical methods to animate positioning
+- Added scaleTempo methods to calculate in range time scale
 
 # UPDATE 2.0.24
 - Fixed wrong DisplayTest, causing WATERMeDIA to be required on server by FORGE
