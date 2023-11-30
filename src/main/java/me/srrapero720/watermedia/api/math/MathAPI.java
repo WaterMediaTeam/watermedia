@@ -39,10 +39,26 @@ public class MathAPI {
     public static double scaleTempo(long start, long end, long time) {
         if (start < 0 || end < 0 || time < 0) throw new IllegalArgumentException("Invalid negative value");
         try {
-            double result = ((double) start + time) / end;
-            if (time > Long.MAX_VALUE - (start - end)) throw new IllegalArgumentException("You stupid bastard");
-            if (time > end - start) result %= end - start;
-            return  result;
+            long duration = end - start; // start acts like a margin
+            long realTime = time - start;
+
+            long result = realTime / duration;
+            if (realTime > duration) result %= end - start;
+            return result;
+        } catch (ArithmeticException ignored) {
+            return 0;
+        }
+    }
+
+    public static double scaleTempo(double start, double end, double time) {
+        if (start < 0 || end < 0 || time < 0) throw new IllegalArgumentException("Invalid negative value");
+        try {
+            double duration = end - start; // start acts like a margin
+            double realTime = time - start;
+
+            double result = realTime / duration;
+            if (realTime > duration) result %= end - start;
+            return result;
         } catch (ArithmeticException ignored) {
             return 0;
         }
@@ -55,19 +71,8 @@ public class MathAPI {
      * @param timeTick
      * @return
      */
-    public static double scaleTempoOfTicks(int startTick, int endTick, int timeTick) {
-        if (startTick < 0 || endTick < 0 || timeTick < 0) throw new IllegalArgumentException("Invalid negative value");
-        try {
-            long start = MathAPI.tickToMs(startTick);
-            long end = MathAPI.tickToMs(endTick);
-            long time = MathAPI.tickToMs(timeTick);
-            double result = ((double) start + time) / end;
-            if (time > Long.MAX_VALUE - (start - end)) throw new IllegalArgumentException("You stupid bastard");
-            if (time > end - start) result %= end - start;
-            return  result;
-        } catch (ArithmeticException ignored) {
-            return 0;
-        }
+    public static double scaleTempoTick(int startTick, int endTick, int timeTick) {
+        return scaleTempo(MathAPI.tickToMs(startTick), MathAPI.tickToMs(endTick), MathAPI.tickToMs(timeTick));
     }
 
     /**
