@@ -36,7 +36,7 @@ import java.util.Map;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@Deprecated
+@Deprecated(forRemoval = true)
 public final class WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker("API");
 
@@ -60,13 +60,6 @@ public final class WaterMediaAPI {
      */
     @Deprecated
     public static ImageRenderer img_getLandFailedVLC() { return ImageAPI.failedVLCLandscape(); }
-
-    /**
-     * DO NOT USE IT
-     * @param loader instance of current environment
-     * @throws ReInitException If already was init
-     */
-    public static void init(IMediaLoader loader) throws ReInitException {}
 
     /**
      * Returns loading gif picture for a specific MODID

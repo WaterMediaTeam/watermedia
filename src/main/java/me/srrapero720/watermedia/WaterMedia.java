@@ -105,7 +105,7 @@ public class WaterMedia {
 
 		// PREPARE API
 		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
-		TryCore.simple(() -> WaterMediaAPI.init(this.loader), e -> onFailed(WaterMediaAPI.class.getSimpleName(), e));
+		LOGGER.info(IT, "Warning: {} is deprecated for removal", WaterMediaAPI.class.getSimpleName());
 
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLanCore.class.getSimpleName());
