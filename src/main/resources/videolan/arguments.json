@@ -6,7 +6,7 @@
   "--logfile={logfile}",
   "--verbose=2",
 
-  "--aout=directsound",
+  "--aout={directsound,mmdevice,waveout}",
 
   "--http-reconnect"
 ]
