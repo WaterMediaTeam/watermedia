@@ -1,18 +1,20 @@
 # UPDATE 2.0.25
 - Added ease mathematical methods to animate positioning
 - Added scaleTempo methods to calculate in range time scale
+- Rid off DirectSound outside windows
+- Disabled cache on ImageAPI fetch
 
 # UPDATE 2.0.24
 - Fixed wrong DisplayTest, causing WATERMeDIA to be required on server by FORGE
 
-# UPDATE 2.0.23
+# UPDATE 2.0.23 (ARCHIVED)
 - Removed DisplayTest on 1.18.2
 - Removed server-only pair system of DisplayTest (fixes crashes on 1.16.5)
 
 # UPDATE 2.0.22 (ARCHIVED)
 - Fixed crash on 1.16.5
 
-# UPDATE 2.0.21
+# UPDATE 2.0.21 (ARCHIVED)
 - Fixed pictures are infinite loading
   - For some reason, IOUtils soft-crashes ImageFetch without throwing any error, it just
 stops working.
@@ -58,10 +60,10 @@ crashes consider downgrading to 2.0.10 (and report it quickly to the authors of 
 - PlayerAPI: deprecated SyncVideoPlayer#preRender() and SyncVideoPlayer#getTexture()
 - UrlAPI: added support for file paths
 
-# UPDATE 2.0.8
+# UPDATE 2.0.8 (ARCHIVED)
 - Feature: added tickToMs variant for Float (partial ticks)
 
-# UPDATE 2.0.7
+# UPDATE 2.0.7 (ARCHIVED)
 NOTE: Support for NeoForge 1.20.2 is not planned until they got into a more stable build
 - Fixed [#26](https://github.com/SrRapero720/watermedia/issues/23): Crash on startup trying to get OS (from archived version 2.0.6)
 - Fixed: new instances of MediaPlayerFactory doesn't log from where it is loaded
@@ -83,10 +85,10 @@ browser url
 - Fixed "missing vlc binaries" logger message is always thrown even if binaries are included
 - Fixed "cannot create directories" for custom loading gif API
 
-# UPDATE 2.0.5
+# UPDATE 2.0.5 (ARCHIVED)
 - Fixed NPE trying to access to url var in some dependent mods
 
-# UPDATE 2.0.4
+# UPDATE 2.0.4 (ARCHIVED)
 - API: Mitosis on ImageAPI#imageRenderer() and renamed to renderer()
 - Reduced MediaPlayer#release priority
 - Renamed MediaPlayer#enableSpecialFixer()
@@ -94,11 +96,11 @@ browser url
 - Removed IMediaLoader#classLoader() from bootstrap
 - Deprecated WaterMediaAPI#url_isValid()
 
-# UPDATE 2.0.3
+# UPDATE 2.0.3 (ARCHIVED)
 - Fixed NPE when url is null or empty
 - Reduced arguments for VLC and make console output quiet
 
-# UPDATE 2.0.2
+# UPDATE 2.0.2 (ARCHIVED)
 - Added loggers for mod version and missing pre-installation of VLC
 - Reduced async priority of image loading (slow loading, more fps)
 - Fixed some stun lag loading images if url is null or empty
@@ -113,10 +115,10 @@ browser url
 - API: Now can be released ImageCache (please don't) even if it wasn't ready
 - API: Added SyncMusicPlayer
 
-# UPDATE 2.0.1
+# UPDATE 2.0.1 (ARCHIVED)
 - Removed mod features (now can start on forge 1.19+)
 
-# BREAKING UPDATE 2.0.0
+# BREAKING UPDATE 2.0.0 
 This update breaks dependency mods, 
 only update when all mods depending on it releases a compatibility update
 

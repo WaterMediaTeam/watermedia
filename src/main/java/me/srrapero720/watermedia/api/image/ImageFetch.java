@@ -115,12 +115,12 @@ public class ImageFetch {
         CacheCore.Entry entry = CacheCore.getEntry(originalUrl);
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
-
+        request.setDefaultUseCaches(false);
         int code = -1;
 
         request.addRequestProperty("User-Agent", USER_AGENT);
         if (request instanceof HttpURLConnection) {
-            HttpURLConnection conn = (HttpURLConnection) request;
+            final HttpURLConnection conn = (HttpURLConnection) request;
             if (entry != null && entry.getFile().exists()) {
                 if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
                 else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
