@@ -36,7 +36,7 @@ import java.util.Map;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@Deprecated(forRemoval = true)
+@Deprecated()
 public final class WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker("API");
 
