@@ -21,6 +21,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class WaterMedia {
 	private static final Marker IT = MarkerManager.getMarker("Bootstrap");
 	private static final ReentrantLock LOCK = new ReentrantLock();
+	private static final String NBP_NAME = "watermedia.disableBoot";
+	private static final boolean NBP = Boolean.parseBoolean(System.getProperty(NBP_NAME));
 
 	// INFO
 	public static final String ID = "watermedia";
@@ -62,6 +64,10 @@ public class WaterMedia {
 
 	public void envInit(IEnvLoader loader) {
 		if (this.env != null) LOGGER.warn(IT, "Override environment is a deprecated feature");
+		if (NBP) {
+			LOGGER.error(IT, "Cowardly refusing to load WATERMeDIA environment, detected {}=true", NBP_NAME);
+			return;
+		}
 
 		this.env = loader;
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)
@@ -83,6 +89,11 @@ public class WaterMedia {
 	}
 
 	public void init() {
+		if (NBP) {
+			LOGGER.error(IT, "Cowardly refusing to bootstrap WATERMeDIA, detected {}=true", NBP_NAME);
+			return;
+		}
+
 		LOCK.lock();
 		LOGGER.info(IT, "Starting modules");
 		if (env == null) LOGGER.warn(IT, "{} is starting without Environment, may cause problems", NAME);
