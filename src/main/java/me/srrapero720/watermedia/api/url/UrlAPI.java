@@ -26,7 +26,7 @@ public class UrlAPI extends WaterMediaAPI {
      * @return result of the fixed url, null if was a broken URL
      */
     public static URLFixer.Result fixURL(String strUrl) {
-        return fixURL(strUrl, false);
+        return fixURL(strUrl, true);
     }
 
     /**
@@ -35,6 +35,7 @@ public class UrlAPI extends WaterMediaAPI {
      * @param specials enable special fixers - be aware
      * @return result of the fixed url, null if was a broken URL
      */
+    @Deprecated
     public static URLFixer.Result fixURL(String strUrl, boolean specials) {
         if (isValid(strUrl)) {
             return TryCore.withReturn(defaultVar -> {
