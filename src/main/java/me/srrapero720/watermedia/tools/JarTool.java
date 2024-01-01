@@ -32,6 +32,12 @@ public class JarTool {
         }
     }
 
+    public static <T> T readObject(String path) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getResourceInputStream(path)))) {
+            return new Gson().fromJson(reader, new TypeToken<T>() {}.getType());
+        }
+    }
+
     public static String[] readArrayAndParse(String path, Map<String, String> values) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getResourceInputStream(path)))) {
             String[] keyset = values.keySet().toArray(new String[0]);

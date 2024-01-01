@@ -1,6 +1,5 @@
-package me.srrapero720.watermedia.tests.uncannonical;
+package me.srrapero720.watermedia.tests.boxing;
 
-import me.srrapero720.watermedia.api.player.PlayerAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -14,7 +13,6 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class RawMacOSTester {
     private static final Marker IT = MarkerManager.getMarker("MacOsTester");
-
     private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     private static final String[] ARGS = new String[] {
             "--no-quiet",
@@ -29,7 +27,12 @@ public class RawMacOSTester {
             "--http-reconnect"
     };
 
-    public RawMacOSTester() throws Exception {
+    public static void main(String[] args) {
+        new RawMacOSTester().start("");
+    }
+
+    private final CallbackMediaPlayerComponent playerComponent;
+    public RawMacOSTester() {
         MediaPlayerFactory factory = null;
         if (DISCOVERY.discover()) {
             factory = new MediaPlayerFactory(DISCOVERY, ARGS);
@@ -39,10 +42,14 @@ public class RawMacOSTester {
             LOGGER.fatal(IT, "Missing VLC - Cannot create MediaPlayerFactory instance");
         }
 
-        CallbackMediaPlayerComponent rawPlayer = new CallbackMediaPlayerComponent(factory, false,
+        playerComponent = new CallbackMediaPlayerComponent(factory, false,
                 (mediaPlayer, nativeBuffers, bufferFormat) -> {},
                 (sourceWidth, sourceHeight) -> new BufferFormat("RGBA", sourceWidth, sourceHeight, new int[]{sourceWidth * 4}, new int[]{sourceHeight}));
 
-        rawPlayer.mediaPlayer().audio().setVolume(80); // here is where it crashes
+        playerComponent.mediaPlayer().audio().setVolume(80); // here is where it crashes
+    }
+
+    public void start(String url) {
+        playerComponent.mediaPlayer().media().start(url);
     }
 }
