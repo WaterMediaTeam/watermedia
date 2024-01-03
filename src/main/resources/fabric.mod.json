@@ -17,7 +17,7 @@
   "environment": "client",
   "entrypoints": {
     "preLaunch": [
-      "me.srrapero720.watermedia.modloaders.fabric.FabricModLoader"
+      "me.srrapero720.watermedia.loaders.fabric.FabricModLoader"
     ]
   },
   "breaks": {

@@ -21,18 +21,21 @@ Kick.com, Google Drive, OneDrive, Dropbox, Imgur, Twitter and PornHub.
 All Minecraft versions supported + all mod loaders supported.
 Technically, WATERMeDIA can be loaded in any MC version in range of 1.12.2 ~ 1.20.x and even
 outside Minecraft modded (pure Java). 
-But...We only expect to give (right sentence) support to most important MC versions 
-listed here and most important mod loaders (except Fabric and Quilt)<br><br>
 
-| Version | Forge | Fabric | Quilt | NeoForge |
-|:-------:|:-----:|:------:|:-----:|:--------:|
-| 1.7.10  |   ⚠   |   🚫   |  🚫   |    🚫    |
-| 1.12.2  |   ✅   |   🚫   |  🚫   |    🚫    |
-| 1.16.5  |   ✅   |   ✅    |  🚫   |    🚫    |
-| 1.18.2  |   ✅   |   ✅    |   ✅   |    🚫    |
-| 1.19.2  |   ✅   |   ✅    |   ✅   |    🚫    |
-| 1.20.x  |   ✅   |   ✅    |   ✅   |    ⛔     |
-| 1.21.x  |   !   |   !    |   !   |    ⚠     |
+IMPORTANT: we only support most popular versions of Minecraft.
+QUILT ABOUT: Quilt is not officially supported.<br>
+Is a dead modloader, and the only "reason" to use it are political reasons.
+sorry, but I not going to support another broken modloader
+
+| Version | Forge | Fabric | NeoForge |
+|:-------:|:-----:|:------:|:--------:|
+| 1.7.10  |   ⚠   |   🚫   |    🚫    |
+| 1.12.2  |   ✅   |   🚫   |    🚫    |
+| 1.16.5  |   ✅   |   ✅    |    🚫    |
+| 1.18.2  |   ✅   |   ✅    |    🚫    |
+| 1.19.2  |   ✅   |   ✅    |    🚫    |
+| 1.20.x  |   ✅   |   ✅    |    ⛔     |
+| 1.21.x  |   !   |   !    |    ⚠     |
 
 ✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A**
 

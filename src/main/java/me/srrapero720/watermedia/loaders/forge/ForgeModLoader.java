@@ -16,14 +16,14 @@ import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@Mod(modid = WaterMedia.ID, acceptableRemoteVersions = "*", clientSideOnly = true, value = WaterMedia.ID, dependencies="after:watermedia_bin")
+@Mod(modid = WaterMedia.ID, acceptableRemoteVersions = "*", clientSideOnly = true, value = WaterMedia.ID, dependencies="after:watermedia_natives")
 public class ForgeModLoader implements IBootCore {
     private static final Marker IT = MarkerManager.getMarker("ForgeModLoader");
     private static final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     private static final Path processPath = new File("").toPath().toAbsolutePath();
 
     public ForgeModLoader() {
-        LOGGER.info(IT, "Preparing '{}' for FORGE", WaterMedia.ID);
+        LOGGER.info(IT, "Preparing '{}' for {}", WaterMedia.ID, name().toUpperCase());
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
 

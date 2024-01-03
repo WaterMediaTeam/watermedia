@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.loaders.fabric;
 
-import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.tools.exceptions.IllegalTLauncherException;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -28,7 +28,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IBootCore {
 
     @Override
     public void onPreLaunch() {
-        LOGGER.info(IT, "Preparing '{}' for FORGE", WaterMedia.NAME);
+        LOGGER.info(IT, "Preparing '{}' for {}", WaterMedia.NAME, name().toUpperCase());
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
 

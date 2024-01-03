@@ -65,11 +65,7 @@ dependencies {
     compileOnly 'com.google.code.gson:gson:2.10.1'
     compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
     compileOnly 'org.ow2.asm:asm-tree:9.1'
-    compileOnly('org.spongepowered:mixin:0.8.5') {
-        exclude module: 'guava'
-        exclude module: 'commons-io'
-        exclude module: 'gson'
-    }
+
     // SUB-PROJECTS
     compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
     compileOnly(project(":lib-neoforge")) // MOCKED NEOFORGE CLASSES- REMOVED ON JAR
@@ -163,10 +159,6 @@ jar {
                 "Implementation-Version"    : modversion,
                 "Implementation-Vendor"     : modauthor,
                 "Implementation-Timestamp"  : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-//                "TweakClass"                : "org.spongepowered.asm.launch.MixinTweaker",
-//                "TweakOrder"                : 0,
-                "MixinConfigs"              : "watermedia.mixin.json",
-                "ForceLoadAsMod"            : "true"
         ])
     }
     from(configurations.library.collect { it.isDirectory() ? it : zipTree(it) }) {

@@ -20,7 +20,7 @@ public class NeoForgeModLoader implements IBootCore {
     private static final Path processPath = new File("").toPath().toAbsolutePath();
 
     public NeoForgeModLoader() {
-        LOGGER.info(IT, "Preparing '{}' for (neo)FORGE", WaterMedia.ID);
+        LOGGER.info(IT, "Preparing '{}' for (neo){}", WaterMedia.ID, name().toUpperCase());
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
 
