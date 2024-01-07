@@ -143,6 +143,29 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     }
 
     /**
+     * WARNING: use it at your own risk
+     * Returns current defined buffer, may be null or may cause concurrency issues
+     * @return Buffer containing current frame
+     */
+    public ByteBuffer getBuffer() {
+        return buffer;
+    }
+
+    /**
+     * WARNING: use it at your own risk
+     * Returns current defined buffer, may be null
+     * @return Buffer containing current frame
+     */
+    public ByteBuffer getBufferLock() {
+        try {
+            renderLock.lock();
+            return buffer;
+        } finally {
+            renderLock.unlock();
+        }
+    }
+
+    /**
      * Send texture buffer to OpenGL
      * always run this on render thread, and before use texture id
      * @deprecated in rendering, doesn't have sense just get texture without pre-render.

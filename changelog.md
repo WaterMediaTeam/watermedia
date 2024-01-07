@@ -1,7 +1,10 @@
+# UPDATE 2.0.27
+- Removed mixins
+- Player API: added ``getBuffer`` and `getBufferLock` in order to get current buffer
+
 # UPDATE 2.0.26
 - Added ``-Dwatermedia.disableBoot=<boolean>`` argument
   - When enabled, Disables boot completely, useful for not boot in on DataGen
-- Removed mixins
 
 # UPDATE 2.0.25
 - Added ease mathematical methods to animate positioning
