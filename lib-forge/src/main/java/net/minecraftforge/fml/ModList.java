@@ -1,11 +1,13 @@
 package net.minecraftforge.fml;
 
+import java.util.NoSuchElementException;
+
 public class ModList {
     public static ModList get() {
-        return new ModList();
+        throw new NoSuchElementException("stub!");
     }
 
     public boolean isLoaded(String modTarget) {
-        return false;
+        throw new NoSuchElementException("stub!");
     }
 }

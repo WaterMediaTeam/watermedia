@@ -1,6 +1,7 @@
 # UPDATE 2.0.27
 - Removed mixins
 - Player API: added ``getBuffer`` and `getBufferLock` in order to get current buffer
+- 1.12.2 boot is not longer async (may reduce booting times)
 
 # UPDATE 2.0.26
 - Added ``-Dwatermedia.disableBoot=<boolean>`` argument

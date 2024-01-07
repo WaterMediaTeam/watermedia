@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia;
 
 import me.lib720.watermod.safety.TryCore;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
@@ -16,12 +15,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 public class WaterMedia {
 	private static final Marker IT = MarkerManager.getMarker("Bootstrap");
-	private static final ReentrantLock LOCK = new ReentrantLock();
-	private static final String NBP_NAME = "watermedia.disableBoot";
+    private static final String NBP_NAME = "watermedia.disableBoot";
 	private static final boolean NBP = Boolean.parseBoolean(System.getProperty(NBP_NAME));
 
 	// INFO
@@ -34,6 +30,10 @@ public class WaterMedia {
 	private final IMediaLoader loader;
 	private IEnvLoader env;
 	private static volatile Exception exception;
+
+	// STATE
+	private boolean finished;
+	private boolean earlyCrash;
 
 	public static WaterMedia getInstance() {
 		if (instance == null) throw new IllegalStateException("Instance wasn't created");
@@ -94,7 +94,6 @@ public class WaterMedia {
 			return;
 		}
 
-		LOCK.lock();
 		LOGGER.info(IT, "Starting modules");
 		if (env == null) LOGGER.warn(IT, "{} is starting without Environment, may cause problems", NAME);
 
@@ -114,22 +113,22 @@ public class WaterMedia {
 		LOGGER.info(IT, "Loading {}", UrlAPI.class.getSimpleName());
 		TryCore.simple(() -> UrlAPI.init(this.loader), e -> onFailed(UrlAPI.class.getSimpleName(), e));
 
-		// PREPARE API
-		LOGGER.info(IT, "Loading {}", WaterMediaAPI.class.getSimpleName());
-		LOGGER.info(IT, "Warning: {} is deprecated for removal", WaterMediaAPI.class.getSimpleName());
-
 		// PREPARE VLC
 		LOGGER.info(IT, "Loading {}", VideoLanCore.class.getSimpleName());
 		TryCore.simple(() -> VideoLanCore.init(this.loader), e -> onFailed(VideoLanCore.class.getSimpleName(), e));
 
+		finished = true;
 		LOGGER.info(IT, "Startup finished");
-		LOCK.unlock();
+		if (earlyCrash && exception != null) throw new RuntimeException(exception);
 	}
 
 	public void crash() {
-		LOCK.lock();
-		if (exception != null) throw new RuntimeException(exception);
-		LOCK.unlock();
+		if (!finished) {
+			earlyCrash = true;
+			LOGGER.warn(IT, "Crash executed before startup finish");
+		} else {
+			if (exception != null) throw new RuntimeException(exception);
+		}
 	}
 
 	private void onFailed(String module, Exception e) {

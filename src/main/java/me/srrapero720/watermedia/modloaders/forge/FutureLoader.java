@@ -2,14 +2,10 @@ package me.srrapero720.watermedia.modloaders.forge;
 
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
-import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
-
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.network.NetworkConstants;
 
 import java.io.File;
 

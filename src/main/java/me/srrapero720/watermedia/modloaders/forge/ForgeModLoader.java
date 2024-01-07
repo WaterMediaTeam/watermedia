@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.modloaders.forge;
 
-import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
@@ -35,12 +34,6 @@ public class ForgeModLoader implements IMediaLoader {
             loader.tlauncher();
 
             instance.envInit(loader);
-
-            ThreadCore.thread(() -> {
-                LOGGER.warn(IT, "Rustic version detected, running ASYNC bootstrap");
-                if (instance.env().client()) instance.init();
-            });
-            return;
         } catch (Throwable ignored) {}
         try {
             IEnvLoader loader = new CurrentLoader();
