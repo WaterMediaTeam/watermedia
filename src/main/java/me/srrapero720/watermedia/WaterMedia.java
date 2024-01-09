@@ -55,7 +55,6 @@ public class WaterMedia {
 		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString(WaterMedia.class.getClassLoader(), "/watermedia/version.cfg"));
 
 		if (loader instanceof IEnvLoader) envInit((IEnvLoader) loader);
-        else LOGGER.warn(IT, "Environment not detected, be careful about it");
 	}
 
 	public IEnvLoader env() { return env; }
@@ -64,12 +63,12 @@ public class WaterMedia {
 
 	public void envInit(IEnvLoader loader) {
 		if (this.env != null) LOGGER.warn(IT, "Override environment is a deprecated feature");
+		this.env = loader;
 		if (NBP) {
 			LOGGER.error(IT, "Cowardly refusing to load WATERMeDIA environment, detected {}=true", NBP_NAME);
 			return;
 		}
 
-		this.env = loader;
 		// ENSURE WATERMeDIA IS NOT RUNNING ON SERVERS (except FABRIC)
 		if (!this.loader.name().equalsIgnoreCase("fabric") && !loader.client() && !loader.development()) {
 			exception = new IllegalStateException("Cannot run WATERMeDIA on a server");
@@ -93,6 +92,7 @@ public class WaterMedia {
 			LOGGER.error(IT, "Cowardly refusing to bootstrap WATERMeDIA, detected {}=true", NBP_NAME);
 			return;
 		}
+		if (this.env == null) LOGGER.warn(IT, "Environment not detected, be careful about it");
 
 		LOGGER.info(IT, "Starting modules");
 		if (env == null) LOGGER.warn(IT, "{} is starting without Environment, may cause problems", NAME);
