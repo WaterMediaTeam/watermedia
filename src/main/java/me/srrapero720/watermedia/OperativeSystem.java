@@ -63,8 +63,7 @@ public enum OperativeSystem {
                 if (RuntimeUtil.isMac()) return MAC_ARM;
                 if (RuntimeUtil.isNix()) return NIX_ARM;
             case "x86":
-                if (RuntimeUtil.isWindows()) return WIN_X32;
-                throw new IllegalStateException("Detected x86 but begin non windows");
+                throw new IllegalStateException("Detected unsupported arch x86");
             default:
                 return DUMMY;
         }
