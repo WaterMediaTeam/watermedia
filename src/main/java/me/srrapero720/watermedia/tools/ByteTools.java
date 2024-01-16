@@ -10,7 +10,6 @@ import java.util.ServiceLoader;
 public class ByteTools {
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 
-    @Deprecated
     public static <T> List<T> toList(ServiceLoader<T> s) {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);
@@ -62,7 +61,7 @@ public class ByteTools {
             }
             // if the last call to read returned -1 or the number of bytes
             // requested have been read then break
-        } while (n >= 0 && remaining > 0);
+        } while (n != -1 && remaining > 0);
 
         if (bufs == null) {
             if (result == null) {
