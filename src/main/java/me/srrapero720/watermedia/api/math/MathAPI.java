@@ -30,11 +30,13 @@ public class MathAPI {
     public static int msToTick(long ms) { return (int) (ms / 50); }
 
     /**
-     * Missing docs
-     * @param start
-     * @param end
-     * @param time
-     * @return
+     * Returns a precise scale of a start time and end time.
+     * If time is out of range, it will be reset to zero
+     * ej start: 0, end: 10, time: 15 - Result will be 0.5d
+     * @param start initial point to calculate scale, cannot be negative
+     * @param end final point to calculate scale. cannot be negative
+     * @param time current time between values
+     * @return scaled time
      */
     public static double scaleTempo(long start, long end, long time) {
         if (start < 0 || end < 0 || time < 0) throw new IllegalArgumentException("Invalid negative value");
@@ -50,6 +52,15 @@ public class MathAPI {
         }
     }
 
+    /**
+     * Returns a precise scale of a start time and end time.
+     * If time is out of range, it will be reset to zero
+     * ej start: 0, end: 10, time: 15 - Result will be 0.5d
+     * @param start initial point to calculate scale, cannot be negative
+     * @param end final point to calculate scale. cannot be negative
+     * @param time current time between values
+     * @return scaled time
+     */
     public static double scaleTempo(double start, double end, double time) {
         if (start < 0 || end < 0 || time < 0) throw new IllegalArgumentException("Invalid negative value");
         try {
@@ -65,11 +76,14 @@ public class MathAPI {
     }
 
     /**
-     * missing docs
-     * @param startTick
-     * @param endTick
-     * @param timeTick
-     * @return
+     * Returns a precise scale of a start time and end time.
+     * If time is out of range, it will be reset to zero
+     * ej start: 0, end: 10, time: 15 - Result will be 0.5d
+     * Method helper to calculate time in ticks (20t = 1s)
+     * @param startTick initial point to calculate scale, cannot be negative
+     * @param endTick final point to calculate scale. cannot be negative
+     * @param timeTick current time between values
+     * @return scaled time
      */
     public static double scaleTempoTick(int startTick, int endTick, int timeTick) {
         return scaleTempo(MathAPI.tickToMs(startTick), MathAPI.tickToMs(endTick), MathAPI.tickToMs(timeTick));
