@@ -2,9 +2,9 @@ package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.math.MathAPI;
+import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
@@ -46,7 +46,7 @@ public class ImageAPI extends WaterMediaAPI {
      * @return instance of the picture in a renderer
      */
     public static ImageRenderer loadingGif(String modId) {
-        Path processDir = WaterMedia.getInstance().getBootCore().processDir();
+        Path processDir = WaterMedia.getLoader().processDir();
         Path modConfig = processDir.resolve("config/watermedia/assets/" + modId + "/loading.gif");
 
         if (Files.exists(modConfig)) {
@@ -148,7 +148,7 @@ public class ImageAPI extends WaterMediaAPI {
     private final Path loadingGifPath;
     ImageAPI() {
         super();
-        IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
+        ILoader bootstrap = WaterMedia.getLoader();
         this.loadingGifPath = bootstrap.processDir().resolve("config/watermedia/assets/loading.gif");
     }
 
@@ -158,12 +158,12 @@ public class ImageAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(IBootCore bootCore) throws Exception {
+    public boolean prepare(ILoader bootCore) throws Exception {
         return false;
     }
 
     @Override
-    public void start(IBootCore bootCore) throws Exception {
+    public void start(ILoader bootCore) throws Exception {
         if (!loadingGifPath.toFile().exists()) {
             LOGGER.info(IT, "Extracting picture resources...");
             JarTool.copyAsset("/pictures/loading.gif", loadingGifPath);

@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.loaders.neoforge;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.exceptions.IllegalEnvironmentException;
 import me.srrapero720.watermedia.tools.exceptions.IllegalTLauncherException;
 import net.neoforge.fml.common.Mod;
@@ -14,27 +14,27 @@ import java.nio.file.Path;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @Mod(WaterMedia.ID)
-public class NeoForgeModLoader implements IBootCore {
-    private static final Marker IT = MarkerManager.getMarker("ForgeModLoader");
-    private static final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
+public class NeoForgeLoader implements ILoader {
+    private static final Marker IT = MarkerManager.getMarker("NeoForge");
+    private static final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve(WaterMedia.ID);
     private static final Path processPath = new File("").toPath().toAbsolutePath();
 
-    public NeoForgeModLoader() {
-        LOGGER.info(IT, "Preparing '{}' for (neo){}", WaterMedia.ID, name().toUpperCase());
+    public NeoForgeLoader() {
+        LOGGER.info(IT, "Preparing '{}' for {}", WaterMedia.ID, name().toUpperCase());
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
 
-            if (clientSide()) WaterMedia.create(this).init();
-            else if (developerMode()) throw new IllegalEnvironmentException();
+            if (clientSide()) WaterMedia.prepare(this).start();
+            else if (!developerMode()) throw new IllegalEnvironmentException();
 
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot run " + WaterMedia.NAME + " for FORGE", e);
+        } catch (Throwable e) {
+            throw new RuntimeException("Cannot run " + WaterMedia.NAME + " for (NEO)FORGE", e);
         }
     }
 
     @Override
     public String name() {
-        return "NeoFroge";
+        return "NeoForge";
     }
 
     @Override

@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.loaders.forge;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.exceptions.IllegalEnvironmentException;
 import me.srrapero720.watermedia.tools.exceptions.IllegalTLauncherException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -17,18 +17,18 @@ import java.nio.file.Path;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @Mod(modid = WaterMedia.ID, acceptableRemoteVersions = "*", clientSideOnly = true, value = WaterMedia.ID, dependencies="after:watermedia_natives")
-public class ForgeModLoader implements IBootCore {
+public class ForgeLoader implements ILoader {
     private static final Marker IT = MarkerManager.getMarker("ForgeModLoader");
-    private static final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
+    private static final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve(WaterMedia.ID);
     private static final Path processPath = new File("").toPath().toAbsolutePath();
 
-    public ForgeModLoader() {
+    public ForgeLoader() {
         LOGGER.info(IT, "Preparing '{}' for {}", WaterMedia.ID, name().toUpperCase());
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
 
-            if (clientSide()) WaterMedia.create(this).init();
-            else if (developerMode()) throw new IllegalEnvironmentException();
+            if (clientSide()) WaterMedia.prepare(this).start();
+            else if (!developerMode()) throw new IllegalEnvironmentException();
 
         } catch (Exception e) {
             throw new RuntimeException("Cannot run " + WaterMedia.NAME + " for FORGE", e);

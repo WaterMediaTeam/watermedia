@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.cache;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -26,7 +26,7 @@ public class CacheAPI extends WaterMediaAPI {
 
     public CacheAPI() {
         super();
-        IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
+        ILoader bootstrap = WaterMedia.getLoader();
         dir = bootstrap.tempDir().toAbsolutePath().resolve("cache/pictures").toFile();
         index = new File(dir, "index");
     }
@@ -37,7 +37,7 @@ public class CacheAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(IBootCore bootCore) {
+    public boolean prepare(ILoader bootCore) {
         if (!released) {
             LOGGER.error(IT, "Failed due boot API while is not released, boot cancelled");
             return false;
@@ -51,7 +51,7 @@ public class CacheAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start(IBootCore bootCore) throws Exception {
+    public void start(ILoader bootCore) throws Exception {
         LOGGER.info(IT, "Mounted on path '{}'", dir);
         if (index.exists()) {
             try (DataInputStream stream = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())))) {

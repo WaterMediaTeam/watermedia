@@ -7,7 +7,7 @@ import java.nio.file.Path;
  * Required interface to boot instance of {@link me.srrapero720.watermedia.WaterMedia WaterMedia}
  * some instances was pre-made for Minecraft mod loaders like MinecraftForge, NeoForge, Fabric and Quilt.
  */
-public interface IBootCore {
+public interface ILoader {
     /**
      * Name should be without spaces or number and with capital letters
      * @return loader name
@@ -52,10 +52,10 @@ public interface IBootCore {
     boolean developerMode();
 
     /**
-     * Default {@link IBootCore} instance to be used in non-minecraft instances
-     * @see IBootCore
+     * Default {@link ILoader} instance to be used in non-minecraft instances
+     * @see ILoader
      */
-    IBootCore DEFAULT = new IBootCore() {
+    ILoader DEFAULT = new ILoader() {
         private final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
         private final Path processPath = new File("").toPath().toAbsolutePath();
 

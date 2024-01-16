@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.loaders.fabric;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.exceptions.IllegalTLauncherException;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -14,13 +14,7 @@ import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-/**
- * Loader for FABRIC
- * Is safe to do things inside this class
- * By default, this class preloads WATERMeDIA over other mods
- * but haven't warranties, because other mods can preload easy too.
- */
-public class FabricModLoader implements PreLaunchEntrypoint, IBootCore {
+public class FavricLoader implements PreLaunchEntrypoint, ILoader {
     private static final Marker IT = MarkerManager.getMarker("FabricModLoader");
 
     private final Path tempPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
@@ -32,7 +26,7 @@ public class FabricModLoader implements PreLaunchEntrypoint, IBootCore {
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
 
-            if (clientSide()) WaterMedia.create(this).init();
+            if (clientSide()) WaterMedia.prepare(this).start();
         } catch (Exception e) {
             throw new RuntimeException("Cannot run " + WaterMedia.NAME + " for FABRIC", e);
         }

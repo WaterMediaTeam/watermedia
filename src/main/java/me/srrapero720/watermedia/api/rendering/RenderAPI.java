@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.api.rendering;
 import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
-import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.loaders.ILoader;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -123,12 +123,12 @@ public class RenderAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(IBootCore bootCore) throws Exception {
+    public boolean prepare(ILoader bootCore) throws Exception {
         return false;
     }
 
     @Override
-    public void start(IBootCore bootCore) throws Exception {
+    public void start(ILoader bootCore) throws Exception {
 
     }
 

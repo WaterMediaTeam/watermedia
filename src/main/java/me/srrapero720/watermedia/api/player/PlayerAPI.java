@@ -3,9 +3,9 @@ package me.srrapero720.watermedia.api.player;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.OperativeSystem;
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
-import me.srrapero720.watermedia.loaders.IBootCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
+import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
@@ -14,7 +14,9 @@ import uk.co.caprica.vlcj.VideoLan4J;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -113,7 +115,7 @@ public class PlayerAPI extends WaterMediaAPI {
     private boolean extract;
     public PlayerAPI() {
         super();
-        IBootCore bootstrap = WaterMedia.getInstance().getBootCore();
+        ILoader bootstrap = WaterMedia.getLoader();
         this.dir = bootstrap.tempDir();
         this.logs = dir.toAbsolutePath().resolve("logs/videolan.log");
 
@@ -127,7 +129,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(IBootCore bootCore) throws Exception {
+    public boolean prepare(ILoader bootCore) throws Exception {
         String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
         String versionInFile = IOTool.readString(configOutputFile.toPath());
         boolean wrapped = OperativeSystem.isWrapped();
@@ -141,7 +143,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start(IBootCore bootCore) throws Exception {
+    public void start(ILoader bootCore) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutputFile.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile.toPath())) || zipOutputFile.exists()) {

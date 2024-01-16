@@ -28,11 +28,8 @@ public class MediafireDownloader {
             HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.178 Safari/537.36");
 
-            while (true) {
-                if ("Content-Disposition".equals(connection.getHeaderFieldKey(0))) {
-                    // This is the file
-                    break;
-                }
+            // This is the file
+            while (!"Content-Disposition".equals(connection.getHeaderFieldKey(0))) {
 
                 // Need to redirect with confirmation
                 url = extractDownloadLink(new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine());

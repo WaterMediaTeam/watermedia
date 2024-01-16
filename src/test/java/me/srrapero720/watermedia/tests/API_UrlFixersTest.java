@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.tests;
 
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.loaders.IBootCore;
+import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -21,8 +21,8 @@ public class API_UrlFixersTest extends Test {
         SOURCES = JarTool.readObject("fixers-test.json");
 
         UrlAPI boot = new UrlAPI();
-        boot.prepare(IBootCore.DEFAULT);
-        boot.start(IBootCore.DEFAULT);
+        boot.prepare(ILoader.DEFAULT);
+        boot.start(ILoader.DEFAULT);
         LOGGER.info(IT, "API started");
     }
 
