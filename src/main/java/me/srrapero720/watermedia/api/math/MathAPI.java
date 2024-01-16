@@ -45,7 +45,7 @@ public class MathAPI {
             long realTime = time - start;
 
             long result = realTime / duration;
-            if (realTime > duration) result %= end - start;
+            if (realTime > duration) result %= duration;
             return result;
         } catch (ArithmeticException ignored) {
             return 0;
@@ -68,7 +68,7 @@ public class MathAPI {
             double realTime = time - start;
 
             double result = realTime / duration;
-            if (realTime > duration) result %= end - start;
+            if (realTime > duration) result %= duration;
             return result;
         } catch (ArithmeticException ignored) {
             return 0;
@@ -86,6 +86,59 @@ public class MathAPI {
      * @return scaled time
      */
     public static double scaleTempoTick(int startTick, int endTick, int timeTick) {
+        return scaleTempo(MathAPI.tickToMs(startTick), MathAPI.tickToMs(endTick), MathAPI.tickToMs(timeTick));
+    }
+
+    /**
+     * Returns a precise scale of a start time and end time.
+     * If time is out of range, it will be over-scaled
+     * ej start: 0, end: 10, time: 15 - Result will be 1.5d
+     * @param start initial point to calculate scale, cannot be negative
+     * @param end final point to calculate scale. cannot be negative
+     * @param time current time between values
+     * @return scaled time
+     */
+    public static double scaleDesTempo(long start, long end, long time) {
+        if (start < 0 || end < 0 || time < 0) throw new IllegalArgumentException("Invalid negative value");
+        try {
+            long duration = end - start; // start acts like a margin
+            long realTime = time - start;
+
+            return (double) realTime / duration;
+        } catch (ArithmeticException ignored) { // still needed, casting doesn't do anything
+            return 0;
+        }
+    }
+
+    /**
+     * Returns a precise scale of a start time and end time.
+     * If time is out of range, it will be over-scaled
+     * ej start: 0, end: 10, time: 15 - Result will be 1.5d
+     * @param start initial point to calculate scale, cannot be negative
+     * @param end final point to calculate scale. cannot be negative
+     * @param time current time between values
+     * @return scaled time
+     */
+    public static double scaleDesTempo(double start, double end, double time) {
+        if (start < 0 || end < 0 || time < 0) throw new IllegalArgumentException("Invalid negative value");
+        double duration = end - start; // start acts like a margin
+        double realTime = time - start;
+
+        double result = realTime / duration;
+        return (Double.isNaN(result)) ? 0 : result;
+    }
+
+    /**
+     * Returns a precise scale of a start time and end time.
+     * If time is out of range, it will be over-scaled
+     * ej start: 0, end: 10, time: 15 - Result will be 1.5d
+     * Method helper to calculate time in ticks (20t = 1s)
+     * @param startTick initial point to calculate scale, cannot be negative
+     * @param endTick final point to calculate scale. cannot be negative
+     * @param timeTick current time between values
+     * @return scaled time
+     */
+    public static double scaleDesTempoTick(int startTick, int endTick, int timeTick) {
         return scaleTempo(MathAPI.tickToMs(startTick), MathAPI.tickToMs(endTick), MathAPI.tickToMs(timeTick));
     }
 
