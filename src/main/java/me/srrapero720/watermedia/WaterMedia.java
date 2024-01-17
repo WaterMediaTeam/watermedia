@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -18,6 +19,7 @@ public class WaterMedia {
 	public static final String NAME = "WATERMeDIA";
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
+	private static final List<ClassLoader> CLASS_LOADERS = new ArrayList<>();
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -31,6 +33,11 @@ public class WaterMedia {
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();
+	}
+
+	public static void attachClassLoader(Class<?> classFrom, ClassLoader classLoader) {
+		CLASS_LOADERS.add(classLoader);
+		LOGGER.info(IT, "Attached new search class loader from {}", classFrom.getName());
 	}
 
 	public void start() throws Exception {

@@ -41,6 +41,7 @@ repositories {
         content { includeGroup "curse.maven" }
     }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.neoforged.net/releases' }
 }
 
 /* CONFIGURATION TO SHADOW DEPENDENCIES - */
@@ -50,11 +51,6 @@ configurations {
 }
 
 dependencies {
-    // FabricLoader (just to give loading support on FABRIC)
-    compileOnly("net.fabricmc:fabric-loader:${project.fabricv}") {
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
-
     // DEPENDENCIES INCLUDED IN MINECRAFT
     compileOnly 'net.java.dev.jna:jna:4.4.0'
     compileOnly 'net.java.dev.jna:platform:3.4.0'
@@ -66,9 +62,12 @@ dependencies {
     compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
     compileOnly 'org.ow2.asm:asm-tree:9.1'
 
-    // SUB-PROJECTS
+    // MOCKERS
     compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
     compileOnly(project(":lib-neoforge")) // MOCKED NEOFORGE CLASSES- REMOVED ON JAR
+    compileOnly("net.fabricmc:fabric-loader:${fabricV}") { // FABRIC LOADER SUPPORT
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
 
     // GROOVY
     compileOnly group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9'
@@ -81,7 +80,7 @@ dependencies {
     library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     library 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     library 'com.squareup.retrofit2:retrofit:2.6.4'
-    library 'org.apache.commons:commons-compress:1.23.0'
+    library 'org.apache.commons:commons-compress:1.24.0'
     library ('com.squareup.retrofit2:converter-gson:2.9.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }

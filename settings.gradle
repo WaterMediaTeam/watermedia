@@ -25,4 +25,4 @@ buildscript {
     }
 }
 
-include 'lib-vlcj', 'lib-extras', 'lib-forge', 'lib-neoforge'
+include 'lib-vlcj', 'lib-extras', 'lib-forge', 'lib-neoforge', 'bins'

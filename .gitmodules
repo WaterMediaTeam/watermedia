@@ -1,0 +1,3 @@
+[submodule "bins"]
+	path = bins
+	url = https://github.com/SrRapero720/watermedia-binaries
