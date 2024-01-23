@@ -35,7 +35,7 @@ import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
  * Tool to fetch new images from internet
  * stores all loaded pictures in our cache to skip downloading image 2 times
  */
-public class ImageFetch {
+public class ImageFetch implements Runnable {
     private static final Marker IT = MarkerManager.getMarker("ImageAPI");
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("WATERMeDIA-if-Worker"));
@@ -70,8 +70,8 @@ public class ImageFetch {
      * Start image fetch
      * result is fired on callbacks
      */
-    public void start() { EX.execute(this::run); }
-    private void run() {
+    public void start() { EX.execute(this); }
+    public void run() {
         try {
             URLFixer.Result result = UrlAPI.fixURL(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");

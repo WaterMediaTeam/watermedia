@@ -81,6 +81,9 @@ dependencies {
     library 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     library 'com.squareup.retrofit2:retrofit:2.6.4'
     library 'org.apache.commons:commons-compress:1.24.0'
+    library 'org.tukaani:xz:1.9'
+    library 'com.github.luben:zstd-jni:1.5.5-10'
+    library 'org.apache.commons:commons-compress:1.24.0'
     library ('com.squareup.retrofit2:converter-gson:2.9.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
@@ -126,6 +129,9 @@ shadowJar {
     relocate 'com.fasterxml', 'me.lib720'
     relocate 'retrofit2', 'me.lib720.retrofit2'
     relocate 'uk.co', 'me.lib720'
+    relocate 'org.apache.commons', 'me.lib720.apache'
+    relocate 'org.tukaani', 'me.lib720.tukaani'
+    relocate 'com.tianscar', 'me.lib720.tianscar'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
