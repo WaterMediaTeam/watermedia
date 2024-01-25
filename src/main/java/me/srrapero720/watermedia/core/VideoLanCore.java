@@ -53,7 +53,7 @@ public class VideoLanCore {
 
     private static String[] init$readArguments(IMediaLoader loader, Path loggerPath) {
         String[] args = JarTool.readStringList(VideoLanCore.class.getClassLoader(), "/videolan/arguments.json").toArray(new String[0]);
-        for (int i =0; i < args.length; i++) args[i] = args[i].replace("{logfile}", loggerPath.toString());
+        for (int i = 0; i < args.length; i++) args[i] = args[i].replace("{logfile}", loggerPath.toString());
         return  args;
     }
 

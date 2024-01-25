@@ -1,24 +1,24 @@
 package me.srrapero720.watermedia.core.tools;
 
 import com.sun.jna.Platform;
-import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import uk.co.caprica.vlcj.binding.RuntimeUtil;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public enum OsTool {
     WIN_X32("win", "x32", ".dll", false),
     WIN_X64("win", "x64", ".dll", true),
-    MAC_X64("mac", "x64", ".dylib", false),
+    MAC_X64("mac", "all", ".dylib", true),
     NIX_X64("nix", "x64", ".os", false),
 
     WIN_ARM64("win", "arm64", ".dll", false),
-    MAC_ARM64("mac", "arm64", ".dylib", false),
+    MAC_ARM64("mac", "all", ".dylib", true),
     NIX_ARM64("nix", "arm64", ".os", false),
 
     WIN_ARM("win", "arm", ".dll", false),
-    MAC_ARM("mac", "arm", ".dylib", false),
+    MAC_ARM("mac", "all", ".dylib", true),
     NIX_ARM("nix", "arm", ".os", false),
 
     DUMMY("dummy", "dummy", ".dummy", false);
