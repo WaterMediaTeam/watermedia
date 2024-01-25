@@ -74,7 +74,7 @@ public class WaterMedia {
 			exception = new IllegalStateException("Cannot run WATERMeDIA on a server");
 
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-			LOGGER.error(IT, "Mod is not designed to run on SERVERS. remove this mod from server to stop crashes");
+			LOGGER.error(IT, "WATERMeDIA is not designed to run on SERVERS. remove this mod from server to stop crashes");
 			LOGGER.error(IT, "If dependant mods throws error loading our classes then report it to the creator");
 			LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
 		}
