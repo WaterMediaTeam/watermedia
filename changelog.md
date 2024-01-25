@@ -2,6 +2,9 @@
 - Removed mixins
 - Player API: added ``getBuffer`` and `getBufferLock` in order to get current buffer
 - 1.12.2 boot is not longer async (may reduce booting times)
+- MemoryAlloc is no longer static (may solve rendering issues on MacOS + fabric)
+- Added MacOS binaries
+  - Experimental: may bindings not work, please report if your OS doesn't work with it
 
 # UPDATE 2.0.26
 - Added ``-Dwatermedia.disableBoot=<boolean>`` argument
