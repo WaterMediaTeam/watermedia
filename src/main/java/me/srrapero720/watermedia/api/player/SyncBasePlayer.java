@@ -18,6 +18,8 @@ import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 
+import java.io.File;
+
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public abstract class SyncBasePlayer {
@@ -67,20 +69,37 @@ public abstract class SyncBasePlayer {
         }
     }
 
-    private boolean rpa(CharSequence url) {
+    private boolean rpa(CharSequence url) { // request player action
         if (raw == null) return false;
         return TryCore.withReturn(defaultVar -> {
             if (url.toString().startsWith("file:///")) {
+                String compose = url.toString().replace("file:///", "");
+
+                File location = new File(compose);
+                if (!location.exists()) return false;
+
                 this.url = url.toString().replace("file:///", "");
                 this.live = false;
                 return true;
-            }
-            URLFixer.Result result = UrlAPI.fixURL(url.toString(), sfixer);
-            if (result == null) throw new IllegalArgumentException("Invalid URL");
+            } else if (url.toString().startsWith("local://")) {
+                String compose = url.toString().replace("local://", "");
+                if (compose.startsWith("/")) compose = compose.substring(1);
 
-            this.url = result.url.toString();
-            live = result.assumeStream;
-            return true;
+                File location = new File(compose);
+                if (!location.exists()) return false;
+
+                this.url = location.toPath().toString();
+                this.live = false;
+                return true;
+            } else {
+                URLFixer.Result result = UrlAPI.fixURL(url.toString(), sfixer);
+                if (result == null) throw new IllegalArgumentException("Invalid URL");
+
+                this.url = result.url.toString();
+                live = result.assumeStream;
+                return true;
+            }
+
         }, e -> LOGGER.error(IT, "Failed to load player"), false);
     }
 

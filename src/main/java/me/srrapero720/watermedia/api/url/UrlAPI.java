@@ -40,7 +40,7 @@ public class UrlAPI {
         if (isValid(strUrl)) {
             return TryCore.withReturn(defaultVar -> {
                 URL url = new URL(strUrl);
-                if (strUrl.startsWith("file:///")) return new URLFixer.Result(url, false, false);
+                if (strUrl.startsWith("file:///") || strUrl.startsWith("local://")) return new URLFixer.Result(url, false, false);
                 for (int i = 0; i < FIXERS.size(); i++) {
                     URLFixer fixer = FIXERS.get(i);
                     if (fixer instanceof SpecialFixer && !specials) continue;
