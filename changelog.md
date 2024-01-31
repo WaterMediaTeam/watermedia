@@ -5,6 +5,7 @@
 - MemoryAlloc is no longer static (may solve rendering issues on MacOS + fabric)
 - Added MacOS binaries
   - Experimental: may bindings not work, please report if your OS doesn't work with it
+- Added ``local://`` support, you can load videos and pictures from your game folder using a relative path
 
 # UPDATE 2.0.26
 - Added ``-Dwatermedia.disableBoot=<boolean>`` argument
