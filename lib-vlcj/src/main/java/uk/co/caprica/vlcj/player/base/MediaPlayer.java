@@ -27,9 +27,7 @@ import uk.co.caprica.vlcj.binding.internal.libvlc_renderer_item_t;
 import uk.co.caprica.vlcj.player.renderer.RendererItem;
 import uk.co.caprica.vlcj.support.eventmanager.TaskExecutor;
 
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_player_new;
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_player_release;
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_player_set_renderer;
+import static uk.co.caprica.vlcj.binding.LibVlc.*;
 
 /**
  * Base media player implementation.
@@ -48,6 +46,12 @@ public class MediaPlayer {
      * Native media player instance.
      */
     private final libvlc_media_player_t mediaPlayerInstance;
+
+    /**
+     * WATERMeDIA PATCH
+     * Stores classloader
+     */
+    private final ClassLoader classLoader;
 
     /**
      * Single-threaded service to execute tasks that need to be off-loaded from a native callback thread.
@@ -103,6 +107,10 @@ public class MediaPlayer {
     public MediaPlayer(libvlc_instance_t instance, libvlc_media_player_t mediaPlayerInstance) {
         this.libvlcInstance = instance;
         this.mediaPlayerInstance = mediaPlayerInstance;
+        // WATERMeDIA PATCH - start
+        this.classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) throw new NullPointerException("Current thread class loader is NULL");
+        // WATERMeDIA PATCH - start
 
         audioApi      = new AudioApi     (this);
         chapterApi    = new ChapterApi   (this);
@@ -129,6 +137,10 @@ public class MediaPlayer {
         } else {
             throw new RuntimeException("Failed to get a new native media player instance");
         }
+    }
+
+    public final ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     public final AudioApi audio() {

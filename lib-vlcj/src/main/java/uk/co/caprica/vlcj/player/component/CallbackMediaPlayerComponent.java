@@ -164,13 +164,13 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         return new BufferFormatCallback() {
             @Override
             public void allocatedBuffers(ByteBuffer[] buffers) {
-                VideoLan4J.native$checkClassLoader();
+                VideoLan4J.native$checkClassLoader(mediaPlayer.getClassLoader());
                 cb.allocatedBuffers(buffers);
             }
 
             @Override
             public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
-                VideoLan4J.native$checkClassLoader();
+                VideoLan4J.native$checkClassLoader(mediaPlayer.getClassLoader());
                 return cb.getBufferFormat(sourceWidth, sourceHeight);
             }
         };
@@ -178,7 +178,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
 
     private RenderCallback init$buildClassLoaderSafeCallback(RenderCallback cb) {
         return (mediaPlayer, nativeBuffers, bufferFormat) -> {
-            VideoLan4J.native$checkClassLoader();
+            VideoLan4J.native$checkClassLoader(mediaPlayer.getClassLoader());
             cb.display(mediaPlayer, nativeBuffers, bufferFormat);
         };
     }

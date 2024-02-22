@@ -1,3 +1,7 @@
+# UPDATE 2.0.28
+- Store classloader on instances instead of static scope
+  - May solve issues in 1.12.2 related to security exceptions
+
 # UPDATE 2.0.27
 - Removed mixins
 - Player API: added ``getBuffer`` and `getBufferLock` in order to get current buffer

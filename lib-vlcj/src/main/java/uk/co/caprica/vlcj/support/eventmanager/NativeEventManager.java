@@ -23,11 +23,7 @@ import com.sun.jna.CallbackThreadInitializer;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import uk.co.caprica.vlcj.VideoLan4J;
-import uk.co.caprica.vlcj.binding.internal.libvlc_callback_t;
-import uk.co.caprica.vlcj.binding.internal.libvlc_event_e;
-import uk.co.caprica.vlcj.binding.internal.libvlc_event_manager_t;
-import uk.co.caprica.vlcj.binding.internal.libvlc_event_t;
-import uk.co.caprica.vlcj.binding.internal.libvlc_instance_t;
+import uk.co.caprica.vlcj.binding.internal.*;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -91,6 +87,8 @@ abstract public class NativeEventManager<E,L> {
      */
     private boolean callbackRegistered;
 
+    private final ClassLoader classLoader;  // WATERMeDIA PATCH
+
     /**
      * Create a new component to manage native events.
      *
@@ -106,6 +104,8 @@ abstract public class NativeEventManager<E,L> {
         this.firstEvent = firstEvent;
         this.lastEvent = lastEvent;
         this.callbackName = callbackName;
+        this.classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) throw new NullPointerException("ClassLoader is null");
     }
 
     /**
@@ -175,7 +175,7 @@ abstract public class NativeEventManager<E,L> {
      * @param event event to raise, may be <code>null</code> and if so will be ignored
      */
     public final void raiseEvent(EventNotification<L> event) {
-        VideoLan4J.native$checkClassLoader(); // WATERMeDIA PATCH
+        VideoLan4J.native$checkClassLoader(classLoader); // WATERMeDIA PATCH
         if (event != null && !eventListenerList.isEmpty()) {
             for (L listener : eventListenerList) {
                  event.notify(listener);
@@ -205,7 +205,7 @@ abstract public class NativeEventManager<E,L> {
 
         @Override
         public void callback(libvlc_event_t event, Pointer userData) {
-            VideoLan4J.native$checkClassLoader(); // WATERMeDIA PATCH
+            VideoLan4J.native$checkClassLoader(classLoader); // WATERMeDIA PATCH
             raiseEvent(onCreateEvent(libvlcInstance, event, eventObject));
         }
 
