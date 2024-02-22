@@ -17,7 +17,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
+import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
 
 /**
  * Tool to fetch new images from internet
@@ -72,11 +71,10 @@ public class ImageFetch {
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            URLFixer.Result result = UrlAPI.fixURL(url);
-            if (result == null) throw new IllegalArgumentException("Invalid URL");
-            if (result.assumeVideo) throw new NoPictureException();
+            DynamicURL result = new DynamicURL(url);
+            if (result.isVideo()) throw new NoPictureException();
 
-            byte[] data = load(url, result.url);
+            byte[] data = load(result);
             String type = readType(data);
 
             try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
@@ -111,10 +109,10 @@ public class ImageFetch {
         }
     }
 
-    private static byte[] load(String originalUrl, URL url) throws IOException, NoPictureException {
-        CacheAPI.Entry entry = CacheAPI.getEntry(originalUrl);
+    private static byte[] load(DynamicURL url) throws IOException, NoPictureException {
+        CacheAPI.Entry entry = CacheAPI.getEntry(url.getSource());
         long requestTime = System.currentTimeMillis();
-        URLConnection request = url.openConnection();
+        URLConnection request = url.asURL().openConnection();
         request.setDefaultUseCaches(false);
         request.setRequestProperty("Accept", "image/*");
         int code = -1;
@@ -177,14 +175,14 @@ public class ImageFetch {
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return DataTool.readAllBytes(fileStream);
                     } finally {
-                        CacheAPI.updateEntry(new CacheAPI.Entry(originalUrl, freshTag, lastTimestamp, expTimestamp));
+                        CacheAPI.updateEntry(new CacheAPI.Entry(url.getSource(), freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
 
             byte[] data = DataTool.readAllBytes(in);
-            CacheAPI.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
+            CacheAPI.saveFile(url.getSource(), tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();
