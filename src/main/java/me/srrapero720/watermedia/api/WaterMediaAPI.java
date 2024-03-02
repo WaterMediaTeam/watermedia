@@ -19,7 +19,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;

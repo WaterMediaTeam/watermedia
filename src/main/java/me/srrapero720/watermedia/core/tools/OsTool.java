@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.core.tools;
 import com.sun.jna.Platform;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import uk.co.caprica.vlcj.binding.RuntimeUtil;
+import me.lib720.caprica.vlcj.binding.RuntimeUtil;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 

@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.player;
 
 import me.srrapero720.watermedia.core.VideoLanCore;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 
 public class PlayerAPI {
 

@@ -123,7 +123,6 @@ shadowJar {
     relocate 'okio', 'me.lib720.okio'
     relocate 'com.fasterxml', 'me.lib720'
     relocate 'retrofit2', 'me.lib720.retrofit2'
-    relocate 'uk.co', 'me.lib720'
     relocate 'org.apache.commons', 'me.lib720.apache'
     relocate 'org.tukaani', 'me.lib720.tukaani'
     relocate 'com.tianscar', 'me.lib720.tianscar'

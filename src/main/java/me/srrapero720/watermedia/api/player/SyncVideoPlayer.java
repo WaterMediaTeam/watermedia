@@ -5,8 +5,8 @@ import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
