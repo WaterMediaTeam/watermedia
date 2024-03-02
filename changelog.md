@@ -1,3 +1,9 @@
+# UPDATE 2.0.30
+- Update dev SETUP
+
+# UPDATE 2.0.29
+- Bump VLC version.cfg (solve MacOS binaries didn't get extracted)
+
 # UPDATE 2.0.28
 - Store classloader on instances instead of static scope
   - May solve issues in 1.12.2 related to security exceptions

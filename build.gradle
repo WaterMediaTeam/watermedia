@@ -3,7 +3,7 @@ import groovy.json.JsonOutput
 plugins {
     id 'java'
     id 'idea'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 /* JAR INFO */
@@ -42,12 +42,6 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-/* CONFIGURATION TO SHADOW DEPENDENCIES - */
-configurations {
-    library
-    implementation.extendsFrom library
-}
-
 dependencies {
     // FabricLoader (just to give loading support on FABRIC)
     compileOnly("net.fabricmc:fabric-loader:${project.fabricv}") {
@@ -71,17 +65,17 @@ dependencies {
     compileOnly group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9'
 
     // SUB-LIBRARIES
-    library(project(":lib-vlcj"))
-    library(project(":lib-extras"))
+    shadow(project(":lib-vlcj"))
+    shadow(project(":lib-extras"))
 
     // LIBRARIES TO BE SHADOW
-    library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
-    library 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-    library 'com.squareup.retrofit2:retrofit:2.6.4'
-    library 'org.apache.commons:commons-compress:1.24.0'
-    library 'org.tukaani:xz:1.9'
+    shadow 'com.github.sealedtx:java-youtube-downloader:3.2.3'
+    shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+    shadow 'com.squareup.retrofit2:retrofit:2.6.4'
+    shadow 'org.apache.commons:commons-compress:1.24.0'
+    shadow 'org.tukaani:xz:1.9'
 //    library 'com.github.luben:zstd-jni:1.5.5-10'
-    library ('com.squareup.retrofit2:converter-gson:2.9.0') {
+    shadow ('com.squareup.retrofit2:converter-gson:2.9.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
 
@@ -113,6 +107,7 @@ processResources {
 
 // ShadowJar task (run this task to make a built JAR.
 shadowJar {
+    configurations = [project.configurations.shadow]
 
     // Add relocation rules for each dependency
     relocate 'com.github', 'me.lib720'
@@ -162,8 +157,5 @@ jar {
                 "Implementation-Timestamp"  : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "ForceLoadAsMod"            : "true"
         ])
-    }
-    from(configurations.library.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude 'META-INF', 'META-INF/**'
     }
 }
