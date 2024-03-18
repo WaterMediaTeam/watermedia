@@ -5,8 +5,8 @@ import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.cache.CacheAPI;
 import me.srrapero720.watermedia.api.cache.CacheEntry;
-import me.srrapero720.watermedia.api.url.UrlAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
+import me.srrapero720.watermedia.api.networkv2.DynamicURL;
+import me.srrapero720.watermedia.api.networkv2.NetworkAPI;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -73,11 +72,10 @@ public class ImageFetch implements Runnable {
     public void start() { EX.execute(this); }
     public void run() {
         try {
-            URLFixer.Result result = UrlAPI.fixURL(url);
-            if (result == null) throw new IllegalArgumentException("Invalid URL");
-            if (result.assumeVideo) throw new NoPictureException();
+            DynamicURL result = NetworkAPI.createDynamicUrl(url);
+            if (result.isVideo()) throw new NoPictureException();
 
-            byte[] data = UrlAPI.isValidPathUrl(result.url) ? load(url, new File(result.url).toURI().toURL()) : load(url, new URL(result.url));
+            byte[] data = load(result);
             String type = readType(data);
 
             try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
@@ -112,10 +110,10 @@ public class ImageFetch implements Runnable {
         }
     }
 
-    private static byte[] load(String originalUrl, URL url) throws IOException, NoPictureException {
-        CacheEntry entry = CacheAPI.getEntry(originalUrl);
+    private static byte[] load(DynamicURL url) throws IOException, NoPictureException {
+        CacheEntry entry = CacheAPI.getEntry(url.getSource());
         long requestTime = System.currentTimeMillis();
-        URLConnection request = url.openConnection();
+        URLConnection request = url.asURL().openConnection();
 
         int code = -1;
 
@@ -166,14 +164,14 @@ public class ImageFetch implements Runnable {
                     if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
                         return IOUtils.toByteArray(fileStream);
                     } finally {
-                        CacheAPI.updateEntry(new CacheEntry(originalUrl, freshTag, lastTimestamp, expTimestamp));
+                        CacheAPI.updateEntry(new CacheEntry(url.getSource(), freshTag, lastTimestamp, expTimestamp));
                     }
                 }
             }
 
             byte[] data = IOUtils.toByteArray(in);
             if (readType(data) == null) throw new NoPictureException();
-            CacheAPI.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
+            CacheAPI.saveFile(url.getSource(), tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();

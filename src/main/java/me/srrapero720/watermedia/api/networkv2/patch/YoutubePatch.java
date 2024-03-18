@@ -9,6 +9,7 @@ import com.github.kiulian.downloader.model.videos.formats.AudioFormat;
 import com.github.kiulian.downloader.model.videos.formats.VideoFormat;
 import me.srrapero720.watermedia.api.network.twitch.StreamQuality;
 import me.srrapero720.watermedia.api.networkv2.DynamicURL;
+import me.srrapero720.watermedia.api.networkv2.NetworkAPI;
 import me.srrapero720.watermedia.api.networkv2.URLPatcher;
 import me.srrapero720.watermedia.tools.exceptions.PatchingURLException;
 
@@ -53,22 +54,22 @@ public class YoutubePatch extends URLPatcher {
                     if (ytLivePlaylist == null) throw new IllegalArgumentException("Live URL playlist is null");
 
                     // TODO: add quality support
-                    return new DynamicURL(StreamQuality.parse(ytLivePlaylist).get(0).getUrl(), false, true);
+                    NetworkAPI.createDynamicUrl(StreamQuality.parse(ytLivePlaylist).get(0).getUrl(), false, true);
                 } else {
                     // TODO: add quality support
                     // BEST WITH AUDIO
                     VideoFormat bestWithAudio = videoInfo.bestVideoWithAudioFormat();
-                    if (bestWithAudio != null) return new DynamicURL(bestWithAudio.url(), true, false);
+                    if (bestWithAudio != null) return NetworkAPI.createDynamicUrl(bestWithAudio.url(), true, false);
 
                     // TODO: add quality support
                     // WITHOUT AUDIO
                     VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
-                    if (bestWithoutAudio != null) return new DynamicURL(bestWithoutAudio.url(), true, false);
+                    if (bestWithoutAudio != null) return NetworkAPI.createDynamicUrl(bestWithoutAudio.url(), true, false);
 
                     // TODO: add quality support
                     // WITHOUT VIDEO
                     AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
-                    if (bestWithoutVideo != null) return new DynamicURL(bestWithoutVideo.url(), true, false);
+                    if (bestWithoutVideo != null) return NetworkAPI.createDynamicUrl(bestWithoutVideo.url(), true, false);
                 }
             } catch (Exception e) {
                 throw new PatchingURLException(url.getSource(), e);

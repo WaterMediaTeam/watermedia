@@ -2,9 +2,8 @@ package me.srrapero720.watermedia.api.player.vlc;
 
 import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
+import me.srrapero720.watermedia.api.networkv2.DynamicURL;
 import me.srrapero720.watermedia.api.player.PlayerAPI;
-import me.srrapero720.watermedia.api.url.UrlAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
@@ -64,28 +63,26 @@ public abstract class SimplePlayer {
         }
     }
 
-    private boolean rpa(CharSequence url) {
+    private boolean rpa(DynamicURL url) {
         if (raw == null) return false;
         return TryCore.withReturn(defaultVar -> {
-            URLFixer.Result result = UrlAPI.fixURL(url.toString());
-            if (result == null) throw new IllegalArgumentException("Invalid URL");
 
-            this.url = result.url;
-            live = result.assumeStream;
+            this.url = url.getSource();
+            this.live = url.isVideo();
             return true;
         }, e -> LOGGER.error(IT, "Failed to load player"), false);
     }
 
-    public void start(CharSequence url) { this.start(url, new String[0]); }
-    public void start(CharSequence url, String[] vlcArgs) {
+    public void start(DynamicURL url) { this.start(url, new String[0]); }
+    public void start(DynamicURL url, String[] vlcArgs) {
         ThreadCore.thread(3, () -> {
             if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
     }
 
-    public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
-    public void startPaused(CharSequence url, String[] vlcArgs) {
+    public void startPaused(DynamicURL url) { this.startPaused(url, new String[0]); }
+    public void startPaused(DynamicURL url, String[] vlcArgs) {
         ThreadCore.thread(3, () -> {
             if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
