@@ -3,104 +3,88 @@ import groovy.json.JsonOutput
 plugins {
     id 'java'
     id 'idea'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.modrinth.minotaur' version '2.+'
     id 'com.matthewprenger.cursegradle' version '1.4+'
 }
 
-/* JAR INFO */
-version = modversion
-group = modgroup
-base { archivesName = "${modid}" }
-
-
-/* JAVA CONFIG */
-java {
-    withSourcesJar()
-    withJavadocJar()
-
-    /* SOURCE AND TARGET JAVA VERSION */
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-sourcesJar {
-    exclude("videolan/**.zip")
-}
-
-println "Gradle Java: ${JavaVersion.current()}"
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-
-/* PROJECT REPOSITORIES */
-repositories {
-    mavenCentral()
-    maven { url "https://repo.spongepowered.org/maven" }
-    maven { url "https://maven.tterrag.com/" }
-    maven {
-        url "https://www.cursemaven.com"
-        content { includeGroup "curse.maven" }
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://repo.spongepowered.org/maven" }
+        maven { url "https://maven.tterrag.com/" }
+        maven {
+            url "https://www.cursemaven.com"
+            content { includeGroup "curse.maven" }
+        }
     }
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://maven.neoforged.net/releases' }
+
+    afterEvaluate {
+        java {
+            withSourcesJar()
+            sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+        }
+
+        sourcesJar {
+            exclude("**.zip")
+            exclude("**.7z")
+            exclude("**.gz")
+        }
+
+        dependencies {
+            // DEPENDENCIES INCLUDED IN MINECRAFT
+            compileOnly 'org.ow2.asm:asm-tree:9.6'
+            compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
+            compileOnly 'net.java.dev.jna:jna:4.4.0'
+            compileOnly 'net.java.dev.jna:platform:3.4.0'
+            compileOnly 'com.google.code.gson:gson:2.10.1'
+            compileOnly 'org.apache.logging.log4j:log4j-api:2.20.0'
+            compileOnly 'org.apache.logging.log4j:log4j-core:2.20.0'
+            compileOnly 'org.apache.commons:commons-lang3:3.12.0'
+            compileOnly 'commons-io:commons-io:2.7'
+
+            // TEST
+            testImplementation 'org.ow2.asm:asm-tree:9.6'
+            testImplementation 'org.lwjgl:lwjgl-opengl:3.2.2'
+            testImplementation 'net.java.dev.jna:jna:4.4.0'
+            testImplementation 'net.java.dev.jna:platform:3.4.0'
+            testImplementation 'com.google.code.gson:gson:2.10.1'
+            testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+            testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+            testImplementation 'org.apache.commons:commons-lang3:3.12.0'
+            testImplementation 'commons-io:commons-io:2.7'
+        }
+    }
 }
 
-/* CONFIGURATION TO SHADOW DEPENDENCIES - */
-configurations {
-    library
-    implementation.extendsFrom library
+base {
+    archivesName = "${id}"
 }
+
+configurations {
+    shadeLib
+    implementation.extendsFrom shadeLib
+    testImplementation.extendsFrom shadeLib
+}
+
+repositories {}
 
 dependencies {
-    // DEPENDENCIES INCLUDED IN MINECRAFT
-    compileOnly 'net.java.dev.jna:jna:4.4.0'
-    compileOnly 'net.java.dev.jna:platform:3.4.0'
-    compileOnly 'org.apache.logging.log4j:log4j-api:2.15.0'
-    compileOnly 'org.apache.logging.log4j:log4j-core:2.17.1'
-    compileOnly 'org.apache.commons:commons-lang3:3.12.0'
-    compileOnly 'commons-io:commons-io:2.7'
-    compileOnly 'com.google.code.gson:gson:2.10.1'
-    compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
-    compileOnly 'org.ow2.asm:asm-tree:9.1'
-
     // MOCKERS
-    compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
-    compileOnly(project(":lib-neoforge")) // MOCKED NEOFORGE CLASSES- REMOVED ON JAR
-    compileOnly("net.fabricmc:fabric-loader:${fabricV}") { // FABRIC LOADER SUPPORT
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
-
-    // GROOVY
-    compileOnly group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9'
+    compileOnly project(":lib-forge")
+    compileOnly project(":lib-neoforge")
+    compileOnly "net.fabricmc:fabric-loader:${fbversion}"
 
     // SUB-LIBRARIES
-    library(project(":lib-vlcj"))
-    library(project(":lib-extras"))
+    shadeLib project(":lib-vlcj")
+    shadeLib project(":lib-tools")
 
     // LIBRARIES TO BE SHADOW
-    library 'com.github.sealedtx:java-youtube-downloader:3.2.3'
-    library 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-    library 'com.squareup.retrofit2:retrofit:2.6.4'
-    library 'org.apache.commons:commons-compress:1.24.0'
-    library 'org.tukaani:xz:1.9'
-    library 'com.github.luben:zstd-jni:1.5.5-10'
-    library 'org.apache.commons:commons-compress:1.24.0'
-    library ('com.squareup.retrofit2:converter-gson:2.9.0') {
-        exclude group: 'com.google.code.gson', module: 'gson'
-    }
-
-    // TEST
-    testImplementation 'net.java.dev.jna:jna:4.4.0'
-    testImplementation 'net.java.dev.jna:platform:3.4.0'
-    testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
-    testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-    testImplementation 'org.apache.commons:commons-lang3:3.12.0'
-    testImplementation 'commons-io:commons-io:2.7'
-    testImplementation 'com.google.code.gson:gson:2.10.1'
-
-    testImplementation 'com.github.sealedtx:java-youtube-downloader:3.2.3'
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-    testImplementation 'com.squareup.retrofit2:retrofit:2.6.4'
-    testImplementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    shadeLib 'com.github.sealedtx:java-youtube-downloader:3.2.3'
+    shadeLib 'org.apache.commons:commons-compress:1.26.0'
+    shadeLib 'org.tukaani:xz:1.9'
+    shadeLib 'com.github.luben:zstd-jni:1.5.5-11'
 }
 
 // Process target resources with mod info
@@ -122,10 +106,7 @@ shadowJar {
     // Add relocation rules for each dependency
     relocate 'com.github', 'me.lib720'
     relocate 'com.alibaba', 'me.lib720.alibaba'
-    relocate 'com.mpatric', 'me.lib720.mpatric'
     relocate 'org.mozilla', 'me.lib720.mozilla'
-    relocate 'okhttp3', 'me.lib720.okhttp3'
-    relocate 'okio', 'me.lib720.okio'
     relocate 'com.fasterxml', 'me.lib720'
     relocate 'retrofit2', 'me.lib720.retrofit2'
     relocate 'uk.co', 'me.lib720'
@@ -143,32 +124,33 @@ shadowJar {
     exclude "META-INF/retrofit.**"
 
     mergeServiceFiles()
-    archiveFileName = "${modid}-${modversion}.jar"
+    archiveBaseName = id
+    archiveClassifier = ''
 }
 
 // Make the reobfJar task depend on shadowJar
-tasks.build.dependsOn shadowJar
+tasks.processResources.outputs.upToDateWhen { false }
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
 }
-tasks.processResources.outputs.upToDateWhen { false }
 
-// DO NOT RUN
 jar {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+
     manifest {
         attributes([
-                "Specification-Title"       : modname,
+                "Specification-Title"       : name,
                 "Specification-Vendor"      : modauthor,
-                "Specification-Version"     : modversion,
-                "Implementation-Title"      : modname,
-                "Implementation-Version"    : modversion,
+                "Specification-Version"     : version,
+                "Implementation-Title"      : name,
+                "Implementation-Version"    : version,
                 "Implementation-Vendor"     : modauthor,
                 "Implementation-Timestamp"  : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "ForceLoadAsMod"            : "true"
         ])
     }
-    from(configurations.library.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude 'META-INF', 'META-INF/**'
-    }
+
+    finalizedBy shadowJar
 }
 
 //tasks.modrinth.enabled = System.getenv("MODRINTH_TOKEN") != null

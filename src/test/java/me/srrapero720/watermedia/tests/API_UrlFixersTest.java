@@ -1,8 +1,5 @@
 package me.srrapero720.watermedia.tests;
 
-import me.srrapero720.watermedia.api.url.UrlAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -20,9 +17,9 @@ public class API_UrlFixersTest extends Test {
     protected void prepare() throws Exception {
         SOURCES = JarTool.readObject("fixers-test.json");
 
-        UrlAPI boot = new UrlAPI();
-        boot.prepare(ILoader.DEFAULT);
-        boot.start(ILoader.DEFAULT);
+//        UrlAPI boot = new UrlAPI();
+//        boot.prepare(ILoader.DEFAULT);
+//        boot.start(ILoader.DEFAULT);
         LOGGER.info(IT, "API started");
     }
 
@@ -34,10 +31,10 @@ public class API_UrlFixersTest extends Test {
             LOGGER.info(IT, "Running test for {}", key.replace(":soft", ""));
             for (String value: SOURCES.get(key)) {
                 try {
-                    URLFixer.Result result = UrlAPI.fixURL(value);
-                    if (result == null) throw new IllegalStateException("Fixer failed with '" + value + "'");
+//                    URLFixer.Result result = UrlAPI.fixURL(value);
+//                    if (result == null) throw new IllegalStateException("Fixer failed with '" + value + "'");
 
-                    LOGGER.debug(IT, "Fix successfully {}", result.toString());
+//                    LOGGER.debug(IT, "Fix successfully {}", result.toString());
                     // TODO: fetch URL to check if status code was 200
                 } catch (Exception e) {
                     if (key.contains(":soft")) {

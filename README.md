@@ -1,26 +1,25 @@
-[![CurseForge](https://img.shields.io/curseforge/v/869524?style=for-the-badge&label=curseforge&labelColor=%232d2d2d&color=%23e04e14&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fwatermedia%2Ffiles)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
-[![JitPack](https://img.shields.io/jitpack/version/com.github.SrRapero720/watermedia?style=for-the-badge&label=JITPACK&color=34495e&link=https%3A%2F%2Fjitpack.io%2F%23SrRapero720%2Fwatermedia)](https://jitpack.io/#SrRapero720/watermedia)
-[![Modrinth Version](https://img.shields.io/modrinth/v/watermedia?style=for-the-badge&logo=modrinth&label=MODRINTH&color=%231bd96a)](https://modrinth.com/mod/watermedia)<br>
 [![CurseForge downloads](https://cf.way2muchnoise.eu/watermedia.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/watermedia)
+[![CurseForge](https://img.shields.io/curseforge/v/869524?style=for-the-badge&label=curseforge&labelColor=%232d2d2d&color=%23e04e14&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fwatermedia%2Ffiles)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
 [![Minecraft versions supported](https://cf.way2muchnoise.eu/versions/Supports_watermedia_all.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
+[![Github issues](https://img.shields.io/github/issues/SrRapero720/watermedia?style=for-the-badge&logo=github)](https://github.com/SrRapero720/watermedia)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/SrRapero720/watermedia/gradle.yml?branch=master&event=push&style=for-the-badge&logo=github)](https://github.com/SrRapero720/watermedia)
+[![JitPack](https://img.shields.io/jitpack/version/com.github.SrRapero720/watermedia?style=for-the-badge&label=JITPACK&color=34495e&link=https%3A%2F%2Fjitpack.io%2F%23SrRapero720%2Fwatermedia)](https://jitpack.io/#SrRapero720/watermedia)
 
 [![](https://dcbadge.vercel.app/api/server/cuYAzzZ)](https://discord.gg/cuYAzzZ)
 [![](https://dcbadge.vercel.app/api/server/453QZ749U4)](https://discord.gg/453QZ749U4)
 
 # WATERMeDIA | MULTIMEDIA API
-Library and API to provide multimedia support using VLC for other mods like VideoPlayer, 
-designed to be used in Minecraft with MinecraftForge (NeoForge) and Fabric (Quilt), 
-but can be used in any other environment (no tested)
+API-Library providing multimedia support using LibVLC, used by Minecraft mods like VideoPlayer.
+Designed to be used in pure Java and Minecraft environments using MinecraftForge (NeoForge) and Fabric (Quilt).
 
-API provides an extra layer of VLCJ MediaPlayers making easier player management,
+our API provides an extra layer of VLCJ MediaPlayers making easier player management,
 async task and concurrency.
 Custom ``URLFixers`` to provide support of platforms like Youtube, Twitch,
 Kick.com, Google Drive, OneDrive, Dropbox, Imgur, Twitter and PornHub.
 
 ## VERSION STATUS
-All Minecraft versions supported + all mod loaders supported.
-Technically, WATERMeDIA can be loaded in any MC version in range of 1.12.2 ~ 1.20.x and even
-outside Minecraft modded (pure Java). 
+WATERMeDIA can be loaded in any MC version in range of 1.12.2 ~ 1.20.x and
+outside Minecraft using the proper dependencies. 
 
 IMPORTANT: we only support most popular versions of Minecraft.
 QUILT ABOUT: Quilt is not officially supported.<br>

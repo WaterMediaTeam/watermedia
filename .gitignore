@@ -14,7 +14,8 @@ out
 .idea
 
 # gradle
-build
+build/
+**/build/
 .gradle
 gradle-private.properties
 
@@ -22,6 +23,3 @@ gradle-private.properties
 eclipse
 logs
 run
-
-# Files from Forge MDK
-forge*changelog.txt

@@ -1,15 +1,14 @@
 {
   "schemaVersion": 1,
-  "id": "${modid}",
-  "version": "${modversion}",
-  "name": "${modname}",
-  "description": "${moddescription}",
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${mod_description}",
   "authors": ${modauthorlist},
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/watermedia/",
-    "sources": "https://github.com/SrRapero720/watermedia",
-    "issues": "https://github.com/SrRapero720/watermedia/issues",
-    "email": "SrRapero720@hotmail.com"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/${id}",
+    "sources": "https://github.com/${github_project}",
+    "issues": "https://github.com/${github_project}/issues",
   },
 
   "license": "${modlicense}",
