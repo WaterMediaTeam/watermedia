@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.player.vlc;
 
 import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
-import me.srrapero720.watermedia.api.networkv2.DynamicURL;
+import me.srrapero720.watermedia.api.network.DynamicURL;
 import me.srrapero720.watermedia.api.player.PlayerAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;

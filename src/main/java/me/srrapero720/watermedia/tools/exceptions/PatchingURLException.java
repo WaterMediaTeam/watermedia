@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.tools.exceptions;
 
-import me.srrapero720.watermedia.api.networkv2.DynamicURL;
+import me.srrapero720.watermedia.api.network.DynamicURL;
 
 import java.net.URL;
 

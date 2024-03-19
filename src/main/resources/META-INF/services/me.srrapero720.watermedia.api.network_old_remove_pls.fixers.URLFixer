@@ -1,7 +1,0 @@
-# NORMAL FIXERS
-me.srrapero720.watermedia.api.network_old_remove_pls.fixers.OnedriveFixer
-me.srrapero720.watermedia.api.network_old_remove_pls.fixers.TwitchFixer
-me.srrapero720.watermedia.api.network_old_remove_pls.fixers.TwitterFixer
-
-# SPECIAL FIXERS
-me.srrapero720.watermedia.api.network_old_remove_pls.fixers.special.PHFixer

@@ -5,8 +5,7 @@ import me.lib720.watermod.concurrent.ThreadCore;
 import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.cache.CacheAPI;
 import me.srrapero720.watermedia.api.cache.CacheEntry;
-import me.srrapero720.watermedia.api.networkv2.DynamicURL;
-import me.srrapero720.watermedia.api.networkv2.NetworkAPI;
+import me.srrapero720.watermedia.api.network.DynamicURL;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -28,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.api.networkv2.NetworkAPI.USER_AGENT;
+import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
 
 /**
  * Tool to fetch new images from internet
@@ -72,7 +71,7 @@ public class ImageFetch implements Runnable {
     public void start() { EX.execute(this); }
     public void run() {
         try {
-            DynamicURL result = NetworkAPI.createDynamicUrl(url);
+            DynamicURL result = new DynamicURL(url);
             if (result.isVideo()) throw new NoPictureException();
 
             byte[] data = load(result);
