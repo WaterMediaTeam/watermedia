@@ -3,7 +3,7 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "${mod_description}",
+  "description": "${moddesc}",
   "authors": ${modauthorlist},
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/${id}",

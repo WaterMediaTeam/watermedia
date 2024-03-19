@@ -4,7 +4,7 @@
     "name": "${name}",
     "version": "${version}",
     "mcversion": "1.12.2",
-    "description": "${mod_description}",
+    "description": "${moddesc}",
     "url": "https://www.curseforge.com/minecraft/mc-mods/${id}",
     "updateUrl": "",
     "parent": "",
