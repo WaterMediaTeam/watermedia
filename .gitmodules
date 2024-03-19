@@ -1,6 +1,6 @@
 [submodule "lib-binaries"]
 	path = lib-binaries
-	url = https://github.com/SrRapero720/watermedia-binaries
+	url = https://github.com/SrRapero720/watermedia-binaries.git
 [submodule "lib-ytdownloader"]
 	path = lib-ytdownloader
 	url = https://github.com/SrRapero720/watermedia-ytdownloader.git
