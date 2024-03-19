@@ -15,7 +15,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
+import static me.srrapero720.watermedia.api.networkv2.NetworkAPI.USER_AGENT;
 
 public class TwitchAPI {
     public static final String GRAPH_QL_URL = "https://gql.twitch.tv/gql";

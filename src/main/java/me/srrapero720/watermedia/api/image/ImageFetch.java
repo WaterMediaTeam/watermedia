@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
+import static me.srrapero720.watermedia.api.networkv2.NetworkAPI.USER_AGENT;
 
 /**
  * Tool to fetch new images from internet

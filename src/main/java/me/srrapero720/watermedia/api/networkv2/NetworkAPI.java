@@ -7,8 +7,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
+import java.net.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +20,9 @@ public class NetworkAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker(NetworkAPI.class.getSimpleName());
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
     private static final ServiceLoader<URLPatcher> URL_PATCHES = ServiceLoader.load(URLPatcher.class);
+    static {
+        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+    }
 
     public static DynamicURL patchURL(DynamicURL url) {
         if (url.isLocal()) return url;
