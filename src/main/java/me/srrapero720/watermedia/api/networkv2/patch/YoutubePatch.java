@@ -7,7 +7,7 @@ import com.github.kiulian.downloader.model.videos.VideoDetails;
 import com.github.kiulian.downloader.model.videos.VideoInfo;
 import com.github.kiulian.downloader.model.videos.formats.AudioFormat;
 import com.github.kiulian.downloader.model.videos.formats.VideoFormat;
-import me.srrapero720.watermedia.api.network.twitch.StreamQuality;
+import me.srrapero720.watermedia.api.network_old_remove_pls.twitch.StreamQuality;
 import me.srrapero720.watermedia.api.networkv2.DynamicURL;
 import me.srrapero720.watermedia.api.networkv2.NetworkAPI;
 import me.srrapero720.watermedia.api.networkv2.URLPatcher;
