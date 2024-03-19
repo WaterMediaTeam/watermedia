@@ -79,9 +79,9 @@ dependencies {
     // SUB-LIBRARIES
     shadeLib project(":lib-vlcj")
     shadeLib project(":lib-tools")
+    shadeLib project(":lib-ytdownloader")
 
     // LIBRARIES TO BE SHADOW
-    shadeLib 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     shadeLib 'org.apache.commons:commons-compress:1.26.0'
     shadeLib 'org.tukaani:xz:1.9'
     shadeLib 'com.github.luben:zstd-jni:1.5.5-11'
