@@ -70,14 +70,8 @@ dependencies {
     shadow(project(":lib-ytdownloader"))
 
     // LIBRARIES TO BE SHADOW
-    shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-    shadow 'com.squareup.retrofit2:retrofit:2.6.4'
-    shadow 'org.apache.commons:commons-compress:1.24.0'
+    shadow 'org.apache.commons:commons-compress:1.26.1'
     shadow 'org.tukaani:xz:1.9'
-//    library 'com.github.luben:zstd-jni:1.5.5-10'
-    shadow ('com.squareup.retrofit2:converter-gson:2.9.0') {
-        exclude group: 'com.google.code.gson', module: 'gson'
-    }
 
     // TEST
     testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
@@ -86,10 +80,9 @@ dependencies {
     testImplementation 'commons-io:commons-io:2.7'
     testImplementation 'com.google.code.gson:gson:2.10.1'
 
-    testImplementation 'com.github.sealedtx:java-youtube-downloader:3.2.3'
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-    testImplementation 'com.squareup.retrofit2:retrofit:2.6.4'
-    testImplementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    testImplementation(project(":lib-vlcj"))
+    testImplementation(project(":lib-extras"))
+    testImplementation(project(":lib-ytdownloader"))
 }
 
 // Process target resources with mod info
