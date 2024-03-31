@@ -67,9 +67,9 @@ dependencies {
     // SUB-LIBRARIES
     shadow(project(":lib-vlcj"))
     shadow(project(":lib-extras"))
+    shadow(project(":lib-ytdownloader"))
 
     // LIBRARIES TO BE SHADOW
-    shadow 'com.github.sealedtx:java-youtube-downloader:3.2.3'
     shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     shadow 'com.squareup.retrofit2:retrofit:2.6.4'
     shadow 'org.apache.commons:commons-compress:1.24.0'
