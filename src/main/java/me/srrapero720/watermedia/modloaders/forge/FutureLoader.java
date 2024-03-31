@@ -16,7 +16,16 @@ public class FutureLoader implements IEnvLoader {
 
     @Override
     public boolean tlauncher() {
-        return installed("tlskincape") || new File("").toPath().toAbsolutePath().toString().contains("tlauncher");
+        // FOLDER VALIDATION - Avoid ATLauncher and SKLauncher (for some reason)
+        String f = new File("").toPath().toAbsolutePath().toString().toLowerCase();
+        boolean tlauncher = f.contains("tlauncher");
+        boolean atlauncher = f.contains("atlauncher");
+        boolean sklauncher = f.contains("sklauncher");
+
+        // TLSKINCAPE VALIDATION
+        boolean tlskincape = installed("tlskincape");
+
+        return tlskincape || (tlauncher && !atlauncher && !sklauncher);
     }
 
     @Override

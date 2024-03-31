@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -30,7 +29,16 @@ public class RusticLoader implements IEnvLoader {
 
     @Override
     public boolean tlauncher() {
-        return installed("tlskincape") || new File("").toPath().toAbsolutePath().toString().contains("tlauncher");
+        // FOLDER VALIDATION - Avoid ATLauncher and SKLauncher (for some reason)
+        String f = new File("").toPath().toAbsolutePath().toString().toLowerCase();
+        boolean tlauncher = f.contains("tlauncher");
+        boolean atlauncher = f.contains("atlauncher");
+        boolean sklauncher = f.contains("sklauncher");
+
+        // TLSKINCAPE VALIDATION
+        boolean tlskincape = installed("tlskincape");
+
+        return tlskincape || (tlauncher && !atlauncher && !sklauncher);
     }
 
     @Override

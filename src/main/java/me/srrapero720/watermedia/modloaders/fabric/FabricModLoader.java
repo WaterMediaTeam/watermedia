@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.modloaders.fabric;
 
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.WaterMedia;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
@@ -59,6 +59,15 @@ public class FabricModLoader implements PreLaunchEntrypoint, IMediaLoader, IEnvL
 
     @Override
     public boolean tlauncher() {
-        return installed("tlskincape") || processPath().toAbsolutePath().toString().contains("tlauncher");
+        // FOLDER VALIDATION - Avoid ATLauncher and SKLauncher (for some reason)
+        String f = new File("").toPath().toAbsolutePath().toString().toLowerCase();
+        boolean tlauncher = f.contains("tlauncher");
+        boolean atlauncher = f.contains("atlauncher");
+        boolean sklauncher = f.contains("sklauncher");
+
+        // TLSKINCAPE VALIDATION
+        boolean tlskincape = installed("tlskincape");
+
+        return tlskincape || (tlauncher && !atlauncher && !sklauncher);
     }
 }

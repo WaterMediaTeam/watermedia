@@ -28,10 +28,9 @@ public class ForgeModLoader implements IMediaLoader {
             IEnvLoader loader = new RusticLoader();
             
             // Stress test
-            loader.client();
-            loader.installed("jei");
-            loader.development();
             loader.tlauncher();
+            loader.client();
+            loader.development();
 
             instance.envInit(loader);
         } catch (Throwable ignored) {}
@@ -39,10 +38,9 @@ public class ForgeModLoader implements IMediaLoader {
             IEnvLoader loader = new CurrentLoader();
             
             // Stress test
-            loader.client();
-            loader.installed("jei");
-            loader.development();
             loader.tlauncher();
+            loader.client();
+            loader.development();
 
             instance.envInit(loader);
         } catch (Throwable ignored) {}
@@ -50,15 +48,19 @@ public class ForgeModLoader implements IMediaLoader {
             IEnvLoader loader = new FutureLoader();
 
             // Stress test
-            loader.client();
-            loader.installed("jei");
-            loader.development();
             loader.tlauncher();
+            loader.client();
+            loader.development();
 
             instance.envInit(loader);
         } catch (Throwable ignored) {}
 
-        if (instance.env().client()) instance.init();
+        if (instance.env() == null) {
+            LOGGER.warn(IT, "Environment is null, something really bad happens");
+        } else {
+            if (instance.env().client()) instance.init();
+        }
+
     }
 
     @Override

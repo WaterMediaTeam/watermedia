@@ -32,8 +32,8 @@ public class WaterMedia {
 	private static volatile Exception exception;
 
 	// STATE
-	private boolean finished;
-	private boolean earlyCrash;
+	private volatile boolean finished;
+	private volatile boolean earlyCrash;
 
 	public static WaterMedia getInstance() {
 		if (instance == null) throw new IllegalStateException("Instance wasn't created");
@@ -65,7 +65,7 @@ public class WaterMedia {
 		if (this.env != null) LOGGER.warn(IT, "Override environment is a deprecated feature");
 		this.env = loader;
 		if (NBP) {
-			LOGGER.error(IT, "Cowardly refusing to load WATERMeDIA environment, detected {}=true", NBP_NAME);
+			LOGGER.error(IT, "Refusing to load WATERMeDIA environment, detected {}=true", NBP_NAME);
 			return;
 		}
 
@@ -81,6 +81,7 @@ public class WaterMedia {
 
 		// ENSURE FANCYVIDEO_API IS NOT INSTALLED (to prevent more bugreports about it)
 		if (loader.installed("fancyvideo_api")) exception = new IllegalStateException("FancyVideo-API is a incompatible mod. You have to remove it");
+		if (loader.installed("xenon")) exception = new IllegalStateException("Xenon is not supported. Please remove it and install Embeddium or Sodium");
 
 		// ENSURE IS NOT RUNNING BY TLAUNCHER
 		if (loader.tlauncher()) exception = new IllegalStateException("TLauncher is UNSUPPORTED. Use instead SKLauncher or MultiMC");
@@ -89,7 +90,7 @@ public class WaterMedia {
 
 	public void init() {
 		if (NBP) {
-			LOGGER.error(IT, "Cowardly refusing to bootstrap WATERMeDIA, detected {}=true", NBP_NAME);
+			LOGGER.error(IT, "Refusing to bootstrap WATERMeDIA, detected {}=true", NBP_NAME);
 			return;
 		}
 		if (this.env == null) LOGGER.warn(IT, "Environment not detected, be careful about it");
