@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -37,7 +36,7 @@ public class CacheCore {
 
         if (!dir.exists()) dir.mkdirs();
         if (index.exists()) {
-            try (DataInputStream stream = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())))) {
+            try (DataInputStream stream = new DataInputStream(new GZIPInputStream(new FileInputStream(index)))) {
                 int length = stream.readInt();
 
                 for (int i = 0; i < length; i++) {
@@ -57,7 +56,7 @@ public class CacheCore {
     }
 
     private static boolean refreshAll() {
-        try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(Files.newOutputStream(index.toPath())))) {
+        try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)))) {
             out.writeInt(ENTRIES.size());
 
             for (Map.Entry<String, Entry> mapEntry : ENTRIES.entrySet()) {

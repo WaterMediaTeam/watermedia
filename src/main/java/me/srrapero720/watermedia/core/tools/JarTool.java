@@ -84,7 +84,6 @@ public class JarTool {
     }
 
     // WITHOUT CLASSLOADER OPTIONS
-
     public static String readString(String from) {
         try {
             byte[] bytes = DataTool.readAllBytes(readResource(from));

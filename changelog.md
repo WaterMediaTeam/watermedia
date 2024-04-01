@@ -2,6 +2,7 @@
 - Disabled Kick.com and Imgur fixers (Temporally)
 - Removed transitive dependencies and any other not essential dependency (retrofit, jackson databind and others)
 - switch to fork version of yt-downloader
+- disable VLC file logging (also deletes log folders if was founded)
 
 # UPDATE 2.0.30
 - Update dev SETUP

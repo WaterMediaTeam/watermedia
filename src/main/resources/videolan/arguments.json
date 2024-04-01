@@ -1,11 +1,7 @@
 [
   "--quiet",
 
-  "--file-logging",
-  "--logmode=text",
-  "--logfile={logfile}",
-  "--verbose=2",
-
+  "--no-file-logging",
   "--aout={directsound,mmdevice,waveout}",
 
   "--http-reconnect"
