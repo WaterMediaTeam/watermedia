@@ -101,6 +101,20 @@ public class ImageRenderer {
     }
 
     /**
+     * Calculate texture based on tick time (1s/20t) plus deltaTime (missing seconds on ticks)
+     * make tick count by yourself
+     * @param tick Tick count
+     * @param deltaTime extra ms to add
+     * @param loop enable looping if tick count overflows duration
+     * @return OpenGL texture ID
+     */
+    public int texture(long tick, long deltaTime, boolean loop) {
+        long time = (tick * 50L) + deltaTime;
+        if (duration > 0 && time > duration && loop) time %= duration;
+        return texture(time);
+    }
+
+    /**
      * Calculate texture based on tick time (1s/20t) plus partialTicks (fraction of a tick)
      * make tick count by yourself
      * @param tick Tick count
@@ -109,9 +123,7 @@ public class ImageRenderer {
      * @return OpenGL texture ID
      */
     public int texture(long tick, float partialTicks, boolean loop) {
-        long time = (tick * 50L) + MathAPI.tickToMs(partialTicks);
-        if (duration > 0 && time > duration && loop) time %= duration;
-        return texture(time);
+        return texture(tick, MathAPI.tickToMs(partialTicks), loop);
     }
 
     /**
