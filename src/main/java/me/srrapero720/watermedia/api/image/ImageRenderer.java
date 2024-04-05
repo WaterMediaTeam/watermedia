@@ -101,7 +101,7 @@ public class ImageRenderer {
     }
 
     /**
-     * Calculate texture based on tick time (1s/20t) plus deltaTime (missing seconds on ticks)
+     * Calculate texture based on tick time (1s/20t) plus deltaTime (missing ms on ticks)
      * make tick count by yourself
      * @param tick Tick count
      * @param deltaTime extra ms to add
