@@ -1,63 +1,82 @@
 import groovy.json.JsonOutput
 
-buildscript {
-    allprojects {
-        repositories {
-            mavenCentral()
-            maven { url 'https://jitpack.io' }
-            maven { url "https://repo.spongepowered.org/maven" }
-            maven { url "https://maven.tterrag.com/" }
-            maven {
-                url "https://www.cursemaven.com"
-                content { includeGroup "curse.maven" }
-            }
-        }
-
-        afterEvaluate {
-            java {
-                withSourcesJar()
-                sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
-            }
-
-            sourcesJar {
-                exclude("**.zip")
-                exclude("**.7z")
-                exclude("**.gz")
-            }
-
-            dependencies {
-                // DEPENDENCIES INCLUDED IN MINECRAFT
-                compileOnly 'org.ow2.asm:asm-tree:9.6'
-                compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
-                compileOnly 'net.java.dev.jna:jna:4.4.0'
-                compileOnly 'net.java.dev.jna:platform:3.4.0'
-                compileOnly 'com.google.code.gson:gson:2.10.1'
-                compileOnly 'org.apache.logging.log4j:log4j-api:2.20.0'
-                compileOnly 'org.apache.logging.log4j:log4j-core:2.20.0'
-                compileOnly 'org.apache.commons:commons-lang3:3.12.0'
-                compileOnly 'commons-io:commons-io:2.7'
-
-                // TEST
-                testImplementation 'org.ow2.asm:asm-tree:9.6'
-                testImplementation 'org.lwjgl:lwjgl-opengl:3.2.2'
-                testImplementation 'net.java.dev.jna:jna:4.4.0'
-                testImplementation 'net.java.dev.jna:platform:3.4.0'
-                testImplementation 'com.google.code.gson:gson:2.10.1'
-                testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
-                testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-                testImplementation 'org.apache.commons:commons-lang3:3.12.0'
-                testImplementation 'commons-io:commons-io:2.7'
-            }
-        }
-    }
-}
+buildscript {}
 
 plugins {
-    id 'java'
-    id 'idea'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.modrinth.minotaur' version '2.+'
     id 'com.matthewprenger.cursegradle' version '1.4+'
+}
+
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://repo.spongepowered.org/maven" }
+        maven { url "https://maven.tterrag.com/" }
+        maven {
+            url "https://www.cursemaven.com"
+            content { includeGroup "curse.maven" }
+        }
+    }
+    afterEvaluate {
+        java {
+            withSourcesJar()
+            sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+        }
+
+        sourcesJar {
+            exclude("**.zip")
+            exclude("**.7z")
+            exclude("**.gz")
+        }
+
+        dependencies {
+            // DEPENDENCIES INCLUDED IN MINECRAFT
+            compileOnly 'org.ow2.asm:asm-tree:9.6'
+            compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
+            compileOnly 'net.java.dev.jna:jna:4.4.0'
+            compileOnly 'net.java.dev.jna:platform:3.4.0'
+            compileOnly 'com.google.code.gson:gson:2.10.1'
+            compileOnly 'org.apache.logging.log4j:log4j-api:2.20.0'
+            compileOnly 'org.apache.logging.log4j:log4j-core:2.20.0'
+            compileOnly 'org.apache.commons:commons-lang3:3.12.0'
+            compileOnly 'commons-io:commons-io:2.7'
+
+            // TEST
+            testImplementation 'org.ow2.asm:asm-tree:9.6'
+            testImplementation 'org.lwjgl:lwjgl-opengl:3.2.2'
+            testImplementation 'net.java.dev.jna:jna:4.4.0'
+            testImplementation 'net.java.dev.jna:platform:3.4.0'
+            testImplementation 'com.google.code.gson:gson:2.10.1'
+            testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+            testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+            testImplementation 'org.apache.commons:commons-lang3:3.12.0'
+            testImplementation 'commons-io:commons-io:2.7'
+        }
+
+        // Process target resources with mod info
+        processResources {
+            filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info", "watermedia/version.cfg"]) {
+                def combinedMap = [:]
+                combinedMap.putAll(project.properties)
+                combinedMap.putAll([
+                        modauthorlist: JsonOutput.toJson(modauthor.trim().replaceAll(" ", "").split(","))
+                ])
+
+                expand(combinedMap)
+            }
+            outputs.upToDateWhen { false }
+        }
+
+        tasks.withType(JavaCompile).configureEach {
+            it.options.encoding = 'UTF-8'
+        }
+    }
 }
 
 base {
@@ -65,9 +84,8 @@ base {
 }
 
 configurations {
-    shadeLib
-    implementation.extendsFrom shadeLib
-    testImplementation.extendsFrom shadeLib
+    implementation.extendsFrom shadow
+    testImplementation.extendsFrom shadow
 }
 
 repositories {}
@@ -79,27 +97,14 @@ dependencies {
     compileOnly "net.fabricmc:fabric-loader:${fbversion}"
 
     // SUB-LIBRARIES
-    shadeLib project(":lib-vlcj")
-    shadeLib project(":lib-tools")
-    shadeLib project(":lib-ytdownloader")
+    shadow project(":lib-vlcj")
+    shadow project(":lib-tools")
+    shadow project(":lib-ytdownloader")
 
     // LIBRARIES TO BE SHADOW
-    shadeLib 'org.apache.commons:commons-compress:1.26.0'
-    shadeLib 'org.tukaani:xz:1.9'
-    shadeLib 'com.github.luben:zstd-jni:1.5.5-11'
-}
-
-// Process target resources with mod info
-processResources {
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info", "watermedia/version.cfg"]) {
-        def combinedMap = [:]
-        combinedMap.putAll(rootProject.properties)
-        combinedMap.putAll([
-                modauthorlist: JsonOutput.toJson(modauthor.trim().replaceAll(" ", "").split(","))
-        ])
-
-        expand(combinedMap)
-    }
+    shadow 'org.apache.commons:commons-compress:1.26.0'
+    shadow 'org.tukaani:xz:1.9'
+    shadow 'com.github.luben:zstd-jni:1.5.5-11'
 }
 
 // ShadowJar task (run this task to make a built JAR.
@@ -107,14 +112,9 @@ shadowJar {
 
     // Add relocation rules for each dependency
     relocate 'com.github', 'me.lib720'
-    relocate 'com.alibaba', 'me.lib720.alibaba'
-    relocate 'org.mozilla', 'me.lib720.mozilla'
-    relocate 'com.fasterxml', 'me.lib720'
-    relocate 'retrofit2', 'me.lib720.retrofit2'
     relocate 'uk.co', 'me.lib720'
     relocate 'org.apache.commons', 'me.lib720.apache'
     relocate 'org.tukaani', 'me.lib720.tukaani'
-    relocate 'com.tianscar', 'me.lib720.tianscar'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
@@ -128,12 +128,6 @@ shadowJar {
     mergeServiceFiles()
     archiveBaseName = id
     archiveClassifier = ''
-}
-
-// Make the reobfJar task depend on shadowJar
-tasks.processResources.outputs.upToDateWhen { false }
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
 }
 
 jar {
