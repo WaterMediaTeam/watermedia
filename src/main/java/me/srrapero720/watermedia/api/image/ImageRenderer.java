@@ -1,6 +1,7 @@
 package me.srrapero720.watermedia.api.image;
 
 import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.lwjgl.opengl.GL11;
 
@@ -70,7 +71,7 @@ public class ImageRenderer {
      * use API to calculate time
      * @param time time in millis
      * @return texture id usable on OpenGL
-     * @see ImageRenderer#texture(int, long, boolean) too
+     * @see ImageRenderer#texture(long, long, boolean) too
      */
     public int texture(long time) {
         if (textures == null) return -1;
