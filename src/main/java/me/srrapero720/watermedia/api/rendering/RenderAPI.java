@@ -1,14 +1,14 @@
 package me.srrapero720.watermedia.api.rendering;
 
-import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
 import org.apache.commons.lang3.NotImplementedException;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -59,33 +59,17 @@ public class RenderAPI {
      * @return texture id for OpenGL
      */
     public static int applyBuffer(BufferedImage image, int width, int height) {
-        int[] pixels = new int[width * height];
-        image.getRGB(0, 0, width, height, pixels, 0, width);
-        boolean alpha = false;
 
-        if (image.getColorModel().hasAlpha()) for (int pixel : pixels)
-            if ((pixel >> 24 & 0xFF) < 0xFF) {
-                alpha = true;
-                break;
-            }
+        boolean alpha = image.getColorModel().hasAlpha();
 
-        int bytesPerPixel = alpha ? 4 : 3;
-        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bytesPerPixel);
-        for (int pixel : pixels) {
-            buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red
-            buffer.put((byte) ((pixel >> 8) & 0xFF)); // Green
-            buffer.put((byte) (pixel & 0xFF)); // Blue
-            if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
-        }
+        byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        ByteBuffer buffer = createByteBuffer(data.length);
 
-        /*
-         * FLIP method changes what class type returns in new JAVA versions, in runtime causes a JVM crash by that
-         * THIS EXECUTES {@link ByteBuffer#flip }
-         */
-        ReflectTool.invoke("flip", buffer.getClass(), buffer);
+        buffer.put(data);
+        ((Buffer) buffer).flip();
 
-        int textureID = GL11.glGenTextures(); //Generate texture ID
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
+        int id = GL11.glGenTextures(); //Generate texture ID
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id); // Bind texture ID
 
         //Setup wrap mode
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
@@ -106,7 +90,7 @@ public class RenderAPI {
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, alpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0, alpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
 
         //Return the texture ID, so we can bind it later again
-        return textureID;
+        return id;
     }
 
     /**
