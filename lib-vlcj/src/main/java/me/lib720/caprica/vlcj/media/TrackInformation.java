@@ -22,23 +22,13 @@ package me.lib720.caprica.vlcj.media;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
-import me.lib720.watermod.reflect.ReflectTool;
 import me.lib720.caprica.vlcj.binding.NativeString;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_audio_track_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_media_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_media_track_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_subtitle_track_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_video_track_t;
+import me.lib720.caprica.vlcj.binding.internal.*;
+import me.lib720.watermod.reflect.ReflectTool;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static me.lib720.caprica.vlcj.binding.LibVlc.libvlc_media_get_codec_description;
-import static me.lib720.caprica.vlcj.binding.LibVlc.libvlc_media_tracks_get;
-import static me.lib720.caprica.vlcj.binding.LibVlc.libvlc_media_tracks_release;
+import static me.lib720.caprica.vlcj.binding.LibVlc.*;
 
 final class TrackInformation {
 

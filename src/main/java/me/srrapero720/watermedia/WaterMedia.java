@@ -52,7 +52,7 @@ public class WaterMedia {
 
 		this.loader = loader;
 		LOGGER.info(IT, "Running '{}' on '{}'", NAME, this.loader.name());
-		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString(WaterMedia.class.getClassLoader(), "/watermedia/version.cfg"));
+		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString("watermedia/version.cfg"));
 
 		if (loader instanceof IEnvLoader) envInit((IEnvLoader) loader);
 	}

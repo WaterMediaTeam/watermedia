@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.modloaders.forge;
 
-import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -12,15 +11,10 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-
 public class RusticLoader implements IEnvLoader {
     private static final Marker IT = MarkerManager.getMarker("LegacyForge");
 
-    RusticLoader() {
-        String MC_VERSION = ReflectTool.getValue("MC_VERSION", Loader.class, null);
-        if (client()) LOGGER.info(IT, "Minecraft version '{}'", MC_VERSION);
-    }
+    RusticLoader() {}
 
     @EventHandler
     public void init(FMLPostInitializationEvent event) {

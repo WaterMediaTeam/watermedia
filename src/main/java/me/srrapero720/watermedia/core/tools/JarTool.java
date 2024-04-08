@@ -20,43 +20,48 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class JarTool {
     static final Marker IT = MarkerManager.getMarker("Tools");
+    private static final Gson GSON = new Gson();
 
-    public static String readString(ClassLoader loader, String from) {
+    @Deprecated
+    public static String readString(ClassLoader loader, String source) {
         try {
-            byte[] bytes = DataTool.readAllBytes(readResource(loader, from));
+            byte[] bytes = DataTool.readAllBytes(readResource$byClassLoader(source, loader));
             return new String(bytes, Charset.defaultCharset());
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static boolean copyAsset(ClassLoader loader, String origin, Path dest) {
-        try (InputStream is = readResource(loader, origin)) {
-            if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
+    @Deprecated
+    public static boolean copyAsset(ClassLoader loader, String source, Path dest) {
+        try (InputStream is = readResource$byClassLoader(source, loader)) {
+            if (is == null) throw new FileNotFoundException("Resource was not found in " + source);
 
             File destParent = dest.getParent().toFile();
             if (!destParent.exists() && !destParent.mkdirs()) LOGGER.fatal(IT, "Cannot be created parent directories to {}", dest.toString());
             Files.copy(is, dest, StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (Exception e) {
-            LOGGER.fatal(IT, "Failed to extract from (JAR) {} to {} due to unexpected error", origin, dest, e);
+            LOGGER.fatal(IT, "Failed to extract from (JAR) {} to {} due to unexpected error", source, dest, e);
         }
         return false;
     }
 
-    public static List<String> readStringList(ClassLoader loader, String path) {
+    @Deprecated
+    public static List<String> readStringList(ClassLoader loader, String source) {
         List<String> result = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResource(loader, path)))) {
-            result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
+        try (InputStreamReader reader = new InputStreamReader(readResource$byClassLoader(source, loader))) {
+            result.addAll(GSON.fromJson(reader, new TypeToken<List<String>>() {}.getType()));
         } catch (Exception e) {
-            LOGGER.fatal(IT, "Exception trying to read JSON from {}", path, e);
+            LOGGER.fatal(IT, "Exception trying to read JSON from {}", source, e);
         }
 
         return result;
     }
 
+    @Deprecated
     public static BufferedImage readImage(ClassLoader loader, String path) {
-        try (InputStream in = readResource(loader, path)) {
+        try (InputStream in = readResource$byClassLoader(path, loader)) {
             BufferedImage image = ImageIO.read(in);
             if (image != null) return image;
             else throw new FileNotFoundException("result of BufferedImage was null");
@@ -65,8 +70,9 @@ public class JarTool {
         }
     }
 
+    @Deprecated
     public static GifDecoder readGif(ClassLoader loader, String path) {
-        try (BufferedInputStream in = new BufferedInputStream(readResource(loader, path))) {
+        try (BufferedInputStream in = new BufferedInputStream(readResource$byClassLoader(path, loader))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
             if (status == GifDecoder.STATUS_OK) return gif;
@@ -77,22 +83,15 @@ public class JarTool {
         }
     }
 
-    public static InputStream readResource(ClassLoader loader, String source) {
-        InputStream is = loader.getResourceAsStream(source);
-        if (is == null && source.startsWith("/")) is = loader.getResourceAsStream(source.substring(1));
-        return is;
-    }
-
     // WITHOUT CLASSLOADER OPTIONS
     public static String readString(String from) {
-        try {
-            byte[] bytes = DataTool.readAllBytes(readResource(from));
+        try (InputStream is = readResource(from)) {
+            byte[] bytes = DataTool.readAllBytes(is);
             return new String(bytes, Charset.defaultCharset());
         } catch (Exception e) {
             return null;
         }
     }
-
     public static boolean copyAsset(String origin, Path dest) {
         try (InputStream is = readResource(origin)) {
             if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
@@ -109,7 +108,7 @@ public class JarTool {
 
     public static List<String> readStringList(String path) {
         List<String> result = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResource(path)))) {
+        try (InputStreamReader reader = new InputStreamReader(readResource(path))) {
             result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
         } catch (Exception e) {
             LOGGER.fatal(IT, "Exception trying to read JSON from {}", path, e);
@@ -141,10 +140,7 @@ public class JarTool {
     }
 
     public static InputStream readResource(String source) {
-        InputStream is = readResource$byClassLoader(source, JarTool.class.getClassLoader());
-        if (is == null) is = readResource$byClassLoader(source, Thread.currentThread().getContextClassLoader());
-        if (is == null) is = readResource$byClassLoader(source, ClassLoader.getSystemClassLoader());
-        return is; // InputStream still can be null
+        return readResource$byClassLoader(source, JarTool.class.getClassLoader()); // InputStream still can be null
     }
 
     private static InputStream readResource$byClassLoader(String source, ClassLoader classLoader) {

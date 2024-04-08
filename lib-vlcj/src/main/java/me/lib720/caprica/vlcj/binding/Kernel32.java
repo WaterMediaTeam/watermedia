@@ -24,14 +24,13 @@ import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 import me.lib720.caprica.vlcj.binding.support.size_t;
-import me.lib720.watermod.reflect.ReflectTool;
 
 public interface Kernel32 extends StdCallLibrary {
 
     // WATERMeDIA PATCH - start
 //    Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
-//    Kernel32 INSTANCE = Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
-    Kernel32 INSTANCE = ReflectTool.findAndInvokeWithReturn(new String[] {"load", "loadLibrary"}, Native.class, null, "kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
+    Kernel32 INSTANCE = Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
+//    Kernel32 INSTANCE = ReflectTool.findAndInvokeWithReturn(new String[] {"load", "loadLibrary"}, Native.class, null, "kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
     // WATERMeDIA PATCH - end
 
     int VirtualLock(Pointer lpAddress, size_t dwSize);

@@ -47,7 +47,7 @@ public class VideoLanCore {
     }
 
     private static String[] init$readArguments() {
-        return JarTool.readStringList(VideoLanCore.class.getClassLoader(), "/videolan/arguments.json").toArray(new String[0]);
+        return JarTool.readStringList("videolan/arguments.json").toArray(new String[0]);
     }
 
     private static void init$clearLogsFile(Path logFilePath) {

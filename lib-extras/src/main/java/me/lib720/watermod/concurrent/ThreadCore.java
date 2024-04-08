@@ -56,7 +56,6 @@ public class ThreadCore {
     private static Thread thread$basic(Runnable runnable) {
         Thread thread = new Thread(runnable);
         thread.setName("WATERCoRE-worker-" + (++TWC));
-        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
         thread.setUncaughtExceptionHandler(EXCEPTION_HANDLER);
         thread.setDaemon(true);
         return thread;
@@ -94,7 +93,6 @@ public class ThreadCore {
         return r -> {
             Thread t = new Thread(r);
             t.setName(name + "-" + count.incrementAndGet());
-            t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
             t.setDaemon(true);
             t.setPriority(priority);
             return t;
@@ -103,10 +101,6 @@ public class ThreadCore {
 
     public static ThreadFactory factory(String name) {
         return factory(name, 3);
-    }
-
-    public static void hasClassLoaderOrSet(ClassLoader classLoader) {
-        if (Thread.currentThread().getContextClassLoader() == null) Thread.currentThread().setContextClassLoader(classLoader);
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
