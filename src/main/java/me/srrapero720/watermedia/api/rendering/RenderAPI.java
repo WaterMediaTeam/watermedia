@@ -67,7 +67,7 @@ public class RenderAPI {
         int height = image.getHeight();
         Raster raster = image.getRaster();
 
-        ByteBuffer byteBuffer = createMapBuffer(width * height * 4);
+        ByteBuffer byteBuffer = createByteBuffer(width * height * 4);
         byteBuffer.clear();
         switch (raster.getTransferType()) {
             case DataBuffer.TYPE_BYTE: {
