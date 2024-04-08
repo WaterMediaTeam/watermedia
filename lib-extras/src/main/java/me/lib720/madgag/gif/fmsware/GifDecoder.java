@@ -80,6 +80,7 @@ public class GifDecoder {
     protected int lastDispose = 0;
     protected boolean transparency = false; // use transparent color
     protected int delay = 0; // delay in milliseconds
+    protected long duration = 0; // duration in milliseconds
     protected int transIndex; // transparent color index
     
     protected static final int MaxStackSize = 4096;
@@ -91,7 +92,7 @@ public class GifDecoder {
     protected byte[] pixelStack;
     protected byte[] pixels;
     
-    protected ArrayList<GifFrame> frames; // frames read from current file
+    private ArrayList<GifFrame> frames; // frames read from current file
     protected int frameCount;
     
     static class GifFrame {
@@ -115,6 +116,18 @@ public class GifDecoder {
             delay = frames.get(n).delay;
         }
         return delay;
+    }
+
+    public long[] getDelayArray() {
+        long[] delays = new long[frames.size()];
+        for (int i = 0; i < frames.size(); i++) {
+            delays[i] = frames.get(i).delay;
+        }
+        return delays;
+    }
+
+    public long getDuration() {
+        return duration;
     }
     
     /** Gets the number of frames read from file.
@@ -235,6 +248,15 @@ public class GifDecoder {
             im = frames.get(n).image;
         }
         return im;
+    }
+
+    public BufferedImage[] getFrameArray() {
+        BufferedImage[] ims = new BufferedImage[frames.size()];
+        for (int i = 0; i < frames.size(); ++i) {
+            ims[i] = frames.get(i).image;
+        }
+
+        return ims;
     }
     
     /** Gets image size.
@@ -537,11 +559,11 @@ public class GifDecoder {
                         
                         case 0xff: // application extension
                             readBlock();
-                            String app = "";
+                            StringBuilder app = new StringBuilder();
                             for (int i = 0; i < 11; i++) {
-                                app += (char) block[i];
+                                app.append((char) block[i]);
                             }
-                            if (app.equals("NETSCAPE2.0")) {
+                            if (app.toString().equals("NETSCAPE2.0")) {
                                 readNetscapeExt();
                             } else
                                 skip(); // don't care
@@ -575,6 +597,7 @@ public class GifDecoder {
         }
         transparency = (packed & 1) != 0;
         delay = readShort() * 10; // delay in milliseconds
+        duration += delay;
         transIndex = read(); // transparent color index
         read(); // block terminator
     }

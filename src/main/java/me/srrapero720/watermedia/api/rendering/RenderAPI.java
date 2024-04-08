@@ -5,6 +5,8 @@ import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
 import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL21;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -50,7 +52,19 @@ public class RenderAPI {
     }
 
     /**
-     * Created by CreativeMD
+     * Creates a PBO and returns the ByteBuffer
+     * TODO: enhance doc
+     * @return the Buffer
+     */
+    public static ByteBuffer createMapBuffer(int bufferSize) {
+        try {
+            return GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_READ_WRITE, bufferSize, null);
+        } finally {
+            GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
+        }
+    }
+
+    /**
      * Creates a new texture id based on a {@link BufferedImage} instance
      * (used internally by {@link ImageRenderer}
      * @param image image to process
