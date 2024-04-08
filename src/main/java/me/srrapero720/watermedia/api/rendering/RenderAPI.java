@@ -1,19 +1,17 @@
 package me.srrapero720.watermedia.api.rendering;
 
-import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
 import org.apache.commons.lang3.NotImplementedException;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL21;
 
 import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
+import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
+import java.nio.*;
 
 /**
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
@@ -64,17 +62,70 @@ public class RenderAPI {
         }
     }
 
-    /**
-     * Creates a new texture id based on a {@link BufferedImage} instance
-     * (used internally by {@link ImageRenderer}
-     * @param image image to process
-     * @param width buffer width (can be image width)
-     * @param height buffer height (can be image height)
-     * @return texture id for OpenGL
-     */
-    public static int applyBuffer(BufferedImage image, int width, int height) {
+    public static ByteBuffer createImageByteBuffer(BufferedImage image, int startX, int startY) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        Raster raster = image.getRaster();
+
+        ByteBuffer byteBuffer = createMapBuffer(width * height * 4);
+        byteBuffer.clear();
+        switch (raster.getTransferType()) {
+            case DataBuffer.TYPE_BYTE: {
+                byte[] data = new byte[width * raster.getNumDataElements()];
+                for (int i = startY; i < startY + height; i++) {
+                    raster.getDataElements(startX, i, width, 1, data);
+                    byteBuffer.put(data);
+                }
+            }
+            break;
+            case DataBuffer.TYPE_SHORT:
+            case DataBuffer.TYPE_USHORT: {
+                ShortBuffer buffer = byteBuffer.asShortBuffer();
+                short[] data = new short[width * raster.getNumDataElements()];
+                for (int i = startY; i < startY + height; i++) {
+                    raster.getDataElements(startX, i, width, 1, data);
+                    buffer.put(data);
+                }
+            }
+            break;
+            case DataBuffer.TYPE_INT: {
+                IntBuffer buffer = byteBuffer.asIntBuffer();
+                int[] data = new int[width * raster.getNumDataElements()];
+                for (int i = startY; i < startY + height; i++) {
+                    raster.getDataElements(startX, i, width, 1, data);
+                    buffer.put(data);
+                }
+            }
+            break;
+            case DataBuffer.TYPE_FLOAT: {
+                FloatBuffer buffer = byteBuffer.asFloatBuffer();
+                float[] data = new float[width * raster.getNumDataElements()];
+                for (int i = startY; i < startY + height; i++) {
+                    raster.getDataElements(startX, i, width, 1, data);
+                    buffer.put(data);
+                }
+            }
+            break;
+            case DataBuffer.TYPE_DOUBLE: {
+                DoubleBuffer buffer = byteBuffer.asDoubleBuffer();
+                double[] data = new double[width * raster.getNumDataElements()];
+                for (int i = startY; i < startY + height; i++) {
+                    raster.getDataElements(startX, i, width, 1, data);
+                    buffer.put(data);
+                }
+            }
+            break;
+        }
+        byteBuffer.flip();
+        return byteBuffer;
+    }
+
+    public static ByteBuffer createImageRGBByteBuffer(BufferedImage image, int startX, int startY) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
         int[] pixels = new int[width * height];
-        image.getRGB(0, 0, width, height, pixels, 0, width);
+        image.getRGB(startX, startY, width, height, pixels, 0, width);
         boolean alpha = false;
 
         if (image.getColorModel().hasAlpha()) for (int pixel : pixels)
@@ -84,19 +135,28 @@ public class RenderAPI {
             }
 
         int bytesPerPixel = alpha ? 4 : 3;
-        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bytesPerPixel);
+        ByteBuffer buffer = createMapBuffer(width * height * bytesPerPixel);
         for (int pixel : pixels) {
             buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red
             buffer.put((byte) ((pixel >> 8) & 0xFF)); // Green
             buffer.put((byte) (pixel & 0xFF)); // Blue
             if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
         }
+        ((Buffer) buffer).flip();
+        return buffer;
+    }
 
-        /*
-         * FLIP method changes what class type returns in new JAVA versions, in runtime causes a JVM crash by that
-         * THIS EXECUTES {@link ByteBuffer#flip }
-         */
-        ReflectTool.invoke("flip", buffer.getClass(), buffer);
+    /**
+     * Creates a new texture id based on a {@link BufferedImage} instance
+     * (used internally by {@link ImageRenderer}
+     * @param image image to process
+     * @param width buffer width (can be image width)
+     * @param height buffer height (can be image height)
+     * @return texture id for OpenGL
+     */
+    public static int applyBuffer(BufferedImage image, int width, int height) {
+        ByteBuffer buffer = createImageByteBuffer(image, 0, 0);
+        boolean alpha = image.getColorModel().hasAlpha();
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID

@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL21;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
 
 public class ImageRenderer {
@@ -18,12 +17,12 @@ public class ImageRenderer {
     public final int height;
     public final long duration;
     public final long[] delay;
-    private final BufferedImage[] images;
+    private final ByteBuffer[] images;
 
     // GL PARAMS
     public int texture = -1;
-    public int bufferId = -1;
-    public ByteBuffer buffer = null;
+    public int pboId = -1;
+    public ByteBuffer pbo = null;
 
     /**
      * creates a new instance of an ImageRenderer
@@ -34,9 +33,9 @@ public class ImageRenderer {
     @Deprecated
     public ImageRenderer(BufferedImage image) {
         if (image == null) throw new NullPointerException();
-        this.images = new BufferedImage[] { image };
         this.width = image.getWidth();
         this.height = image.getHeight();
+        this.images = new ByteBuffer[] { RenderAPI.createImageByteBuffer(image, 0, 0) };
         this.delay = new long[] { 0 };
         this.duration = 1;
     }
@@ -54,7 +53,11 @@ public class ImageRenderer {
         Dimension frameSize = decoder.getFrameSize();
         this.width = frameSize.width;
         this.height = frameSize.height;
-        this.images = decoder.getFrameArray();
+        BufferedImage[] bufferedImages = decoder.getFrameArray();
+        this.images = new ByteBuffer[bufferedImages.length];
+        for (int i = 0; i < bufferedImages.length; i++) {
+            images[i] = RenderAPI.createImageByteBuffer(bufferedImages[i], 0, 0);
+        }
         this.delay = decoder.getDelayArray();
         this.duration = decoder.getDuration();
     }
@@ -62,12 +65,12 @@ public class ImageRenderer {
     private void setupGL() {
         if (texture != -1) return;
         this.texture = GL11.glGenTextures();
-        this.bufferId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, bufferId);
+        this.pboId = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
         GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, this.width * this.height * 4L, GL15.GL_STREAM_DRAW);
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
 
-        this.buffer = RenderAPI.createMapBuffer(this.width * this.height * 4);
+        this.pbo = RenderAPI.createMapBuffer(this.width * this.height * 4);
     }
 
     /**
@@ -94,20 +97,18 @@ public class ImageRenderer {
      */
     public int texture(int index) {
         this.setupGL();
-        BufferedImage image = images[index];
-        DataBufferByte bufferByte = (DataBufferByte) image.getRaster().getDataBuffer();
 
         // BIND PBO
-        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, bufferId);
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
 
         // COPY TO PBO
-        buffer.clear();
-        buffer.put(bufferByte.getData());
-        buffer.flip();
+        pbo.clear();
+        pbo.put(images[index]);
+        pbo.flip();
 
         // DRAIN PBO
         GL21.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
-        GL21.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, buffer, GL21.GL_STREAM_DRAW);
+        GL21.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, pbo, GL21.GL_STREAM_DRAW);
 
         // PARAMS
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
@@ -176,9 +177,6 @@ public class ImageRenderer {
      * This method just drains buffers but not releases OpenGL texture
      */
     public void flush() {
-        for (BufferedImage img: images) {
-            img.flush();
-        }
     }
     /**
      * This method drain buffers and release OpenGL textures
