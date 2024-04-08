@@ -30,7 +30,7 @@ public class RusticLoader implements IEnvLoader {
         boolean sklauncher = f.contains("sklauncher");
 
         // TLSKINCAPE VALIDATION
-        boolean tlskincape = installed("tlskincape");
+        boolean tlskincape = installed("tlskincape") || installed("tlauncher_custom_cape_skin");
 
         return tlskincape || (tlauncher && !atlauncher && !sklauncher);
     }
