@@ -1,3 +1,8 @@
+# UPDATE 2.0.32
+- Fixed memoryleak reading strings
+- Reduce ClassLoader usage and impact
+- Optimized picture GPU upload (suggested by Zeno)
+
 # UPDATE 2.0.31
 - Disabled Kick.com and Imgur fixers (Temporally)
 - Removed transitive dependencies and any other not essential dependency (retrofit, jackson databind and others)
