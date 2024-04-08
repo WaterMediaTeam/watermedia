@@ -39,8 +39,6 @@ public class ImageRenderer {
         this.height = image.getHeight();
         this.delay = new long[] { 0 };
         this.duration = 1;
-
-        this.setupGL();
     }
 
     /**
@@ -95,6 +93,7 @@ public class ImageRenderer {
      * @return texture id usable on OpenGL
      */
     public int texture(int index) {
+        this.setupGL();
         BufferedImage image = images[index];
         DataBufferByte bufferByte = (DataBufferByte) image.getRaster().getDataBuffer();
 
