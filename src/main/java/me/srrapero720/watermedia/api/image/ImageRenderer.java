@@ -81,12 +81,12 @@ public class ImageRenderer {
      * @see ImageRenderer#texture(int, long, boolean) too
      */
     public int texture(long time) {
-        int last = texture(0);
-        for (int i = 1; i < delay.length; i++) {
-            if (delay[i] > time) break;
-            last = texture(i);
+        for (int i = 0; i < delay.length; i++) {
+            time -= delay[i];
+            if (time <= 0)
+                return texture(i);
         }
-        return last;
+        return texture(images.length - 1);
     }
 
     /**
