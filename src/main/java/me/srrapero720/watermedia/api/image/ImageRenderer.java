@@ -101,7 +101,7 @@ public class ImageRenderer {
 
         // COPY TO PBO
         pbo = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY, this.width * this.height * 4L, pbo);
-        RenderAPI.putImageByteBuffer(pbo, images[index], 0, 0);
+        RenderAPI.putImageByteBuffer(pbo, images[index]);
         GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
 
         // PARAMS
@@ -110,7 +110,7 @@ public class ImageRenderer {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, 0);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
 
         // UNBIND PBO
         GL21.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
