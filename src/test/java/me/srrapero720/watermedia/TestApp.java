@@ -132,7 +132,7 @@ public class TestApp implements IMediaLoader
             if (cache.getStatus() == ImageCache.Status.READY)
                 renderer = cache.getRenderer();
 
-            glBindTexture(GL_TEXTURE_2D, renderer.texture(System.currentTimeMillis()));
+            glBindTexture(GL_TEXTURE_2D, renderer.texture(System.currentTimeMillis() % renderer.duration));
 
             glColor4f(1, 1, 1, 1);
             glBegin(GL_QUADS);
