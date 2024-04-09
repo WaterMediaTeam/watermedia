@@ -180,6 +180,7 @@ public class ImageRenderer {
      */
     public void release() {
         GL11.glDeleteTextures(texture);
+        GL21.glDeleteBuffers(pboId);
         flush();
     }
 }
