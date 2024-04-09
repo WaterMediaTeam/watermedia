@@ -11,7 +11,9 @@ import org.lwjgl.system.*;
 import java.io.File;
 import java.nio.*;
 import java.nio.file.Path;
-import java.util.concurrent.Executors;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.Executor;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,8 +21,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class TestApp implements IMediaLoader
+public class TestApp implements IMediaLoader, Executor
 {
+    private Queue<Runnable> executor = new LinkedList<>();
     private ImageCache cache;
     private ImageRenderer renderer;
 
@@ -35,7 +38,7 @@ public class TestApp implements IMediaLoader
     public void run(String url) {
         WaterMedia.getInstance(this).init();
         renderer = ImageAPI.loadingGif();
-        cache = ImageAPI.getCache(url, Executors.newCachedThreadPool());
+        cache = ImageAPI.getCache(url, this);
         cache.load();
 
         init();
@@ -147,6 +150,7 @@ public class TestApp implements IMediaLoader
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
+            if (!executor.isEmpty()) executor.remove().run();
         }
     }
 
@@ -163,5 +167,11 @@ public class TestApp implements IMediaLoader
 
     public static void main(String[] args) {
         new TestApp().run(args[0]);
+    }
+
+    @Override
+    public void execute(Runnable command)
+    {
+        executor.add(command);
     }
 }
