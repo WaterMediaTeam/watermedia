@@ -49,66 +49,25 @@ public class RenderAPI {
         }
     }
 
-    public static ByteBuffer putImageByteBuffer(ByteBuffer byteBuffer, BufferedImage image, int startX, int startY) {
+    public static ByteBuffer putImageByteBuffer(ByteBuffer byteBuffer, BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
-        Raster raster = image.getRaster();
 
         byteBuffer.clear();
-        switch (raster.getTransferType()) {
-            case DataBuffer.TYPE_BYTE: {
-                byte[] data = new byte[width * raster.getNumDataElements()];
-                for (int i = startY; i < startY + height; i++) {
-                    raster.getDataElements(startX, i, width, 1, data);
-                    byteBuffer.put(data);
-                }
-            }
-            break;
-            case DataBuffer.TYPE_SHORT:
-            case DataBuffer.TYPE_USHORT: {
-                ShortBuffer buffer = byteBuffer.asShortBuffer();
-                short[] data = new short[width * raster.getNumDataElements()];
-                for (int i = startY; i < startY + height; i++) {
-                    raster.getDataElements(startX, i, width, 1, data);
-                    buffer.put(data);
-                }
-            }
-            break;
-            case DataBuffer.TYPE_INT: {
-                IntBuffer buffer = byteBuffer.asIntBuffer();
-                int[] data = new int[width * raster.getNumDataElements()];
-                for (int i = startY; i < startY + height; i++) {
-                    raster.getDataElements(startX, i, width, 1, data);
-                    buffer.put(data);
-                }
-            }
-            break;
-            case DataBuffer.TYPE_FLOAT: {
-                FloatBuffer buffer = byteBuffer.asFloatBuffer();
-                float[] data = new float[width * raster.getNumDataElements()];
-                for (int i = startY; i < startY + height; i++) {
-                    raster.getDataElements(startX, i, width, 1, data);
-                    buffer.put(data);
-                }
-            }
-            break;
-            case DataBuffer.TYPE_DOUBLE: {
-                DoubleBuffer buffer = byteBuffer.asDoubleBuffer();
-                double[] data = new double[width * raster.getNumDataElements()];
-                for (int i = startY; i < startY + height; i++) {
-                    raster.getDataElements(startX, i, width, 1, data);
-                    buffer.put(data);
-                }
-            }
-            break;
+        IntBuffer buffer = byteBuffer.asIntBuffer();
+        int[] pixels = new int[width];
+        for (int y = 0; y < height; y++)
+        {
+            image.getRGB(0, y, width, 1, pixels, 0, width);
+            buffer.put(pixels);
         }
-        byteBuffer.flip();
+        ((Buffer) byteBuffer).flip();
         return byteBuffer;
     }
 
     public static ByteBuffer createImageByteBuffer(BufferedImage image) {
         ByteBuffer byteBuffer = createByteBuffer(image.getWidth() * image.getHeight() * 4);
-        putImageByteBuffer(byteBuffer, image, 0, 0);
+        putImageByteBuffer(byteBuffer, image);
         return byteBuffer;
     }
 
@@ -122,7 +81,6 @@ public class RenderAPI {
      */
     public static int applyBuffer(BufferedImage image, int width, int height) {
         ByteBuffer buffer = createImageByteBuffer(image);
-        boolean alpha = image.getColorModel().hasAlpha();
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
@@ -135,15 +93,13 @@ public class RenderAPI {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-        if (!alpha) GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, GL11.GL_ONE);
-
         // prevents random crash; when values are too high it causes a jvm crash, caused weird behavior when game is paused
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
 
         //Send texel data to OpenGL
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, alpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0, alpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
 
         //Return the texture ID, so we can bind it later again
         return textureID;
