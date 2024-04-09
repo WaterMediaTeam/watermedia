@@ -49,25 +49,11 @@ public class RenderAPI {
         }
     }
 
-    /**
-     * Creates a PBO and returns the ByteBuffer
-     * TODO: enhance doc
-     * @return the Buffer
-     */
-    public static ByteBuffer createMapBuffer(int bufferSize) {
-        try {
-            return GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_READ_WRITE, bufferSize, null);
-        } finally {
-            GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
-        }
-    }
-
-    public static ByteBuffer createImageByteBuffer(BufferedImage image, int startX, int startY) {
+    public static ByteBuffer putImageByteBuffer(ByteBuffer byteBuffer, BufferedImage image, int startX, int startY) {
         int width = image.getWidth();
         int height = image.getHeight();
         Raster raster = image.getRaster();
 
-        ByteBuffer byteBuffer = createByteBuffer(width * height * 4);
         byteBuffer.clear();
         switch (raster.getTransferType()) {
             case DataBuffer.TYPE_BYTE: {
@@ -120,30 +106,10 @@ public class RenderAPI {
         return byteBuffer;
     }
 
-    public static ByteBuffer createImageRGBByteBuffer(BufferedImage image, int startX, int startY) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        int[] pixels = new int[width * height];
-        image.getRGB(startX, startY, width, height, pixels, 0, width);
-        boolean alpha = false;
-
-        if (image.getColorModel().hasAlpha()) for (int pixel : pixels)
-            if ((pixel >> 24 & 0xFF) < 0xFF) {
-                alpha = true;
-                break;
-            }
-
-        int bytesPerPixel = alpha ? 4 : 3;
-        ByteBuffer buffer = createMapBuffer(width * height * bytesPerPixel);
-        for (int pixel : pixels) {
-            buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red
-            buffer.put((byte) ((pixel >> 8) & 0xFF)); // Green
-            buffer.put((byte) (pixel & 0xFF)); // Blue
-            if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
-        }
-        ((Buffer) buffer).flip();
-        return buffer;
+    public static ByteBuffer createImageByteBuffer(BufferedImage image) {
+        ByteBuffer byteBuffer = createByteBuffer(image.getWidth() * image.getHeight() * 4);
+        putImageByteBuffer(byteBuffer, image, 0, 0);
+        return byteBuffer;
     }
 
     /**
@@ -155,7 +121,7 @@ public class RenderAPI {
      * @return texture id for OpenGL
      */
     public static int applyBuffer(BufferedImage image, int width, int height) {
-        ByteBuffer buffer = createImageByteBuffer(image, 0, 0);
+        ByteBuffer buffer = createImageByteBuffer(image);
         boolean alpha = image.getColorModel().hasAlpha();
 
         int textureID = GL11.glGenTextures(); //Generate texture ID

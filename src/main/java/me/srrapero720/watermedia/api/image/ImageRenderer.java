@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL21;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public class ImageRenderer {
@@ -17,11 +18,12 @@ public class ImageRenderer {
     public final int height;
     public final long duration;
     public final long[] delay;
-    private final ByteBuffer[] images;
+    private final BufferedImage[] images;
 
     // GL PARAMS
     public int texture = -1;
     public int pboId = -1;
+    public int lastIndex = -1;
     public ByteBuffer pbo = null;
 
     /**
@@ -35,7 +37,7 @@ public class ImageRenderer {
         if (image == null) throw new NullPointerException();
         this.width = image.getWidth();
         this.height = image.getHeight();
-        this.images = new ByteBuffer[] { RenderAPI.createImageByteBuffer(image, 0, 0) };
+        this.images = new BufferedImage[] { image };
         this.delay = new long[] { 0 };
         this.duration = 1;
     }
@@ -53,11 +55,7 @@ public class ImageRenderer {
         Dimension frameSize = decoder.getFrameSize();
         this.width = frameSize.width;
         this.height = frameSize.height;
-        BufferedImage[] bufferedImages = decoder.getFrameArray();
-        this.images = new ByteBuffer[bufferedImages.length];
-        for (int i = 0; i < bufferedImages.length; i++) {
-            images[i] = RenderAPI.createImageByteBuffer(bufferedImages[i], 0, 0);
-        }
+        this.images = decoder.getFrameArray();
         this.delay = decoder.getDelayArray();
         this.duration = decoder.getDuration();
     }
@@ -69,8 +67,6 @@ public class ImageRenderer {
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
         GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, this.width * this.height * 4L, GL15.GL_STREAM_DRAW);
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
-
-        this.pbo = RenderAPI.createMapBuffer(this.width * this.height * 4);
     }
 
     /**
@@ -97,18 +93,16 @@ public class ImageRenderer {
      */
     public int texture(int index) {
         this.setupGL();
+        if (index == lastIndex)
+            return texture;
 
         // BIND PBO
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
 
         // COPY TO PBO
-        pbo.clear();
-        pbo.put(images[index]);
-        pbo.flip();
-
-        // DRAIN PBO
-        GL21.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
-        GL21.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, pbo, GL21.GL_STREAM_DRAW);
+        pbo = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY, this.width * this.height * 4L, pbo);
+        RenderAPI.putImageByteBuffer(pbo, images[index], 0, 0);
+        GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
 
         // PARAMS
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
@@ -117,6 +111,9 @@ public class ImageRenderer {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, 0);
+
+        // UNBIND PBO
+        GL21.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
 
         return texture;
     }
