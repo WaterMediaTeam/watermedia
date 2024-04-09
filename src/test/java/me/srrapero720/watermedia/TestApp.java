@@ -63,6 +63,7 @@ public class TestApp implements IMediaLoader
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
         // Create the window
         window = glfwCreateWindow(renderer.width, renderer.height, "WATERMeDIA", NULL, NULL);
@@ -110,6 +111,9 @@ public class TestApp implements IMediaLoader
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+        ARBDebugOutput.glDebugMessageCallbackARB((source, type, id, severity, length, message, userParam) -> {
+            System.out.println(MemoryUtil.memASCII(message));
+        }, 0);
 
         // Set the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
