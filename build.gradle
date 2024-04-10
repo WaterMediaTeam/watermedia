@@ -4,6 +4,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.google.osdetector' version '1.7.3'
 }
 
 /* JAR INFO */
@@ -75,10 +76,19 @@ dependencies {
     testImplementation 'org.apache.commons:commons-lang3:3.12.0'
     testImplementation 'commons-io:commons-io:2.7'
     testImplementation 'com.google.code.gson:gson:2.10.1'
+    testImplementation 'org.lwjgl:lwjgl:3.2.2'
+    testImplementation 'org.lwjgl:lwjgl-opengl:3.2.2'
+    testImplementation 'org.lwjgl:lwjgl-glfw:3.2.2'
+    testImplementation 'net.java.dev.jna:jna:4.4.0'
+    testImplementation 'net.java.dev.jna:platform:3.4.0'
 
     testImplementation(project(":lib-vlcj"))
     testImplementation(project(":lib-extras"))
     testImplementation(project(":lib-ytdownloader"))
+
+    testRuntimeOnly("org.lwjgl:lwjgl:3.2.2:natives-$osdetector.os")
+    testRuntimeOnly("org.lwjgl:lwjgl-opengl:3.2.2:natives-$osdetector.os")
+    testRuntimeOnly("org.lwjgl:lwjgl-glfw:3.2.2:natives-$osdetector.os")
 }
 
 // Process target resources with mod info
