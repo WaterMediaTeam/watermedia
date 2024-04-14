@@ -23,7 +23,7 @@ import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
 public class Twitch {
     public static final String GRAPH_QL_URL = "https://gql.twitch.tv/gql";
     public static final String TTV_LIVE_API_URL_TEMPLATE = "https://usher.ttvnw.net/api/channel/hls/%s.m3u8";
-    public static final String TTV_PLAYLIST_API_URL_TEMPLATE = "https://usher.ttvnw.net/vod/s.m3u8";
+    public static final String TTV_PLAYLIST_API_URL_TEMPLATE = "https://usher.ttvnw.net/vod/%s.m3u8";
     public static final String CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 
     private static final Gson gson = new Gson();
@@ -115,7 +115,7 @@ public class Twitch {
         // Main JSON mapping
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("operationName", "PlaybackAccessToken_Template");
-        jsonMap.put("query", "query PlaybackAccessToken_Template($login: String!, $isLive: Boolean!, $vodID: ID!, $isVod: Boolean!, $playerType: String!) {  streamPlaybackAccessToken(channelName: $login, params: {platform: \"web\", playerBackend: \"mediaplayer\", playerType: $playerType}) @include(if: $isLive) {    value    signature    __typename  }  videoPlaybackAccessToken(id: $vodID, params: {platform: \"web\", playerBackend: \"mediaplayer\", playerType: $playerType}) @include(if: $isVod) {    value    signature    __typename  }}");
+        jsonMap.put("query", "query PlaybackAccessToken_Template($login: String!, $isLive: Boolean!, $vodID: ID!, $isVod: Boolean!, $playerType: String!) {  streamPlaybackAccessToken(channelName: $login, params: {platform: \"web\", playerBackend: \"mediaplayer\", playerType: $playerType}) @include(if: $isLive) {    value    signature   authorization { isForbidden forbiddenReasonCode }   __typename  }  videoPlaybackAccessToken(id: $vodID, params: {platform: \"web\", playerBackend: \"mediaplayer\", playerType: $playerType}) @include(if: $isVod) {    value    signature    __typename  }}");
         jsonMap.put("variables", variables);
 
         return gson.toJson(jsonMap);
