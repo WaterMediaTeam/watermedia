@@ -35,7 +35,7 @@ public class TwitterAPI {
         String response = readResponse(conn);
 
         // Find main.js URL
-        Pattern pattern = Pattern.compile("https://abs.twimg.com/responsive-web/client-web-legacy/main.[^\\.]+.js");
+        Pattern pattern = Pattern.compile("https://abs.twimg.com/responsive-web/client-web/main.[^\\.]+.js");
         Matcher matcher = pattern.matcher(response);
         if (!matcher.find()) {
             throw new Exception("Failed to find main.js file. Tweet url: " + tweetUrl);
