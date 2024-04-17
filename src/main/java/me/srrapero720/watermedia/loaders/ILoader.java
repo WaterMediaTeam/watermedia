@@ -45,7 +45,7 @@ public interface ILoader {
 
     /**
      * Checks if the current environment was a development environment
-     * We cannot consider offline-mode as a dev env because _cracked users_<br>
+     * We cannot consider offline-mode as a dev env because *cracked users*<br>
      * Is necessary search any special trigger like forge
      * @return if was a development env
      */

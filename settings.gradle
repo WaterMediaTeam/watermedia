@@ -14,4 +14,4 @@ buildscript {
     }
 }
 
-include 'lib-vlcj', 'lib-tools', 'lib-forge', 'lib-neoforge', 'lib-binaries', 'lib-ytdownloader'
+include 'lib-vlcj', 'lib-tools', 'lib-forge', 'lib-neoforge', 'lib-binaries', 'lib-ytdownloader', 'lib-natives'

@@ -9,7 +9,7 @@
     "updateUrl": "",
     "parent": "",
     "credits": "${modcredits}",
-    "authorList": ${modauthorlist},
+    "authorList": ${modauthorsarray},
     "screenshots": [],
     "dependencies": [],
     "logoFile": "pack.png"

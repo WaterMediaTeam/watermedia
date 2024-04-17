@@ -1,32 +1,35 @@
-import groovy.json.JsonOutput
-
-buildscript {}
-
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.modrinth.minotaur' version '2.+'
     id 'com.matthewprenger.cursegradle' version '1.4+'
 }
 
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
 
     repositories {
+        google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
         maven { url "https://repo.spongepowered.org/maven" }
-        maven { url "https://maven.tterrag.com/" }
-        maven {
-            url "https://www.cursemaven.com"
-            content { includeGroup "curse.maven" }
-        }
+        maven { url 'https://jitpack.io' }
     }
     afterEvaluate {
         java {
             withSourcesJar()
             sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+        }
+
+        base.archivesName = "${id}"
+
+        configurations {
+            compileAndTest
+        }
+
+        sourceSets {
+            main.compileClasspath += configurations.compileAndTest
+            test.compileClasspath += configurations.compileAndTest
+            test.runtimeClasspath += configurations.compileAndTest
         }
 
         sourcesJar {
@@ -36,39 +39,21 @@ allprojects {
         }
 
         dependencies {
-            // DEPENDENCIES INCLUDED IN MINECRAFT
-            compileOnly 'org.ow2.asm:asm-tree:9.6'
-            compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
-            compileOnly 'net.java.dev.jna:jna:4.4.0'
-            compileOnly 'net.java.dev.jna:platform:3.4.0'
-            compileOnly 'com.google.code.gson:gson:2.10.1'
-            compileOnly 'org.apache.logging.log4j:log4j-api:2.20.0'
-            compileOnly 'org.apache.logging.log4j:log4j-core:2.20.0'
-            compileOnly 'org.apache.commons:commons-lang3:3.12.0'
-            compileOnly 'commons-io:commons-io:2.7'
-
-            // TEST
-            testImplementation 'org.ow2.asm:asm-tree:9.6'
-            testImplementation 'org.lwjgl:lwjgl-opengl:3.2.2'
-            testImplementation 'net.java.dev.jna:jna:4.4.0'
-            testImplementation 'net.java.dev.jna:platform:3.4.0'
-            testImplementation 'com.google.code.gson:gson:2.10.1'
-            testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
-            testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-            testImplementation 'org.apache.commons:commons-lang3:3.12.0'
-            testImplementation 'commons-io:commons-io:2.7'
+            // NEEDED DEPENDENCIES (SOME ARE INCLUDED IN MC)
+            compileAndTest 'org.lwjgl:lwjgl-opengl:3.2.2'
+            compileAndTest 'net.java.dev.jna:jna:4.4.0'
+            compileAndTest 'net.java.dev.jna:platform:3.4.0'
+            compileAndTest 'com.google.code.gson:gson:2.10.1'
+            compileAndTest 'org.apache.logging.log4j:log4j-api:2.20.0'
+            compileAndTest 'org.apache.logging.log4j:log4j-core:2.20.0'
+            compileAndTest 'org.apache.commons:commons-lang3:3.12.0'
+            compileAndTest 'commons-io:commons-io:2.7' // NOTE: ask Forge to bump this on 1.16.5
         }
 
         // Process target resources with mod info
         processResources {
             filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "mcmod.info", "watermedia/version.cfg"]) {
-                def combinedMap = [:]
-                combinedMap.putAll(project.properties)
-                combinedMap.putAll([
-                        modauthorlist: JsonOutput.toJson(modauthor.trim().replaceAll(" ", "").split(","))
-                ])
-
-                expand(combinedMap)
+                expand(project.properties)
             }
             outputs.upToDateWhen { false }
         }
@@ -77,10 +62,6 @@ allprojects {
             it.options.encoding = 'UTF-8'
         }
     }
-}
-
-base {
-    archivesName = "${id}"
 }
 
 configurations {
@@ -169,7 +150,7 @@ jar {
 //    apiKey = System.getenv("CURSEFORGE_TOKEN")
 //    project {
 //        id = curseforgeid
-//        changelog = getCurrentChanges() + "\n" + getChangesHistory()
+//        changelog = getCurrentChanges() + "\n\n" + getChangesHistory()
 //        changelogType = "markdown"
 //        addGameVersion "1.20.2"
 //        addGameVersion "1.20.1"

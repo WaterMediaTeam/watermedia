@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "${name}",
   "description": "${moddesc}",
-  "authors": ${modauthorlist},
+  "authors": ${modauthorsarray},
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/${id}",
     "sources": "https://github.com/${github_project}",
@@ -20,7 +20,7 @@
     ]
   },
   "breaks": {
-    "fancyvideo_api": "*"
+    "fancyvideo_api": "*",
   },
   "depends": {
     "java": ">=8"
