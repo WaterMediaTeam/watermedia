@@ -28,15 +28,14 @@ sorry, but I not going to support another broken modloader
 
 | Version | Forge | Fabric | NeoForge |
 |:-------:|:-----:|:------:|:--------:|
-| 1.7.10  |   ⚠   |   🚫   |    🚫    |
-| 1.12.2  |   ✅   |   🚫   |    🚫    |
-| 1.16.5  |   ✅   |   ✅    |    🚫    |
-| 1.18.2  |   ✅   |   ✅    |    🚫    |
-| 1.19.2  |   ✅   |   ✅    |    🚫    |
-| 1.20.x  |   ✅   |   ✅    |    ⛔     |
+| 1.12.2  |  🚨   |   🚫   |    🚫    |
+| 1.16.5  |  🚨   |   🚨   |    🚫    |
+| 1.18.2  |   ✔   |   ✔    |    🚫    |
+| 1.19.2  |   ✔   |   ✔    |    🚫    |
+| 1.20.x  |   ✔   |   ✔    |    ⛔     |
 | 1.21.x  |   !   |   !    |    ⚠     |
 
-✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A**
+✔ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A** ||| 🚨 - **DROPPING**
 
 # INSTALLATION
 You can use two ways to install this mod in your project
@@ -93,16 +92,15 @@ and others aren't supported by VLC limitations.
 Ensure your OS is supported in this list.<br>
 Linux users: check https://www.videolan.org/vlc/#download
 
-|      Operative System       | Support status |
-|:---------------------------:|:--------------:|
-|    Windows 7 ~ 11 (x64)     |       ✅        |
-|    Windows 7 ~ 11 (x32)     |       ❎        |
-|    Windows 10 ~ 11 (ARM)    |       🚫       |
-|         MacOS (x64)         |       ❎        |
-|    MacOS (Apple Silicon)    |       ❎        |
-|         Linux (x64)         |       ❎        |
-|         Linux (ARM)         |       ❎        |
-| Linux (x64 or ARM via SNAP) |       ⛔        |
+|   Operative System    | Support status |
+|:---------------------:|:--------------:|
+|     Windows (x64)     |       ✅        |
+|     Windows (ARM)     |       🚫       |
+|      MacOS (x64)      |       ✅        |
+| MacOS (Apple Silicon) |       ✅        |
+|      Linux (x64)      |       ❎        |
+|      Linux (ARM)      |       ❎        |
+|   Linux (via SNAP)    |       🚫       |
 
 - ✅ **SUPPORTED**
 - ❎ **LIMITED:** Needs to manually install VLC 3
@@ -111,15 +109,32 @@ Linux users: check https://www.videolan.org/vlc/#download
 
 # Projects using WATERMeDIA
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - Version using: 1.3.x, 2.0.x
-- [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - Version using: 1.3.x, 2.0.x
-- [FancyMenu: Video Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-video) (obsolete) - Version using: 1.3.x
-- [FancyMenu: Multimedia Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-multimedia) - Version using: 2.0.x
+- [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - Version using: 2.0.x
+- [FancyMenu: Video Extension](https://www.curseforge.com/minecraft/mc-mods/fancymenu-video) (obsolete) - Version using: 2.0.x
 - [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - Version using: 2.0.x
+- [NightmareCraft](https://www.curseforge.com/minecraft/modpacks/nightmare-craft-chapter-1) - Version using: 2.0.x
 
-# Libraries used
+# MAINTAINERS
+- [SrRapero720](https://github.com/SrRapero720) - Mastermind
+- [NGoedix](https://github.com/NGoedix) - Mastermind
+
+# CONTRIBUTORS
+- [zenoarrows](https://github.com/ZenoArrows) - Buffer Eater
+- [cyyynthia](https://github.com/cyyynthia) - Deadlock hunter
+
+# SHADED LIBRARIES
 **Important:** All libraries are relocated and wrapped using shadowJar. You can skip our API and directly use
  all native libraries... highly no recommended. Find it all on``me.lib720.libraryname`` package
-- [VLCJ](https://github.com/caprica/vlcj/tree/vlcj-4.x)
-- [Java-youtube-downloader](https://github.com/sealedtx/java-youtube-downloader)
-- [Retrofit2](https://square.github.io/retrofit/)
-- [Jackson Databind](https://github.com/FasterXML/jackson-databind)
+- [VLCJ-natives (forked)](https://github.com/caprica/vlcj-natives/tree/vlcj-4.x)
+- [Java-Youtube-Downloader (forked)](https://github.com/sealedtx/java-youtube-downloader)
+
+# DEPENDENCIES 
+**note: those are not shaded**
+- LWJGL
+- commons-io
+- jna
+- jna-platform
+- gson
+- log4j-api
+- log4j-core
+- commons-lang3
