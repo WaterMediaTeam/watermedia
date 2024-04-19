@@ -8,6 +8,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,6 +135,7 @@ public class CacheAPI extends WaterMediaAPI {
     }
 
     static File entry$getFile(String url) {
-        return new File(dir, Base64.getEncoder().encodeToString(url.getBytes()));
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");        
+        return new File(dir, Base64.getEncoder().encodeToString(digest.digest(url.getBytes(StandardCharsets.UTF_8))));
     }
 }
