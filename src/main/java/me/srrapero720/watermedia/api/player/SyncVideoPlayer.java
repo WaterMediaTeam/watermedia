@@ -1,14 +1,14 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.lib720.watermod.reflect.ReflectTool;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
+import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 
 import java.awt.*;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -76,7 +76,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
             renderLock.lock();
             try {
                 buffer = nativeBuffers[0];
-                ReflectTool.invoke("rewind", ByteBuffer.class, buffer);
+                ((Buffer) buffer).rewind();
                 updateFrame.set(true);
             } catch (Throwable t) {
                 if (exception == null) {

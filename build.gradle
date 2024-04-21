@@ -63,8 +63,6 @@ dependencies {
 
     // SUB-LIBRARIES
     shadow(project(":lib-vlcj"))
-    shadow(project(":lib-extras"))
-    shadow(project(":lib-ytdownloader"))
 
     // LIBRARIES TO BE SHADOW
     shadow 'org.apache.commons:commons-compress:1.26.1'
@@ -83,8 +81,6 @@ dependencies {
     testImplementation 'net.java.dev.jna:platform:3.4.0'
 
     testImplementation(project(":lib-vlcj"))
-    testImplementation(project(":lib-extras"))
-    testImplementation(project(":lib-ytdownloader"))
 
     testRuntimeOnly("org.lwjgl:lwjgl:3.2.2:natives-$osdetector.os")
     testRuntimeOnly("org.lwjgl:lwjgl-opengl:3.2.2:natives-$osdetector.os")

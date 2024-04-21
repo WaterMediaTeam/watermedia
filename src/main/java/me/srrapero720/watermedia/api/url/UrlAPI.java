@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api.url;
 
 
-import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.api.url.fixers.special.SpecialFixer;
@@ -11,6 +10,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -38,16 +38,18 @@ public class UrlAPI {
      */
     public static URLFixer.Result fixURL(String strUrl, boolean specials) {
         if (isValid(strUrl)) {
-            return TryCore.withReturn(defaultVar -> {
+            try {
                 URL url = new URL(strUrl);
                 if (strUrl.startsWith("file:///") || strUrl.startsWith("local://")) return new URLFixer.Result(url, false, false);
-                for (int i = 0; i < FIXERS.size(); i++) {
-                    URLFixer fixer = FIXERS.get(i);
+                for (URLFixer fixer: FIXERS) {
                     if (fixer instanceof SpecialFixer && !specials) continue;
                     if (fixer.isValid(url)) return fixer.patch(url, null);
                 }
                 return new URLFixer.Result(url, false, false);
-            }, e -> LOGGER.error(IT, "Exception occurred fixing URL", e), null);
+            } catch (Exception e) {
+                LOGGER.error(IT, "Exception occurred fixing URL", e);
+                return null;
+            }
         }
 
         LOGGER.error(IT, "URL doesn't have a valid syntax, cannot be fixed");
@@ -81,14 +83,21 @@ public class UrlAPI {
      * @return if was valid
      */
     public static boolean isValid(String url) {
-        return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false);
+        try {
+            new URL(url);
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 
     public static boolean isValidPathUrl(String path) {
-        return TryCore.withReturn(defaultVar -> {
+        try {
             new File(path).toURI().toURL();
             return true;
-        }, false);
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 
     /**

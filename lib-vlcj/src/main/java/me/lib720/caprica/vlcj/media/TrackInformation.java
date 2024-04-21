@@ -24,7 +24,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
 import me.lib720.caprica.vlcj.binding.NativeString;
 import me.lib720.caprica.vlcj.binding.internal.*;
-import me.lib720.watermod.reflect.ReflectTool;
 
 import java.util.*;
 
@@ -72,8 +71,8 @@ final class TrackInformation {
     private static TrackInfo getTrackInfo(Pointer pointer, Set<TrackType> types) {
         TrackInfo result = null;
         // WATERMeDIA PATCH - start
-        // libvlc_media_track_t track = Structure.newInstance(libvlc_media_track_t.class, pointer);
-        libvlc_media_track_t track = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_media_track_t.class, pointer);
+         libvlc_media_track_t track = (libvlc_media_track_t) Structure.newInstance(libvlc_media_track_t.class, pointer);
+//        libvlc_media_track_t track = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_media_track_t.class, pointer);
         // WATERMeDIA PATCH - end
 
         track.read();

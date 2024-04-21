@@ -26,7 +26,6 @@ import me.lib720.caprica.vlcj.binding.LibVlc;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_media_discoverer_description_t;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_media_discoverer_t;
 import me.lib720.caprica.vlcj.binding.support.size_t;
-import me.lib720.watermod.reflect.ReflectTool;
 import me.lib720.caprica.vlcj.media.discoverer.MediaDiscoverer;
 import me.lib720.caprica.vlcj.media.discoverer.MediaDiscovererCategory;
 import me.lib720.caprica.vlcj.media.discoverer.MediaDiscovererDescription;
@@ -60,8 +59,8 @@ public final class MediaDiscovererApi extends BaseApi {
                 Pointer[] pointers = ref.getValue().getPointerArray(0, count);
                 for (Pointer pointer : pointers) {
                     // WATERMeDIA PATCH - start
-                    // libvlc_media_discoverer_description_t description = Structure.newInstance(libvlc_media_discoverer_description_t.class, pointer);
-                    libvlc_media_discoverer_description_t description = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_media_discoverer_description_t.class, pointer);
+                     libvlc_media_discoverer_description_t description = (libvlc_media_discoverer_description_t) Structure.newInstance(libvlc_media_discoverer_description_t.class, pointer);
+//                    libvlc_media_discoverer_description_t description = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_media_discoverer_description_t.class, pointer);
                     // WATERMeDIA PATCH - end
                     description.read();
                     result.add(new MediaDiscovererDescription(description.psz_name, description.psz_longname, MediaDiscovererCategory.mediaDiscovererCategory(description.i_cat)));

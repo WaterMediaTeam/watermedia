@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.core;
 
-import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.core.tools.FileTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
@@ -8,6 +7,7 @@ import me.srrapero720.watermedia.core.tools.OsTool;
 import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import watermod.safety.TryCore;
 
 import java.io.File;
 import java.io.IOException;

@@ -23,5 +23,4 @@ dependencies {
     compileOnly 'net.java.dev.jna:platform:3.4.0'
     compileOnly 'org.apache.logging.log4j:log4j-api:2.15.0'
     compileOnly 'org.apache.logging.log4j:log4j-core:2.17.1'
-    compileOnly project(":lib-extras")
 }

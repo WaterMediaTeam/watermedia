@@ -28,7 +28,6 @@ import me.lib720.caprica.vlcj.binding.internal.libvlc_renderer_discoverer_t;
 import me.lib720.caprica.vlcj.binding.support.size_t;
 import me.lib720.caprica.vlcj.player.renderer.RendererDiscoverer;
 import me.lib720.caprica.vlcj.player.renderer.RendererDiscovererDescription;
-import me.lib720.watermod.reflect.ReflectTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +56,8 @@ public final class RendererApi extends BaseApi {
                 Pointer[] pointers = ref.getValue().getPointerArray(0, count);
                 for (Pointer pointer : pointers) {
                     // WATERMeDIA PATCH - start
-                    // libvlc_rd_description_t description = Structure.newInstance(libvlc_rd_description_t.class, pointer);
-                    libvlc_rd_description_t description = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_rd_description_t.class, pointer);
+                     libvlc_rd_description_t description = (libvlc_rd_description_t) Structure.newInstance(libvlc_rd_description_t.class, pointer);
+//                    libvlc_rd_description_t description = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_rd_description_t.class, pointer);
                     // WATERMeDIA PATCH - end
                     description.read();
                     result.add(new RendererDiscovererDescription(description.psz_name, description.psz_longname));

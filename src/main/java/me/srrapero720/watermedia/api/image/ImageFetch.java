@@ -1,14 +1,13 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.lib720.madgag.gif.fmsware.GifDecoder;
-import me.lib720.watermod.concurrent.ThreadCore;
-import me.lib720.watermod.safety.TryCore;
+import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.CacheCore;
 import me.srrapero720.watermedia.core.tools.DataTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import watermod.concurrent.ThreadCore;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -21,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -141,19 +141,30 @@ public class ImageFetch {
             String maxAge = request.getHeaderField("max-age");
 
             // EXPIRATION GETTER FIRST
-            if (maxAge != null && !maxAge.isEmpty())
-                expTimestamp = TryCore.withReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
+            if (maxAge != null && !maxAge.isEmpty()) {
+                long parsed = DataTool.parseLongOr(maxAge, -1);
+                if (parsed != -1)
+                    expTimestamp = requestTime + Long.parseLong(maxAge) * 100;
+            }
 
             // EXPIRATION GETTER SECOND WAY
             String expires = request.getHeaderField("Expires");
-            if (expires != null && !expires.isEmpty())
-                expTimestamp = TryCore.withReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
-
+            if (expires != null && !expires.isEmpty()) {
+                try {
+                    expTimestamp = FORMAT.parse(expires).getTime();
+                } catch (ParseException ignored) {}
+            }
             // LAST TIMESTAMP
             String lastMod = request.getHeaderField("Last-Modified");
             if (lastMod != null && !lastMod.isEmpty()) {
-                lastTimestamp = TryCore.withReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
-            } else lastTimestamp = requestTime;
+                try {
+                    lastTimestamp = FORMAT.parse(lastMod).getTime();
+                } catch (ParseException e) {
+                    lastTimestamp = requestTime;
+                }
+            } else {
+                lastTimestamp = requestTime;
+            }
 
             if (entry != null) {
                 String freshTag = entry.getTag();

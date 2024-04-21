@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia;
 
-import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.loader.IEnvLoader;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
@@ -14,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import watermod.safety.TryCore;
 
 public class WaterMedia {
 	private static final Marker IT = MarkerManager.getMarker("Bootstrap");

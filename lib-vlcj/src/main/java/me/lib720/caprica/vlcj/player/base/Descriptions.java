@@ -28,7 +28,6 @@ import me.lib720.caprica.vlcj.binding.internal.libvlc_chapter_description_t;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_media_player_t;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_title_description_t;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_track_description_t;
-import me.lib720.watermod.reflect.ReflectTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +43,8 @@ final class Descriptions {
             Pointer[] pointers = titles.getValue().getPointerArray(0, titleCount);
             for (Pointer pointer : pointers) {
                 // WATERMeDIA PATCH - start
-                // libvlc_title_description_t titleDescription = Structure.newInstance(libvlc_title_description_t.class, pointer);
-                libvlc_title_description_t titleDescription = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_title_description_t.class, pointer);
+                 libvlc_title_description_t titleDescription = (libvlc_title_description_t) Structure.newInstance(libvlc_title_description_t.class, pointer);
+//                libvlc_title_description_t titleDescription = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_title_description_t.class, pointer);
                 // WATERMeDIA PATCH - end
                 titleDescription.read();
                 result.add(new TitleDescription(titleDescription.i_duration, NativeString.copyNativeString(titleDescription.psz_name), titleDescription.b_menu != 0));
@@ -67,8 +66,8 @@ final class Descriptions {
             Pointer[] pointers = chapters.getValue().getPointerArray(0, chapterCount);
             for (Pointer pointer : pointers) {
                 // WATERMeDIA PATCH - start
-                // libvlc_chapter_description_t chapterDescription = Structure.newInstance(libvlc_chapter_description_t.class, pointer);
-                libvlc_chapter_description_t chapterDescription = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_chapter_description_t.class, pointer);
+                 libvlc_chapter_description_t chapterDescription = (libvlc_chapter_description_t) Structure.newInstance(libvlc_chapter_description_t.class, pointer);
+//                libvlc_chapter_description_t chapterDescription = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_chapter_description_t.class, pointer);
                 // WATERMeDIA PATCH - end
                 chapterDescription.read();
                 result.add(new ChapterDescription(chapterDescription.i_time_offset, chapterDescription.i_duration, NativeString.copyNativeString(chapterDescription.psz_name)));

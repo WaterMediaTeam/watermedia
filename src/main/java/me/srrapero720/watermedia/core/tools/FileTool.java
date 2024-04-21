@@ -1,12 +1,15 @@
 package me.srrapero720.watermedia.core.tools;
 
-import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;

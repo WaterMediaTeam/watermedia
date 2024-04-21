@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.lib720.madgag.gif.fmsware.GifDecoder;
 import me.srrapero720.watermedia.WaterMedia;
+import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.loader.IMediaLoader;
 import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.core.tools.FileTool;

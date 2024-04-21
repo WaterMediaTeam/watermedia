@@ -12,6 +12,14 @@ public class DataTool {
     private static final int DEFAULT_BUFFER_SIZE = 8192;
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 
+    public static long parseLongOr(String s, long o) {
+        try {
+            return Long.parseLong(s);
+        } catch (NumberFormatException e) {
+            return o;
+        }
+    }
+
     public static <T> List<T> toList(ServiceLoader<T> s) {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);

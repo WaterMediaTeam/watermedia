@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api;
 
-import me.lib720.watermod.reflect.ReflectTool;
-import me.lib720.watermod.safety.TryCore;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.image.ImageFetch;
@@ -19,10 +18,11 @@ import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 
 import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
@@ -151,7 +151,13 @@ public final class WaterMediaAPI {
      * @deprecated use instead {@link UrlAPI#isValid(String)}
      */
     @Deprecated
-    public static boolean url_isValid(String url) { return TryCore.withReturn(defaultVar -> { new URL(url); return true; }, false); }
+    public static boolean url_isValid(String url) {
+        try {
+            new URL(url); return true;
+        } catch (MalformedURLException e) {
+            return false;
+        }
+    }
 
 
     /**
@@ -286,8 +292,7 @@ public final class WaterMediaAPI {
         }
 
         // FLIP method changes what class type returns in new JAVA versions, in runtime causes a JVM crash by that
-        // THIS EXECUTES ByteBuffer#flip
-        ReflectTool.invoke("flip", buffer.getClass(), buffer);
+        ((Buffer) buffer).flip();
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
