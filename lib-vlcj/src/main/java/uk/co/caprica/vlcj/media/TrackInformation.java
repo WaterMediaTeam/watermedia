@@ -22,23 +22,12 @@ package uk.co.caprica.vlcj.media;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
-import me.lib720.watermod.reflect.ReflectTool;
 import uk.co.caprica.vlcj.binding.NativeString;
-import uk.co.caprica.vlcj.binding.internal.libvlc_audio_track_t;
-import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
-import uk.co.caprica.vlcj.binding.internal.libvlc_media_track_t;
-import uk.co.caprica.vlcj.binding.internal.libvlc_subtitle_track_t;
-import uk.co.caprica.vlcj.binding.internal.libvlc_video_track_t;
+import uk.co.caprica.vlcj.binding.internal.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_get_codec_description;
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_tracks_get;
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_tracks_release;
+import static uk.co.caprica.vlcj.binding.LibVlc.*;
 
 final class TrackInformation {
 
@@ -82,8 +71,8 @@ final class TrackInformation {
     private static TrackInfo getTrackInfo(Pointer pointer, Set<TrackType> types) {
         TrackInfo result = null;
         // WATERMeDIA PATCH - start
-        // libvlc_media_track_t track = Structure.newInstance(libvlc_media_track_t.class, pointer);
-        libvlc_media_track_t track = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_media_track_t.class, pointer);
+         libvlc_media_track_t track = (libvlc_media_track_t) Structure.newInstance(libvlc_media_track_t.class, pointer);
+//        libvlc_media_track_t track = ReflectTool.invokeWithReturn("newInstance", Structure.class, null, libvlc_media_track_t.class, pointer);
         // WATERMeDIA PATCH - end
 
         track.read();

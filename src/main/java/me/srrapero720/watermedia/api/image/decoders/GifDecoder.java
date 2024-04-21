@@ -1,4 +1,4 @@
-package me.lib720.madgag.gif.fmsware;
+package me.srrapero720.watermedia.api.image.decoders;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

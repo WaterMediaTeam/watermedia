@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.tools;
 
-import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.logging.log4j.Marker;

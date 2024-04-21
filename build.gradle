@@ -79,7 +79,6 @@ dependencies {
 
     // SUB-LIBRARIES
     shadow project(":lib-vlcj")
-    shadow project(":lib-tools")
     shadow project(":lib-ytdownloader")
 
     // LIBRARIES TO BE SHADOW

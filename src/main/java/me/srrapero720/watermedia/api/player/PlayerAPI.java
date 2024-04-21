@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.OperativeSystem;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
@@ -150,7 +149,7 @@ public class PlayerAPI extends WaterMediaAPI {
                 IOTool.unzip(IT, zipOutputFile.toPath());
                 zipOutputFile.deleteOnExit();
 
-                TryCore.simple(() -> JarTool.copyAsset(VIDEOLAN_VER_ASSET, configOutputFile.toPath()), LOGGER::error);
+                JarTool.copyAsset(VIDEOLAN_VER_ASSET, configOutputFile.toPath());
 
                 LOGGER.info(IT, "VideoLAN binaries extracted successfully");
             }

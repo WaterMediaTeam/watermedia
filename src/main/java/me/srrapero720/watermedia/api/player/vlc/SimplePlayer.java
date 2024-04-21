@@ -1,9 +1,9 @@
 package me.srrapero720.watermedia.api.player.vlc;
 
-import me.lib720.watermod.concurrent.ThreadCore;
-import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.network.DynamicURL;
 import me.srrapero720.watermedia.api.player.PlayerAPI;
+import me.srrapero720.watermedia.tools.ThreadCore;
+import me.srrapero720.watermedia.tools.Tools;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
@@ -65,12 +65,12 @@ public abstract class SimplePlayer {
 
     private boolean rpa(DynamicURL url) {
         if (raw == null) return false;
-        return TryCore.withReturn(defaultVar -> {
+        return Tools.withReturn(defaultVar -> {
 
             this.url = url.getSource();
             this.live = url.isVideo();
             return true;
-        }, e -> LOGGER.error(IT, "Failed to load player"), false);
+        }, false);
     }
 
     public void start(DynamicURL url) { this.start(url, new String[0]); }

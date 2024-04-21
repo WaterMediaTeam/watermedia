@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.api.player.vlc;
 
-import me.lib720.watermod.reflect.ReflectTool;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -9,6 +8,7 @@ import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 
 import java.awt.*;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,7 +43,7 @@ public class VideoPlayer extends SimplePlayer {
             synchronized (lock) {
                 try {
                     buffer = nativeBuffers[0];
-                    ReflectTool.invoke("rewind", ByteBuffer.class, buffer);
+                    ((Buffer) buffer).rewind();
                     updated.set(true);
                 } catch (Throwable t) {
                     if (exception == null) {

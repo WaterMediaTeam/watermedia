@@ -1,4 +1,3 @@
 dependencies {
     compileOnly 'uk.co.caprica:vlcj-osx-stubs:1.0.0'
-    compileOnly project(":lib-tools")
 }

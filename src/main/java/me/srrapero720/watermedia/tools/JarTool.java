@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.tools;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import me.lib720.madgag.gif.fmsware.GifDecoder;
+import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 

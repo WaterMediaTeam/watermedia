@@ -1,11 +1,11 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.lib720.madgag.gif.fmsware.GifDecoder;
-import me.lib720.watermod.concurrent.ThreadCore;
-import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.cache.CacheAPI;
 import me.srrapero720.watermedia.api.cache.CacheEntry;
+import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.network.DynamicURL;
+import me.srrapero720.watermedia.tools.ThreadCore;
+import me.srrapero720.watermedia.tools.Tools;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -36,7 +36,7 @@ import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
 public class ImageFetch implements Runnable {
     private static final Marker IT = MarkerManager.getMarker("ImageAPI");
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("WATERMeDIA-if-Worker"));
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("WATERMeDIA-if-Worker", 3));
 
     private final String url;
     private TaskSuccessful successful;
@@ -140,17 +140,17 @@ public class ImageFetch implements Runnable {
 
             // EXPIRATION GETTER FIRST
             if (maxAge != null && !maxAge.isEmpty())
-                expTimestamp = TryCore.withReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
+                expTimestamp = Tools.withReturn(defaultVar -> requestTime + Long.parseLong(maxAge) * 1000, expTimestamp);
 
             // EXPIRATION GETTER SECOND WAY
             String expires = request.getHeaderField("Expires");
             if (expires != null && !expires.isEmpty())
-                expTimestamp = TryCore.withReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
+                expTimestamp = Tools.withReturn(defaultVar -> FORMAT.parse(expires).getTime(), expTimestamp);
 
             // LAST TIMESTAMP
             String lastMod = request.getHeaderField("Last-Modified");
             if (lastMod != null && !lastMod.isEmpty()) {
-                lastTimestamp = TryCore.withReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
+                lastTimestamp = Tools.withReturn(defaultVar -> FORMAT.parse(lastMod).getTime(), requestTime);
             } else lastTimestamp = requestTime;
 
             if (entry != null) {
