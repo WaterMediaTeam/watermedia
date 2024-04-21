@@ -65,6 +65,8 @@ dependencies {
     shadow(project(":lib-vlcj"))
 
     // LIBRARIES TO BE SHADOW
+    shadow 'com.github.sealedtx:java-youtube-downloader:3.2.3'
+    shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     shadow 'org.apache.commons:commons-compress:1.26.1'
     shadow 'org.tukaani:xz:1.9'
 

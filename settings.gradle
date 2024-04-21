@@ -24,4 +24,4 @@ buildscript {
     }
 }
 
-include 'lib-ytdownloader', 'lib-vlcj', 'lib-forge'
+include 'lib-vlcj', 'lib-forge'

@@ -1,4 +1,0 @@
-[submodule "lib-ytdownloader"]
-	path = lib-ytdownloader
-	url = https://github.com/SrRapero720/watermedia-ytdownloader.git
-	branch = 2.0.x
