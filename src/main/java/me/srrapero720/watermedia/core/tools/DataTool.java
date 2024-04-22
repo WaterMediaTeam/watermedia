@@ -11,6 +11,7 @@ public class DataTool {
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
     private static final int DEFAULT_BUFFER_SIZE = 8192;
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     public static long parseLongOr(String s, long o) {
         try {
@@ -89,5 +90,15 @@ public class DataTool {
         }
 
         return result;
+    }
+
+    public static String encodeHexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }

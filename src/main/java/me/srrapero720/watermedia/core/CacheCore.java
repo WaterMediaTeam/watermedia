@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.core;
 
 import me.srrapero720.watermedia.api.WaterInternalAPI;
+import me.srrapero720.watermedia.core.tools.DataTool;
 import me.srrapero720.watermedia.loaders.ILoader;
-import me.srrapero720.watermedia.tools.IOTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -48,7 +48,7 @@ public class CacheCore extends WaterInternalAPI {
     private static File entry$getFile(String url) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			return new File(dir, IOTool.encodeHexString(digest.digest(url.getBytes(StandardCharsets.UTF_8))));
+			return new File(dir, DataTool.encodeHexString(digest.digest(url.getBytes(StandardCharsets.UTF_8))));
 		} catch (NoSuchAlgorithmException e) { LOGGER.error(IT, "Failed to initalize digest", e); }
 
 		// Fallback to old naming
