@@ -1,3 +1,12 @@
+# UPDATE 2.0.40
+WACHOUT! BREAKING CHANGES
+- Removed Deprecated methods from WaterMediaAPI
+- Backported v3.0 bootstrap
+- Removed some lib720 libraries
+- Fixed caching failure when URL is too long by Kaze (#61) (#62)
+- Enhanced ImageRenderer using PBO for gifs and pictures (by ZenoArrows) [reduces VRAM usage]
+- Reverted Youtube-downloader version to the original version (skipping our fork)
+
 # UPDATE 2.0.32
 - Fixed memoryleak reading strings
 - Reduce ClassLoader usage and impact
