@@ -1,22 +1,23 @@
 package me.srrapero720.watermedia.api.rendering;
 
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
+import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL21;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
-import java.nio.*;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 /**
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
  */
-public class RenderAPI {
+public class RenderAPI extends WaterMediaAPI {
 
     /**
      * Creates a DirectByteBuffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
@@ -139,5 +140,25 @@ public class RenderAPI {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, glTexture);
         if (firstFrame) {GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, videoWidth, videoHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, videoBuffer);
         } else GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, videoWidth, videoHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, videoBuffer);
+    }
+
+    @Override
+    public Priority priority() {
+        return Priority.LOW;
+    }
+
+    @Override
+    public boolean prepare(ILoader bootCore) throws Exception {
+        return false;
+    }
+
+    @Override
+    public void start(ILoader bootCore) throws Exception {
+
+    }
+
+    @Override
+    public void release() {
+
     }
 }

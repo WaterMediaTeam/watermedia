@@ -10,12 +10,12 @@ import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
+import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import watermod.concurrent.ThreadCore;
 
 import java.io.File;
 
@@ -59,7 +59,7 @@ public abstract class SyncBasePlayer {
      */
     protected void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (PlayerAPI.isReady() && raw == null) {
-            if (factory == null) factory = PlayerAPI.getVLCFactory();
+            if (factory == null) factory = PlayerAPI.getFactory();
             this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(LISTENER);
         } else {

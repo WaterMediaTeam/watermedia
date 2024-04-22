@@ -39,11 +39,25 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+configurations {
+    shadow.extendsFrom(implementation)
+}
+
 dependencies {
     // FabricLoader (just to give loading support on FABRIC)
     compileOnly("net.fabricmc:fabric-loader:${project.fabricv}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
+
+    // LIBRARIES TO BE SHADOW
+    shadow ('com.github.sealedtx:java-youtube-downloader:3.2.3')
+    // THIS FREAKING DEP CARRIES 'CODEC', 'LANG3' AND 'COMMONS-IO'
+    shadow ('org.apache.commons:commons-compress:1.26.1') {
+        exclude group: 'org.apache.commons', module: 'commons-lang3'
+        exclude group: 'commons-io', module: 'commons-io'
+    }
+    shadow ('org.tukaani:xz:1.9')
+    shadow project(":lib-vlcj")
 
     // DEPENDENCIES INCLUDED IN MINECRAFT
     compileOnly 'net.java.dev.jna:jna:4.4.0'
@@ -55,20 +69,7 @@ dependencies {
     compileOnly 'com.google.code.gson:gson:2.10.1'
     compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
     compileOnly 'org.ow2.asm:asm-tree:9.1'
-    // SUB-PROJECTS
     compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
-
-    // GROOVY
-    compileOnly group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9'
-
-    // SUB-LIBRARIES
-    shadow(project(":lib-vlcj"))
-
-    // LIBRARIES TO BE SHADOW
-    shadow 'com.github.sealedtx:java-youtube-downloader:3.2.3'
-    shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
-    shadow 'org.apache.commons:commons-compress:1.26.1'
-    shadow 'org.tukaani:xz:1.9'
 
     // TEST
     testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
@@ -81,8 +82,6 @@ dependencies {
     testImplementation 'org.lwjgl:lwjgl-glfw:3.2.2'
     testImplementation 'net.java.dev.jna:jna:4.4.0'
     testImplementation 'net.java.dev.jna:platform:3.4.0'
-
-    testImplementation(project(":lib-vlcj"))
 
     testRuntimeOnly("org.lwjgl:lwjgl:3.2.2:natives-$osdetector.os")
     testRuntimeOnly("org.lwjgl:lwjgl-opengl:3.2.2:natives-$osdetector.os")
@@ -109,15 +108,10 @@ shadowJar {
     // Add relocation rules for each dependency
     relocate 'com.github', 'me.lib720'
     relocate 'com.alibaba', 'me.lib720.alibaba'
-    relocate 'com.mpatric', 'me.lib720.mpatric'
-    relocate 'org.mozilla', 'me.lib720.mozilla'
-    relocate 'okhttp3', 'me.lib720.okhttp3'
-    relocate 'okio', 'me.lib720.okio'
     relocate 'com.fasterxml', 'me.lib720'
-    relocate 'retrofit2', 'me.lib720.retrofit2'
-    relocate 'org.apache.commons', 'me.lib720.apache'
+    relocate 'org.apache.commons.compress', 'me.lib720.apache.compress'
+    relocate 'org.apache.commons.codec', 'me.lib720.apache.codec'
     relocate 'org.tukaani', 'me.lib720.tukaani'
-    relocate 'com.tianscar', 'me.lib720.tianscar'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"

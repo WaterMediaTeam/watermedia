@@ -1,4 +1,4 @@
-package watermod.safety;
+package me.lib720.watermod.safety;
 
 /**
  * @deprecated No replacement

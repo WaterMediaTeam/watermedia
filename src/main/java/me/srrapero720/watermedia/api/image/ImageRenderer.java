@@ -28,11 +28,9 @@ public class ImageRenderer {
     /**
      * creates a new instance of an ImageRenderer
      * @param image picture to use
-     * @deprecated Use instead {@link ImageAPI#renderer(BufferedImage)}
      * method is going to begin package-protected
      */
-    @Deprecated
-    public ImageRenderer(BufferedImage image) {
+    ImageRenderer(BufferedImage image) {
         if (image == null) throw new NullPointerException();
         this.width = image.getWidth();
         this.height = image.getHeight();
@@ -44,11 +42,9 @@ public class ImageRenderer {
     /**
      * creates a new instance of an ImageRenderer
      * @param decoder picture to use
-     * @deprecated Use instead {@link ImageAPI#renderer(GifDecoder)}
      * method is going to begin package-protected
      */
-    @Deprecated
-    public ImageRenderer(GifDecoder decoder) {
+    ImageRenderer(GifDecoder decoder) {
         if (decoder == null) throw new NullPointerException();
 
         Dimension frameSize = decoder.getFrameSize();

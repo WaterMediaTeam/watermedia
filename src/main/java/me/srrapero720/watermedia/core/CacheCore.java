@@ -1,16 +1,16 @@
 package me.srrapero720.watermedia.core;
 
-import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
+import me.srrapero720.watermedia.api.WaterInternalAPI;
+import me.srrapero720.watermedia.loaders.ILoader;
 import me.srrapero720.watermedia.tools.IOTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
-import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,44 +20,13 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored", "PathCanBeConvertedToMethod"})
-public class CacheCore {
+public class CacheCore extends WaterInternalAPI {
     private static final Marker IT = MarkerManager.getMarker(CacheCore.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;
     private static File index;
     private static boolean init = false;
-
-    public static void init(IMediaLoader modLoader) throws Exception {
-        if (init) throw new ReInitException(CacheCore.class.getSimpleName());
-
-        // SETUP
-        dir = modLoader.tmpPath().toAbsolutePath().resolve("cache/pictures").toFile();
-        index = new File(dir, "index");
-
-        // LOGGER
-        LOGGER.info(IT, "Mounted on path '{}'", dir);
-
-        if (!dir.exists()) dir.mkdirs();
-        if (index.exists()) {
-            try (DataInputStream stream = new DataInputStream(new GZIPInputStream(new FileInputStream(index)))) {
-                int length = stream.readInt();
-
-                for (int i = 0; i < length; i++) {
-                    String url = stream.readUTF();
-                    String tag = stream.readUTF();
-                    long time = stream.readLong();
-                    long expireTime = stream.readLong();
-                    Entry entry = new Entry(url, !tag.isEmpty() ? tag : null, time, expireTime);
-                    ENTRIES.put(entry.getUrl(), entry);
-                }
-            } catch (Exception e) {
-                LOGGER.error(IT, "Failed to load indexes", e);
-            }
-        }
-
-        init = true;
-    }
 
     private static boolean refreshAll() {
         try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)))) {
@@ -121,6 +90,47 @@ public class CacheCore {
             File file = entry$getFile(url);
             if (file.exists()) file.delete();
         }
+    }
+
+    @Override
+    public Priority priority() {
+        return Priority.HIGHEST;
+    }
+
+    @Override
+    public boolean prepare(ILoader bootCore) throws Exception {
+        // SETUP
+        dir = bootCore.tempDir().toAbsolutePath().resolve("cache/pictures").toFile();
+        index = new File(dir, "index");
+        LOGGER.info(IT, "Mounted on path '{}'", dir);
+
+        return !init;
+    }
+
+    @Override
+    public void start(ILoader bootCore) throws Exception {
+        if (!dir.exists()) dir.mkdirs();
+        if (index.exists()) {
+            try (DataInputStream stream = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())))) {
+                int length = stream.readInt();
+
+                for (int i = 0; i < length; i++) {
+                    String url = stream.readUTF();
+                    String tag = stream.readUTF();
+                    long time = stream.readLong();
+                    long expireTime = stream.readLong();
+                    Entry entry = new Entry(url, !tag.isEmpty() ? tag : null, time, expireTime);
+                    ENTRIES.put(entry.getUrl(), entry);
+                }
+            } catch (Exception e) {
+                LOGGER.error(IT, "Failed to load indexes", e);
+            }
+        }
+        init = true;
+    }
+
+    @Override
+    public void release() {
     }
 
     public static final class Entry {

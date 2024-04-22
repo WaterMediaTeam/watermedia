@@ -1,6 +1,9 @@
 package me.srrapero720.watermedia.api.math;
 
-public class MathAPI {
+import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.loaders.ILoader;
+
+public class MathAPI extends WaterMediaAPI {
 
     /**
      * 1 seconds in Minecraft equals 20 ticks
@@ -223,5 +226,25 @@ public class MathAPI {
      */
     public static double easyEase(double start, double end, double t) {
         return start + (end - start) * ((t < 0.5) ? 2 * t * t : -1 + 2 * t * (2 - t));
+    }
+
+    @Override
+    public Priority priority() {
+        return Priority.LOWEST;
+    }
+
+    @Override
+    public boolean prepare(ILoader bootCore) throws Exception {
+        return false;
+    }
+
+    @Override
+    public void start(ILoader bootCore) throws Exception {
+
+    }
+
+    @Override
+    public void release() {
+
     }
 }

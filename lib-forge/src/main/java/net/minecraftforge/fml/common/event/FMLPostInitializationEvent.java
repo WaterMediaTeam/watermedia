@@ -1,4 +1,6 @@
 package net.minecraftforge.fml.common.event;
 
-public class FMLPostInitializationEvent {
+import net.minecraftforge.eventbus.api.Event;
+
+public class FMLPostInitializationEvent extends Event {
 }

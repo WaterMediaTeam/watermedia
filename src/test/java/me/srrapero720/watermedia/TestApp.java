@@ -3,26 +3,26 @@ package me.srrapero720.watermedia;
 import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.image.ImageCache;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
-import me.srrapero720.watermedia.api.loader.IMediaLoader;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import me.srrapero720.watermedia.loaders.ILoader;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.ARBDebugOutput;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
-import java.io.File;
-import java.nio.*;
-import java.nio.file.Path;
+import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class TestApp implements IMediaLoader, Executor
-{
+public class TestApp implements Executor {
     private Queue<Runnable> executor = new LinkedList<>();
     private ImageCache cache;
     private ImageRenderer renderer;
@@ -32,11 +32,14 @@ public class TestApp implements IMediaLoader, Executor
 
     // The media loader
     private static final String NAME = "TestApp";
-    private Path PS;
-    private Path TMP;
 
     public void run(String url) {
-        WaterMedia.getInstance(this).init();
+        try {
+            WaterMedia.prepare(ILoader.DEFAULT).start();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load WATERMeDIA", e);
+        }
+
         renderer = ImageAPI.loadingGif();
         cache = ImageAPI.getCache(url, this);
         cache.load();
@@ -50,7 +53,7 @@ public class TestApp implements IMediaLoader, Executor
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
-        glfwSetErrorCallback(null).free();
+        glfwSetErrorCallback(null).close();
     }
 
     private void init() {
@@ -152,17 +155,6 @@ public class TestApp implements IMediaLoader, Executor
             glfwPollEvents();
             if (!executor.isEmpty()) executor.remove().run();
         }
-    }
-
-    @Override
-    public String name() { return NAME; }
-
-    @Override
-    public Path processPath() { return (PS != null) ? PS : (PS = new File("run").toPath()); }
-
-    @Override
-    public Path tmpPath() {
-        return (TMP != null) ? TMP : (TMP = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia"));
     }
 
     public static void main(String[] args) {

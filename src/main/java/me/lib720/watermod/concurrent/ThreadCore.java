@@ -1,8 +1,8 @@
-package watermod.concurrent;
+package me.lib720.watermod.concurrent;
 
+import me.lib720.watermod.safety.TryCore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import watermod.safety.TryCore;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

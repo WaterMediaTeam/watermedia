@@ -19,7 +19,7 @@ import java.util.zip.ZipInputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class FileTool {
+public class IOTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");
 
     public static String readString(Path from) {
@@ -79,8 +79,9 @@ public class FileTool {
         }
     }
 
-    public static void unzip(Path zipFilePath) throws IOException { unzip(zipFilePath, zipFilePath.getParent()); }
-    public static void unzip(Path zipFilePath, Path destDirectory) throws IOException {
+    public static void unzip(Marker it, Path zipFilePath) throws IOException { unzip(it, zipFilePath, zipFilePath.getParent()); }
+    public static void unzip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
+        LOGGER.debug(it, "Unzipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
         File destDir = destDirectory.toFile();
         if (!destDir.exists()) destDir.mkdir();
 
@@ -102,11 +103,12 @@ public class FileTool {
             }
         }
     }
+
     private static void unzip$extract(ZipInputStream zipIn, String filePath) throws IOException {
-        try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
+        try (BufferedOutputStream output = new BufferedOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
             byte[] bytesIn = new byte[4096];
             int read;
-            while ((read = zipIn.read(bytesIn)) != -1) bos.write(bytesIn, 0, read);
+            while ((read = zipIn.read(bytesIn)) != -1) output.write(bytesIn, 0, read);
         }
     }
 }

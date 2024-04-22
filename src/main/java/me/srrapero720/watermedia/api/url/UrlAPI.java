@@ -1,11 +1,11 @@
 package me.srrapero720.watermedia.api.url;
 
 
-import me.srrapero720.watermedia.api.loader.IMediaLoader;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.api.url.fixers.special.SpecialFixer;
 import me.srrapero720.watermedia.core.tools.DataTool;
-import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
+import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -16,7 +16,7 @@ import java.util.*;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-public class UrlAPI {
+public class UrlAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker("UrlAPI");
     private static final List<URLFixer> FIXERS = new ArrayList<>();
 
@@ -119,10 +119,24 @@ public class UrlAPI {
         return queryParams;
     }
 
-    public static void init(IMediaLoader loader) throws ReInitException {
-        if (!FIXERS.isEmpty()) throw new ReInitException(IT.getName());
 
-        LOGGER.info(IT,"Loading {}'s", URLFixer.class.getSimpleName());
+    @Override
+    public Priority priority() {
+        return Priority.NORMAL;
+    }
+
+    @Override
+    public boolean prepare(ILoader bootCore) throws Exception {
+        return FIXERS.isEmpty();
+    }
+
+    @Override
+    public void start(ILoader bootCore) throws Exception {
         FIXERS.addAll(DataTool.toList(ServiceLoader.load(URLFixer.class)));
+    }
+
+    @Override
+    public void release() {
+
     }
 }

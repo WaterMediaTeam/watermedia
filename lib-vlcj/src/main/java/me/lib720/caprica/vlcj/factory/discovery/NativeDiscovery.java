@@ -5,6 +5,7 @@ import com.sun.jna.StringArray;
 import me.lib720.caprica.vlcj.binding.LibVlc;
 import me.lib720.caprica.vlcj.binding.RuntimeUtil;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
+import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.LinuxNativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 import me.lib720.caprica.vlcj.factory.discovery.strategy.OsxNativeDiscoveryStrategy;
@@ -14,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Field;
@@ -65,7 +65,7 @@ public class NativeDiscovery {
      * If the discovery failed before, then running it again may work e.g. if the client application took some remedial
      * steps to make the native libraries available.
      */
-    private static boolean alreadyFound;
+    public static boolean alreadyFound;
 
     /**
      * The native discovery strategy instance that discovered the native library path.

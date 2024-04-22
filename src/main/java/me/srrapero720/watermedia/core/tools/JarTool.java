@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -115,6 +116,22 @@ public class JarTool {
         }
 
         return result;
+    }
+
+    public static String[] readArrayAndParse(String path, Map<String, String> values) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResource(path)))) {
+            String[] keyset = values.keySet().toArray(new String[0]);
+            String[] str = new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
+
+            String v;
+            for (int i = 0; i < str.length; i++) {
+                v = str[i];
+                for (int j = 0; j < keyset.length; j++) {
+                    str[i] = v.replace("{" + keyset[j] + "}", values.get(keyset[j]));
+                }
+            }
+            return str;
+        }
     }
 
     public static BufferedImage readImage(String path) {

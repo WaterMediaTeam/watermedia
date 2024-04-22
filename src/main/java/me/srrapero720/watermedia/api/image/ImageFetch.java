@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.api.image;
 
+import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
@@ -7,7 +8,6 @@ import me.srrapero720.watermedia.core.CacheCore;
 import me.srrapero720.watermedia.core.tools.DataTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import watermod.concurrent.ThreadCore;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
