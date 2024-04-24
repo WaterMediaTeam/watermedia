@@ -8,7 +8,10 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -50,18 +53,24 @@ public class RenderAPI extends WaterMediaAPI {
         }
     }
 
-    public static ByteBuffer putImageByteBuffer(ByteBuffer byteBuffer, BufferedImage image) {
-        int width = image.getWidth();
-        int height = image.getHeight();
+    public static BufferedImage convertImageFormat(BufferedImage originalImage) {
+        // If image type is already good then no conversion needed, so we use the original image.
+        if(originalImage.getType() == BufferedImage.TYPE_INT_ARGB) return originalImage;
 
-        byteBuffer.clear();
-        IntBuffer buffer = byteBuffer.asIntBuffer();
-        int[] pixels = new int[width];
-        for (int y = 0; y < height; y++)
-        {
-            image.getRGB(0, y, width, 1, pixels, 0, width);
-            buffer.put(pixels);
-        }
+        // Convert the image to the expected format.
+        BufferedImage newImage = new BufferedImage(originalImage.getWidth(), 
+                originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = newImage.getGraphics();
+        g.drawImage(originalImage, 0, 0, null);
+        g.dispose();
+        return newImage;
+    }
+
+    public static ByteBuffer putImageByteBuffer(ByteBuffer byteBuffer, BufferedImage image) {
+        BufferedImage newImage = convertImageFormat(image);
+        DataBufferInt buffer = (DataBufferInt) newImage.getData().getDataBuffer();        
+        byteBuffer.clear();     
+        byteBuffer.asIntBuffer().put(buffer.getData());
         ((Buffer) byteBuffer).flip();
         return byteBuffer;
     }
