@@ -41,7 +41,7 @@ public enum OperativeSystem {
 
     public static boolean isWrapped() { return OS.wrapped; }
     public static boolean isMerged() { return OS.merged; }
-    public static String getFile() { return (isMerged() ? getName() + "-merged" : getName() + "-" + getArch()) + ".7z"; }
+    public static String getFile() { return (isMerged() ? getName() + "-all" : getName() + "-" + getArch()) + ".7z"; }
     public static String getName() { return OS.name; }
     public static String getArch() { return OS.arch; }
 
