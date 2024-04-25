@@ -27,9 +27,8 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class PlayerAPI extends WaterMediaAPI {
     private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());
-    private static final String VIDEOLAN_CFG_NAME = "version.cfg";
     private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OperativeSystem.getFile();
-    private static final String VIDEOLAN_VER_ASSET = "/videolan/" + VIDEOLAN_CFG_NAME;
+    private static final String VIDEOLAN_VER_ASSET = "videolan/version.cfg";
 
     private static final Map<String, String> ARGVARS = new HashMap<>();
 
@@ -92,7 +91,7 @@ public class PlayerAPI extends WaterMediaAPI {
         this.logs = dir.toAbsolutePath().resolve("logs/videolan.log");
 
         this.zipOutputFile = bootstrap.tempDir().resolve(VIDEOLAN_BIN_ASSET).toFile();
-        this.configOutputFile = zipOutputFile.toPath().getParent().resolve(VIDEOLAN_CFG_NAME).toFile();
+        this.configOutputFile = bootstrap.tempDir().resolve(VIDEOLAN_VER_ASSET).toFile();
     }
 
     @Override
@@ -109,7 +108,7 @@ public class PlayerAPI extends WaterMediaAPI {
         extract = wrapped && !versionMatch;
 
         if (!extract)
-            LOGGER.warn(IT, "VLC binaries extraction skipped, {}", !wrapped ? "binaries are not wrapped" : "extracted binaries version match");
+            LOGGER.warn(IT, "VLC binaries extraction skipped, {}", !wrapped ? "binaries for '" + OperativeSystem.OS + "' are not wrapped" : "extracted binaries version '" + versionInFile + "' match");
 
         return true;
     }
