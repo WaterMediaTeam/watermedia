@@ -14,8 +14,8 @@ public class ImageRenderer {
     public final int[] textures;
     public final long[] delay;
     public final long duration;
-    public final BufferedImage image;
-    public GifDecoder decoder;
+    private BufferedImage image;
+    private GifDecoder decoder;
 
     public int remaining;
 
@@ -81,7 +81,7 @@ public class ImageRenderer {
     }
 
     /**
-     * gets texture id from texture array
+     * gets texture id from a texture array
      * @param index image index
      * @return texture id usable on OpenGL
      */
@@ -89,9 +89,10 @@ public class ImageRenderer {
         if (this.textures[index] == -1) {
             if (decoder != null) {
                 this.textures[index] = RenderAPI.applyBuffer(this.decoder.getFrame(index), width, height);
-                if (--this.remaining <= 0) decoder = null;
+                if (--this.remaining <= 0) decoder = null; // uploaded in VRAM
             } else if (image != null) {
                 this.textures[index] = RenderAPI.applyBuffer(this.image, width, height);
+                image = null; // uploaded in VRAM
             }
         }
         return textures[index];
@@ -106,6 +107,23 @@ public class ImageRenderer {
      * @return OpenGL texture ID
      */
     public int texture(long tick, long deltaTime, boolean loop) {
+        long time = (tick * 50L) + deltaTime;
+        if (duration > 0 && time > duration && loop) time %= duration;
+        return texture(time);
+    }
+
+    /**
+     * Calculate texture based on tick time (1s/20t) plus deltaTime (missing ms on ticks)
+     * make tick count by yourself
+     * @param tick Tick count
+     * @param deltaTime extra ms to add
+     * @param loop enable looping if tick count overflows duration
+     * @deprecated <p>Tick type was changed from int to long following the time counting standard.</p>
+     * Use instead {@link ImageRenderer#texture(long, long, boolean)}
+     * @return OpenGL texture ID
+     */
+    @Deprecated
+    public int texture(int tick, long deltaTime, boolean loop) {
         long time = (tick * 50L) + deltaTime;
         if (duration > 0 && time > duration && loop) time %= duration;
         return texture(time);
