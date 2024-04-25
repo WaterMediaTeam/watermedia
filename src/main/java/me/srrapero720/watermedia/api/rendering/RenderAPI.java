@@ -5,6 +5,7 @@ import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
 import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.commons.lang3.NotImplementedException;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -50,29 +51,8 @@ public class RenderAPI extends WaterMediaAPI {
         }
     }
 
-    public static ByteBuffer putImageByteBuffer(ByteBuffer byteBuffer, BufferedImage image) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        byteBuffer.clear();
-        IntBuffer buffer = byteBuffer.asIntBuffer();
-        int[] pixels = new int[width];
-        for (int y = 0; y < height; y++)
-        {
-            image.getRGB(0, y, width, 1, pixels, 0, width);
-            buffer.put(pixels);
-        }
-        ((Buffer) byteBuffer).flip();
-        return byteBuffer;
-    }
-
-    public static ByteBuffer createImageByteBuffer(BufferedImage image) {
-        ByteBuffer byteBuffer = createByteBuffer(image.getWidth() * image.getHeight() * 4);
-        putImageByteBuffer(byteBuffer, image);
-        return byteBuffer;
-    }
-
     /**
+     * Created by CreativeMD
      * Creates a new texture id based on a {@link BufferedImage} instance
      * (used internally by {@link ImageRenderer}
      * @param image image to process
@@ -81,7 +61,30 @@ public class RenderAPI extends WaterMediaAPI {
      * @return texture id for OpenGL
      */
     public static int applyBuffer(BufferedImage image, int width, int height) {
-        ByteBuffer buffer = createImageByteBuffer(image);
+        int[] pixels = new int[width * height];
+        image.getRGB(0, 0, width, height, pixels, 0, width);
+        boolean alpha = false;
+
+        if (image.getColorModel().hasAlpha()) for (int pixel : pixels)
+            if ((pixel >> 24 & 0xFF) < 0xFF) {
+                alpha = true;
+                break;
+            }
+
+        int bytesPerPixel = alpha ? 4 : 3;
+        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bytesPerPixel);
+        for (int pixel : pixels) {
+            buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red
+            buffer.put((byte) ((pixel >> 8) & 0xFF)); // Green
+            buffer.put((byte) (pixel & 0xFF)); // Blue
+            if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
+        }
+
+        /*
+         * FLIP method changes what class type returns in new JAVA versions, in runtime causes a JVM crash by that
+         * THIS EXECUTES {@link ByteBuffer#flip }
+         */
+        ((Buffer) buffer).flip();
 
         int textureID = GL11.glGenTextures(); //Generate texture ID
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
@@ -94,13 +97,15 @@ public class RenderAPI extends WaterMediaAPI {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
+        if (!alpha) GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, GL11.GL_ONE);
+
         // prevents random crash; when values are too high it causes a jvm crash, caused weird behavior when game is paused
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
 
         //Send texel data to OpenGL
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, alpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0, alpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
 
         //Return the texture ID, so we can bind it later again
         return textureID;

@@ -36,6 +36,10 @@ repositories {
     mavenCentral()
     maven { url "https://repo.spongepowered.org/maven" }
     maven { url "https://maven.tterrag.com/" }
+    maven {
+        url "https://www.cursemaven.com"
+        content { includeGroup "curse.maven" }
+    }
     maven { url 'https://jitpack.io' }
 }
 
