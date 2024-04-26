@@ -10,6 +10,7 @@ import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
 import me.srrapero720.watermedia.core.tools.IOTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.loaders.ILoader;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.file.PathUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -80,18 +81,18 @@ public class PlayerAPI extends WaterMediaAPI {
     private final Path dir;
     private final Path logs;
 
-    private final File zipOutputFile;
-    private final File configOutputFile;
+    private final File binOutput;
+    private final File cfgOutput;
 
     private boolean extract;
     public PlayerAPI() {
         super();
         ILoader bootstrap = WaterMedia.getLoader();
-        this.dir = bootstrap.tempDir();
-        this.logs = dir.toAbsolutePath().resolve("logs/videolan.log");
+        this.dir = bootstrap.tempDir().resolve("videolan");
+        this.logs = bootstrap.tempDir().resolve("logs/videolan.log");
 
-        this.zipOutputFile = bootstrap.tempDir().resolve(VIDEOLAN_BIN_ASSET).toFile();
-        this.configOutputFile = bootstrap.tempDir().resolve(VIDEOLAN_VER_ASSET).toFile();
+        this.binOutput = bootstrap.tempDir().resolve(VIDEOLAN_BIN_ASSET).toFile();
+        this.cfgOutput = bootstrap.tempDir().resolve(VIDEOLAN_VER_ASSET).toFile();
     }
 
     @Override
@@ -102,13 +103,24 @@ public class PlayerAPI extends WaterMediaAPI {
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
         String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
-        String versionInFile = IOTool.readString(configOutputFile.toPath());
+        String versionInFile = IOTool.readString(cfgOutput.toPath());
         boolean wrapped = OperativeSystem.isWrapped();
         boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
         extract = wrapped && !versionMatch;
 
-        if (!extract)
-            LOGGER.warn(IT, "VLC binaries extraction skipped, {}", !wrapped ? "binaries for '" + OperativeSystem.OS + "' are not wrapped" : "extracted binaries version '" + versionInFile + "' match");
+        LOGGER.info(IT, "Running in {}, binaries are {}", OperativeSystem.OS, wrapped ? "wrapped" : "not wrapped");
+        if (!extract) {
+            String reason = "unknown";
+            if (!wrapped) reason = "binaries are not wrapped";
+            if (versionMatch) reason = "extracted version match with wrapped version";
+            LOGGER.warn(IT, "VLC binaries extraction skipped. Reason: {}", reason);
+        } else {
+            if (binOutput.getParentFile().exists()) {
+                LOGGER.warn(IT, "Detected an old installation, cleaning up...");
+                FileUtils.deleteDirectory(binOutput.getParentFile());
+                LOGGER.warn(IT, "Cleaning up successfully");
+            }
+        }
 
         return true;
     }
@@ -117,13 +129,15 @@ public class PlayerAPI extends WaterMediaAPI {
     public void start(ILoader bootCore) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
-            if ((!zipOutputFile.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, zipOutputFile.toPath())) || zipOutputFile.exists()) {
-                IOTool.unzip(IT, zipOutputFile.toPath());
-                zipOutputFile.deleteOnExit();
+            if ((!binOutput.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, binOutput.toPath())) || binOutput.exists()) {
+                IOTool.unzip(IT, binOutput.toPath());
+                binOutput.delete();
 
-                JarTool.copyAsset(VIDEOLAN_VER_ASSET, configOutputFile.toPath());
+                JarTool.copyAsset(VIDEOLAN_VER_ASSET, cfgOutput.toPath());
 
                 LOGGER.info(IT, "VideoLAN binaries extracted successfully");
+            } else {
+                LOGGER.error(IT, "Failed to extract VideoLAN binaries");
             }
         }
 
@@ -139,7 +153,7 @@ public class PlayerAPI extends WaterMediaAPI {
         }
 
         // VLCJ INIT
-        VideoLan4J.init(dir.toAbsolutePath().resolve("videolan/"));
+        VideoLan4J.init(dir.toAbsolutePath());
 
         // VLC INIT, this need to be soft-crashed because api and game can still work without VLC
         try {
