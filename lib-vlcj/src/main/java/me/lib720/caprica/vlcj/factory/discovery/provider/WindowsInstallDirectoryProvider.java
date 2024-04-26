@@ -22,6 +22,9 @@ package me.lib720.caprica.vlcj.factory.discovery.provider;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 import me.lib720.caprica.vlcj.binding.RuntimeUtil;
+import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
+
+import java.io.File;
 
 /**
  * Implementation of a directory provider that uses the native Windows Registry to locate the VLC installation directory
@@ -69,6 +72,20 @@ public class WindowsInstallDirectoryProvider implements DiscoveryDirectoryProvid
             return Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, VLC_REGISTRY_KEY, VLC_INSTALL_DIR_KEY);
         }
         catch(Exception e) {
+            NativeDiscovery.LOGGER.error("Failed to get VLC installation path from HKEY_LOCAL_MACHINE: {}", e.getMessage());
+            NativeDiscovery.LOGGER.warn("Recurring to fallback system...");
+
+            if (new File("C:\\Program Files\\VideoLAN\\VLC").exists()) {
+                NativeDiscovery.LOGGER.info("VLC well-know installation folder founded.");
+                return "C:\\Program Files\\VideoLAN\\VLC";
+            }
+
+            if (new File("C:\\Program Files (x86)\\VideoLAN\\VLC").exists()) {
+                NativeDiscovery.LOGGER.info("VLC well-know installation folder founded.");
+                NativeDiscovery.LOGGER.warn("DEPRECATION NOTICE: x32 is not longer supported. Please switch to an x64 installation");
+                return "C:\\Program Files (x86)\\VideoLAN\\VLC";
+            }
+            NativeDiscovery.LOGGER.warn("Fallback system failed... delegating decision to NativeDiscovery");
             return null;
         }
     }
