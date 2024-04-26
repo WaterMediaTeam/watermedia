@@ -20,6 +20,9 @@ public class WaterMedia {
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
 	private static final List<ClassLoader> CLASS_LOADERS = new ArrayList<>();
+
+	private static final String NO_BOOT_NAME = "watermedia.disableBoot";
+	private static final boolean NO_BOOT = Boolean.parseBoolean(System.getProperty(NO_BOOT_NAME));
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -41,6 +44,11 @@ public class WaterMedia {
 	}
 
 	public void start() throws Exception {
+		if (NO_BOOT) {
+			LOGGER.error(IT, "Refusing to bootstrap WATERMeDIA, detected D{}=true", NO_BOOT_NAME);
+			return;
+		}
+
 		List<WaterMediaAPI> modules = DataTool.toList(ServiceLoader.load(WaterMediaAPI.class));
 		modules.sort(Comparator.comparingInt(e -> e.priority().ordinal()));
 
