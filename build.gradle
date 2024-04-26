@@ -115,6 +115,7 @@ shadowJar {
     relocate 'com.fasterxml', 'me.lib720'
     relocate 'org.apache.commons.compress', 'me.lib720.apache.compress'
     relocate 'org.apache.commons.codec', 'me.lib720.apache.codec'
+    relocate 'org.apache.commons.io.file.attribute', 'me.lib720.apache.io.file.attribute'
     relocate 'org.tukaani', 'me.lib720.tukaani'
 
     exclude "META-INF/versions/**"
