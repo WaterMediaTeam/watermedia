@@ -2,7 +2,7 @@
 - Added back ``Dwatermedia.disableBoot`` jvm argument (deleted accidentally in 2.0.40)
 - Reverted whole PBO implementation due to artifacts and FPS drops
 - Downgrade VLC binaries for macOS to 3.0.18 (fix crashes on VLC)
-- Fixed PlayerAPI can't find wrapped binaries for macOS due to a wrong file name.
+- Fixed PlayerAPI can't extract VLC binaries for macOS due to a wrong file name.
 - Added Fallback system on windows when VLC installation path is missing in the Windows Registries
 - Do a proper cleanup when VLC is about to (re)extract
 - Rid off BufferedImage allocation from RAM when the picture is alredy in VRAM
