@@ -2,7 +2,6 @@
   "--quiet",
 
   "--no-file-logging",
-  "--aout={directsound,mmdevice,waveout}",
 
   "--http-reconnect"
 ]
