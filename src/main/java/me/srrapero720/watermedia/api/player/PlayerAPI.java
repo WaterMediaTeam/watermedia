@@ -132,7 +132,7 @@ public class PlayerAPI extends WaterMediaAPI {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!binOutput.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, binOutput.toPath())) || binOutput.exists()) {
-                IOTool.unzip(IT, binOutput.toPath());
+                IOTool.un7zip(IT, binOutput.toPath());
                 binOutput.delete();
 
                 JarTool.copyAsset(VIDEOLAN_VER_ASSET, cfgOutput.toPath());

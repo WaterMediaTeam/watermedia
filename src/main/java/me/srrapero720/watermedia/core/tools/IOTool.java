@@ -44,9 +44,10 @@ public class IOTool {
         return null;
     }
 
-    public static void un7zip(Path zipFilePath) throws IOException { un7zip(zipFilePath, zipFilePath.getParent()); }
-
-    public static void un7zip(Path zipFilePath, Path destDirectory) throws IOException {
+    public static void un7zip(Marker it, Path zipFilePath) throws IOException { un7zip(it, zipFilePath, zipFilePath.getParent()); }
+    public static void un7zip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
+        LOGGER.debug(it, "Un7zipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
+        if (zipFilePath.toString().endsWith(".zip")) throw new IOException("Attempted to extract a .zip as a .7z");
         File destDir = destDirectory.toFile();
         if (!destDir.exists()) destDir.mkdir();
 
@@ -63,7 +64,7 @@ public class IOTool {
                         un7zip$extract(sevenZFile, outputFile.toPath());
                     }
                 } else {
-                    LOGGER.warn(IT, "Cancelled un7zip attempt of '{}', file already exists", entry.getName());
+                    LOGGER.warn(it, "Cancelled un7zip attempt of '{}', file already exists", entry.getName());
                 }
 
                 entry = sevenZFile.getNextEntry();
@@ -82,10 +83,11 @@ public class IOTool {
     public static void unzip(Marker it, Path zipFilePath) throws IOException { unzip(it, zipFilePath, zipFilePath.getParent()); }
     public static void unzip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
         LOGGER.debug(it, "Unzipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
+        if (zipFilePath.toString().endsWith(".7z")) throw new IOException("Attempted to extract a 7z as a .zip");
         File destDir = destDirectory.toFile();
         if (!destDir.exists()) destDir.mkdirs();
 
-        try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(zipFilePath.toFile().toPath()))) {
+        try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(zipFilePath))) {
             ZipEntry entry = zipIn.getNextEntry();
             // iterates over entries in the zip file
             while (entry != null) {
