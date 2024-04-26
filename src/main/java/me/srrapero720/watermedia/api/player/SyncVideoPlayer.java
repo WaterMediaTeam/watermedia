@@ -175,6 +175,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     @Deprecated
     public void preRender() {
         if (raw() == null) return;
+        if (isPaused()) return; // reduce GL calls when players are paused, rehuse same bufer
         renderLock.lock();
         try {
             if (updateFrame.compareAndSet(true, false))
