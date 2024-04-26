@@ -1,4 +1,13 @@
-# UPDATE 2.0.40
+# UPDATE 2.0.41
+- Added back ``Dwatermedia.disableBoot`` jvm argument (deleted accidentally in 2.0.40)
+- Reverted whole PBO implementation due to artifacts and FPS drops
+- Downgrade VLC binaries for macOS to 3.0.18 (fix crashes on VLC)
+- Fixed PlayerAPI can't find wrapped binaries for macOS due to a wrong file name.
+- Added Fallback system on windows when VLC installation path is missing in the Windows Registries
+- Do a proper cleanup when VLC is about to (re)extract
+- Rid off BufferedImage allocation from RAM when the picture is alredy in VRAM
+
+# UPDATE 2.0.40 (ARCHIVED)
 WACHOUT! BREAKING CHANGES
 - Removed Deprecated methods from WaterMediaAPI
 - Backported v3.0 bootstrap
@@ -7,29 +16,29 @@ WACHOUT! BREAKING CHANGES
 - Enhanced ImageRenderer using PBO for gifs and pictures (by ZenoArrows) [reduces VRAM usage]
 - Reverted Youtube-downloader version to the original version (skipping our fork)
 
-# UPDATE 2.0.32
+# UPDATE 2.0.32 (ARCHIVED)
 - Fixed memoryleak reading strings
 - Reduce ClassLoader usage and impact
 - Optimized picture GPU upload (suggested by Zeno)
 
-# UPDATE 2.0.31
+# UPDATE 2.0.31 (ARCHIVED)
 - Disabled Kick.com and Imgur fixers (Temporally)
 - Removed transitive dependencies and any other not essential dependency (retrofit, jackson databind and others)
 - switch to fork version of yt-downloader
 - disable VLC file logging (also deletes log folders if was founded)
 
-# UPDATE 2.0.30
+# UPDATE 2.0.30 (ARCHIVED)
 - Update dev SETUP
 
-# UPDATE 2.0.29
+# UPDATE 2.0.29 (ARCHIVED)
 - Bump VLC version.cfg (solve MacOS binaries didn't get extracted)
 
-# UPDATE 2.0.28
+# UPDATE 2.0.28 (ARCHIVED)
 - Store classloader on instances instead of static scope
   - May solve issues in 1.12.2 related to security exceptions
 - Fixed MacOS binaries aren't getting extracted
 
-# UPDATE 2.0.27
+# UPDATE 2.0.27 (ARCHIVED)
 - Removed mixins
 - Player API: added ``getBuffer`` and `getBufferLock` in order to get current buffer
 - 1.12.2 boot is not longer async (may reduce booting times)
@@ -42,13 +51,13 @@ WACHOUT! BREAKING CHANGES
 - Added ``-Dwatermedia.disableBoot=<boolean>`` argument
   - When enabled, Disables boot completely, useful for not boot in on DataGen
 
-# UPDATE 2.0.25
+# UPDATE 2.0.25 (CHECKPOINT)
 - Added ease mathematical methods to animate positioning
 - Added scaleTempo methods to calculate in range time scale
 - Rid off DirectSound outside windows
 - Disabled cache on ImageAPI fetch
 
-# UPDATE 2.0.24
+# UPDATE 2.0.24 (ARCHIVED)
 - Fixed wrong DisplayTest, causing WATERMeDIA to be required on server by FORGE
 
 # UPDATE 2.0.23 (ARCHIVED)
