@@ -3,7 +3,7 @@
 - Fixed VLC binaries never got extracted (WM attempts to extract the .7z as a .zip)
 - Fixed 7zip extraction fails due to a missing commons-io class
 - Reverted whole PBO implementation due to artifacts and FPS drops
-- Downgrade VLC binaries for macOS to 3.0.18 (fix crashes on VLC)
+- Downgrade VLC binaries for macOS to 3.0.18 (fix crashes by VLC)
 - Fixed PlayerAPI can't extract VLC binaries for macOS due to a wrong file name.
 - Added Fallback system on windows when VLC installation path is missing in the Windows Registries
 - Do a proper cleanup when VLC is about to (re)extract
@@ -18,7 +18,7 @@ WACHOUT! BREAKING CHANGES
 - Enhanced ImageRenderer using PBO for gifs and pictures (by ZenoArrows) [reduces VRAM usage]
 - Reverted Youtube-downloader version to the original version (skipping our fork)
 
-# UPDATE 2.0.32 (ARCHIVED)
+# UPDATE 2.0.32 (UNRELEASED)
 - Fixed memoryleak reading strings
 - Reduce ClassLoader usage and impact
 - Optimized picture GPU upload (suggested by Zeno)
@@ -29,10 +29,10 @@ WACHOUT! BREAKING CHANGES
 - switch to fork version of yt-downloader
 - disable VLC file logging (also deletes log folders if was founded)
 
-# UPDATE 2.0.30 (ARCHIVED)
+# UPDATE 2.0.30 (UNRELEASED)
 - Update dev SETUP
 
-# UPDATE 2.0.29 (ARCHIVED)
+# UPDATE 2.0.29 (UNRELEASED)
 - Bump VLC version.cfg (solve MacOS binaries didn't get extracted)
 
 # UPDATE 2.0.28 (ARCHIVED)
@@ -49,7 +49,7 @@ WACHOUT! BREAKING CHANGES
   - Experimental: may bindings not work, please report if your OS doesn't work with it
 - Added ``local://`` support, you can load videos and pictures from your game folder using a relative path
 
-# UPDATE 2.0.26
+# UPDATE 2.0.26 (UNRELEASED)
 - Added ``-Dwatermedia.disableBoot=<boolean>`` argument
   - When enabled, Disables boot completely, useful for not boot in on DataGen
 
