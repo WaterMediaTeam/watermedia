@@ -157,7 +157,7 @@ public class PlayerAPI extends WaterMediaAPI {
 
         // VLC INIT, this need to be soft-crashed because api and game can still work without VLC
         try {
-            String[] args = JarTool.readArrayAndParse("/videolan/arguments.json", ARGVARS);
+            String[] args = JarTool.readArrayAndParse("videolan/arguments.json", ARGVARS);
             DEFAULT_FACTORY = customFactory(args);
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);
