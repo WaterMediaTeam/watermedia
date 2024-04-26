@@ -47,7 +47,16 @@ public class WindowsInstallDirectoryProvider implements DiscoveryDirectoryProvid
     @Override
     public String[] directories() {
         String installDir = getVlcInstallDir();
-        return installDir != null ? new String[] {installDir} : new String[0];
+        String userInstallDir = getVlcUserInstallDir();
+        if (installDir != null && userInstallDir != null) {
+            return new String[] { installDir, userInstallDir };
+        } else if (installDir != null) {
+            return new String[] { installDir };
+        } else if (userInstallDir != null) {
+            return new String[] { userInstallDir };
+        } else {
+            return new String[0];
+        }
     }
 
     @Override
@@ -58,6 +67,15 @@ public class WindowsInstallDirectoryProvider implements DiscoveryDirectoryProvid
     private String getVlcInstallDir() {
         try {
             return Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, VLC_REGISTRY_KEY, VLC_INSTALL_DIR_KEY);
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
+
+    private String getVlcUserInstallDir() {
+        try {
+            return Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, VLC_REGISTRY_KEY, VLC_INSTALL_DIR_KEY);
         }
         catch(Exception e) {
             return null;
