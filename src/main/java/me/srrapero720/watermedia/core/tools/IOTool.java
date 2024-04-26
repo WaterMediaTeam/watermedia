@@ -83,7 +83,7 @@ public class IOTool {
     public static void unzip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
         LOGGER.debug(it, "Unzipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
         File destDir = destDirectory.toFile();
-        if (!destDir.exists()) destDir.mkdir();
+        if (!destDir.exists()) destDir.mkdirs();
 
         try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(zipFilePath.toFile().toPath()))) {
             ZipEntry entry = zipIn.getNextEntry();
