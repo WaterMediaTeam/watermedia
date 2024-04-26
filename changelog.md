@@ -1,6 +1,7 @@
 # UPDATE 2.0.41
 - Added back ``Dwatermedia.disableBoot`` jvm argument (deleted accidentally in 2.0.40)
 - Fixed VLC binaries never got extracted (WM attempts to extract the .7z as a .zip)
+- Fixed 7zip extraction fails due to a missing commons-io class
 - Reverted whole PBO implementation due to artifacts and FPS drops
 - Downgrade VLC binaries for macOS to 3.0.18 (fix crashes on VLC)
 - Fixed PlayerAPI can't extract VLC binaries for macOS due to a wrong file name.
