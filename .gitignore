@@ -24,6 +24,7 @@ logs
 run
 lib-tools
 lib-binaries
+lib-ytdownloader
 
 # Files from Forge MDK
 forge*changelog.txt
