@@ -20,6 +20,7 @@
 package me.lib720.caprica.vlcj.factory.discovery.strategy;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,9 +70,9 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
     @Override
     public final String discover() {
         for (String discoveryDirectory : discoveryDirectories()) {
-            LOGGER.info(IT, "Searching on '{}'", discoveryDirectory);
-            if (find(discoveryDirectory)) {
-                return discoveryDirectory;
+            String discoveredDirectory = find(discoveryDirectory);
+            if (discoveredDirectory != null) {
+                return discoveredDirectory;
             }
         }
         return null;
@@ -92,15 +93,53 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
      * @param directoryName name of the directory to search
      * @return <code>true</code> if all required files were found; <code>false</code> otherwise
      */
-    private boolean find(String directoryName) {
+    // WATERMEDIA PATCH - method patched
+    private String find(String directoryName) {
         File dir = new File(directoryName);
+        LOGGER.info(IT, "Searching on '{}'", directoryName);
         if (!dir.exists()) {
-            return false;
+            return null;
         }
         File[] files = dir.listFiles();
+
+        if (Files.isSymbolicLink(dir.toPath())) {
+            try {
+                File symLink = Files.readSymbolicLink(dir.toPath()).toFile();
+                if (symLink.isDirectory()) {
+                    files = symLink.listFiles();
+                    LOGGER.info(IT, "Directory '{}' is a symlink to '{}', reading it...", directoryName, symLink.toPath());
+                }
+            } catch (Exception ignored) {}
+        }
+
         if (files != null) {
-            Set<String> matches = new HashSet<String>(patternsToMatch.length);
-            for (File file : files) {
+            Set<String> matches = new HashSet<>(patternsToMatch.length);
+            for (File file: files) {
+                LOGGER.info(IT, "Searching on subdirectory '{}'", file.toString());
+                // recursively check if folders was under 8
+                File[] subfiles = dir.listFiles();
+                if (subfiles != null) {
+                    if (subfiles.length > 8) {
+                        LOGGER.info(IT, "Skipped subdirectory '{}', contains more than 8 entries", file.toString());
+                        continue;
+                    }
+                    for (File subfile: subfiles) {
+                        for (Pattern pattern : patternsToMatch) {
+                            Matcher matcher = pattern.matcher(subfile.getName());
+                            if (matcher.matches()) {
+                                // A match was found for this pattern (note that it may be possible to match multiple times, any
+                                // one of those matches will do so a Set is used to ignore duplicates)
+                                matches.add(pattern.pattern());
+                                if (matches.size() == patternsToMatch.length) {
+                                    return subfile.toString();
+                                }
+                            }
+                        }
+                    }
+                    continue;
+                }
+
+                // check files directly
                 for (Pattern pattern : patternsToMatch) {
                     Matcher matcher = pattern.matcher(file.getName());
                     if (matcher.matches()) {
@@ -108,13 +147,13 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
                         // one of those matches will do so a Set is used to ignore duplicates)
                         matches.add(pattern.pattern());
                         if (matches.size() == patternsToMatch.length) {
-                            return true;
+                            return directoryName;
                         }
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 
     @Override
