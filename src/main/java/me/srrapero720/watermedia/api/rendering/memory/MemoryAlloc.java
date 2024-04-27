@@ -28,4 +28,10 @@ public class MemoryAlloc {
             return MemoryUtil.memByteBuffer(i, pByteSize);
         }
     }
+
+    public static void free(ByteBuffer pBuffer) {
+        if (ALLOCATOR == null) ALLOCATOR = MemoryUtil.getAllocator(false);
+
+        ALLOCATOR.free(MemoryUtil.memAddress0(pBuffer));
+    }
 }

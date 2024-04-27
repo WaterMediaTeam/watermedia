@@ -1,26 +1,49 @@
 package me.srrapero720.watermedia.api.rendering;
 
+import jdk.internal.ref.Cleaner;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
 import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import sun.misc.Unsafe;
+import sun.nio.ch.DirectBuffer;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.awt.image.DataBufferInt;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
  */
 public class RenderAPI extends WaterMediaAPI {
+    public static final Marker IT = MarkerManager.getMarker(RenderAPI.class.getSimpleName());
+
+    //various buffer creation utility functions etc. etc.
+
+    protected static final sun.misc.Unsafe UNSAFE = AccessController.doPrivileged((PrivilegedAction<Unsafe>) () -> {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            return (Unsafe) f.get(null);
+        } catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+    });
 
     /**
      * Creates a DirectByteBuffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
@@ -53,17 +76,30 @@ public class RenderAPI extends WaterMediaAPI {
         }
     }
 
-    public static BufferedImage convertImageFormat(BufferedImage originalImage) {
-        // If image type is already good then no conversion needed, so we use the original image.
-        if(originalImage.getType() == BufferedImage.TYPE_INT_ARGB) return originalImage;
-        
-        // Convert the image to the expected format.
-        BufferedImage newImage = new BufferedImage(originalImage.getWidth(), 
-                originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics g = newImage.getGraphics();
-        g.drawImage(originalImage, 0, 0, null);
-        g.dispose();
-        return newImage;
+    /**
+     * Deletes the direct buffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
+     *
+     * <p>In case class was missing fallbacks into unsafe cleaner</p>
+     * @param buffer buffer to free
+     */
+    public static void freeByteBuffer(ByteBuffer buffer) {
+        try {
+            MemoryAlloc.free(buffer);
+        } catch (Throwable t) {
+            if(!buffer.isDirect()) return;
+            try {
+                DirectBuffer db = (DirectBuffer) buffer;
+                if (db.attachment() != null)
+                    throw new IllegalArgumentException("duplicate or slice");
+
+                Cleaner cleaner = db.cleaner();
+                if (cleaner != null) {
+                    cleaner.clean();
+                }
+            } catch(Throwable ex) {
+                LOGGER.error(IT, "Failed to delete DirectByteBuffer");
+            }
+        }
     }
 
     /**
@@ -78,7 +114,7 @@ public class RenderAPI extends WaterMediaAPI {
     public static int applyBuffer(BufferedImage image, int width, int height) {
         image = convertImageFormat(image);
         int[] pixels = ((DataBufferInt) convertImageFormat(image).getRaster().getDataBuffer()).getData();
-        
+
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
         buffer.asIntBuffer().put(pixels);
 
