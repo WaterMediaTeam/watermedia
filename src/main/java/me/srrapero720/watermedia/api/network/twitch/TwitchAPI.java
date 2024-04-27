@@ -20,7 +20,7 @@ import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
 public class TwitchAPI {
     public static final String GRAPH_QL_URL = "https://gql.twitch.tv/gql";
     public static final String TTV_LIVE_API_URL_TEMPLATE = "https://usher.ttvnw.net/api/channel/hls/%s.m3u8";
-    public static final String TTV_PLAYLIST_API_URL_TEMPLATE = "https://usher.ttvnw.net/vod/s.m3u8";
+    public static final String TTV_PLAYLIST_API_URL_TEMPLATE = "https://usher.ttvnw.net/vod/%s.m3u8";
     public static final String CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 
     private static final Gson gson = new Gson();
