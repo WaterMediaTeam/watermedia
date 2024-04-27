@@ -11,19 +11,15 @@ import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import sun.misc.Unsafe;
 import sun.nio.ch.DirectBuffer;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Field;
 import java.awt.image.DataBufferInt;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -32,18 +28,6 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  */
 public class RenderAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker(RenderAPI.class.getSimpleName());
-
-    //various buffer creation utility functions etc. etc.
-
-    protected static final sun.misc.Unsafe UNSAFE = AccessController.doPrivileged((PrivilegedAction<Unsafe>) () -> {
-        try {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            return (Unsafe) f.get(null);
-        } catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        }
-    });
 
     /**
      * Creates a DirectByteBuffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
@@ -101,6 +85,20 @@ public class RenderAPI extends WaterMediaAPI {
             }
         }
     }
+
+    public static BufferedImage convertImageFormat(BufferedImage originalImage) {
+        // If image type is already good then no conversion needed, so we use the original image.
+        if(originalImage.getType() == BufferedImage.TYPE_INT_ARGB) return originalImage;
+
+        // Convert the image to the expected format.
+        BufferedImage newImage = new BufferedImage(originalImage.getWidth(),
+                originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = newImage.getGraphics();
+        g.drawImage(originalImage, 0, 0, null);
+        g.dispose();
+        return newImage;
+    }
+
 
     /**
      * Created by CreativeMD
