@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.api.rendering;
 
-import jdk.internal.ref.Cleaner;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import sun.nio.ch.DirectBuffer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -72,14 +70,14 @@ public class RenderAPI extends WaterMediaAPI {
         } catch (Throwable t) {
             if(!buffer.isDirect()) return;
             try {
-                DirectBuffer db = (DirectBuffer) buffer;
-                if (db.attachment() != null)
-                    throw new IllegalArgumentException("duplicate or slice");
-
-                Cleaner cleaner = db.cleaner();
-                if (cleaner != null) {
-                    cleaner.clean();
-                }
+//                DirectBuffer db = (DirectBuffer) buffer;
+//                if (db.attachment() != null)
+//                    throw new IllegalArgumentException("duplicate or slice");
+//
+//                Cleaner cleaner = db.cleaner();
+//                if (cleaner != null) {
+//                    cleaner.clean();
+//                }
             } catch(Throwable ex) {
                 LOGGER.error(IT, "Failed to delete DirectByteBuffer");
             }
