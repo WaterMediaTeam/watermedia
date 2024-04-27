@@ -23,7 +23,7 @@ public class TwitterFixer extends URLFixer {
 
     @Override
     public boolean isValid(URL url) {
-        return (url.getHost().equals("www.twitter.com") || url.getHost().equals("twitter.com")) && url.getPath().matches("/[a-zA-Z0-9_]+/status/[0-9]+");
+        return (url.getHost().equals("www.x.com") || url.getHost().equals("x.com") || url.getHost().equals("www.twitter.com") || url.getHost().equals("twitter.com")) && url.getPath().matches("/[a-zA-Z0-9_]+/status/[0-9]+");
     }
 
     @Override

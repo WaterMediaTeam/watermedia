@@ -12,7 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,10 +29,11 @@ public class TwitterAPI {
         URL url = new URL(tweetUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0");
         String response = readResponse(conn);
 
         // Find main.js URL
-        Pattern pattern = Pattern.compile("https://abs.twimg.com/responsive-web/client-web-legacy/main.[^\\.]+.js");
+        Pattern pattern = Pattern.compile("https://abs.twimg.com/responsive-web/client-web/main.[^\\.]+.js");
         Matcher matcher = pattern.matcher(response);
         if (!matcher.find()) {
             throw new Exception("Failed to find main.js file. Tweet url: " + tweetUrl);
