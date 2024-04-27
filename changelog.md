@@ -1,3 +1,13 @@
+# UPDATE 2.0.42
+- Reduced impact of GLTexture, increases loading times and FPS (by zFERDQFREZrzfq and J-RAP)
+- Release memory when videoplayers got released (experimental, report issues)
+- Added back missing methods on MathAPI by the reverts
+- Backported 3.0.0 MathAPI (not backported ease methods)
+- Fixed Twiiter(X) fixers.
+- Fixed Twitch Vods support (by NGoedix)
+- Added back Kick.com fixers (by NGoedix)
+- Make VLCJ scan folders recursively and evaluate symlinks
+
 # UPDATE 2.0.41
 - Added back ``Dwatermedia.disableBoot`` jvm argument (deleted accidentally in 2.0.40)
 - Fixed VLC binaries never got extracted (WM attempts to extract the .7z as a .zip)
