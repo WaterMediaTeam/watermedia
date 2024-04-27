@@ -9,7 +9,9 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -51,6 +53,19 @@ public class RenderAPI extends WaterMediaAPI {
         }
     }
 
+    public static BufferedImage convertImageFormat(BufferedImage originalImage) {
+        // If image type is already good then no conversion needed, so we use the original image.
+        if(originalImage.getType() == BufferedImage.TYPE_INT_ARGB) return originalImage;
+        
+        // Convert the image to the expected format.
+        BufferedImage newImage = new BufferedImage(originalImage.getWidth(), 
+                originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = newImage.getGraphics();
+        g.drawImage(originalImage, 0, 0, null);
+        g.dispose();
+        return newImage;
+    }
+
     /**
      * Created by CreativeMD
      * Creates a new texture id based on a {@link BufferedImage} instance
@@ -61,24 +76,11 @@ public class RenderAPI extends WaterMediaAPI {
      * @return texture id for OpenGL
      */
     public static int applyBuffer(BufferedImage image, int width, int height) {
-        int[] pixels = new int[width * height];
-        image.getRGB(0, 0, width, height, pixels, 0, width);
-        boolean alpha = false;
-
-        if (image.getColorModel().hasAlpha()) for (int pixel : pixels)
-            if ((pixel >> 24 & 0xFF) < 0xFF) {
-                alpha = true;
-                break;
-            }
-
-        int bytesPerPixel = alpha ? 4 : 3;
-        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bytesPerPixel);
-        for (int pixel : pixels) {
-            buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red
-            buffer.put((byte) ((pixel >> 8) & 0xFF)); // Green
-            buffer.put((byte) (pixel & 0xFF)); // Blue
-            if (alpha) buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha
-        }
+        image = convertImageFormat(image);
+        int[] pixels = ((DataBufferInt) convertImageFormat(image).getRaster().getDataBuffer()).getData();
+        
+        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
+        buffer.asIntBuffer().put(pixels);
 
         /*
          * FLIP method changes what class type returns in new JAVA versions, in runtime causes a JVM crash by that
@@ -97,15 +99,13 @@ public class RenderAPI extends WaterMediaAPI {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-        if (!alpha) GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, GL11.GL_ONE);
-
         // prevents random crash; when values are too high it causes a jvm crash, caused weird behavior when game is paused
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
 
         //Send texel data to OpenGL
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, alpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0, alpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
 
         //Return the texture ID, so we can bind it later again
         return textureID;
