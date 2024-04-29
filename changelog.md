@@ -1,3 +1,6 @@
+# UPDATE 2.0.43
+- Fixed VLC discovery and optimize the lookup
+
 # UPDATE 2.0.42
 - Reduced impact of GLTexture, increases loading times and FPS (by zFERDQFREZrzfq and J-RAP)
 - Release memory when videoplayers got released (experimental, report issues)
