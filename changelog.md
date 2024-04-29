@@ -1,3 +1,6 @@
+# UPDATE 2.0.44
+- removed experimental memory dealloc (crashes)
+
 # UPDATE 2.0.43
 - Fixed VLC discovery and optimize the lookup
 
