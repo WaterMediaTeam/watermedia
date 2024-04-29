@@ -82,7 +82,7 @@ public class ImageCache {
             fetch.setOnSuccessCallback(imageRenderer -> {
                 synchronized (fetch) {
                     if (!this.status.equals(Status.LOADING)) {
-                        imageRenderer.release(); // IS SAFE DO THAT WHEN ANY TEX PICTURE ISN'T GENERATED
+                        renderThreadEx.execute(imageRenderer::release);
                         return;
                     }
                     this.renderer = imageRenderer;
