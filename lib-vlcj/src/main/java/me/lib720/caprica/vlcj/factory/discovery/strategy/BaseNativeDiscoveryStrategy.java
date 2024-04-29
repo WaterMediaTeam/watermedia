@@ -21,6 +21,7 @@ package me.lib720.caprica.vlcj.factory.discovery.strategy;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,6 +86,18 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
      */
     protected abstract List<String> discoveryDirectories();
 
+    private static File getSymLinkPath(Path path) {
+        if (!Files.isSymbolicLink(path)) return null;
+        try {
+            File symLink = Files.readSymbolicLink(path).toFile();
+            if (symLink.isDirectory()) {
+                LOGGER.info(IT, "Directory '{}' is a symlink to '{}'", path.toString(), symLink.toPath());
+                return symLink;
+            }
+        } catch (Exception ignored) {}
+        return null;
+    }
+
     /**
      * Attempt to match all required files in a particular directory.
      * <p>
@@ -95,64 +108,58 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
      */
     // WATERMEDIA PATCH - method patched
     private String find(String directoryName) {
-        File dir = new File(directoryName);
+        File[] rootFolder = new File(directoryName).listFiles();
+        if (rootFolder == null) return null;
+
         LOGGER.info(IT, "Searching on '{}'", directoryName);
-        if (!dir.exists()) {
-            return null;
-        }
-        File[] files = dir.listFiles();
 
-        if (Files.isSymbolicLink(dir.toPath())) {
-            try {
-                File symLink = Files.readSymbolicLink(dir.toPath()).toFile();
-                if (symLink.isDirectory()) {
-                    files = symLink.listFiles();
-                    LOGGER.info(IT, "Directory '{}' is a symlink to '{}', reading it...", directoryName, symLink.toPath());
-                }
-            } catch (Exception ignored) {}
-        }
-
-        if (files != null) {
-            Set<String> matches = new HashSet<>(patternsToMatch.length);
-            for (File file: files) {
-                LOGGER.info(IT, "Searching on subdirectory '{}'", file.toString());
-                // recursively check if folders was under 8
-                File[] subfiles = dir.listFiles();
-                if (subfiles != null) {
-                    if (subfiles.length > 8) {
-                        LOGGER.info(IT, "Skipped subdirectory '{}', contains more than 8 entries", file.toString());
-                        continue;
+        Set<String> matches = new HashSet<>(patternsToMatch.length);
+        for (File mainFile: rootFolder) {
+            if (mainFile.isDirectory()) continue;
+            // check files directly
+            for (Pattern pattern : patternsToMatch) {
+                Matcher matcher = pattern.matcher(mainFile.getName());
+                if (matcher.matches()) {
+                    // A match was found for this pattern (note that it may be possible to match multiple times, any
+                    // one of those matches will do so a Set is used to ignore duplicates)
+                    matches.add(pattern.pattern());
+                    if (matches.size() == patternsToMatch.length) {
+                        return directoryName;
                     }
-                    for (File subfile: subfiles) {
-                        for (Pattern pattern : patternsToMatch) {
-                            Matcher matcher = pattern.matcher(subfile.getName());
-                            if (matcher.matches()) {
-                                // A match was found for this pattern (note that it may be possible to match multiple times, any
-                                // one of those matches will do so a Set is used to ignore duplicates)
-                                matches.add(pattern.pattern());
-                                if (matches.size() == patternsToMatch.length) {
-                                    return subfile.toString();
-                                }
-                            }
-                        }
-                    }
-                    continue;
                 }
+            }
+        }
 
-                // check files directly
-                for (Pattern pattern : patternsToMatch) {
-                    Matcher matcher = pattern.matcher(file.getName());
+        // NOTHING FOUND? CHECK RECURSIVELY
+        for (File mainFile: rootFolder) {
+            File symFile = getSymLinkPath(mainFile.toPath());
+            if (symFile != null) mainFile = symFile;
+
+            File[] subFolders = mainFile.listFiles();
+            if (subFolders == null) return null;
+
+            if (subFolders.length > 8) {
+                LOGGER.debug(IT, "Skipped subdirectory '{}', contains more than 8 entries", mainFile.toString());
+                continue;
+            }
+            LOGGER.info(IT, "Searching on subdirectory '{}'", mainFile.toString());
+            Set<String> subMatches = new HashSet<>(patternsToMatch.length);
+            for (File subFile: subFolders) {
+                for (Pattern pattern: patternsToMatch) {
+                    Matcher matcher = pattern.matcher(subFile.getName());
                     if (matcher.matches()) {
                         // A match was found for this pattern (note that it may be possible to match multiple times, any
                         // one of those matches will do so a Set is used to ignore duplicates)
-                        matches.add(pattern.pattern());
-                        if (matches.size() == patternsToMatch.length) {
-                            return directoryName;
+                        subMatches.add(pattern.pattern());
+                        if (subMatches.size() == patternsToMatch.length) {
+                            return mainFile.toPath().toAbsolutePath().toString();
                         }
                     }
                 }
             }
         }
+
+
         return null;
     }
 
