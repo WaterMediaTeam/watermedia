@@ -32,6 +32,8 @@ public class LinuxWellKnownDirectoryProvider extends WellKnownDirectoryProvider 
             "/usr/local/lib64",
             "/usr/lib/i386-linux-gnu",
             "/usr/lib",
+            "/usr/lib/vlc",
+            "/usr/bin/",
             "/usr/local/lib",
             "/bin" // WATERMeDIA PATCH - Adds pacman dir support
     };
