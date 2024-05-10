@@ -116,6 +116,7 @@ public final class NativeUri {
      * @return encoded value
      */
     private static String toLocalFileUri(String value) {
+        value = value.replaceFirst("file:(/{1,3})", "");
         String asciiString = new File(value).toURI().toASCIIString();
         if (asciiString.startsWith("file://")) {
             // URI already starts with "file://", so simply return the ASCII string

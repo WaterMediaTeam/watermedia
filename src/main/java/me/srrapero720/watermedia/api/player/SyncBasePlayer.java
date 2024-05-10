@@ -17,8 +17,6 @@ import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.io.File;
-
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public abstract class SyncBasePlayer {
@@ -26,12 +24,11 @@ public abstract class SyncBasePlayer {
     protected static final WaterMediaPlayerEventListener LISTENER = new WaterMediaPlayerEventListener();
 
     // PLAYER
-    protected String url;
+    protected volatile String url;
     private volatile CallbackMediaPlayerComponent raw;
     public CallbackMediaPlayerComponent raw() { return raw; }
 
     // PLAYER THREAD
-    protected volatile boolean sfixer = false;
     protected volatile boolean live = false;
     protected volatile boolean started = false;
 
@@ -71,33 +68,14 @@ public abstract class SyncBasePlayer {
     private boolean rpa(CharSequence url) { // request player action
         if (raw == null) return false;
         try {
-            if (url.toString().startsWith("file:///")) {
-                String compose = url.toString().replace("file:///", "");
+            URLFixer.Result result = UrlAPI.fixURL(url.toString());
+            if (result == null) throw new IllegalArgumentException("Invalid URL");
 
-                File location = new File(compose);
-                if (!location.exists()) return false;
-
-                this.url = url.toString().replace("file:///", "");
-                this.live = false;
-                return true;
-            } else if (url.toString().startsWith("local://")) {
-                String compose = url.toString().replace("local://", "");
-                if (compose.startsWith("/")) compose = compose.substring(1);
-
-                File location = new File(compose);
-                if (!location.exists()) return false;
-
-                this.url = location.toPath().toString();
-                this.live = false;
-                return true;
-            } else {
-                URLFixer.Result result = UrlAPI.fixURL(url.toString(), sfixer);
-                if (result == null) throw new IllegalArgumentException("Invalid URL");
-
-                this.url = result.url.toString();
-                live = result.assumeStream;
-                return true;
-            }
+            String resultUrl = result.url.toString();
+            this.url = resultUrl;
+            if (resultUrl.startsWith("file:/")) this.url = resultUrl.substring("file:/".length());
+            live = result.assumeStream;
+            return true;
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load player", e);
             return false;
@@ -106,7 +84,7 @@ public abstract class SyncBasePlayer {
 
     public void start(CharSequence url) { this.start(url, new String[0]); }
     public void start(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(3, () -> {
+        ThreadCore.thread(Thread.MIN_PRIORITY, () -> {
             if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
@@ -114,19 +92,10 @@ public abstract class SyncBasePlayer {
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(3, () -> {
+        ThreadCore.thread(Thread.MIN_PRIORITY, () -> {
             if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
-    }
-
-    /**
-     * Enables NOTHING SPECIAL fixers of WATERMeDIA
-     * CAREFUL: This method can give you a big trouble.
-     * Keep it disabled by default and configurable by end user
-     */
-    public void enableSpecialFixers() {
-        sfixer = true;
     }
 
     public State getRawPlayerState() {
