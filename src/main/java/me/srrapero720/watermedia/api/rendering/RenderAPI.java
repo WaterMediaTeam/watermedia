@@ -16,10 +16,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
@@ -35,11 +32,7 @@ public class RenderAPI extends WaterMediaAPI {
      * @return DirectByteBuffer
      */
     public static ByteBuffer createByteBuffer(int size) {
-        try {
-            return MemoryAlloc.create(size);
-        } catch (Throwable t) {
-            return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
-        }
+        return MemoryAlloc.create(size);
     }
 
     /**
@@ -51,11 +44,7 @@ public class RenderAPI extends WaterMediaAPI {
      * @return resized DirectByteBuffer
      */
     public static ByteBuffer resizeByteBuffer(ByteBuffer buffer, int newSize) {
-        try {
-            return MemoryAlloc.resize(buffer, newSize);
-        } catch (Throwable t) {
-            throw new NoSuchMethodError("resizeByteBuffer is not available on LWJGL 2.x");
-        }
+        return MemoryAlloc.resize(buffer, newSize);
     }
 
     /**
@@ -65,23 +54,7 @@ public class RenderAPI extends WaterMediaAPI {
      * @param buffer buffer to free
      */
     public static void freeByteBuffer(ByteBuffer buffer) {
-        try {
-            MemoryAlloc.free(buffer);
-        } catch (Throwable t) {
-            if(!buffer.isDirect()) return;
-            try {
-//                DirectBuffer db = (DirectBuffer) buffer;
-//                if (db.attachment() != null)
-//                    throw new IllegalArgumentException("duplicate or slice");
-//
-//                Cleaner cleaner = db.cleaner();
-//                if (cleaner != null) {
-//                    cleaner.clean();
-//                }
-            } catch(Throwable ex) {
-                LOGGER.error(IT, "Failed to delete DirectByteBuffer");
-            }
-        }
+        MemoryAlloc.free(buffer);
     }
 
     public static BufferedImage convertImageFormat(BufferedImage originalImage) {
