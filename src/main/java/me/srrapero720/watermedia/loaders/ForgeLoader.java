@@ -5,8 +5,6 @@ import me.srrapero720.watermedia.core.tools.exceptions.IllegalEnvironmentExcepti
 import me.srrapero720.watermedia.core.tools.exceptions.IllegalTLauncherException;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +16,7 @@ import java.nio.file.Path;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@Mod(modid = WaterMedia.ID, acceptableRemoteVersions = "*", clientSideOnly = true, value = WaterMedia.ID)
+@Mod(value = WaterMedia.ID)
 public class ForgeLoader implements ILoader {
     private static final Marker IT = MarkerManager.getMarker("ForgeLoader");
     private static final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve(WaterMedia.ID);
@@ -58,15 +56,10 @@ public class ForgeLoader implements ILoader {
     public boolean tlcheck() {
         boolean tllike = false;
         try {
-            tllike = Loader.isModLoaded("tlskincape")
-                    || Loader.isModLoaded("tlauncher_custom_cape_skin");
-        } catch (Throwable t) {
-            try {
-                tllike = FMLLoader.getLoadingModList().getModFileById("tlskincape") != null
-                        || FMLLoader.getLoadingModList().getModFileById("tlauncher_custom_cape_skin") != null;
-            } catch (Throwable t2) {
-                LOGGER.error(IT, "Cannot check if TL was installed");
-            }
+            tllike = FMLLoader.getLoadingModList().getModFileById("tlskincape") != null
+                    || FMLLoader.getLoadingModList().getModFileById("tlauncher_custom_cape_skin") != null;
+        } catch (Throwable t2) {
+            LOGGER.error(IT, "Cannot check if TL was installed");
         }
 
         String f = processDir().toAbsolutePath().toString().toLowerCase();
@@ -80,14 +73,10 @@ public class ForgeLoader implements ILoader {
     @Override
     public boolean clientSide() {
         try {
-            return FMLCommonHandler.instance().getSide().isClient();
-        } catch (Throwable t) {
-            try {
-                return FMLLoader.getDist().isClient();
-            } catch (Throwable t2) {
-                LOGGER.error(IT, "Cannot check if was client, assuming it was");
-                return true;
-            }
+            return FMLLoader.getDist().isClient();
+        } catch (Throwable t2) {
+            LOGGER.error(IT, "Cannot check if was client, assuming it was");
+            return true;
         }
     }
 
