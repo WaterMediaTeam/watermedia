@@ -7,7 +7,6 @@ import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -84,7 +83,7 @@ public class RenderAPI extends WaterMediaAPI {
         image = convertImageFormat(image);
         int[] pixels = ((DataBufferInt) convertImageFormat(image).getRaster().getDataBuffer()).getData();
 
-        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
+        ByteBuffer buffer = createByteBuffer(width * height * 4);
         buffer.asIntBuffer().put(pixels);
 
         /*
