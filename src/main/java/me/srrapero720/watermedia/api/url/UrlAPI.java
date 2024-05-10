@@ -27,33 +27,33 @@ public class UrlAPI extends WaterMediaAPI {
      * @return result of the fixed url, null if was a broken URL
      */
     public static URLFixer.Result fixURL(String strUrl) {
-        return fixURL(strUrl, false);
+        return fixURL(strUrl, true);
     }
 
     /**
      * Fixes string url to be stored in a URL and begin usable on VLC
      * @param strUrl string url
-     * @param specials enable special fixers - be aware
+     * @param specials enable special fixers - no longer used
      * @return result of the fixed url, null if was a broken URL
      */
     public static URLFixer.Result fixURL(String strUrl, boolean specials) {
-        if (isValid(strUrl)) {
-            try {
-                URL url = new URL(strUrl);
-                if (strUrl.startsWith("file:///") || strUrl.startsWith("local://")) return new URLFixer.Result(url, false, false);
-                for (URLFixer fixer: FIXERS) {
-                    if (fixer instanceof SpecialFixer && !specials) continue;
-                    if (fixer.isValid(url)) return fixer.patch(url, null);
-                }
-                return new URLFixer.Result(url, false, false);
-            } catch (Exception e) {
-                LOGGER.error(IT, "Exception occurred fixing URL", e);
-                return null;
+        try {
+            if (strUrl.startsWith("local://")) {
+                strUrl = strUrl.substring("local://".length());
+                if (strUrl.startsWith("/")) strUrl = strUrl.substring(1);
+                return new URLFixer.Result(new File(strUrl).toURI().toURL(), false, false);
             }
-        }
 
-        LOGGER.error(IT, "URL doesn't have a valid syntax, cannot be fixed");
-        return null;
+            URL url = new URL(strUrl);
+            if (strUrl.startsWith("file:///")) return new URLFixer.Result(url, false, false);
+            for (URLFixer fixer: FIXERS) {
+                if (fixer.isValid(url)) return fixer.patch(url, null);
+            }
+            return new URLFixer.Result(url, false, false);
+        } catch (Exception e) {
+            LOGGER.error(IT, "Exception occurred fixing URL", e);
+            return null;
+        }
     }
 
     /**
