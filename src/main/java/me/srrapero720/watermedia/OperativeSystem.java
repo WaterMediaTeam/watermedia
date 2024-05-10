@@ -8,13 +8,13 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public enum OperativeSystem {
     WIN_X64("win", "x64", true, false),
-    MAC_X64("mac", "x64", false, true),
-    NIX_X64("nix", "x64", false, false),
+    MAC_X64("mac", "x64", true, true),
+    NIX_X64("nix", "x64", true, false),
     WIN_ARM64("win", "arm64", false, false),
-    MAC_ARM64("mac", "arm64", false, true),
+    MAC_ARM64("mac", "arm64", true, true),
     NIX_ARM64("nix", "arm64", false, false),
     WIN_ARM("win", "arm", false, false),
-    MAC_ARM("mac", "arm", false, false),
+    MAC_ARM("mac", "arm", true, true),
     NIX_ARM("nix", "arm", false, false),
 
     DUMMY("dummy", "dummy", false, false);
