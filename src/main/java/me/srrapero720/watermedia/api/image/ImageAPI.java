@@ -89,6 +89,17 @@ public class ImageAPI extends WaterMediaAPI {
     }
 
     /**
+     * Creates a custom ImageCache instance
+     * DANGER: this instnace is NOT catched internally, this requires your own catching system
+     * @param image BufferedImage instance to store in the Renderer
+     * @param absolute if the renderer should be released running {@link ImageRenderer#release()} nor {@link ImageRenderer#flush()}
+     * @return ImageCache instance with the renderer and no fetch
+     */
+    public static ImageCache createCache(BufferedImage image, boolean absolute) {
+        return new ImageCache(renderer(image, absolute));
+    }
+
+    /**
      * Reloads all ImageCache instanced
      * This might cause lag
      */
