@@ -19,11 +19,12 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 public class SyncVideoPlayer extends SyncBasePlayer {
     private static final Marker IT = MarkerManager.getMarker("SyncVideoPlayer");
 
-    private volatile int texture;
+    private final int texture;
     private volatile int width = 1;
     private volatile int height = 1;
     private volatile ByteBuffer buffer;
     private volatile Throwable exception;
+    private final BufferHelper bufferHelper;
 
     protected final Executor playerThreadEx;
     protected final ReentrantLock renderLock = new ReentrantLock();
@@ -38,7 +39,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * PlayerAPI (including all Players) are intended to be rewrited in 2.1.0
      */
     @Deprecated
-    public SyncVideoPlayer(Executor playerThreadEx) { this(null, playerThreadEx, RenderAPI::createByteBuffer); }
+    public SyncVideoPlayer(Executor playerThreadEx) { this(null, playerThreadEx, DEFAULT_BUFFER_HELPER); }
 
 
     /**
@@ -49,7 +50,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * PlayerAPI (including all Players) are intended to be rewrited in 2.1.0
      */
     @Deprecated
-    public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(factory, playerThreadEx, RenderAPI::createByteBuffer); }
+    public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(factory, playerThreadEx, DEFAULT_BUFFER_HELPER); }
 
     /**
      * Creates a player instance
@@ -72,10 +73,12 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         super();
         this.playerThreadEx = playerThreadEx;
         this.texture = GL11.glGenTextures();
+        this.bufferHelper = bufferHelper;
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
-            renderLock.lock();
+            renderLock.lock(); // we are running in a native thread!! careful
             try {
-                buffer = nativeBuffers[0];
+                ((Buffer) nativeBuffers[0]).rewind();
+                buffer.put(nativeBuffers[0]);
                 ((Buffer) buffer).rewind();
                 updateFrame.set(true);
             } catch (Throwable t) {
@@ -106,7 +109,6 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         });
         if (raw() == null) {
             GL11.glDeleteTextures(texture);
-            texture = -1;
         }
     }
 
@@ -133,7 +135,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * always run this on render thread, and before use texture id
      * @deprecated in rendering, doesn't have sense just get texture without pre-render.
      * Now pre-render is collapsed in one method
-     * Use instead {@link #getTexture()}, ensure you store texture ID after execute
+     * Use instead {@link #getGlTexture()}, ensure you store texture ID after execute
      * @return gl texture ID
      */
     @Deprecated
@@ -165,6 +167,10 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         }
     }
 
+    public ReentrantLock getRenderLock() {
+        return renderLock;
+    }
+
     /**
      * Send texture buffer to OpenGL
      * always run this on render thread, and before use texture id
@@ -175,7 +181,6 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     @Deprecated
     public void preRender() {
         if (raw() == null) return;
-        if (isPaused()) return; // reduce GL calls when players are paused, rehuse same bufer
         renderLock.lock();
         try {
             if (updateFrame.compareAndSet(true, false))
@@ -247,11 +252,12 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     public void release() {
         playerThreadEx.execute(() -> {
             GL11.glDeleteTextures(texture);
-            texture = -1;
+            if (bufferHelper == DEFAULT_BUFFER_HELPER) RenderAPI.freeByteBuffer(buffer);
         });
         super.release();
     }
 
     @Deprecated
     public interface BufferHelper { @Deprecated ByteBuffer create(int size); }
+    public static final BufferHelper DEFAULT_BUFFER_HELPER = RenderAPI::createByteBuffer;
 }
