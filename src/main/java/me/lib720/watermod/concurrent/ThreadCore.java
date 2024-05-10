@@ -71,10 +71,15 @@ public class ThreadCore {
 
     public static ThreadFactory factory(String name, int priority) {
         AtomicInteger count = new AtomicInteger();
+        Thread.UncaughtExceptionHandler handler = Thread.currentThread().getUncaughtExceptionHandler();
         return r -> {
             Thread t = new Thread(r);
             t.setName(name + "-" + count.incrementAndGet());
             t.setDaemon(true);
+            t .setUncaughtExceptionHandler(((t1, e2) -> {
+                EXCEPTION_HANDLER.uncaughtException(t1, e2);
+                handler.uncaughtException(t1, e2);
+            }));
             t.setPriority(priority);
             return t;
         };

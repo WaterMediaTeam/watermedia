@@ -1,12 +1,13 @@
 package me.srrapero720.watermedia.core.tools;
 
 import com.sun.jna.Platform;
+import me.lib720.caprica.vlcj.binding.RuntimeUtil;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import me.lib720.caprica.vlcj.binding.RuntimeUtil;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+@Deprecated(forRemoval = true)
 public enum OsTool {
     WIN_X32("win", "x32", ".dll", false),
     WIN_X64("win", "x64", ".dll", true),
