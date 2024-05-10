@@ -152,14 +152,14 @@ public class ImageFetch {
             if (expires != null && !expires.isEmpty()) {
                 try {
                     expTimestamp = FORMAT.parse(expires).getTime();
-                } catch (ParseException ignored) {}
+                } catch (ParseException | NumberFormatException ignored) {}
             }
             // LAST TIMESTAMP
             String lastMod = request.getHeaderField("Last-Modified");
             if (lastMod != null && !lastMod.isEmpty()) {
                 try {
                     lastTimestamp = FORMAT.parse(lastMod).getTime();
-                } catch (ParseException e) {
+                } catch (ParseException | NumberFormatException e) {
                     lastTimestamp = requestTime;
                 }
             } else {
