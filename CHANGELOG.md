@@ -1,3 +1,16 @@
+# UPDATE 2.0.50
+- Fixed missing dep classes (Crashes on 1.16.5)
+- Added back ``math_colorARGB`` on `WaterMediaAPI`
+- Fixed VLC isn't extracted (regression on backport the new bootstrap)
+- Fixed `local://` and `file:/// `wasn't working properly
+- ``SyncVideoPlayer``: added getter for RenderLock
+- ``SyncVideoPlayer``: fixed memoryleaks and some spammy allocations on multiple buffers
+- RenderAPI: removed useless checks (done for 1.12.2 compatibility)
+- RenderAPI: use MemoryAllocator method to store image buffers
+- ImageAPI: added ``createCache`` method: custom image wrapper, is not cached internally
+- New experimental player class: ``VideoPlayer``
+  - It uses a PBO implementation (not approved by ZenoArrow yet)
+
 # UPDATE 2.0.44
 - removed experimental memory dealloc (crashes)
 
