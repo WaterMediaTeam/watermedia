@@ -163,12 +163,16 @@ task curseforge(type: TaskPublishCurseForge) {
     apiToken = System.getenv("CURSEFORGE_TOKEN") != null ? System.getenv("CURSEFORGE_TOKEN") : "empty"
 
     // MAIN FILE
-    def mainFile = upload(curseforgeid, jar)
+    def mainFile = upload(curseforgeid, shadowJar)
     mainFile.displayName = modnamebig + "/" + modversion
     mainFile.changelog = getChangelogText(false)
     mainFile.changelogType = "markdown"
     mainFile.addModLoader("Forge")
     mainFile.addModLoader("NeoForge")
+    mainFile.addJavaVersion("Java 21")
+    mainFile.addJavaVersion("Java 17")
+    mainFile.addJavaVersion("Java 11")
+    mainFile.addJavaVersion("Java 8")
     mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "client")
     mainFile.addIncompatibility("fancyvideo-api")
     mainFile.releaseType = modversiontype
@@ -180,9 +184,9 @@ modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     versionName = modnamebig + "/" + modversion
     projectId = modrinthid
-    versionNumber = mcversion + "-" + modversion
+    versionNumber = modversion
     versionType = versiontype
-    uploadFile = jar
+    uploadFile = shadowJar
     gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1" ]
     changelog = getChangelogText(true)
     loaders = [ "forge", "neoforge" ]

@@ -1,6 +1,6 @@
 # UPDATE 2.0.50
-- Fixed missing dep classes (Crashes on 1.16.5)
-- Added back ``math_colorARGB`` on `WaterMediaAPI`
+- Fixed missing dependencies classes (the annoying crashes on 1.16.5)
+- Added back ``math_colorARGB`` on `WaterMediaAPI` (stops crashes on VideoPlayer and outdated versions of some mods)
 - Fixed VLC isn't extracted (regression on backport the new bootstrap)
 - Fixed `local://` and `file:/// `wasn't working properly
 - `SyncVideoPlayer`: Added getter for RenderLock
