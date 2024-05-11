@@ -1,3 +1,8 @@
+# UPDATE 2.0.51
+- Fixed online URLs aren't working
+- [VLCJ]\: Changed mrl type from String to URL all `prepare` methods and its usages
+  - Devs: If you use the WATERMeDIA API and not the direct VLCJ you have nothing to care about :)
+
 # UPDATE 2.0.50
 - Fixed missing dependencies classes (the annoying crashes on 1.16.5)
 - Added back ``math_colorARGB`` on `WaterMediaAPI` (stops crashes on VideoPlayer and outdated versions of some mods)
