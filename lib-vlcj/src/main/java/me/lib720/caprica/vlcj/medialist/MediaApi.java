@@ -27,6 +27,7 @@ import me.lib720.caprica.vlcj.media.MediaFactory;
 import me.lib720.caprica.vlcj.media.MediaRef;
 import me.lib720.caprica.vlcj.media.callback.CallbackMedia;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public final class MediaApi extends BaseApi {
      * @param options options to add to the media
      * @return <code>true</code> if successful; <code>false</code> if error
      */
-    public boolean add(String mrl, String... options) {
+    public boolean add(URL mrl, String... options) {
         return add(MediaFactory.newMediaRef(libvlcInstance, mrl, options));
     }
 
@@ -103,7 +104,7 @@ public final class MediaApi extends BaseApi {
      * @param options options to add to the media
      * @return <code>true</code> if successful; <code>false</code> if error
      */
-    public boolean insert(int index, String mrl, String... options) {
+    public boolean insert(int index, URL mrl, String... options) {
         return insert(index, MediaFactory.newMediaRef(libvlcInstance, mrl, options));
     }
 

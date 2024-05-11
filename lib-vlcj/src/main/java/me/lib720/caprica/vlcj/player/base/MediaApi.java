@@ -23,19 +23,10 @@ import me.lib720.caprica.vlcj.binding.LibVlc;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_media_t;
 import me.lib720.caprica.vlcj.media.EventApi;
 import me.lib720.caprica.vlcj.media.SubitemApi;
+import me.lib720.caprica.vlcj.media.*;
 import me.lib720.caprica.vlcj.media.callback.CallbackMedia;
-import me.lib720.caprica.vlcj.media.InfoApi;
-import me.lib720.caprica.vlcj.media.Media;
-import me.lib720.caprica.vlcj.media.MediaEventListener;
-import me.lib720.caprica.vlcj.media.MediaFactory;
-import me.lib720.caprica.vlcj.media.MediaRef;
-import me.lib720.caprica.vlcj.media.MediaSlavePriority;
-import me.lib720.caprica.vlcj.media.MediaSlaveType;
-import me.lib720.caprica.vlcj.media.MetaApi;
-import me.lib720.caprica.vlcj.media.OptionsApi;
-import me.lib720.caprica.vlcj.media.ParseApi;
-import me.lib720.caprica.vlcj.media.SlaveApi;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +70,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean prepare(String mrl, String... options) {
+    public boolean prepare(URL mrl, String... options) {
         return changeMedia(MediaFactory.newMedia(libvlcInstance, mrl, options));
     }
 
@@ -90,7 +81,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean play(String mrl, String... options) {
+    public boolean play(URL mrl, String... options) {
         if (prepare(mrl, options)) {
             return play();
         } else {
@@ -107,7 +98,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean start(String mrl, String... options) {
+    public boolean start(URL mrl, String... options) {
         if (prepare(mrl, options)) {
             return start();
         } else {
@@ -221,7 +212,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean startPaused(String mrl, String... options) {
+    public boolean startPaused(URL mrl, String... options) {
         // Starting with start-paused will generate a "playing" event, which this start call waits for
         boolean started = start(mrl, startPausedOptions(options));
         if (started) {

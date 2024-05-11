@@ -27,6 +27,8 @@ import me.lib720.caprica.vlcj.medialist.MediaList;
 import me.lib720.caprica.vlcj.medialist.MediaListFactory;
 import me.lib720.caprica.vlcj.medialist.MediaListRef;
 
+import java.net.URL;
+
 /**
  * Behaviour pertaining to creation of various types of media and media lists.
  */
@@ -45,7 +47,7 @@ public final class MediaApi extends BaseApi {
      * @param options options to add to the media
      * @return media reference, or <code>null</code> on error
      */
-    public MediaRef newMediaRef(String mrl, String... options) {
+    public MediaRef newMediaRef(URL mrl, String... options) {
         return MediaFactory.newMediaRef(libvlcInstance, mrl, options);
     }
 
@@ -104,7 +106,7 @@ public final class MediaApi extends BaseApi {
      * @param options options to add to the media
      * @return media, or <code>null</code> on error
      */
-    public Media newMedia(String mrl, String... options) {
+    public Media newMedia(URL mrl, String... options) {
         return MediaFactory.newMedia(libvlcInstance, mrl, options);
     }
 

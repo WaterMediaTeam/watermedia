@@ -24,6 +24,8 @@ import me.lib720.caprica.vlcj.binding.internal.libvlc_instance_t;
 import me.lib720.caprica.vlcj.binding.internal.libvlc_media_t;
 import me.lib720.caprica.vlcj.media.callback.CallbackMedia;
 
+import java.net.URL;
+
 /**
  * Factory to create {@link Media} and {@link MediaRef} instances.
  * <p>
@@ -62,7 +64,7 @@ public final class MediaFactory {
      * @param options options to add to the media
      * @return media reference
      */
-    public static MediaRef newMediaRef(libvlc_instance_t libvlcInstance, String mrl, String... options) {
+    public static MediaRef newMediaRef(libvlc_instance_t libvlcInstance, URL mrl, String... options) {
         return createMediaRef(libvlcInstance, newMediaInstance(libvlcInstance, mrl), options);
     }
 
@@ -160,7 +162,7 @@ public final class MediaFactory {
      * @param options options to add to the media
      * @return media
      */
-    public static Media newMedia(libvlc_instance_t libvlcInstance, String mrl, String... options) {
+    public static Media newMedia(libvlc_instance_t libvlcInstance, URL mrl, String... options) {
         return createMedia(libvlcInstance, newMediaInstance(libvlcInstance, mrl), options);
     }
 
@@ -230,8 +232,8 @@ public final class MediaFactory {
         return createMedia(libvlcInstance, LibVlc.libvlc_media_duplicate(media.mediaInstance()), options);
     }
 
-    private static libvlc_media_t newMediaInstance(libvlc_instance_t libvlcInstance, String mrl) {
-        mrl = MediaResourceLocator.encodeMrl(mrl);
+    private static libvlc_media_t newMediaInstance(libvlc_instance_t libvlcInstance, URL url) {
+        String mrl = MediaResourceLocator.encodeMrl(url);
         return MediaResourceLocator.isLocation(mrl) ?
             LibVlc.libvlc_media_new_location(libvlcInstance, mrl) :
             LibVlc.libvlc_media_new_path(libvlcInstance, mrl);

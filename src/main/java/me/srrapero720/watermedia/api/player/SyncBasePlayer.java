@@ -10,12 +10,14 @@ import me.lib720.caprica.vlcj.player.base.State;
 import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
-import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
+import me.srrapero720.watermedia.core.tools.ThreadTool;
 import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -24,7 +26,7 @@ public abstract class SyncBasePlayer {
     protected static final WaterMediaPlayerEventListener LISTENER = new WaterMediaPlayerEventListener();
 
     // PLAYER
-    protected volatile String url;
+    protected volatile URL url;
     private volatile CallbackMediaPlayerComponent raw;
     public CallbackMediaPlayerComponent raw() { return raw; }
 
@@ -71,10 +73,8 @@ public abstract class SyncBasePlayer {
             URLFixer.Result result = UrlAPI.fixURL(url.toString());
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
-            String resultUrl = result.url.toString();
-            this.url = resultUrl;
-            if (resultUrl.startsWith("file:/")) this.url = resultUrl.substring("file:/".length());
-            live = result.assumeStream;
+            this.url = result.url;
+            this.live = result.assumeStream;
             return true;
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load player", e);
@@ -84,7 +84,7 @@ public abstract class SyncBasePlayer {
 
     public void start(CharSequence url) { this.start(url, new String[0]); }
     public void start(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(Thread.MIN_PRIORITY, () -> {
+        ThreadTool.thread(Thread.MIN_PRIORITY, () -> {
             if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
@@ -92,7 +92,7 @@ public abstract class SyncBasePlayer {
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        ThreadCore.thread(Thread.MIN_PRIORITY, () -> {
+        ThreadTool.thread(Thread.MIN_PRIORITY, () -> {
             if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
@@ -188,7 +188,7 @@ public abstract class SyncBasePlayer {
     public boolean isLive() {
         if (live) return true;
 
-        if (url.endsWith(".m3u8") || url.endsWith(".m3u")) {
+        if (url.getPath().endsWith(".m3u8") || url.getPath().endsWith(".m3u")) {
             if (getMediaInfoDuration() == -1) return true;
             if (getTime() > getDuration()) return true;
         }
@@ -293,7 +293,7 @@ public abstract class SyncBasePlayer {
 
     public void release() {
         if (raw == null) return;
-        ThreadCore.thread(3, () -> {
+        ThreadTool.thread(Thread.MIN_PRIORITY, () -> {
             while (!started); // WAIT FOR PLAYER START WAS FINISHED
 
             synchronized (this) {

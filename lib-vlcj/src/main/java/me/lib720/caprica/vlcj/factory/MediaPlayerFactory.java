@@ -27,6 +27,7 @@ import me.lib720.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy
 import me.lib720.caprica.vlcj.support.eventmanager.TaskExecutor;
 import me.lib720.caprica.vlcj.support.version.LibVlcVersion;
 
+import java.net.URL;
 import java.util.Collection;
 
 /**
@@ -34,7 +35,7 @@ import java.util.Collection;
  * <p>
  * When using VLC options/arguments to initialise the factory, generally any options that enable/disable modules (e.g.
  * video/audio filters) must be set via the factory instance and not when invoking
- * {@link me.lib720.caprica.vlcj.player.base.MediaApi#play(String, String...)}. However, the module-specific
+ * {@link me.lib720.caprica.vlcj.player.base.MediaApi#play(URL, String...)}. However, the module-specific
  * options <em>may</em> be able to be passed as media options and be effective via that play call.
  * <p>
  * The factory will attempt to automatically discover the location of the required LibVLC native library, so it should
