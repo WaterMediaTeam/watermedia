@@ -61,6 +61,8 @@ public final class NativeUri {
                     result = toLocalFileUri(uri);
                 }
             }
+        } else {
+            if (!result.startsWith("file:///")) result = "file:///" + result;
         }
         return result;
     }
@@ -123,7 +125,9 @@ public final class NativeUri {
             return asciiString;
         } else {
             // URI therefore starts by so replace the bad prefix with a proper one
-            return asciiString.replaceFirst("file:/", "file:///");
+            String url = asciiString.replaceFirst("file:/", "file:///");
+            if (!url.startsWith("file:///")) url = "file:///" + url;
+            return url;
         }
     }
 

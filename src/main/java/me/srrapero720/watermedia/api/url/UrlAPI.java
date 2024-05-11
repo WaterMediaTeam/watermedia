@@ -41,7 +41,9 @@ public class UrlAPI extends WaterMediaAPI {
             if (strUrl.startsWith("local://")) {
                 strUrl = strUrl.substring("local://".length());
                 if (strUrl.startsWith("/")) strUrl = strUrl.substring(1);
-                return new URLFixer.Result(new File(strUrl).toURI().toURL(), false, false);
+                URL url = new File(strUrl).toURI().toURL();
+                LOGGER.debug(IT, "Fixed protocol 'local://' to '{}'", url.toString());
+                return new URLFixer.Result(url, false, false);
             }
 
             URL url = new URL(strUrl);
