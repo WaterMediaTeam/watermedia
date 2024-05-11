@@ -167,12 +167,8 @@ task curseforge(type: TaskPublishCurseForge) {
     mainFile.displayName = modnamebig + "/" + modversion
     mainFile.changelog = getChangelogText(false)
     mainFile.changelogType = "markdown"
-    mainFile.addModLoader("Forge")
-    mainFile.addModLoader("NeoForge")
-    mainFile.addJavaVersion("Java 21")
-    mainFile.addJavaVersion("Java 17")
-    mainFile.addJavaVersion("Java 11")
-    mainFile.addJavaVersion("Java 8")
+    mainFile.addModLoader("Forge", "NeoForge")
+    mainFile.addJavaVersion("Java 21", "Java 17", "Java 11", "Java 8")
     mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "client")
     mainFile.addIncompatibility("fancyvideo-api")
     mainFile.releaseType = modversiontype
@@ -187,9 +183,9 @@ modrinth {
     versionNumber = modversion
     versionType = versiontype
     uploadFile = shadowJar
+    loaders = [ "forge", "neoforge" ]
     gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1" ]
     changelog = getChangelogText(true)
-    loaders = [ "forge", "neoforge" ]
 }
 
 String getChangelogText(boolean latest) {
