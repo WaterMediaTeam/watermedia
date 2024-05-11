@@ -1,5 +1,5 @@
 [
-  "--quiet",
+  "--no-quiet",
 
   "--no-file-logging",
 

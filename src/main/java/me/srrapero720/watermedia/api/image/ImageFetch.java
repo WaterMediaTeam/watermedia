@@ -37,7 +37,7 @@ import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
 public class ImageFetch {
     private static final Marker IT = MarkerManager.getMarker("ImageAPI");
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("WATERMeDIA-if-Worker"));
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("ImageFetch-Worker"));
 
     private final String url;
     private TaskSuccessful successful;

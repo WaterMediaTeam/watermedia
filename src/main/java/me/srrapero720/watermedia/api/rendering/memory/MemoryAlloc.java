@@ -30,6 +30,7 @@ public class MemoryAlloc {
     }
 
     public static void free(ByteBuffer pBuffer) {
+        if (pBuffer == null) return;
         if (ALLOCATOR == null) ALLOCATOR = MemoryUtil.getAllocator(false);
 
         ALLOCATOR.free(MemoryUtil.memAddress0(pBuffer));

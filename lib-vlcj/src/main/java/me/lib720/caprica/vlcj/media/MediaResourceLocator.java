@@ -19,6 +19,7 @@
 
 package me.lib720.caprica.vlcj.media;
 
+import me.lib720.caprica.vlcj.VideoLan4J;
 import me.lib720.caprica.vlcj.binding.NativeUri;
 
 import java.util.regex.Pattern;
@@ -60,7 +61,9 @@ final class MediaResourceLocator {
      * @return the original MRL if no encoding is required, or a percent-encoded file URL
      */
     static String encodeMrl(String mrl) {
-        return NativeUri.encodeUri(mrl);
+        String url = NativeUri.encodeUri(mrl);
+        VideoLan4J.LOGGER.debug("Decoded URL: {}", url);
+        return url;
     }
 
 }
