@@ -3,8 +3,8 @@
 - Added back ``math_colorARGB`` on `WaterMediaAPI`
 - Fixed VLC isn't extracted (regression on backport the new bootstrap)
 - Fixed `local://` and `file:/// `wasn't working properly
-- ``SyncVideoPlayer``: added getter for RenderLock
-- ``SyncVideoPlayer``: fixed memoryleaks and some spammy allocations on multiple buffers
+- `SyncVideoPlayer`: Added getter for RenderLock
+- `SyncVideoPlayer`: Fixed memoryleaks and some spam allocations on multiple buffers
 - RenderAPI: removed useless checks (done for 1.12.2 compatibility)
 - RenderAPI: use MemoryAllocator method to store image buffers
 - ImageAPI: added ``createCache`` method: custom image wrapper, is not cached internally

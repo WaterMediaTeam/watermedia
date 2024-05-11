@@ -154,7 +154,7 @@ jar {
 task upload(type: GradleBuild) {
     description 'Uploads new version to modrinth and curseforge.'
     group = 'publishing'
-    tasks = [ 'curseforge', 'modrinth']
+    tasks = [ 'curseforge', 'modrinth' ]
 }
 
 task curseforge(type: TaskPublishCurseForge) {
