@@ -7,12 +7,13 @@ import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.function.Supplier;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -24,8 +25,17 @@ public class ForgeLoader implements ILoader {
 
     public ForgeLoader() {
         try {
-            ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> "", (incoming, isNetwork) -> true));
-        } catch (Throwable ignored) {}
+            Method pairOf = Class.forName("org.apache.commons.lang3.tuple.Pair").getMethod("of", Object.class, Object.class);
+
+            Supplier<String> stringSupplier = () -> "";
+            Supplier<Boolean> booleanSupplier = () -> true;
+
+            Object o = pairOf.invoke(null, stringSupplier, booleanSupplier);
+
+            ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> o);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to run " + WaterMedia.NAME + " for FORGE: " + e.getMessage(), e);
+        }
 
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
@@ -33,7 +43,7 @@ public class ForgeLoader implements ILoader {
             if (clientSide()) WaterMedia.prepare(this).start();
             else if (!developerMode()) throw new IllegalEnvironmentException();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot run " + WaterMedia.NAME + " for FORGE", e);
+            throw new RuntimeException("Failed to run " + WaterMedia.NAME + " for FORGE: " + e.getMessage(), e);
         }
     }
 

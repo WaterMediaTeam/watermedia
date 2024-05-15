@@ -39,8 +39,17 @@ public class WaterMedia {
 	}
 
 	public static void attachClassLoader(Class<?> classFrom, ClassLoader classLoader) {
+		LOGGER.info(IT, "Attaching new search class loader from {}", classFrom.getName());
 		CLASS_LOADERS.add(classLoader);
-		LOGGER.info(IT, "Attached new search class loader from {}", classFrom.getName());
+	}
+
+	public static void attachClassLoader(ClassLoader classLoader) {
+		LOGGER.info(IT, "Attaching new search class loader from {}", Thread.currentThread().getStackTrace()[2].getClassName());
+		CLASS_LOADERS.add(classLoader);
+	}
+
+	public static List<ClassLoader> getClassLoaders() {
+		return CLASS_LOADERS;
 	}
 
 	public void start() throws Exception {

@@ -8,6 +8,6 @@ public class ModLoadingContext {
     }
 
     public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {}
-    public <T extends Object & IExtensionPoint<T>> void registerExtensionPoint(Class<? extends IExtensionPoint<T>> point, Supplier<T> extension) {
-    }
+//    public <T extends Object & IExtensionPoint<T>> void registerExtensionPoint(Class<? extends IExtensionPoint<T>> point, Supplier<T> extension) {
+//    }
 }
