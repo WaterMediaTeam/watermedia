@@ -7,10 +7,11 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class IllegalEnvironmentException extends Exception {
     public IllegalEnvironmentException() {
-        super(WaterMedia.NAME + "CANNOT be used or installed on SERVER-SIDE. Just remove " + WaterMedia.NAME + " for server, and keep it on client");
-        LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
-        LOGGER.error(IT, "MOD is not designed for server-side, please remove it from server and keep it on client");
-        LOGGER.error(IT, "If other mod requires WaterMedia on server-side, report it immediately with the creator");
-        LOGGER.error(IT, "###########################  ILLEGAL ENVIRONMENT  ###################################");
+        super(WaterMedia.NAME + " CANNOT be installed on SERVER-SIDE. Please remove " + WaterMedia.NAME + " from the server, and keep it on client");
+        LOGGER.fatal(IT, "##############################  ILLEGAL ENVIRONMENT  ######################################");
+        LOGGER.fatal(IT, "{} is not designed to work on server-side, please remove it from server and keep it on client", WaterMedia.NAME);
+        LOGGER.fatal(IT, "Dependent mods can work without {} ON SERVERS, remember keep the mod ONLY ON CLIENT-SIDE", WaterMedia.NAME);
+        LOGGER.fatal(IT, "if dependent mods throws exceptions ON SERVER asking for WATERMeDIA, report it to the creators");
+        LOGGER.fatal(IT, "##############################  ILLEGAL ENVIRONMENT  ######################################");
     }
 }
