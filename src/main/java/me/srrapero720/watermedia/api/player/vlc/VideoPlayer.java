@@ -85,6 +85,7 @@ public class VideoPlayer extends SyncBasePlayer {
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock(); // we are running in a native thread!! careful
             try {
+                if (buffer == null) return;
                 ((Buffer) nativeBuffers[0]).rewind();
                 buffer.put(nativeBuffers[0]);
                 ((Buffer) buffer).rewind();
@@ -284,6 +285,7 @@ public class VideoPlayer extends SyncBasePlayer {
             if (bufferHelper == DEFAULT_BUFFER_HELPER) RenderAPI.freeByteBuffer(buffer);
         });
         super.release();
+        buffer = null;
     }
 
     @Deprecated

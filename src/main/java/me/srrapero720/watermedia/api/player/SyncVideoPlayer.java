@@ -254,9 +254,9 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         playerThreadEx.execute(() -> {
             GL11.glDeleteTextures(texture);
             if (bufferHelper == DEFAULT_BUFFER_HELPER) RenderAPI.freeByteBuffer(buffer);
-            buffer = null;
         });
         super.release();
+        buffer = null;
     }
 
     @Deprecated
