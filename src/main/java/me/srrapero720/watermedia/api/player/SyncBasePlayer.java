@@ -84,7 +84,8 @@ public abstract class SyncBasePlayer {
 
     public void start(CharSequence url) { this.start(url, new String[0]); }
     public void start(CharSequence url, String[] vlcArgs) {
-        ThreadTool.thread(Thread.MIN_PRIORITY, () -> {
+        started = false;
+        ThreadTool.thread(4, () -> {
             if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
         });
@@ -92,7 +93,8 @@ public abstract class SyncBasePlayer {
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
-        ThreadTool.thread(Thread.MIN_PRIORITY, () -> {
+        started = false;
+        ThreadTool.thread(4, () -> {
             if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
         });
@@ -101,6 +103,10 @@ public abstract class SyncBasePlayer {
     public State getRawPlayerState() {
         if (raw == null) return State.ERROR;
         return raw.mediaPlayer().status().state();
+    }
+
+    public void resume() {
+        this.play();
     }
 
     public void play() {
@@ -293,7 +299,7 @@ public abstract class SyncBasePlayer {
 
     public void release() {
         if (raw == null) return;
-        ThreadTool.thread(Thread.MIN_PRIORITY, () -> {
+        ThreadTool.thread(Thread.NORM_PRIORITY, () -> {
             while (!started); // WAIT FOR PLAYER START WAS FINISHED
 
             synchronized (this) {

@@ -77,6 +77,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock(); // we are running in a native thread!! careful
             try {
+                if (buffer == null) return;
                 ((Buffer) nativeBuffers[0]).rewind();
                 buffer.put(nativeBuffers[0]);
                 ((Buffer) buffer).rewind();
@@ -253,6 +254,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         playerThreadEx.execute(() -> {
             GL11.glDeleteTextures(texture);
             if (bufferHelper == DEFAULT_BUFFER_HELPER) RenderAPI.freeByteBuffer(buffer);
+            buffer = null;
         });
         super.release();
     }
