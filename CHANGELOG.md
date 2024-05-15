@@ -1,3 +1,6 @@
+# UPDATE 2.0.53
+- Fixed crashes on minecraft versions above 1.16.5
+
 # UPDATE 2.0.52
 - Fixed the cursed crashes when embeddium is installed
 - Fixed sometimes videos aren't correctly played
