@@ -33,9 +33,7 @@ public class ForgeLoader implements ILoader {
             Object o = pairOf.invoke(null, stringSupplier, booleanSupplier);
 
             ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> o);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to run " + WaterMedia.NAME + " for FORGE: " + e.getMessage(), e);
-        }
+        } catch (Throwable ignored) {}
 
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
