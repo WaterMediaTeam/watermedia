@@ -1,3 +1,9 @@
+# UPDATE 2.0.52
+- Fixed the cursed crashes when embeddium is installed
+- Fixed sometimes videos aren't correctly played
+- Fixed Forge 1.16.5 crashes trying to set the DisplayTest for WATERMeDIA
+- Crashes are now more descriptive (with the real cause)
+
 # UPDATE 2.0.51
 - Fixed online URLs aren't working
 - [VLCJ]\: Changed mrl type from String to URL all `prepare` methods and its usages
