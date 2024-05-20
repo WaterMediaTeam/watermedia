@@ -86,16 +86,24 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
      */
     protected abstract List<String> discoveryDirectories();
 
-    private static File getSymLinkPath(Path path) {
-        if (!Files.isSymbolicLink(path)) return null;
+    /**
+     * Returns the real path of the symlink
+     * if fails or wasn't a symlink, it returns the exact same path as a File
+     * @param path path to the symlink
+     * @return File of the real path or the argument-ed path
+     */
+    private static File getSymLinkPathOrSelf(Path path) {
+        if (!Files.isSymbolicLink(path)) return path.toFile();
         try {
             File symLink = Files.readSymbolicLink(path).toFile();
             if (symLink.isDirectory()) {
-                LOGGER.info(IT, "Directory '{}' is a symlink to '{}'", path.toString(), symLink.toPath());
-                return symLink;
+                LOGGER.warn(IT, "Path '{}' is a directory symlink to '{}'", path.toString(), symLink.toPath());
+            } else {
+                LOGGER.warn(IT, "Path '{}' is a file symlink to '{}'", path.toString(), symLink.toPath());
             }
+            return symLink;
         } catch (Exception ignored) {}
-        return null;
+        return path.toFile();
     }
 
     /**
@@ -108,8 +116,12 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
      */
     // WATERMEDIA PATCH - method patched
     private String find(String directoryName) {
-        File[] rootFolder = new File(directoryName).listFiles();
-        if (rootFolder == null) return null;
+        File rootFile = new File(directoryName);
+        File[] rootFolder = getSymLinkPathOrSelf(rootFile.toPath()).listFiles();
+        if (rootFolder == null) {
+            LOGGER.debug(IT, "Cannot search on '{}', exists: {} - isDirectory: {} - canRead: {} - canExecute: {} ", directoryName, rootFile.exists(), rootFile.isDirectory(), rootFile.canRead(), rootFile.canExecute());
+            return null;
+        }
 
         LOGGER.info(IT, "Searching on '{}'", directoryName);
 
@@ -132,8 +144,7 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
 
         // NOTHING FOUND? CHECK RECURSIVELY
         for (File mainFile: rootFolder) {
-            File symFile = getSymLinkPath(mainFile.toPath());
-            if (symFile != null) mainFile = symFile;
+            mainFile = getSymLinkPathOrSelf(mainFile.toPath());
 
             File[] subFolders = mainFile.listFiles();
             if (subFolders == null) return null;
@@ -171,6 +182,7 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
     @Override
     public final boolean onSetPluginPath(String path) {
         for (String pathFormat : pluginPathFormats) {
+            if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
             String pluginPath = String.format(pathFormat, path);
             if (new File(pluginPath).exists()) {
                 return setPluginPath(pluginPath);

@@ -26,6 +26,7 @@ import me.lib720.caprica.vlcj.binding.RuntimeUtil;
  */
 public class LinuxWellKnownDirectoryProvider extends WellKnownDirectoryProvider {
 
+    // WATERMeDIA PATCH - This is patched, not sure what but is patched
     private static final String[] DIRECTORIES = {
             "/usr/lib/x86_64-linux-gnu",
             "/usr/lib64",
@@ -34,8 +35,13 @@ public class LinuxWellKnownDirectoryProvider extends WellKnownDirectoryProvider 
             "/usr/lib",
             "/usr/lib/vlc",
             "/usr/bin/",
+            "/usr/bin/vlc",
             "/usr/local/lib",
-            "/bin" // WATERMeDIA PATCH - Adds pacman dir support
+            "/usr/local/lib/vlc",
+            "/var/lib/flatpak",
+            "/var/lib/flatpak/org.videolan.VLC",
+            "/var/lib/flatpak/app/org.videolan.VLC",
+            "/bin"
     };
 
     @Override
