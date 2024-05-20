@@ -138,8 +138,8 @@ public abstract class BaseNativeDiscoveryStrategy implements NativeDiscoveryStra
             File[] subFolders = mainFile.listFiles();
             if (subFolders == null) return null;
 
-            if (subFolders.length > 8) {
-                LOGGER.debug(IT, "Skipped subdirectory '{}', contains more than 8 entries", mainFile.toString());
+            if (subFolders.length > 16) {
+                LOGGER.debug(IT, "Skipped subdirectory '{}', contains more than 16 entries", mainFile.toString());
                 continue;
             }
             LOGGER.info(IT, "Searching on subdirectory '{}'", mainFile.toString());
