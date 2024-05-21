@@ -36,6 +36,7 @@ public class PlayerAPI extends WaterMediaAPI {
     private static final Map<String, String> ARGVARS = new HashMap<>();
 
     private static MediaPlayerFactory DEFAULT_FACTORY;
+    private static MediaPlayerFactory DEFAULT_SONG_FACTORY;
 
     /**
      * Check if PlayerAPI and/or VLC is loaded and ready to be used.
@@ -48,13 +49,23 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     /**
-     * Returns default WATERMeDIA's MediaPlayer factory instance with audio output variant
+     * Returns default WATERMeDIA's MediaPlayer factory instance
      * uses DirectSound by default, witch provides an individual volume for each player
      * by default uses on video output "mem"
      * @return default factory
      */
     public static MediaPlayerFactory getFactory() {
         return DEFAULT_FACTORY;
+    }
+
+    /**
+     * Returns default WATERMeDIA's MediaPlayer factory instance
+     * uses DirectSound and No video output by default, witch provides an individual volume for each player
+     * by default uses on video output "none"
+     * @return default factory
+     */
+    public static MediaPlayerFactory getFactorySoundOnly() {
+        return DEFAULT_SONG_FACTORY;
     }
 
     /**
@@ -162,6 +173,7 @@ public class PlayerAPI extends WaterMediaAPI {
             String[] args = JarTool.readArrayAndParse("videolan/arguments.json", ARGVARS);
             String[] args2 = ArrayUtils.addAll(args, RuntimeUtil.isWindows() ? "--aout=directsound" : "--aout={mmdevice,waveout}");
             DEFAULT_FACTORY = customFactory(args2);
+            DEFAULT_SONG_FACTORY = customFactory(ArrayUtils.addAll(args, "--vout=none"));
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);
         }
