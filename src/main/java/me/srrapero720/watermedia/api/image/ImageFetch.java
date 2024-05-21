@@ -133,7 +133,7 @@ public class ImageFetch {
             if (code != HttpURLConnection.HTTP_NOT_MODIFIED) {
                 String type = request.getContentType();
                 if (type == null) throw new ConnectException();
-                if (!type.startsWith("image")) throw new NoPictureException();
+                if (!type.startsWith("image/")) throw new NoPictureException();
             }
 
             String tag = request.getHeaderField("ETag");
@@ -183,7 +183,6 @@ public class ImageFetch {
 
 
             byte[] data = DataTool.readAllBytes(in);
-            if (readType(data) == null) throw new NoPictureException();
             CacheCore.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
