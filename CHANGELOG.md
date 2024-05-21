@@ -1,3 +1,14 @@
+# UPDATE 2.0.54
+- Fixed PNGs aren't able to load correctly (and instead calls VLC for it)
+- Fixed ImageAPI wasn't able to load images due to no specify it wants an image on headers
+- [VLCJ] Fixed cannot find VLC directory if the root search folder is a symlink
+- [VLCJ] Increased subfolders max number of entries to allow begin scanned
+- Removed VLC binaries for Linux x64 (apparently linux is stupid enough to require VLC begin registered as a "dynamic library")
+- ImageAPI: ``ImageRenderer`` now process buffers off-thread and stores the pixels instead of the BufferedImage
+- ImageAPI: Added `flush` method on ``ImageCache`` to safety flush the picture from VRAM to RAM
+- RenderAPI: deprecated `applyBuffer` methods, use instead `getRawImageBuffer` and `uploadBufferTexture
+- PlayerAPI: Added `getFactorySoundOnly()`. It returns a variant of the default factory with no video output
+
 # UPDATE 2.0.53
 - Fixed crashes on minecraft versions above 1.16.5
 
