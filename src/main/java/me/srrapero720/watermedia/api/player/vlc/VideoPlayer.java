@@ -5,6 +5,7 @@ import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat
 import me.srrapero720.watermedia.api.player.PlayerAPI;
 import me.srrapero720.watermedia.api.player.SyncBasePlayer;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
+import me.srrapero720.watermedia.core.tools.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
@@ -21,8 +22,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+/**
+ * WARNING: Experimental
+ * this class works same as SyncVideoPlayer but uses a PBO
+ * Use it only to test + contribute to its functionality
+ */
+@Experimental
 public class VideoPlayer extends SyncBasePlayer {
-    private static final Marker IT = MarkerManager.getMarker("SyncVideoPlayer");
+    private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
 
     private final int texture;
     private final int pbo;

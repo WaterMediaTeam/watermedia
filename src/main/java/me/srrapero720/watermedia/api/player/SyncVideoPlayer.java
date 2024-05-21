@@ -49,7 +49,6 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * @deprecated Future replacement is a static method inside {@link PlayerAPI}.
      * PlayerAPI (including all Players) are intended to be rewrited in 2.1.0
      */
-    @Deprecated
     public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx) { this(factory, playerThreadEx, DEFAULT_BUFFER_HELPER); }
 
     /**
@@ -58,7 +57,6 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * @param bufferHelper helper to create IntBuffers
      * @deprecated mod now integrates an own MemoryTracker with a BufferAlloc
      */
-    @Deprecated
     public SyncVideoPlayer(Executor playerThreadEx, BufferHelper bufferHelper) { this(null, playerThreadEx, bufferHelper); }
 
     /**
@@ -66,9 +64,10 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      * @param factory custom MediaPlayerFactory instance
      * @param playerThreadEx executor of render thread for an async task (normally <code>Minecraft.getInstance()</code>)
      * @param bufferHelper helper to create IntBuffers
-     * @deprecated mod now integrates an own MemoryTracker with a BufferAlloc
+     * @deprecated mod now integrates an own MemoryTracker with a BufferAlloc,
+     * it releases the memory properly when usage is done (not bugging GC)
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public SyncVideoPlayer(MediaPlayerFactory factory, Executor playerThreadEx, BufferHelper bufferHelper) {
         super();
         this.playerThreadEx = playerThreadEx;
