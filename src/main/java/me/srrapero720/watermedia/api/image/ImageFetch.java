@@ -116,6 +116,7 @@ public class ImageFetch {
         long requestTime = System.currentTimeMillis();
         URLConnection request = url.openConnection();
         request.setDefaultUseCaches(false);
+        request.setRequestProperty("Accept", "image/*");
         int code = -1;
 
         request.addRequestProperty("User-Agent", USER_AGENT);
