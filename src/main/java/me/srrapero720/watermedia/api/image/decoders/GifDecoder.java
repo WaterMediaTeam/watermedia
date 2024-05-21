@@ -93,6 +93,7 @@ public class GifDecoder {
     
     protected ArrayList<GifFrame> frames; // frames read from current file
     protected int frameCount;
+    protected long duration = 0;
     
     static class GifFrame {
         public GifFrame(BufferedImage im, int del) {
@@ -236,14 +237,42 @@ public class GifDecoder {
         }
         return im;
     }
-    
+
+    public BufferedImage[] getFrames() {
+        BufferedImage[] result = new BufferedImage[frames.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = frames.get(i).image;
+        }
+        return result;
+    }
+
+    public long[] getDelayFrames() {
+        long[] result = new long[frames.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = frames.get(i).delay;
+        }
+        return result;
+    }
+
     /** Gets image size.
      *
      * @return GIF image dimensions */
     public Dimension getFrameSize() {
         return new Dimension(width, height);
     }
-    
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
     /** Reads GIF image from stream
      *
      * @param is
@@ -575,6 +604,7 @@ public class GifDecoder {
         }
         transparency = (packed & 1) != 0;
         delay = readShort() * 10; // delay in milliseconds
+        duration += delay;
         transIndex = read(); // transparent color index
         read(); // block terminator
     }

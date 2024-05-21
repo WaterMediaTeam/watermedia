@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static me.srrapero720.watermedia.api.image.ImageAPI.IT;
+
 public class ImageCache {
     static final Map<String, ImageCache> CACHE = new HashMap<>();
     static final ImageCache EMPTY_INSTANCE = new ImageCache(null);
@@ -65,8 +68,18 @@ public class ImageCache {
     public boolean isUsed() { return uses.get() > 0; }
     public ImageCache use() { uses.getAndIncrement(); return this; }
     public ImageCache deuse() {
-        uses.decrementAndGet();
-        if (uses.get() <= 0) release();
+        if (uses.decrementAndGet() <= 0) release();
+        return this;
+    }
+
+    /**
+     * Calls to {@link ImageRenderer#flush()} when only have one usage in a safety way
+     * @return self
+     */
+    public ImageCache flush() {
+        if (uses.get() == 1 && this.renderer != null && !this.renderer.isFlushed()) {
+            renderer.flush();
+        }
         return this;
     }
 
@@ -124,6 +137,9 @@ public class ImageCache {
     public void release() {
         if (fetch == null) return;
         synchronized (fetch) {
+            if (uses.get() > 0) {
+                LOGGER.warn(IT, "Cache of '{}' released with {} usages remaining", this.url, this.uses.get());
+            }
             this.status = Status.FORGOTTEN;
             this.video = false;
             this.exception = null;

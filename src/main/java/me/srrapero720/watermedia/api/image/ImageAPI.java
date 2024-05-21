@@ -124,10 +124,7 @@ public class ImageAPI extends WaterMediaAPI {
      */
     public static ImageRenderer renderer(BufferedImage image, boolean absolute) {
         if (absolute) return new ImageRenderer(image);
-        return new ImageRenderer(image) {
-            @Override public void flush() {}
-            @Override public void release() {}
-        };
+        return new ImageRenderer.Absolute(image);
     }
 
     /**
@@ -147,10 +144,7 @@ public class ImageAPI extends WaterMediaAPI {
      */
     public static ImageRenderer renderer(GifDecoder image, boolean absolute) {
         if (!absolute) return new ImageRenderer(image);
-        return new ImageRenderer(image) {
-            @Override public void flush() {}
-            @Override public void release() {}
-        };
+        return new ImageRenderer.Absolute(image);
     }
 
     private Path loadingGifPath;

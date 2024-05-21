@@ -3,10 +3,11 @@ package me.srrapero720.watermedia.api.image;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
-import org.lwjgl.opengl.GL11;
+import me.srrapero720.watermedia.core.tools.DataTool;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class ImageRenderer {
     public final int width;
@@ -14,9 +15,9 @@ public class ImageRenderer {
     public final int[] textures;
     public final long[] delay;
     public final long duration;
-    private BufferedImage image;
-    private GifDecoder decoder;
+    private ByteBuffer[] images;
 
+    public boolean flushed;
     public int remaining;
 
     /**
@@ -25,14 +26,14 @@ public class ImageRenderer {
      * method is going to begin package-protected
      */
     ImageRenderer(BufferedImage image) {
-        this.image = image;
         if (image == null) throw new NullPointerException();
+        this.images = new ByteBuffer[] { RenderAPI.getRawImageBuffer(image) };
         this.width = image.getWidth();
         this.height = image.getHeight();
         this.textures = new int[] { -1 };
-        this.delay = new long[] { 0 };
+        this.delay = new long[1];
         this.duration = 1;
-        this.decoder = null;
+        this.remaining = this.images.length;
     }
 
     /**
@@ -41,25 +42,15 @@ public class ImageRenderer {
      * method is going to begin package-protected
      */
     ImageRenderer(GifDecoder decoder) {
-        this.decoder = decoder;
         if (decoder == null) throw new NullPointerException();
-
-        Dimension frameSize = decoder.getFrameSize();
-        width = (int) frameSize.getWidth();
-        height = (int) frameSize.getHeight();
-        textures = new int[decoder.getFrameCount()];
-        delay = new long[decoder.getFrameCount()];
-
-        this.image = null;
-        this.remaining = decoder.getFrameCount();
-        long time = 0;
-        for (int i = 0; i < decoder.getFrameCount(); i++) {
-            textures[i] = -1;
-            delay[i] = time;
-            time += decoder.getDelay(i);
-        }
-
-        duration = time;
+        this.images = RenderAPI.getRawImageBuffer(decoder.getFrames());
+        this.width = decoder.getWidth();
+        this.height = decoder.getHeight();
+        this.textures = new int[decoder.getFrameCount()];
+        this.delay = decoder.getDelayFrames();
+        this.duration = decoder.getDuration();
+        this.remaining = this.images.length;
+        Arrays.fill(textures, -1);
     }
 
     /**
@@ -70,14 +61,15 @@ public class ImageRenderer {
      * @see ImageRenderer#texture(int, long, boolean) too
      */
     public int texture(long time) {
-        if (textures == null) return -1;
+        if (textures == null) return 0;
         if (textures.length == 1) return texture(0);
-        int last = texture(0);
-        for (int i = 1; i < delay.length; i++) {
-            if (delay[i] > time) break;
-            last = texture(i);
+
+        for (int i = 0; i < delay.length; i++) {
+            time -= delay[i];
+            if (time <= 0)
+                return texture(i);
         }
-        return last;
+        return texture(images.length - 1);
     }
 
     /**
@@ -87,12 +79,10 @@ public class ImageRenderer {
      */
     public int texture(int index) {
         if (this.textures[index] == -1) {
-            if (decoder != null) {
-                this.textures[index] = RenderAPI.applyBuffer(this.decoder.getFrame(index), width, height);
-                if (--this.remaining <= 0) decoder = null; // uploaded in VRAM
-            } else if (image != null) {
-                this.textures[index] = RenderAPI.applyBuffer(this.image, width, height);
-                image = null; // uploaded in VRAM
+            this.textures[index] = RenderAPI.uploadBufferTexture(this.images[index], width, height);
+            this.remaining -= 1;
+            if (this.remaining == 0) {
+                this.flush();
             }
         }
         return textures[index];
@@ -141,21 +131,59 @@ public class ImageRenderer {
         return texture(tick, MathAPI.tickToMs(partialTicks), loop);
     }
 
+    public boolean isFlushed() {
+        return flushed;
+    }
+
     /**
      * This method just drains buffers but not releases OpenGL texture
      */
-    public void flush() {
-        if (image != null) image.flush();
-        if (decoder != null) {
-            for (int i = 0; i < decoder.getFrameCount(); i++) decoder.getFrame(i).flush();
-            decoder = null;
+    protected void flush() {
+        if (flushed) throw new IllegalStateException("Buffers are already flushed");
+        for (ByteBuffer buffer: this.images) {
+            RenderAPI.freeByteBuffer(buffer);
+        }
+        this.images = new ByteBuffer[this.images.length];
+        this.flushed = true;
+    }
+
+    /**
+     * Moves the image data to RAM (from VRAM) and resets the state of the ImageRender as never requested
+     */
+    public void reset() {
+        if (!flushed) throw new IllegalStateException("Buffers are not flushed");
+        this.remaining = this.images.length;
+        for (int i = 0; i < this.images.length; i++) {
+            this.images[i] = RenderAPI.getTextureBuffer(this.textures[i], width, height);
+            RenderAPI.deleteTexture(this.textures);
+            Arrays.fill(this.textures, -1);
         }
     }
+
     /**
      * This method drain buffers and release OpenGL textures
      */
     public void release() {
-        for (int i: textures) if (i != -1) GL11.glDeleteTextures(i);
-        flush();
+        if (flushed) {
+            RenderAPI.deleteTexture(this.textures);
+            Arrays.fill(this.textures, -1);
+        } else {
+            this.flush();
+            RenderAPI.deleteTexture(DataTool.filterValue(this.textures, -1));
+            Arrays.fill(this.textures, -1);
+        }
+    }
+
+    static class Absolute extends ImageRenderer {
+
+        Absolute(BufferedImage image) {
+            super(image);
+        }
+
+        Absolute(GifDecoder decoder) {
+            super(decoder);
+        }
+
+        @Override public void release() {}
     }
 }

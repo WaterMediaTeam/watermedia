@@ -21,6 +21,19 @@ public class DataTool {
         }
     }
 
+    public static int[] filterValue(int[] its, int v) {
+        int size = 0;
+        for (int i : its) if (i != v) size++;
+
+        int[] result = new int[size];
+
+        int pos = 0;
+        for (int i : its)
+            if (i != v) result[pos++] = i;
+
+        return result;
+    }
+
     public static <T> List<T> toList(ServiceLoader<T> s) {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);
