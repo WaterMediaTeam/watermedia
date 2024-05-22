@@ -3,6 +3,7 @@ package me.srrapero720.watermedia.api.player;
 import me.srrapero720.watermedia.OperativeSystem;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
+import me.srrapero720.watermedia.api.config.WaterConfig;
 import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
 import me.srrapero720.watermedia.core.tools.IOTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
@@ -105,34 +106,17 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     // LOADING
-    private final Path dir;
+    private Path dir;
+    private Path logs;
 
-    private final String zipInput;
-    private final String configInput;
+    private String zipInput;
+    private String configInput;
 
-    private final File zipOutput;
-    private final File configOutput;
+    private File zipOutput;
+    private File configOutput;
 
-    private final boolean wrapped;
+    private boolean wrapped;
     private boolean extract;
-    public PlayerAPI() {
-        super();
-        ILoader bootstrap = WaterMedia.getLoader();
-        String zFilename = OperativeSystem.getFile();
-
-        this.dir = bootstrap.tempDir().resolve("videolan");
-
-        this.wrapped = zFilename != null;
-        this.zipInput = "videolan/" + zFilename;
-        this.configInput = "videolan/version.cfg";
-
-        if (wrapped) {
-            this.zipOutput = dir.resolve(zFilename).toFile();
-            this.configOutput = dir.resolve("version.cfg").toFile();
-        } else {
-            zipOutput = configOutput = null;
-        }
-    }
 
     @Override
     public Priority priority() {

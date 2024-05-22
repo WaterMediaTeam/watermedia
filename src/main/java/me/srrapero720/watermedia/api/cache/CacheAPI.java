@@ -5,6 +5,7 @@ import me.srrapero720.watermedia.core.annotations.Unstable;
 import me.srrapero720.watermedia.core.annotations.WaterMediaAPI;
 import me.srrapero720.watermedia.core.annotations.WorkInProgress;
 import me.srrapero720.watermedia.core.tools.DataTool;
+import me.srrapero720.watermedia.api.config.WaterConfig;
 import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -109,11 +110,14 @@ public class CacheAPI extends WaterInternalAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
-        // SETUP
-        dir = bootCore.tempDir().toAbsolutePath().resolve("cache/pictures").toFile();
+    public boolean prepare(ILoader bootCore) {
+        dir = new File(WaterConfig.vlcInstallPath, "cache/pictures");
         index = new File(dir, "index");
-        LOGGER.info(IT, "Mounted on path '{}'", dir);
+
+        if (!released) {
+            LOGGER.error(IT, "Failed due boot API while is not released, boot cancelled");
+            return false;
+        }
 
         return !init;
     }
