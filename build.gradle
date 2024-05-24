@@ -21,6 +21,10 @@ test {
     useJUnitPlatform()
 }
 
+test {
+    useJUnitPlatform()
+}
+
 java {
     withSourcesJar()
     sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
