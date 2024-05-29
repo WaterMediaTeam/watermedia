@@ -45,8 +45,9 @@ configurations {
 }
 
 dependencies {
-    // FabricLoader (just to give loading support on FABRIC)
-    compileOnly("net.fabricmc:fabric-loader:${project.fabricv}") {
+    // MODLOADERS
+    compileOnly 'com.github.WaterMediaTeam:modloaders:1.0.0'
+    compileOnly("net.fabricmc:fabric-loader:$fabricv") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
@@ -71,7 +72,6 @@ dependencies {
     compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2'
     compileOnly 'org.lwjgl:lwjgl-openal:3.1.1'
     compileOnly 'org.ow2.asm:asm-tree:9.1'
-    compileOnly(project(":lib-forge")) // MOCKED FORGE CLASSES - REMOVED ON JAR
 
     // TEST
     testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
