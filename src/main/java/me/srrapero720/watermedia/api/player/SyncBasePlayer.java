@@ -1,21 +1,21 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.lib720.caprica.vlcj.binding.RuntimeUtil;
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.media.InfoApi;
-import me.lib720.caprica.vlcj.media.MediaType;
-import me.lib720.caprica.vlcj.player.base.EmbededMediaPlayerEventListener;
-import me.lib720.caprica.vlcj.player.base.MediaPlayer;
-import me.lib720.caprica.vlcj.player.base.State;
-import me.lib720.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
-import me.srrapero720.watermedia.api.url.UrlAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.core.annotations.Experimental;
-import me.srrapero720.watermedia.core.tools.ThreadTool;
+import com.sun.jna.Platform;
+import me.srrapero720.watermedia.api.network.DynamicURL;
+import me.srrapero720.watermedia.api.network.NetworkAPI;
+import me.srrapero720.watermedia.tools.ThreadTool;
+import me.srrapero720.watermedia.tools.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.media.InfoApi;
+import uk.co.caprica.vlcj.media.MediaType;
+import uk.co.caprica.vlcj.player.base.EmbededMediaPlayerEventListener;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.State;
+import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
+import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
+import uk.co.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 
 import java.net.URL;
 
@@ -271,7 +271,7 @@ public abstract class SyncBasePlayer {
      */
     public long getDuration() {
         if (raw == null) return 0L;
-        if (!isValid() || (RuntimeUtil.isNix() && getRawPlayerState().equals(State.STOPPED))) return 0L;
+        if (!isValid() || (Platform.isLinux() && getRawPlayerState().equals(State.STOPPED))) return 0L;
         return raw.mediaPlayer().status().length();
     }
 

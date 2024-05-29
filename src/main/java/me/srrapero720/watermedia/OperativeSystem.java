@@ -2,6 +2,7 @@ package me.srrapero720.watermedia;
 
 import com.sun.jna.Platform;
 import me.srrapero720.watermedia.runtime.UnsupportedArchitechtureException;
+
 import static me.srrapero720.watermedia.WaterMedia.IT;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
