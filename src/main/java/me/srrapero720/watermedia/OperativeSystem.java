@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia;
 
 import com.sun.jna.Platform;
-
+import me.srrapero720.watermedia.runtime.UnsupportedArchitechtureException;
 import static me.srrapero720.watermedia.WaterMedia.IT;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -48,6 +48,7 @@ public enum OperativeSystem {
     public static String getArch() { return OS.arch; }
 
     private static OperativeSystem getOs() {
+        if (!Platform.is64Bit()) throw new UnsupportedArchitechtureException();
         if (Platform.is64Bit()) {
             if (Platform.isARM()) {
                 if (Platform.isWindows()) return WIN_ARM64;
