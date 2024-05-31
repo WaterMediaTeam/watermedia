@@ -237,6 +237,7 @@ public class MathAPI extends WaterMediaAPI {
      * @return HEX color
      * @deprecated renamed to {@link MathAPI#argb(int, int, int, int)}
      */
+    @Deprecated(forRemoval = true)
     public static int getColorARGB(int a, int r, int g, int b) { return (a << 24) | (r << 16) | (g << 8) | b; }
 
     /**
@@ -344,7 +345,7 @@ public class MathAPI extends WaterMediaAPI {
 
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
-        return false;
+        return true;
     }
 
     @Override

@@ -175,7 +175,7 @@ public class ImageAPI extends WaterMediaAPI {
         IMG_VLC_FAIL_LAND = renderer(JarTool.readGif("/pictures/videolan/failed-land.gif"), true);
 
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        image.setRGB(0, 0, MathAPI.getColorARGB(255, 0, 0, 0));
+        image.setRGB(0, 0, MathAPI.argb(255, 0, 0, 0));
         IMG_BLACK = renderer(image);
 
     }

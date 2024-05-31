@@ -6,6 +6,9 @@ import me.lib720.caprica.vlcj.binding.RuntimeUtil;
 import static me.srrapero720.watermedia.WaterMedia.IT;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+/**
+ * Contains the current OS, architecture and the binary-wrap state
+ */
 public enum OperativeSystem {
     WIN_X64("win", "x64", true, false),
     MAC_X64("mac", "x64", true, true),

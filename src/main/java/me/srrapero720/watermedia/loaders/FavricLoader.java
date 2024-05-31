@@ -24,7 +24,7 @@ public class FavricLoader implements PreLaunchEntrypoint, ILoader {
 
             if (clientSide()) WaterMedia.prepare(this).start();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to run " + WaterMedia.NAME + " for FABRIC: " + e.getMessage(), e);
+            throw new RuntimeException("Failed starting " + WaterMedia.NAME + " for " + name() + ": " + e.getMessage(), e);
         }
     }
 

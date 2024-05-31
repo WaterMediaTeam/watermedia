@@ -1,11 +1,11 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.lib720.watermod.concurrent.ThreadCore;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.url.UrlAPI;
 import me.srrapero720.watermedia.api.url.fixers.URLFixer;
 import me.srrapero720.watermedia.core.CacheCore;
 import me.srrapero720.watermedia.core.tools.DataTool;
+import me.srrapero720.watermedia.core.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -37,7 +37,7 @@ import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
 public class ImageFetch {
     private static final Marker IT = MarkerManager.getMarker("ImageAPI");
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadCore.minThreads(), ThreadCore.factory("ImageFetch-Worker"));
+    private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("ImageFetch-Worker", Thread.NORM_PRIORITY + 1));
 
     private final String url;
     private TaskSuccessful successful;

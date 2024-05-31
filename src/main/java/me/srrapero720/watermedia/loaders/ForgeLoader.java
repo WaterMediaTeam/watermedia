@@ -41,7 +41,7 @@ public class ForgeLoader implements ILoader {
             if (clientSide()) WaterMedia.prepare(this).start();
             else if (!developerMode()) throw new IllegalEnvironmentException();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to run " + WaterMedia.NAME + " for FORGE: " + e.getMessage(), e);
+            throw new RuntimeException("Failed starting " + WaterMedia.NAME + " for " + name() +": " + e.getMessage(), e);
         }
     }
 

@@ -215,6 +215,7 @@ public class RenderAPI extends WaterMediaAPI {
      * @param firstFrame if was the first frame
      * @deprecated use instead {@link RenderAPI#getRawImageBuffer(BufferedImage)} and {@link RenderAPI#uploadBufferTexture(IntBuffer, int, int)}
      */
+    @Deprecated(forRemoval = true)
     public static void applyBuffer(IntBuffer videoBuffer, int glTexture, int videoWidth, int videoHeight, boolean firstFrame) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, glTexture);
 
@@ -283,7 +284,7 @@ public class RenderAPI extends WaterMediaAPI {
 
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
-        return false;
+        return true;
     }
 
     @Override

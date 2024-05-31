@@ -7,6 +7,9 @@ import org.apache.logging.log4j.MarkerManager;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
+/**
+ * @deprecated Use instead {@link me.srrapero720.watermedia.OperativeSystem OperativeSystem}
+ */
 @Deprecated(forRemoval = true)
 public enum OsTool {
     WIN_X32("win", "x32", ".dll", false),
