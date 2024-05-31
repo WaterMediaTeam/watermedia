@@ -1,3 +1,6 @@
+# UPDATE 2.0.56
+- Fixed image is not rendering
+
 # UPDATE 2.0.55
 - Fixed crashes due to non-reset flushed state
 - Deleted FML mockers (moved to modloaders dependency)
