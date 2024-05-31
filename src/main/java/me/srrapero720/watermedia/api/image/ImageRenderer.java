@@ -158,6 +158,7 @@ public class ImageRenderer {
             RenderAPI.deleteTexture(this.textures);
             Arrays.fill(this.textures, -1);
         }
+        this.flushed = false;
     }
 
     /**
