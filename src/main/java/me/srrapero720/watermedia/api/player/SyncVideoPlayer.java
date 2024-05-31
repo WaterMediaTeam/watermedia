@@ -22,7 +22,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     private final int texture;
     private volatile int width = 1;
     private volatile int height = 1;
-    private ByteBuffer buffer;
+    private volatile ByteBuffer buffer;
     private volatile Throwable exception;
     private final BufferHelper bufferHelper;
 
