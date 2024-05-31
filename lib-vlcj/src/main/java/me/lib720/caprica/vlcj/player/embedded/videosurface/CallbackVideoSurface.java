@@ -23,15 +23,11 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import me.lib720.caprica.vlcj.binding.LibVlc;
+import me.lib720.caprica.vlcj.binding.internal.*;
+import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallback;
 import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_display_callback_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_lock_callback_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_unlock_callback_t;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_video_cleanup_cb;
-import me.lib720.caprica.vlcj.binding.internal.libvlc_video_format_cb;
-import me.lib720.caprica.vlcj.player.base.MediaPlayer;
 
 /**
  * Implementation of a video surface that uses native callbacks to receive video frame data for rendering.
@@ -108,7 +104,7 @@ public class CallbackVideoSurface extends VideoSurface {
          */
         private void applyBufferFormat(BufferFormat bufferFormat, PointerByReference chroma, IntByReference width, IntByReference height, PointerByReference pitches, PointerByReference lines) {
             byte[] chromaBytes = bufferFormat.getChroma().getBytes();
-            chroma.getPointer().write(0, chromaBytes, 0, chromaBytes.length < 4 ? chromaBytes.length : 4);
+            chroma.getPointer().write(0, chromaBytes, 0, Math.min(chromaBytes.length, 4));
             width.setValue(bufferFormat.getWidth());
             height.setValue(bufferFormat.getHeight());
             int[] pitchValues = bufferFormat.getPitches();

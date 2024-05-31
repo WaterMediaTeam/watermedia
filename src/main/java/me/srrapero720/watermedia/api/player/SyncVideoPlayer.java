@@ -22,7 +22,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     private final int texture;
     private volatile int width = 1;
     private volatile int height = 1;
-    private volatile ByteBuffer buffer;
+    private ByteBuffer buffer;
     private volatile Throwable exception;
     private final BufferHelper bufferHelper;
 
@@ -76,6 +76,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock(); // we are running in a native thread!! careful
             try {
+                // FIXME: this increases allocation rate as HELL. we need to find out the source of the buffer pointers and allocate it directly
                 if (buffer == null) return;
                 ((Buffer) nativeBuffers[0]).rewind();
                 buffer.put(nativeBuffers[0]);
@@ -94,9 +95,11 @@ public class SyncVideoPlayer extends SyncBasePlayer {
             try {
                 width = sourceWidth;
                 height = sourceHeight;
+                if (updateFirstFrame.compareAndSet(true, true)) {
+                    if (bufferHelper == DEFAULT_BUFFER_HELPER) RenderAPI.freeByteBuffer(buffer);
+                }
                 buffer = bufferHelper.create(sourceWidth * sourceHeight * 4);
                 updateFrame.set(true);
-                updateFirstFrame.set(true);
             } catch (Throwable t) {
                 if (exception == null) {
                     exception = t;
@@ -105,6 +108,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
             } finally {
                 renderLock.unlock();
             }
+            // TODO: This is wrong; https://wiki.videolan.org/Chroma/
             return new BufferFormat("RGBA", sourceWidth, sourceHeight, new int[]{sourceWidth * 4}, new int[]{sourceHeight});
         });
         if (raw() == null) {
