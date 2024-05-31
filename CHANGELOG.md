@@ -1,3 +1,7 @@
+# UPDATE 2.0.55
+- Fixed crashes due to non-reset flushed state
+- Deleted FML mockers (moved to modloaders dependency)
+
 # UPDATE 2.0.54
 - Fixed PNGs aren't able to load correctly (and instead calls VLC for it)
 - Fixed ImageAPI wasn't able to load images due to no specify it wants an image on headers
