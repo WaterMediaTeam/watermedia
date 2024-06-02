@@ -1,3 +1,9 @@
+# UPDATE 2.0.57
+- Use hardware acceleration whenever it is possible
+- Use DirectX xor OpenGL for video output (better performance for users)
+- Added SRT support
+- Fixed VLC binaries for MacOS
+
 # UPDATE 2.0.56
 - Fixed image is not rendering
 
