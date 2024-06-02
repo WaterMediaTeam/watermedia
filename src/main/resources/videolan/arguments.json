@@ -1,6 +1,22 @@
 [
   "--no-quiet",
 
+  "--high-priority",
+  "--cr-average=5000",
+  "--swscale-mode=0",
+
+  "--network-synchronisation",
+  "--network-caching=3000",
+  "--live-caching=3000",
+  "--file-caching=800",
+
+  "--vout", "direct3d11,direct3d9,glwin32,gl,any",
+  "--avcodec-skip-idct=4",
+  "--avcodec-fast",
+  "--avcodec-hw", "d3d11va,dxva2,any",
+  "--no-metadata-network-access",
+  "--no-qt-error-dialogs",
+
   "--no-file-logging",
 
   "--http-reconnect"
