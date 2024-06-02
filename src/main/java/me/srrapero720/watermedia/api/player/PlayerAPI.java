@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api.player;
 
 import me.lib720.caprica.vlcj.VideoLan4J;
-import me.lib720.caprica.vlcj.binding.RuntimeUtil;
 import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
 import me.lib720.caprica.vlcj.factory.discovery.NativeDiscovery;
 import me.srrapero720.watermedia.OperativeSystem;
@@ -171,8 +170,7 @@ public class PlayerAPI extends WaterMediaAPI {
         // VLC INIT, this need to be soft-crashed because api and game can still work without VLC
         try {
             String[] args = JarTool.readArrayAndParse("videolan/arguments.json", ARGVARS);
-            String[] args2 = ArrayUtils.addAll(args, RuntimeUtil.isWindows() ? "--aout=directsound" : "--aout={mmdevice,waveout}");
-            DEFAULT_FACTORY = customFactory(args2);
+            DEFAULT_FACTORY = customFactory(args);
             DEFAULT_SONG_FACTORY = customFactory(ArrayUtils.addAll(args, "--vout=none"));
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);

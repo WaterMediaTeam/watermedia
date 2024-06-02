@@ -10,6 +10,8 @@
   "--live-caching=3000",
   "--file-caching=800",
 
+  "--aout", "directsound,waveout,mmdevice",
+
   "--vout", "direct3d11,direct3d9,glwin32,gl,any",
   "--avcodec-skip-idct=4",
   "--avcodec-fast",
