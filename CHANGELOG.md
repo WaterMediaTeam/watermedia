@@ -1,3 +1,7 @@
+# UPDATE 2.0.58
+- Removed broken VLC argument (prevents proper loading)
+- Fixed videos are not working and the constant ERROR LOG SPAM of OpenGL
+
 # UPDATE 2.0.57
 - Use hardware acceleration whenever it is possible
 - Use DirectX xor OpenGL for video output (better performance for users)
