@@ -17,7 +17,6 @@
   "--avcodec-fast",
   "--avcodec-hw", "d3d11va,dxva2,any",
   "--no-metadata-network-access",
-  "--no-qt-error-dialogs",
 
   "--no-file-logging",
 
