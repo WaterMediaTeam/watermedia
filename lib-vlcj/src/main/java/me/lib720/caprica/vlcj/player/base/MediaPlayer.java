@@ -64,6 +64,8 @@ public class MediaPlayer {
      */
     private RendererItem renderer;
 
+    private volatile boolean released;
+
     /**
      * Arbitrary object associated with this media list player.
      */
@@ -275,10 +277,16 @@ public class MediaPlayer {
         executor.submit(r);
     }
 
+    public boolean isReleased() {
+        return released;
+    }
+
     /**
      * Release the media player, freeing all associated (including native) resources.
      */
     public final void release() {
+        this.released = true;
+
         executor.release();
 
         onBeforeRelease();

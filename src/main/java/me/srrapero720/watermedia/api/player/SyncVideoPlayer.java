@@ -8,8 +8,8 @@ import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,7 +24,6 @@ public class SyncVideoPlayer extends SyncBasePlayer {
     private volatile int height = 1;
     private volatile ByteBuffer buffer;
     private volatile Throwable exception;
-    private final BufferHelper bufferHelper;
 
     protected final Executor playerThreadEx;
     protected final ReentrantLock renderLock = new ReentrantLock();
@@ -72,15 +71,12 @@ public class SyncVideoPlayer extends SyncBasePlayer {
         super();
         this.playerThreadEx = playerThreadEx;
         this.texture = GL11.glGenTextures();
-        this.bufferHelper = bufferHelper;
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
             renderLock.lock(); // we are running in a native thread!! careful
             try {
                 // FIXME: this increases allocation rate as HELL. we need to find out the source of the buffer pointers and allocate it directly
-                if (buffer == null) return;
-                ((Buffer) nativeBuffers[0]).rewind();
-                buffer.put(nativeBuffers[0]);
-                ((Buffer) buffer).rewind();
+                if (mediaPlayer.isReleased()) return;
+                this.buffer = nativeBuffers[0];
                 updateFrame.set(true);
             } catch (Throwable t) {
                 if (exception == null) {
@@ -95,11 +91,9 @@ public class SyncVideoPlayer extends SyncBasePlayer {
             try {
                 width = sourceWidth;
                 height = sourceHeight;
-                if (updateFirstFrame.compareAndSet(true, true)) {
-                    if (bufferHelper == DEFAULT_BUFFER_HELPER) RenderAPI.freeByteBuffer(buffer);
-                }
-                buffer = bufferHelper.create(sourceWidth * sourceHeight * 4);
+                buffer = ByteBuffer.allocateDirect(sourceWidth * sourceHeight * 4).order(ByteOrder.nativeOrder());
                 updateFrame.set(true);
+                updateFirstFrame.set(true);
             } catch (Throwable t) {
                 if (exception == null) {
                     exception = t;
@@ -254,10 +248,7 @@ public class SyncVideoPlayer extends SyncBasePlayer {
      */
     @Override
     public void release() {
-        playerThreadEx.execute(() -> {
-            GL11.glDeleteTextures(texture);
-            if (bufferHelper == DEFAULT_BUFFER_HELPER) RenderAPI.freeByteBuffer(buffer);
-        });
+        playerThreadEx.execute(() -> GL11.glDeleteTextures(texture));
         super.release();
         buffer = null;
     }
