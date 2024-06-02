@@ -83,6 +83,17 @@ public class ImageCache {
         return this;
     }
 
+    /**
+     * Calls to {@link ImageRenderer#flush()} when only have one usage in a safety way
+     * @return self
+     */
+    public ImageCache reset() {
+        if (uses.get() == 1 && this.renderer != null && this.renderer.isFlushed()) {
+            renderer.reset();
+        }
+        return this;
+    }
+
     public Status getStatus() { return status; }
     public Exception getException() { return exception; }
     public ImageRenderer getRenderer() { return renderer; }
