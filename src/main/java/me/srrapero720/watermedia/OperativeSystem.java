@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia;
 
 import com.sun.jna.Platform;
-import me.lib720.caprica.vlcj.binding.RuntimeUtil;
 
 import static me.srrapero720.watermedia.WaterMedia.IT;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -49,25 +48,19 @@ public enum OperativeSystem {
     public static String getArch() { return OS.arch; }
 
     private static OperativeSystem getOs() {
-        switch (Platform.ARCH) {
-            case "x86-64":
-            case "amd64":
-                if (RuntimeUtil.isWindows()) return WIN_X64;
-                if (RuntimeUtil.isMac()) return MAC_X64;
-                if (RuntimeUtil.isNix()) return NIX_X64;
-            case "arm64":
-                if (RuntimeUtil.isWindows()) return WIN_ARM64;
-                if (RuntimeUtil.isMac()) return MAC_ARM64;
-                if (RuntimeUtil.isNix()) return NIX_ARM64;
-            case "armel":
-            case "arm":
-                if (RuntimeUtil.isWindows()) return WIN_ARM;
-                if (RuntimeUtil.isMac()) return MAC_ARM;
-                if (RuntimeUtil.isNix()) return NIX_ARM;
-            case "x86":
-                throw new IllegalStateException("Detected unsupported arch x86");
-            default:
-                return DUMMY;
+        if (Platform.is64Bit()) {
+            if (Platform.isARM()) {
+                if (Platform.isWindows()) return WIN_ARM64;
+                if (Platform.isMac()) return MAC_ARM64;
+                if (Platform.isLinux()) return NIX_ARM64;
+            } else {
+                if (Platform.isWindows()) return WIN_X64;
+                if (Platform.isMac()) return MAC_X64;
+                if (Platform.isLinux()) return NIX_X64;
+            }
+            return DUMMY;
+        } else {
+            throw new IllegalStateException("32 BITS IS NOT SUPPORTED");
         }
     }
 }

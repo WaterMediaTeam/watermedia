@@ -63,8 +63,8 @@ dependencies {
     compileOnly "net.fabricmc:fabric-loader:$fabric_version"
 
     // DEPENDENCIES
-    library "net.java.dev.jna:jna:$jna_version"
-    library "net.java.dev.jna:platform:$jnaplatform_version"
+    shadow "net.java.dev.jna:jna:$jna_version"
+    shadow "net.java.dev.jna:jna-platform:$jnaplatform_version"
 //    shadow "com.github.WaterMediaTeam:videolan-natives:$vlcj_natives_version"
     shadow "com.github.WaterMediaTeam:ytdl-java:$jyd_version"
     shadow "org.apache.commons:commons-compress:$commoncompress_version" // CARRIES 'CODEC', 'LANG3' AND 'COMMONS-IO'
@@ -109,6 +109,7 @@ shadowJar {
     relocate 'com.fasterxml', 'me.lib720'
     relocate 'org.apache.commons', 'me.lib720.apache'
     relocate 'org.tukaani', 'me.lib720.tukaani'
+    relocate 'com.sun.jna', 'me.lib720.jna'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
