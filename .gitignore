@@ -17,6 +17,7 @@ bins
 # gradle
 build
 .gradle
+buildjars
 
 # other
 eclipse

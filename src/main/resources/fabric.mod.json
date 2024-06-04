@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "${modid}",
-  "version": "${modversion}",
-  "name": "${modname}",
-  "description": "${moddescription}",
-  "authors": ${modauthorlist},
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${description}",
+  "authors": ${authors_list},
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/watermedia/",
     "sources": "https://github.com/SrRapero720/watermedia",
@@ -12,7 +12,7 @@
     "email": "SrRapero720@hotmail.com"
   },
 
-  "license": "${modlicense}",
+  "license": "${license}",
   "icon": "pack.png",
   "environment": "client",
   "entrypoints": {
