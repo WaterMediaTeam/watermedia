@@ -9,6 +9,7 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +27,7 @@ public class JarTool {
     @Deprecated
     public static String readString(ClassLoader loader, String source) {
         try {
-            byte[] bytes = DataTool.readAllBytes(readResource$byClassLoader(source, loader));
+            byte[] bytes = DataTool.readAllBytes(readResourceAsStream$byClassLoader(source, loader));
             return new String(bytes, Charset.defaultCharset());
         } catch (Exception e) {
             return null;
@@ -35,7 +36,7 @@ public class JarTool {
 
     @Deprecated
     public static boolean copyAsset(ClassLoader loader, String source, Path dest) {
-        try (InputStream is = readResource$byClassLoader(source, loader)) {
+        try (InputStream is = readResourceAsStream$byClassLoader(source, loader)) {
             if (is == null) throw new FileNotFoundException("Resource was not found in " + source);
 
             File destParent = dest.getParent().toFile();
@@ -51,7 +52,7 @@ public class JarTool {
     @Deprecated
     public static List<String> readStringList(ClassLoader loader, String source) {
         List<String> result = new ArrayList<>();
-        try (InputStreamReader reader = new InputStreamReader(readResource$byClassLoader(source, loader))) {
+        try (InputStreamReader reader = new InputStreamReader(readResourceAsStream$byClassLoader(source, loader))) {
             result.addAll(GSON.fromJson(reader, new TypeToken<List<String>>() {}.getType()));
         } catch (Exception e) {
             LOGGER.fatal(IT, "Exception trying to read JSON from {}", source, e);
@@ -62,7 +63,7 @@ public class JarTool {
 
     @Deprecated
     public static BufferedImage readImage(ClassLoader loader, String path) {
-        try (InputStream in = readResource$byClassLoader(path, loader)) {
+        try (InputStream in = readResourceAsStream$byClassLoader(path, loader)) {
             BufferedImage image = ImageIO.read(in);
             if (image != null) return image;
             else throw new FileNotFoundException("result of BufferedImage was null");
@@ -73,7 +74,7 @@ public class JarTool {
 
     @Deprecated
     public static GifDecoder readGif(ClassLoader loader, String path) {
-        try (BufferedInputStream in = new BufferedInputStream(readResource$byClassLoader(path, loader))) {
+        try (BufferedInputStream in = new BufferedInputStream(readResourceAsStream$byClassLoader(path, loader))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
             if (status == GifDecoder.STATUS_OK) return gif;
@@ -86,7 +87,7 @@ public class JarTool {
 
     // WITHOUT CLASSLOADER OPTIONS
     public static String readString(String from) {
-        try (InputStream is = readResource(from)) {
+        try (InputStream is = readResourceAsStream(from)) {
             byte[] bytes = DataTool.readAllBytes(is);
             return new String(bytes, Charset.defaultCharset());
         } catch (Exception e) {
@@ -94,7 +95,7 @@ public class JarTool {
         }
     }
     public static boolean copyAsset(String origin, Path dest) {
-        try (InputStream is = readResource(origin)) {
+        try (InputStream is = readResourceAsStream(origin)) {
             if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
 
             File destParent = dest.getParent().toFile();
@@ -109,7 +110,7 @@ public class JarTool {
 
     public static List<String> readStringList(String path) {
         List<String> result = new ArrayList<>();
-        try (InputStreamReader reader = new InputStreamReader(readResource(path))) {
+        try (InputStreamReader reader = new InputStreamReader(readResourceAsStream(path))) {
             result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
         } catch (Exception e) {
             LOGGER.fatal(IT, "Exception trying to read JSON from {}", path, e);
@@ -119,7 +120,7 @@ public class JarTool {
     }
 
     public static String[] readArrayAndParse(String path, Map<String, String> values) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResource(path)))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResourceAsStream(path)))) {
             String[] keyset = values.keySet().toArray(new String[0]);
             String[] str = new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
 
@@ -135,7 +136,7 @@ public class JarTool {
     }
 
     public static BufferedImage readImage(String path) {
-        try (InputStream in = readResource(path)) {
+        try (InputStream in = readResourceAsStream(path)) {
             BufferedImage image = ImageIO.read(in);
             if (image != null) return image;
             else throw new FileNotFoundException("result of BufferedImage was null");
@@ -145,7 +146,7 @@ public class JarTool {
     }
 
     public static GifDecoder readGif(String path) {
-        try (BufferedInputStream in = new BufferedInputStream(readResource(path))) {
+        try (BufferedInputStream in = new BufferedInputStream(readResourceAsStream(path))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
             if (status == GifDecoder.STATUS_OK) return gif;
@@ -156,13 +157,23 @@ public class JarTool {
         }
     }
 
-    public static InputStream readResource(String source) {
-        return readResource$byClassLoader(source, JarTool.class.getClassLoader()); // InputStream still can be null
+    public static InputStream readResourceAsStream(String source) {
+        return readResourceAsStream$byClassLoader(source, JarTool.class.getClassLoader()); // InputStream still can be null
     }
 
-    private static InputStream readResource$byClassLoader(String source, ClassLoader classLoader) {
+    private static InputStream readResourceAsStream$byClassLoader(String source, ClassLoader classLoader) {
         InputStream is = classLoader.getResourceAsStream(source);
         if (is == null && source.startsWith("/")) is = classLoader.getResourceAsStream(source.substring(1));
+        return is;
+    }
+
+    public static URL readResource(String source) {
+        return readResource$byClassLoader(source, JarTool.class.getClassLoader()); // URL still can be null
+    }
+
+    private static URL readResource$byClassLoader(String source, ClassLoader classLoader) {
+        URL is = classLoader.getResource(source);
+        if (is == null && source.startsWith("/")) is = classLoader.getResource(source.substring(1));
         return is;
     }
 }
