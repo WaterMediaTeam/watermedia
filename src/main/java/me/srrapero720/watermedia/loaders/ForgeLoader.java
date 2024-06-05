@@ -33,6 +33,7 @@ public class ForgeLoader implements ILoader {
             Object o = pairOf.invoke(null, stringSupplier, booleanSupplier);
 
             ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> o);
+            LOGGER.info(IT, "DISPLAYTEST correctly updated");
         } catch (Throwable ignored) {}
 
         try {
