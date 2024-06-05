@@ -141,9 +141,10 @@ jar {
 }
 
 tasks.register('releaseJar', GradleBuild) {
-    dependsOn "build"
-    description 'Uploads new version to modrinth and curseforge.'
+    dependsOn build
+
     group 'publishing'
+    description 'Uploads new version to modrinth and curseforge.'
     setTasks(['curseforge', 'modrinth'])
 }
 
@@ -152,7 +153,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     apiToken = CF_TOKEN
 
     // MAIN FILE
-    def mainFile = upload(curseforgeid, shadowJar)
+    def mainFile = upload(curseforgeid, jar)
     mainFile.displayName = brandname + "/" + version
     mainFile.changelog = getChangelogText(false)
     mainFile.changelogType = "markdown"
@@ -160,6 +161,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     mainFile.addJavaVersion("Java 21", "Java 17", "Java 11", "Java 8")
     mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "client")
     mainFile.addIncompatibility("fancyvideo-api")
+    mainFile.withAdditionalFile(sourcesJar)
     mainFile.releaseType = versiontype.toUpperCase()
 }
 
@@ -173,6 +175,7 @@ modrinth {
     loaders = [ "forge", "neoforge" ]
     gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1" ]
     changelog = getChangelogText(true)
+    additionalFiles = [ sourcesJar ]
 
     group = 'publishing'
 }
