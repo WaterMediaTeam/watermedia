@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.core;
+package me.srrapero720.watermedia.api.cache;
 
 import me.srrapero720.watermedia.api.WaterInternalAPI;
 import me.srrapero720.watermedia.core.tools.DataTool;
@@ -19,9 +19,9 @@ import java.util.zip.GZIPOutputStream;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-@SuppressWarnings({"ResultOfMethodCallIgnored", "PathCanBeConvertedToMethod"})
-public class CacheCore extends WaterInternalAPI {
-    private static final Marker IT = MarkerManager.getMarker(CacheCore.class.getSimpleName());
+@SuppressWarnings({"unused"})
+public class CacheAPI extends WaterInternalAPI {
+    private static final Marker IT = MarkerManager.getMarker(CacheAPI.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;
@@ -29,7 +29,7 @@ public class CacheCore extends WaterInternalAPI {
     private static boolean init = false;
 
     private static boolean refreshAll() {
-        try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(index)))) {
+        try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(Files.newOutputStream(index.toPath())))) {
             out.writeInt(ENTRIES.size());
 
             for (Map.Entry<String, Entry> mapEntry : ENTRIES.entrySet()) {
@@ -67,8 +67,11 @@ public class CacheCore extends WaterInternalAPI {
             } catch (Exception e) { LOGGER.error(IT, "Failed to save cache file {}", url, e); }
 
             // SAVE INDEX FIST
-            if (saved && refreshAll()) ENTRIES.put(url, entry);
-            else if (file.exists()) file.delete();
+            if (saved && refreshAll()) {
+                ENTRIES.put(url, entry);
+            } else if (file.exists()) {
+                if (file.delete()) LOGGER.warn(IT, "Cannot delete unsaved entry file of '{}' located in '{}'", url, file.toString());
+            }
         }
     }
 
@@ -88,7 +91,9 @@ public class CacheCore extends WaterInternalAPI {
         synchronized (ENTRIES) {
             ENTRIES.remove(url);
             File file = entry$getFile(url);
-            if (file.exists()) file.delete();
+            if (file.exists()) {
+                if (file.delete()) LOGGER.warn(IT, "Cannot delete entry file of '{}' located in '{}'", url, file.toString());
+            }
         }
     }
 
@@ -109,7 +114,9 @@ public class CacheCore extends WaterInternalAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        if (!dir.exists()) dir.mkdirs();
+        if (!dir.exists()) {
+            if (dir.mkdirs()) throw new IOException("Cannot make necessary dirs for proper storing");
+        }
         if (index.exists()) {
             try (DataInputStream stream = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())))) {
                 int length = stream.readInt();
@@ -131,6 +138,7 @@ public class CacheCore extends WaterInternalAPI {
 
     @Override
     public void release() {
+        refreshAll();
     }
 
     public static final class Entry {
