@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia;
 
+import com.sun.jna.Platform;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.tools.DataTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
@@ -33,6 +34,7 @@ public class WaterMedia {
 		if (instance != null) throw new NullPointerException("WaterMedia is already prepared");
 		LOGGER.info(IT, "Preparing '{}' on '{}'", NAME, boot.name());
 		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString("/watermedia/version.cfg"));
+		LOGGER.info(IT, "OS Detected: {} ({})", System.getProperty("os.name"), Platform.ARCH);
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();

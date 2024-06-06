@@ -8,7 +8,9 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 /**
  * Contains the current OS, architecture and the binary-wrap state
+ * @deprecated see
  */
+@Deprecated
 public enum OperativeSystem {
     WIN_X64("win", "x64", true, false),
     MAC_X64("mac", "x64", true, true),
