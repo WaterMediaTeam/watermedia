@@ -3,6 +3,7 @@ package me.srrapero720.watermedia.loaders;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.exceptions.IllegalEnvironmentException;
 import me.srrapero720.watermedia.core.exceptions.IllegalTLauncherException;
+import me.srrapero720.watermedia.core.exceptions.IncompatibleModException;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -38,6 +39,7 @@ public class ForgeLoader implements ILoader {
 
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
+            if (modInstalled("xenon")) throw new IncompatibleModException("xenon", "Xenon");
 
             if (clientSide()) WaterMedia.prepare(this).start();
             else if (!developerMode()) throw new IllegalEnvironmentException();
@@ -65,8 +67,7 @@ public class ForgeLoader implements ILoader {
     public boolean tlcheck() {
         boolean tllike = false;
         try {
-            tllike = FMLLoader.getLoadingModList().getModFileById("tlskincape") != null
-                    || FMLLoader.getLoadingModList().getModFileById("tlauncher_custom_cape_skin") != null;
+            tllike = modInstalled("tlskincape") || modInstalled("tlauncher_custom_cape_skin");
         } catch (Throwable t2) {
             LOGGER.error(IT, "Cannot check if TL was installed");
         }
@@ -77,6 +78,10 @@ public class ForgeLoader implements ILoader {
         boolean sklauncher = f.contains("skcraftlauncher");
 
         return tllike || (tlauncher && !atlauncher && !sklauncher);
+    }
+
+    public boolean modInstalled(String id) {
+        return FMLLoader.getLoadingModList().getModFileById(id) != null;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.runtime;
+package me.srrapero720.watermedia.core.exceptions;
 
 public class UnsupportedArchitechtureException extends UnsupportedOperationException {
     public UnsupportedArchitechtureException() {
