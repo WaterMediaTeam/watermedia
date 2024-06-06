@@ -127,8 +127,8 @@ public class JarTool {
             String v;
             for (int i = 0; i < str.length; i++) {
                 v = str[i];
-                for (int j = 0; j < keyset.length; j++) {
-                    str[i] = v.replace("{" + keyset[j] + "}", values.get(keyset[j]));
+                for (String s : keyset) {
+                    str[i] = v.replace("{" + s + "}", values.get(s));
                 }
             }
             return str;

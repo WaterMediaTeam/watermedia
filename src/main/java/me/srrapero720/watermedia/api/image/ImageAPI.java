@@ -6,7 +6,6 @@ import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.core.tools.IOTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
-import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
 import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -166,7 +165,9 @@ public class ImageAPI extends WaterMediaAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        if (IMG_LOADING != null) throw new ReInitException("ImageAPI");
+        if (IMG_LOADING != null) {
+            // TODO: release images and try again
+        }
 
         LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
 

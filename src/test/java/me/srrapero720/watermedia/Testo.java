@@ -1,9 +1,7 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.core.tools.exceptions.ReInitException;
-
 public class Testo {
-    public static void main(String[] args) throws ReInitException {
+    public static void main(String[] args) {
 
 
 //        String[] arr1 = new String[] { "value-1", "value-2", "value-3" };
