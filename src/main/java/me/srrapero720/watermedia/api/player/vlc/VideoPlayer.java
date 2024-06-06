@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api.player.vlc;
 
-import me.lib720.caprica.vlcj.factory.MediaPlayerFactory;
-import me.lib720.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import me.srrapero720.watermedia.api.player.PlayerAPI;
 import me.srrapero720.watermedia.api.player.SyncBasePlayer;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
@@ -12,6 +10,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL21;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 
 import java.awt.*;
 import java.nio.Buffer;
