@@ -110,6 +110,7 @@ shadowJar {
     relocate 'org.apache.commons', 'me.lib720.apache'
     relocate 'org.tukaani', 'me.lib720.tukaani'
     relocate 'com.sun.jna', 'me.lib720.jna'
+    relocate 'uk.co.caprica', 'me.lib720.caprica'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
