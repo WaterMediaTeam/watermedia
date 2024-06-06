@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.config.support;
 
-import me.srrapero720.watermedia.api.config.WaterConfig;
+import me.srrapero720.watermedia.WaterMedia;
 import uk.co.caprica.vlcj.factory.discovery.provider.DiscoveryDirectoryProvider;
 
 public class CustomDirectoryProvider implements DiscoveryDirectoryProvider {
@@ -16,6 +16,6 @@ public class CustomDirectoryProvider implements DiscoveryDirectoryProvider {
 
     @Override
     public String[] directories() {
-        return new String[] {WaterConfig.vlcInstallPath};
+        return new String[] {WaterMedia.getLoader().tempDir().resolve("videolan").toAbsolutePath().toString()};
     }
 }

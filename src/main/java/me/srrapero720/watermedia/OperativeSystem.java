@@ -49,7 +49,6 @@ public enum OperativeSystem {
     public static String getArch() { return OS.arch; }
 
     private static OperativeSystem getOs() {
-        if (!Platform.is64Bit()) throw new UnsupportedArchitechtureException();
         if (Platform.is64Bit()) {
             if (Platform.isARM()) {
                 if (Platform.isWindows()) return WIN_ARM64;
@@ -62,7 +61,7 @@ public enum OperativeSystem {
             }
             return DUMMY;
         } else {
-            throw new IllegalStateException("32 BITS IS NOT SUPPORTED");
+            throw new UnsupportedArchitechtureException();
         }
     }
 }

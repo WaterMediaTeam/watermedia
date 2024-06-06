@@ -1,10 +1,10 @@
 package me.srrapero720.watermedia.api.player;
 
 import com.sun.jna.Platform;
-import me.srrapero720.watermedia.api.network.DynamicURL;
-import me.srrapero720.watermedia.api.network.NetworkAPI;
-import me.srrapero720.watermedia.tools.ThreadTool;
-import me.srrapero720.watermedia.tools.annotations.Experimental;
+import me.srrapero720.watermedia.api.url.UrlAPI;
+import me.srrapero720.watermedia.api.url.fixers.URLFixer;
+import me.srrapero720.watermedia.core.annotations.Experimental;
+import me.srrapero720.watermedia.core.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -100,6 +100,7 @@ public abstract class SyncBasePlayer {
         });
     }
 
+    @Deprecated
     public State getRawPlayerState() {
         if (raw == null) return State.ERROR;
         return raw.mediaPlayer().status().state();
