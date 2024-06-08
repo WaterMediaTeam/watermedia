@@ -1,16 +1,25 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.math.MathAPI;
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.File;
+import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.logging.*;
 
 public class Main {
+    public static final Logger LOGGER = Logger.getLogger("WaterMedia");
     public static final JFrame window = new JFrame(WaterMedia.NAME + ": Diagnosis Tool");
+    public static final DateFormat FORMAT = new SimpleDateFormat("HH:mm:ss");
+
     public static final ClassLoader classLoader = Main.class.getClassLoader();
 
     public static void main(String... args) {
@@ -56,8 +65,13 @@ public class Main {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(400, 300));
 
-        System.setOut(new PrintStream(new ConsoleOutputStream(console, false)));
-        System.setErr(new PrintStream(new ConsoleOutputStream(console, true)));
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new ConsoleFormatter(console));
+        LOGGER.addHandler(handler);
+        LOGGER.setUseParentHandlers(false);
+
+//        System.setOut(new PrintStream(new ConsoleOutputStream(console, false)));
+//        System.setErr(new PrintStream(new ConsoleOutputStream(console, true)));
 
         root.add(scrollPane, BorderLayout.CENTER);
 
@@ -75,7 +89,7 @@ public class Main {
         generateReport.setFont(new Font("Default", Font.PLAIN, 16));
         generateReport.addActionListener(e -> {
             for (Component c: actionsPanel.getComponents()) c.setEnabled(false);
-            performCollection();
+            new CollectionTask().start();
         });
 
         JButton diagnosis = new JButton("Diagnosis");
@@ -99,39 +113,123 @@ public class Main {
         window.setVisible(true);
     }
 
-    private static class ConsoleOutputStream extends ByteArrayOutputStream {
-
-        JTextArea textArea;
-        boolean err;
-        public ConsoleOutputStream(JTextArea textArea, boolean err) {
-            this.textArea = textArea;
-            this.err = err;
-        }
-
-        @Override
-        public synchronized void write(int b) {
-            super.write(b);
-            textArea.append(String.valueOf((char) b));
-            textArea.setCaretPosition(textArea.getDocument().getLength());
-        }
-
-        @Override
-        public synchronized void write(byte[] b, int off, int len) {
-            super.write(b, off, len);
-            textArea.append(new String(b, off, len));
-            textArea.setCaretPosition(textArea.getDocument().getLength());
-        }
-    }
-
     private static void performDiagnosis() {
         // TODO: perform diagnosis
-        System.out.println("Performing diagnosis...");
-        System.err.println("Diagnosis Failed, WIP!");
+        LOGGER.info("Performing diagnosis");
+        LOGGER.warning("Diagnosis Failed, WIP!");
     }
 
+    private static class CollectionTask extends Thread {
+
+        private final Path root;
+        private final Result result = new Result();
+        public CollectionTask() {
+            File location = new File("");
+            String locationStr = location.toString();
+            if (locationStr.endsWith("/mods") || locationStr.endsWith("/mods/")) {
+                location = location.getParentFile();
+                LOGGER.info("Attached to folder '" + locationStr + "'");
+            } else {
+                LOGGER.warning("We are running outside mods folder, output might not be the ideal");
+            }
+
+            this.root = location.toPath();
+        }
+
+        @Override
+        public void run() {
+            LOGGER.info("Scanning crash-report folder...");
+
+            Path crashReportFolder = root.resolve("crash-report");
+            try {
+                File[] crashReportFiles = crashReportFolder.toFile().listFiles();
+                if (crashReportFiles == null || crashReportFiles.length == 0)
+                    throw new NullPointerException("No such directory or is empty");
+
+                Arrays.sort(crashReportFiles, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+                File crashReport = crashReportFiles[0];
+
+                LOGGER.info("Collected files: " + Arrays.toString(crashReportFiles));
+
+
+            } catch (Exception e) {
+                LOGGER.warning("Failed to get crash-report files..." + e.getMessage());
+            }
+
+
+        }
+
+        public static class Result {
+            private File crashReport;
+            private File log;
+            private File debug;
+            private File[] hsErrPids;
+
+            public void setCrashReport(File crashReport) {
+                this.crashReport = crashReport;
+            }
+
+            public void setDebug(File debug) {
+                this.debug = debug;
+            }
+
+            public void setLog(File log) {
+                this.log = log;
+            }
+
+            public void setHsErrPids(File[] hsErrPids) {
+                this.hsErrPids = hsErrPids;
+            }
+        }
+    }
+
+
     private static void performCollection() {
-        // TODO: perform data collection
-        System.out.println("Collecting");
-        System.err.println("Collecting Failed, WIP!");
+        LOGGER.info("Looking for data...");
+    }
+
+    private static class ConsoleFormatter extends Formatter {
+        public static final String RESET = "\u001B[0m";
+        public static final String RED = "\u001B[31m";
+        public static final String GREEN = "\u001B[32m";
+        public static final String YELLOW = "\u001B[33m";
+        public static final String BLUE = "\u001B[34m";
+        public static final String PURPLE = "\u001B[35m";
+
+        JTextArea textArea;
+        public ConsoleFormatter(JTextArea textArea) {
+            this.textArea = textArea;
+        }
+
+        @Override
+        public String format(LogRecord record) {
+            String color = getColorLevel(record.getLevel());
+            String time = "[" + FORMAT.format(new Date(record.getMillis())) + "]";
+            String threadLevel = "[" + Thread.currentThread().getName() + "/" + record.getLevel().toString().substring(0, 4) + "]";
+            String loggerMarker = "[" + record.getLoggerName() + "/" + "]";
+
+            String r = time + " " + threadLevel + " " + loggerMarker + ": " + record.getMessage() + (record.getThrown() != null ? record.getThrown().toString() : "") + "\n";
+
+            textArea.append(r);
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+            return color + r + RESET;
+        }
+
+        public String getColorLevel(Level level) {
+            if (level.equals(Level.SEVERE)) {
+                return RED;
+            } else if (level.equals(Level.WARNING)) {
+                return YELLOW;
+            } else if (level.equals(Level.INFO)) {
+                return GREEN;
+            } else if (level.equals(Level.CONFIG)) {
+                return BLUE;
+            } else if (level.intValue() <= Level.FINE.intValue()) {
+                return PURPLE;
+            } else {
+                return RESET;
+            }
+        }
+
     }
 }
