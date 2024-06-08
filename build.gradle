@@ -74,8 +74,6 @@ dependencies {
     library "net.java.dev.jna:platform:$jnaplatform_version"
     library "org.apache.logging.log4j:log4j-api:$log4j_version"
     library "org.apache.logging.log4j:log4j-core:$log4jcore_version"
-    library "org.apache.commons:commons-lang3:$commonslang3_version"
-    library "commons-io:commons-io:$commonsio_version"
     library "com.google.code.gson:gson:$gson_version"
     library "org.lwjgl:lwjgl-opengl:$opengl_version"
     library "org.lwjgl:lwjgl-glfw:$opengl_version"
@@ -181,10 +179,10 @@ modrinth {
 }
 
 def getChangelogText(boolean latest) {
-    def result = ''
+    def result = ""
     file('CHANGELOG.md').readLines('UTF-8').each {
         if (latest && it.isEmpty()) return result
-        result += it + "\n"
+        result += it + '\n'
     }
     return result
 }
