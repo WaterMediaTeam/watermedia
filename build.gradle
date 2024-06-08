@@ -55,6 +55,17 @@ sourceSets {
     main.compileClasspath += configurations.library
     test.compileClasspath += configurations.library
     test.runtimeClasspath += configurations.library
+
+    vlcj { // TODO: remove VLCJ and rely on natives
+        // SHADOW
+        compileClasspath += configurations.shadow
+        runtimeClasspath += configurations.shadow
+
+        // LIBRARY
+        compileClasspath += configurations.library
+        compileClasspath += configurations.library
+        runtimeClasspath += configurations.library
+    }
 }
 
 dependencies {
@@ -67,7 +78,7 @@ dependencies {
     shadow "com.github.WaterMediaTeam:ytdl-java:$jyd_version"
     shadow "org.apache.commons:commons-compress:$commoncompress_version" // CARRIES 'CODEC', 'LANG3' AND 'COMMONS-IO'
     shadow "org.tukaani:xz:$tukaani_version"
-    shadow project(":lib-vlcj")
+//    shadow project(":lib-vlcj")
 
     // DEPENDENCIES INCLUDED IN MINECRAFT
     library "net.java.dev.jna:jna:$jna_version"
@@ -78,6 +89,9 @@ dependencies {
     library "org.lwjgl:lwjgl-opengl:$opengl_version"
     library "org.lwjgl:lwjgl-glfw:$opengl_version"
     library "org.lwjgl:lwjgl-openal:$openal_version"
+
+    // UHHH
+    library 'uk.co.caprica:vlcj-osx-stubs:1.0.0'
 
     // TEST DEPENDENCIES
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
