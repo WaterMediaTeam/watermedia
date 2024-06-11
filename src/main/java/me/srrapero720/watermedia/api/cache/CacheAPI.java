@@ -120,9 +120,8 @@ public class CacheAPI extends WaterInternalAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        if (!dir.exists()) {
-            if (dir.mkdirs()) throw new IOException("Cannot make necessary dirs for proper storing");
-        }
+        if (!dir.exists()) dir.mkdirs();
+        if (!dir.exists()) throw new IOException("Cannot make necessary dirs for proper storing");
         if (index.exists()) {
             try (DataInputStream stream = new DataInputStream(new GZIPInputStream(Files.newInputStream(index.toPath())))) {
                 int length = stream.readInt();
