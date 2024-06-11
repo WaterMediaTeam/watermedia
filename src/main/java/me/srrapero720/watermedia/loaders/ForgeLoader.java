@@ -42,7 +42,7 @@ public class ForgeLoader implements ILoader {
             if (modInstalled("xenon")) throw new IncompatibleModException("xenon", "Xenon");
 
             if (clientSide()) WaterMedia.prepare(this).start();
-            else if (!developerMode()) throw new IllegalEnvironmentException();
+            else if (!developerMode()) return;
         } catch (Exception e) {
             throw new RuntimeException("Failed starting " + WaterMedia.NAME + " for " + name() +": " + e.getMessage(), e);
         }
