@@ -151,7 +151,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     apiToken = CF_TOKEN
 
     // MAIN FILE
-    def mainFile = upload(curseforgeid, jar)
+    def mainFile = upload(curseforgeid, shadowJar)
     mainFile.displayName = brandname + "/" + version
     mainFile.changelog = getChangelogText(false)
     mainFile.changelogType = "markdown"
