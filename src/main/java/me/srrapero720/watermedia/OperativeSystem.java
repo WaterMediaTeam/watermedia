@@ -3,12 +3,9 @@ package me.srrapero720.watermedia;
 import com.sun.jna.Platform;
 import me.srrapero720.watermedia.core.exceptions.UnsupportedArchitechtureException;
 
-import static me.srrapero720.watermedia.WaterMedia.IT;
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-
 /**
  * Contains the current OS, architecture and the binary-wrap state
- * @deprecated see
+ * @deprecated see <a href="https://github.com/WaterMediaTeam/watermedia/issues/85">#85</a>
  */
 @Deprecated
 public enum OperativeSystem {
@@ -37,33 +34,25 @@ public enum OperativeSystem {
     public String toString() { return name + "-" + arch; }
 
     // STATIC
-    public static final OperativeSystem OS = getOs();
+    public static final OperativeSystem OS;
+
     static {
-        if (!OS.wrapped) {
-            LOGGER.warn(IT, "[NOT A BUG] {} doesn't contains VLC binaries for your operative system and architecture, you had to manually download it from 'https://www.videolan.org/vlc/'", WaterMedia.NAME);
-        }
-    }
-
-    public static boolean isWrapped() { return OS.wrapped; }
-    public static boolean isMerged() { return OS.merged; }
-    public static String getFile() { return (isMerged() ? getName() + "-all" : getName() + "-" + getArch()) + ".7z"; }
-    public static String getName() { return OS.name; }
-    public static String getArch() { return OS.arch; }
-
-    private static OperativeSystem getOs() {
         if (Platform.is64Bit()) {
             if (Platform.isARM()) {
-                if (Platform.isWindows()) return WIN_ARM64;
-                if (Platform.isMac()) return MAC_ARM64;
-                if (Platform.isLinux()) return NIX_ARM64;
+                if (Platform.isWindows()) OS = WIN_ARM64;
+                else if (Platform.isMac()) OS = MAC_ARM64;
+                else if (Platform.isLinux()) OS = NIX_ARM64;
+                else OS = DUMMY;
             } else {
-                if (Platform.isWindows()) return WIN_X64;
-                if (Platform.isMac()) return MAC_X64;
-                if (Platform.isLinux()) return NIX_X64;
+                if (Platform.isWindows()) OS = WIN_X64;
+                else if (Platform.isMac()) OS = MAC_X64;
+                else if (Platform.isLinux()) OS = NIX_X64;
+                else OS = DUMMY;
             }
-            return DUMMY;
         } else {
             throw new UnsupportedArchitechtureException();
         }
     }
+
+    public static String getFile() { return OS.wrapped ? (OS.merged ? OS.name + "-all" : OS.name + "-" + OS.arch) + ".7z" : null; }
 }

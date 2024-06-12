@@ -135,6 +135,12 @@ public class JarTool {
         }
     }
 
+    public static String[] readArray(String path) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResourceAsStream(path)))) {
+            return new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
+        }
+    }
+
     public static BufferedImage readImage(String path) {
         try (InputStream in = readResourceAsStream(path)) {
             BufferedImage image = ImageIO.read(in);

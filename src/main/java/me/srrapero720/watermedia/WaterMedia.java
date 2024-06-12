@@ -76,4 +76,9 @@ public class WaterMedia {
 	}
 
 	public static ILoader getLoader() { return bootstrap; }
+
+
+	public static String asResource(String path) {
+		return WaterMedia.ID + ":" + path;
+	}
 }

@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.api.player;
 
-import com.sun.jna.Platform;
 import me.srrapero720.watermedia.OperativeSystem;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
@@ -8,6 +7,7 @@ import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
 import me.srrapero720.watermedia.core.tools.IOTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.loaders.ILoader;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,24 +18,23 @@ import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class PlayerAPI extends WaterMediaAPI {
-    private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());
-    private static final String VIDEOLAN_BIN_ASSET = "videolan/" + OperativeSystem.getFile();
-    private static final String VIDEOLAN_VER_ASSET = "videolan/version.cfg";
 
-    private static final Map<String, String> ARGVARS = new HashMap<>();
+    private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
+    public static final Map<String, MediaPlayerFactory> FACTORIES = new LinkedHashMap<>();
 
     private static MediaPlayerFactory DEFAULT_FACTORY;
     private static MediaPlayerFactory DEFAULT_SONG_FACTORY;
+
 
     /**
      * Check if PlayerAPI and/or VLC is loaded and ready to be used.
@@ -54,7 +53,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return default factory
      */
     public static MediaPlayerFactory getFactory() {
-        return DEFAULT_FACTORY;
+        return FACTORIES.get(WaterMedia.asResource("default"));
     }
 
     /**
@@ -64,7 +63,27 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return default factory
      */
     public static MediaPlayerFactory getFactorySoundOnly() {
-        return DEFAULT_SONG_FACTORY;
+        return FACTORIES.get(WaterMedia.asResource("sound_only"));
+    }
+
+    /**
+     * Registers a new FACTORY associated with a identifier (or a well-know Minecraft ResourceLocation as String)
+     * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
+     * @param resLoc the identifier (ResourceLocation#toString())
+     * @param vlcArgs arguments used to create new VLC player instances
+     * @return MediaPlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
+     */
+    public static MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
+        if (DISCOVERY.discover()) {
+            MediaPlayerFactory factory = new MediaPlayerFactory(DISCOVERY, vlcArgs);
+            MediaPlayerFactory oldFactory = FACTORIES.put(resLoc, factory);
+            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", DISCOVERY.discoveredPath(), Arrays.toString(vlcArgs));
+            if (oldFactory != null) LOGGER.warn(IT, "Factory {} previously defined was overwritted", resLoc);
+            return factory;
+        }
+
+        LOGGER.fatal(IT, "[VLC IS MISSING]: Cannot create MediaPlayerFactory instance");
+        return null;
     }
 
     /**
@@ -75,36 +94,44 @@ public class PlayerAPI extends WaterMediaAPI {
      * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
      * @param vlcArgs arguments to make another VLC instance
      * @return a PlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
+     * @deprecated use instead {@link PlayerAPI#registerFactory(String, String[])}. Fallback here is not efficient
      */
     public static MediaPlayerFactory customFactory(String[] vlcArgs) {
-        MediaPlayerFactory factory = null;
-        if (DISCOVERY.discover()) {
-            factory = new MediaPlayerFactory(DISCOVERY, vlcArgs);
-            Runtime.getRuntime().addShutdownHook(new Thread(factory::release));
-            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", DISCOVERY.discoveredPath(), Arrays.toString(vlcArgs));
-        } else {
-            LOGGER.fatal(IT, "Missing VLC - Cannot create MediaPlayerFactory instance");
+        int fakeID = 0;
+        while (FACTORIES.containsKey(WaterMedia.asResource("unidentified_" + fakeID))) {
+            fakeID++;
         }
-
-        return factory;
+        return registerFactory(WaterMedia.asResource("unidentified_" + fakeID), vlcArgs);
     }
 
     // LOADING
     private final Path dir;
-    private final Path logs;
 
-    private final File binOutput;
-    private final File cfgOutput;
+    private final String zipInput;
+    private final String configInput;
 
+    private final File zipOutput;
+    private final File configOutput;
+
+    private final boolean wrapped;
     private boolean extract;
     public PlayerAPI() {
         super();
         ILoader bootstrap = WaterMedia.getLoader();
-        this.dir = bootstrap.tempDir().resolve("videolan");
-        this.logs = bootstrap.tempDir().resolve("logs/videolan.log");
+        String zFilename = OperativeSystem.getFile();
 
-        this.binOutput = bootstrap.tempDir().resolve(VIDEOLAN_BIN_ASSET).toFile();
-        this.cfgOutput = bootstrap.tempDir().resolve(VIDEOLAN_VER_ASSET).toFile();
+        this.dir = bootstrap.tempDir().resolve("videolan");
+
+        this.wrapped = zFilename != null;
+        this.zipInput = "videolan/" + zFilename;
+        this.configInput = "videolan/version.cfg";
+
+        if (wrapped) {
+            this.zipOutput = dir.resolve(zFilename).toFile();
+            this.configOutput = dir.resolve("version.cfg").toFile();
+        } else {
+            zipOutput = configOutput = null;
+        }
     }
 
     @Override
@@ -114,24 +141,25 @@ public class PlayerAPI extends WaterMediaAPI {
 
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
-        String versionInJar = JarTool.readString(VIDEOLAN_VER_ASSET);
-        String versionInFile = IOTool.readString(cfgOutput.toPath());
-        boolean wrapped = OperativeSystem.isWrapped();
-        boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
-        extract = wrapped && !versionMatch;
+        LOGGER.info(IT, "Binaries are {}", wrapped ? "wrapped" : "not wrapped");
+        if (wrapped) {
+            String versionInJar = JarTool.readString(configInput);
+            String versionInFile = IOTool.readString(configOutput.toPath());
 
-        LOGGER.info(IT, "Running in {}, binaries are {}", OperativeSystem.OS, wrapped ? "wrapped" : "not wrapped");
-        if (!extract) {
-            String reason = "unknown";
-            if (!wrapped) reason = "binaries are not wrapped";
-            if (versionMatch) reason = "extracted version match with wrapped version";
-            LOGGER.warn(IT, "VLC binaries extraction skipped. Reason: {}", reason);
-        } else {
-            if (binOutput.getParentFile().exists()) {
-                LOGGER.warn(IT, "Detected an old installation, cleaning up...");
-                FileUtils.deleteDirectory(binOutput.getParentFile());
-                LOGGER.warn(IT, "Cleaning up successfully");
+            boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
+            if (!versionMatch) {
+                this.extract = true;
+                LOGGER.info(IT, "Binaries not extracted, extraction scheduled");
+                if (zipOutput.getParentFile().exists()) {
+                    LOGGER.warn(IT, "Detected an old installation, cleaning up...");
+                    FileUtils.deleteDirectory(zipOutput.getParentFile());
+                    LOGGER.warn(IT, "Cleaning up successfully");
+                }
+            } else {
+                LOGGER.warn(IT, "VLC binaries extraction skipped. Extracted version match with wrapped version");
             }
+        } else {
+            LOGGER.warn(IT, "[NOT A BUG] {} doesn't contains VLC binaries for your OS and ARCH, you had to download it manually from 'https://www.videolan.org/vlc/'", WaterMedia.NAME);
         }
 
         return true;
@@ -141,11 +169,13 @@ public class PlayerAPI extends WaterMediaAPI {
     public void start(ILoader bootCore) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
-            if ((!binOutput.exists() && JarTool.copyAsset(VIDEOLAN_BIN_ASSET, binOutput.toPath())) || binOutput.exists()) {
-                IOTool.un7zip(IT, binOutput.toPath());
-                binOutput.delete();
+            if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
+                IOTool.un7zip(IT, zipOutput.toPath());
+                if (!zipOutput.delete()) {
+                    LOGGER.error(IT, "Failed to delete binaries zip file...");
+                }
 
-                JarTool.copyAsset(VIDEOLAN_VER_ASSET, cfgOutput.toPath());
+                JarTool.copyAsset(configInput, configOutput.toPath());
 
                 LOGGER.info(IT, "VideoLAN binaries extracted successfully");
             } else {
@@ -155,8 +185,8 @@ public class PlayerAPI extends WaterMediaAPI {
 
         // LOGGER INIT
         LOGGER.info(IT, "Processing VideoLAN log files...");
-        if (Files.exists(logs)) {
-            Path parent = logs.getParent();
+        if (Files.exists(dir.resolve("logs/videolan.log"))) {
+            Path parent = dir.resolve("logs");
             try {
                 PathUtils.deleteDirectory(parent);
             } catch (IOException e) {
@@ -164,14 +194,12 @@ public class PlayerAPI extends WaterMediaAPI {
             }
         }
 
-        // VLCJ INIT
-//        VideoLan4J.init(dir.toAbsolutePath()); //
-
-        // VLC INIT, this need to be soft-crashed because api and game can still work without VLC
         try {
-            String[] args = JarTool.readArrayAndParse("videolan/arguments.json", ARGVARS);
-            DEFAULT_FACTORY = customFactory(args);
-            DEFAULT_SONG_FACTORY = customFactory(ArrayUtils.addAll(args, "--vout=none"));
+            String[] args = JarTool.readArray("videolan/arguments.json");
+            registerFactory(WaterMedia.asResource("default"), args);
+            registerFactory(WaterMedia.asResource("sound_only"), ArrayUtils.addAll(args, "--vout=none"));
+
+            Runtime.getRuntime().addShutdownHook(new Thread(this::release));
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);
         }
@@ -179,6 +207,7 @@ public class PlayerAPI extends WaterMediaAPI {
 
     @Override
     public void release() {
-        DEFAULT_FACTORY.release();
+        FACTORIES.forEach((s, mediaPlayerFactory) -> mediaPlayerFactory.release());
+        FACTORIES.clear();
     }
 }

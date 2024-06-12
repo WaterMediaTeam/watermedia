@@ -10,7 +10,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +25,7 @@ public class IOTool {
     public static String readString(Path from) {
         try {
             byte[] bytes = Files.readAllBytes(from);
-            return new String(bytes, Charset.defaultCharset());
+            return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
         }
