@@ -1,3 +1,8 @@
+# UPDATE 2.0.59
+- Fixed MacOS + Fabric causes a black screen when WATERMeDIA is installed
+- Stop scanning runtime dir for VLC binaries
+- [BETA] DIAGNOSIS TOOL: Click on WATERMeDIA's JAR will open our new Diagnosis Tool to help us to provide faster support
+
 # UPDATE 2.0.58
 - Removed broken VLC argument (prevents proper loading)
 - Fixed videos are not working and the constant ERROR LOG SPAM of OpenGL
