@@ -173,7 +173,7 @@ public class Main {
         public void run() {
             LOGGER.info("Scanning crash-report folder...");
 
-            Path crashReportFolder = root.resolve("crash-report");
+            Path crashReportFolder = root.resolve("crash-reports");
             try {
                 File[] crashReportFiles = crashReportFolder.toFile().listFiles();
                 if (crashReportFiles == null || crashReportFiles.length == 0)
@@ -185,7 +185,7 @@ public class Main {
                 LOGGER.info("Collected files: " + Arrays.toString(crashReportFiles));
                 result.setCrashReport(crashReport);
             } catch (Exception e) {
-                LOGGER.warning("Failed to get crash-report files..." + e.getMessage());
+                LOGGER.warning("Failed to get crash-reports files..." + e.getMessage());
             }
 
             Path logsFolder = root.resolve("logs");
