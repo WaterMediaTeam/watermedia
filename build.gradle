@@ -14,7 +14,7 @@ def CF_TOKEN = System.getenv("CURSEFORGE_TOKEN")
 
 base {
     archivesName = id
-    libsDirectory = new File("buildjars/")
+    libsDirectory = new File("builtJars/")
 }
 
 test {
@@ -55,6 +55,20 @@ sourceSets {
     main.compileClasspath += configurations.library
     test.compileClasspath += configurations.library
     test.runtimeClasspath += configurations.library
+
+    main {
+        java {
+            srcDir 'src/main'
+            srcDir 'src/vlcj'
+        }
+    }
+
+    test {
+        java {
+            srcDir 'src/test'
+            srcDir 'src/vlcj'
+        }
+    }
 
     vlcj { // TODO: remove VLCJ and rely on natives
         // SHADOW
