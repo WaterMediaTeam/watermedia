@@ -16,7 +16,7 @@
   "icon": "pack.png",
   "environment": "client",
   "entrypoints": {
-    "preLaunch": [
+    "client": [
       "me.srrapero720.watermedia.loaders.FavricLoader"
     ]
   },

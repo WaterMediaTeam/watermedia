@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.loaders;
 
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.exceptions.IllegalTLauncherException;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
@@ -11,14 +12,14 @@ import org.apache.logging.log4j.MarkerManager;
 import java.io.File;
 import java.nio.file.Path;
 
-public class FavricLoader implements PreLaunchEntrypoint, ILoader {
+public class FavricLoader implements ClientModInitializer, ILoader {
     private static final Marker IT = MarkerManager.getMarker("FabricLoader");
 
     private final Path tempPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
     private final Path processPath = FabricLoader.getInstance().getGameDir();
 
     @Override
-    public void onPreLaunch() {
+    public void onInitializeClient() {
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
 
