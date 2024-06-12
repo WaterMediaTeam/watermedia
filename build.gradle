@@ -180,9 +180,9 @@ modrinth {
 
 def getChangelogText(boolean latest) {
     def result = ""
-    file('CHANGELOG.md').readLines('UTF-8').each {
-        if (latest && it.isEmpty()) return result
-        result += it + '\n'
+    for (String line: file('CHANGELOG.md').readLines('UTF-8')) {
+        if (latest && line.isEmpty()) return result
+        result += line + '\n'
     }
     return result
 }
