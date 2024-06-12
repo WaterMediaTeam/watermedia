@@ -106,8 +106,8 @@ public class Main {
                 }
 
                 long logPrinted = System.currentTimeMillis();
-                long targetTime = logPrinted + 5000; // +5 secs
-                int count = 5;
+                long targetTime = logPrinted + 10000; // +10 secs
+                int count = 10;
                 while (System.currentTimeMillis() < targetTime) {
                     if (logPrinted < System.currentTimeMillis()) {
                         LOGGER.info("Closing in " + count--);
@@ -150,11 +150,13 @@ public class Main {
         private final Path root;
         private final Result result = new Result();
         public CollectionTask() {
-            File location = new File("");
+            File location = new File("").getAbsoluteFile();
             String locationStr = location.toString();
-            if (locationStr.endsWith("/mods") || locationStr.endsWith("/mods/")) {
+            LOGGER.info("Running on '" + locationStr + "'");
+            LOGGER.info("Checking for '" + File.separator + "mods" + "'");
+            if (locationStr.endsWith(File.separator + "mods") || locationStr.endsWith(File.separator + "mods" + File.pathSeparatorChar)) {
                 location = location.getParentFile();
-                LOGGER.info("Attached to folder '" + locationStr + "'");
+                LOGGER.info("Attached to folder '" + location.toString() + "'");
             } else {
                 LOGGER.warning("We are running outside mods folder, output might not be the ideal");
             }
@@ -213,29 +215,37 @@ public class Main {
                 LOGGER.warning("Collector didn't find nothing in your instance... cancelling result outdraw");
                 return;
             }
-            try (InputStream is = JarTool.readResourceAsStream("watermedia/instructions.txt")) {
-                File wroot = root.resolve("watermedia").toFile();
+
+            try (InputStream is = Main.class.getClassLoader().getResourceAsStream("watermedia/instructions.txt")) {
+                File wroot = root.resolve("watermedia_diagnosis").toFile().getAbsoluteFile();
+
                 if (wroot.exists()) {
                     FileUtils.deleteDirectory(wroot);
                 }
-                if (!wroot.mkdirs()) {
+                if (!wroot.exists() && !wroot.mkdirs()) {
                     throw new IOException("Cannot mkdir collected files dir");
                 }
 
+
+                Files.copy(is, wroot.toPath().resolve("instructions.txt"));
+
                 if (result.crashReport != null) {
-                    Files.copy(result.crashReport.toPath(), wroot.toPath());
+                    Files.copy(result.crashReport.toPath(), wroot.toPath().resolve("crash-report.txt"));
                 }
                 if (result.log != null) {
-                    Files.copy(result.log.toPath(), wroot.toPath());
+                    Files.copy(result.log.toPath(), wroot.toPath().resolve("latest.log"));
                 }
                 if (result.debug != null) {
-                    Files.copy(result.debug.toPath(), wroot.toPath());
+                    Files.copy(result.debug.toPath(), wroot.toPath().resolve("debug.log"));
                 }
                 if (result.hsErrPids != null) {
                     for (File f: result.hsErrPids) {
-                        Files.copy(f.toPath(), wroot.toPath());
+                        Files.copy(f.toPath(), wroot.toPath().resolve(f.getName()));
                     }
                 }
+
+                Desktop desktop = Desktop.getDesktop();
+                desktop.open(wroot);
             } catch (Exception e) {
                 LOGGER.warning("Failed collecting files: " + e.getMessage());
             }
