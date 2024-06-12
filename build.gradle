@@ -151,7 +151,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     apiToken = CF_TOKEN
 
     // MAIN FILE
-    def mainFile = upload(curseforgeid, jar)
+    def mainFile = upload(curseforgeid, shadowJar)
     mainFile.displayName = brandname + "/" + version
     mainFile.changelog = getChangelogText(false)
     mainFile.changelogType = "markdown"
@@ -160,7 +160,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "client")
     mainFile.addIncompatibility("fancyvideo-api")
     mainFile.withAdditionalFile(sourcesJar)
-    mainFile.releaseType = versiontype.toUpperCase()
+    mainFile.releaseType = versiontype
 }
 
 modrinth {
