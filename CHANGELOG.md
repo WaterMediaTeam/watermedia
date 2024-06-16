@@ -1,3 +1,10 @@
+# UPDATE 2.0.61
+- Fixed VLC is not loading on the pre-defined temp path
+- Removed MacOS binaries (fixes crashes attemping to load our broken VLC)
+- Added NeoForge support
+- Fixed crash-reports are not obtained via DT3
+- Fixed game crashes when fails to create a new VLC instance
+
 # UPDATE 2.0.60
 - Fixed MacOS + Fabric causes a black screen when WATERMeDIA is installed
 - Stop scanning runtime dir for VLC binaries
