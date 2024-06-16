@@ -32,7 +32,7 @@ listed here and most important mod loaders (except Fabric and Quilt)<br><br>
 | 1.18.2  |   ✅   |   ✅    |   ✅   |    🚫    |
 | 1.19.2  |   ✅   |   ✅    |   ✅   |    🚫    |
 | 1.20.x  |   ✅   |   ✅    |   ✅   |    ⛔     |
-| 1.21.x  |   !   |   !    |   !   |    ⚠     |
+| 1.21.x  |   ✅   |   ✅    |   ✅   |    ✅     |
 
 ✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A**
 
@@ -91,6 +91,9 @@ and others aren't supported by VLC limitations.
 Ensure your OS is supported in this list.<br>
 Linux users: check https://www.videolan.org/vlc/#download
 
+> [!WARNING]
+> FLATPAK is not supported (or any archlinux thing), use apt-get or manual installation for VLC and Minecraft (or any game)
+
 |   Operative System    | Support status |
 |:---------------------:|:--------------:|
 | Windows 7 ~ 11 (x64)  |       ✅        |
@@ -99,7 +102,7 @@ Linux users: check https://www.videolan.org/vlc/#download
 |      MacOS (x64)      |       ❎        |
 | MacOS (Apple Silicon) |       ❎        |
 |      Linux (x64)      |       ❎        |
-|      Linux (ARM)      |       ⛔        |
+|      Linux (ARM)      |       ❎        |
 
 - ✅ **SUPPORTED**
 - ❎ **LIMITED:** Needs manually VLC 3 installation
