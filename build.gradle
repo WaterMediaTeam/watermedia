@@ -155,9 +155,9 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     mainFile.displayName = brandname + "/" + version
     mainFile.changelog = getChangelogText(false)
     mainFile.changelogType = "markdown"
-    mainFile.addModLoader("Forge", "NeoForge")
+    mainFile.addModLoader("Forge", "NeoForge", "Fabric")
     mainFile.addJavaVersion("Java 21", "Java 17", "Java 11", "Java 8")
-    mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "client")
+    mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21", "client")
     mainFile.addIncompatibility("fancyvideo-api")
     mainFile.withAdditionalFile(sourcesJar)
     mainFile.releaseType = versiontype
@@ -170,8 +170,8 @@ modrinth {
     versionNumber = version.toString()
     versionType = versiontype
     uploadFile = shadowJar
-    loaders = [ "forge", "neoforge" ]
-    gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1" ]
+    loaders = [ "forge", "neoforge", "fabric" ]
+    gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21" ]
     changelog = getChangelogText(true)
     additionalFiles = [ sourcesJar ]
 
