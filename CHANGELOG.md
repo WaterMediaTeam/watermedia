@@ -2,7 +2,7 @@
 - Fixed VLC is not loading on the pre-defined temp path
 - Removed MacOS binaries (fixes crashes attemping to load our broken VLC)
 - Added NeoForge support
-- Fixed crash-reports are not obtained via DT3
+- Fixed crash-reports are not obtained via DT
 - Fixed game crashes when fails to create a new VLC instance
 
 # UPDATE 2.0.60
