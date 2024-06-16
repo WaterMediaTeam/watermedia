@@ -59,7 +59,7 @@ sourceSets {
 
 dependencies {
     // MODLOADERS
-    compileOnly 'com.github.WaterMediaTeam:modloaders:1.0.0'
+    compileOnly "com.github.WaterMediaTeam:modloaders:$modloaders_version"
     compileOnly "net.fabricmc:fabric-loader:$fabric_version"
 
     // DEPENDENCIES
