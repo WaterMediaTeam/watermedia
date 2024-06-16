@@ -10,13 +10,13 @@ import me.srrapero720.watermedia.core.exceptions.UnsupportedArchitechtureExcepti
 @Deprecated
 public enum OperativeSystem {
     WIN_X64("win", "x64", true, false),
-    MAC_X64("mac", "x64", true, true),
+    MAC_X64("mac", "x64", false, false),
     NIX_X64("nix", "x64", false, false),
     WIN_ARM64("win", "arm64", false, false),
-    MAC_ARM64("mac", "arm64", true, true),
+    MAC_ARM64("mac", "arm64", false, false),
     NIX_ARM64("nix", "arm64", false, false),
     WIN_ARM("win", "arm", false, false),
-    MAC_ARM("mac", "arm", true, true),
+    MAC_ARM("mac", "arm", false, false),
     NIX_ARM("nix", "arm", false, false),
 
     DUMMY("dummy", "dummy", false, false);
