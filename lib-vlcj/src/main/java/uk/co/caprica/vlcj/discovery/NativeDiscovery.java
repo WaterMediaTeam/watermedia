@@ -130,7 +130,7 @@ public class NativeDiscovery {
                             return true;
                         } else {
                             // WATERMeDIA PATCH - start
-                            LOGGER.error(IT, "Failed loading VLC in '{}' using '{}' cleaning JNA", path, discoveryStrategy.getClass().getSimpleName());
+                            LOGGER.error(IT, "Failed loading VLC in '{}' using '{}' cleaning JNA and trying again...", path, discoveryStrategy.getClass().getSimpleName());
                             if (attemptFix()) continue;
                             // WATERMeDIA PATCH - end
 
@@ -234,8 +234,7 @@ public class NativeDiscovery {
                     return true;
                 }
             }
-        }
-        catch (UnsatisfiedLinkError e) {
+        } catch (Error e) {
             // The library could not be loaded, this includes NoClassDefFoundError which would be thrown e.g. if there
             // was a direct-mapped method in the LibVlc class that was missing from the loaded native library - we don't
             // report the error here (since this discovery is optional), it will be reported by the factory subsequently
@@ -268,12 +267,14 @@ public class NativeDiscovery {
      * @param strategy discovery strategy that found, but failed to load, the native library
      */
     protected void onFailed(String path, NativeDiscoveryStrategy strategy) {
+        LOGGER.error(IT, "Failed to load VLC on path '{}' using strategy '{}'", path, strategy.getClass().getSimpleName());
     }
 
     /**
      * Template method invoked if the native libraries could not be found by any known discovery strategy.
      */
     protected void onNotFound() {
+        LOGGER.error(IT, "VLC was not found");
     }
 
 }
