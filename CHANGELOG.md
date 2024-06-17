@@ -1,3 +1,6 @@
+# UPDATE 2.0.62
+- Fixed WM is not properly loading on NeoForge
+
 # UPDATE 2.0.61
 - Fixed VLC is not loading on the pre-defined temp path
 - Removed MacOS binaries (fixes crashes attemping to load our broken VLC)
