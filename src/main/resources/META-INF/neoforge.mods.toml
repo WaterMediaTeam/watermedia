@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="${neofmlrange}"
-issueTrackerURL="https://github.com/${github_project}/issues"
+issueTrackerURL="https://github.com/${github}/issues"
 logoFile="pack.png"
 license="${license}"
 
@@ -9,21 +9,21 @@ license="${license}"
     version="${version}"
     displayName="${name}"
     displayTest="IGNORE_SERVER_VERSION"
-    displayURL="https://www.curseforge.com/minecraft/mc-mods/waterframes"
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia"
     credits="${credits}"
-    authors="$author}"
+    authors="${authors}"
     logoFile="pack.png"
     side="BOTH"
     description='''${description}'''
 
-[[dependencies.${modid}]]
+[[dependencies.${id}]]
     modId="neoforge"
     type="required"
     ordering="NONE"
     side="CLIENT"
     versionRange="${neorange}"
 
-[[dependencies.${modid}]]
+[[dependencies.${id}]]
     modId="fancyvideo_api"
     type="incompatible"
     reason="Clashes with our VLC discovery. Making both mods not working"

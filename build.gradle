@@ -91,7 +91,7 @@ dependencies {
 
 processResources {
     outputs.upToDateWhen { false }
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'fabric.mod.json', "watermedia/version.cfg"]) {
+    filesMatching(['META-INF/*.toml', 'pack.mcmeta', 'fabric.mod.json', "watermedia/version.cfg"]) {
         expand(project.properties)
     }
 }
