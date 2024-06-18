@@ -64,7 +64,7 @@ public class OsxNativeDiscoveryStrategy extends DirectoryProviderDiscoveryStrate
      * @param path
      */
     private void forceLoadLibVlcCore(String path) {
-        NativeLibrary.addSearchPath(VideoLan4J.LIBVLC_NAME, path);
+        NativeLibrary.addSearchPath(VideoLan4J.LIBVLCCORE_NAME, path);
         NativeLibrary.getInstance(VideoLan4J.LIBVLCCORE_NAME);
     }
 
