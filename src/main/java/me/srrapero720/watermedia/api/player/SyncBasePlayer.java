@@ -85,19 +85,30 @@ public abstract class SyncBasePlayer {
     public void start(CharSequence url) { this.start(url, new String[0]); }
     public void start(CharSequence url, String[] vlcArgs) {
         started = false;
-        ThreadTool.thread(4, () -> {
+        Runnable action = () -> {
             if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
             started = true;
-        });
+        };
+        if (Platform.isMac()) {
+            action.run();
+        } else {
+            ThreadTool.thread(4, action);
+        }
     }
 
     public void startPaused(CharSequence url) { this.startPaused(url, new String[0]); }
     public void startPaused(CharSequence url, String[] vlcArgs) {
         started = false;
-        ThreadTool.thread(4, () -> {
+        Runnable action = () -> {
             if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
             started = true;
-        });
+        };
+
+        if (Platform.isMac()) {
+            action.run();
+        } else {
+            ThreadTool.thread(4, action);
+        }
     }
 
     @Deprecated
