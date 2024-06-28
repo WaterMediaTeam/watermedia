@@ -1,3 +1,13 @@
+# UPDATE 2.0.64
+- Reverted the revert for the removal of wrapped MacOS binaries (again removed)
+- Removed VLC argument missing on some OS
+- Added extra loggers to give more context about DT
+- Patched "setVolume" for MacOS to prevent it set the volume until player is ready (fixed bad memory access)
+
+# UPDATE 2.0.63
+- Reverted removal of wrapped MacOS binaries
+- Fixed crashes trying to load VLC on MacOS
+
 # UPDATE 2.0.62
 - Fixed WM is not properly loading on NeoForge
 
