@@ -1,3 +1,6 @@
+# UPDATE 2.0.65
+- Disabled async play on MacOS (may cause FPS Drops on playing videos)
+
 # UPDATE 2.0.64
 - Reverted the revert for the removal of wrapped MacOS binaries (again removed)
 - Removed VLC argument missing on some OS
