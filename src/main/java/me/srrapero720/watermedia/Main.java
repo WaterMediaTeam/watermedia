@@ -123,7 +123,7 @@ public class Main {
         diagnosis.setMargin(new Insets(15, 25, 15, 25));
         diagnosis.setFont(new Font("Default", Font.PLAIN, 16));
         diagnosis.addActionListener(e -> {
-            for (Component c: actionsPanel.getComponents()) c.setEnabled(false);
+//            for (Component c: actionsPanel.getComponents()) c.setEnabled(false);
             performDiagnosis();
         });
 
@@ -134,12 +134,16 @@ public class Main {
         // Agregar el panel a la ventana
         window.add(root);
         window.setVisible(true);
+
+        LOGGER.info("Welcome to the diagnosis tool");
+        LOGGER.info("==== Click on any of the options to start ====");
     }
 
     private static void performDiagnosis() {
         // TODO: perform diagnosis
         LOGGER.info("Performing diagnosis");
-        LOGGER.warning("Diagnosis Failed, WIP!");
+        LOGGER.warning("Diagnosis Failed, Not Implemented Yet!");
+
     }
 
     private static class CollectionTask extends Thread {
