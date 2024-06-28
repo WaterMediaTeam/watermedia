@@ -1,7 +1,6 @@
 [
   "--no-quiet",
 
-  "--high-priority",
   "--cr-average=5000",
   "--swscale-mode=0",
 

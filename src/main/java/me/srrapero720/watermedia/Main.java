@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.math.MathAPI;
-import me.srrapero720.watermedia.core.tools.JarTool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 
@@ -20,8 +19,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.*;
 import java.util.stream.Stream;
-
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class Main {
     public static final Logger LOGGER = Logger.getLogger("WaterMedia");
