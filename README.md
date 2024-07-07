@@ -8,66 +8,36 @@
 [![](https://dcbadge.vercel.app/api/server/453QZ749U4)](https://discord.gg/453QZ749U4)
 
 # WATERMeDIA | MULTIMEDIA API
-Library and API to provide multimedia support using VLC for other mods like VideoPlayer, 
-designed to be used in Minecraft with MinecraftForge (NeoForge) and Fabric (Quilt), 
-but can be used in any other environment (no tested)
+API-Library providing multimedia support using LibVLC, used by Minecraft mods like VideoPlayer.
+Designed to be used in pure Java and Minecraft environments using MinecraftForge (NeoForge) and Fabric (Quilt).
 
-API provides an extra layer of VLCJ MediaPlayers making easier player management,
+our API provides an extra layer of VLCJ MediaPlayers making easier player management,
 async task and concurrency.
-Custom ``URLFixers`` to provide support of platforms like Youtube, Twitch,
+Custom ``URLFixers`` to provide support of platforms like YouTube, Twitch,
 Kick.com, Google Drive, OneDrive, Dropbox, Imgur, Twitter and PornHub.
 
 ## VERSION STATUS
-All Minecraft versions supported + all mod loaders supported.
-Technically, WATERMeDIA can be loaded in any MC version in range of 1.12.2 ~ 1.20.x and even
-outside Minecraft modded (pure Java). 
-But...We only expect to give (right sentence) support to most important MC versions 
-listed here and most important mod loaders (except Fabric and Quilt)<br><br>
+WATERMeDIA can be loaded in any MC version in range of 1.16.5 ~ 1.21.x and
+outside Minecraft adding the proper dependencies.
 
-| Version | Forge | Fabric | Quilt | NeoForge |
-|:-------:|:-----:|:------:|:-----:|:--------:|
-| 1.7.10  |   ⚠   |   🚫   |  🚫   |    🚫    |
-| 1.12.2  |   ✅   |   🚫   |  🚫   |    🚫    |
-| 1.16.5  |   ✅   |   ✅    |  🚫   |    🚫    |
-| 1.18.2  |   ✅   |   ✅    |   ✅   |    🚫    |
-| 1.19.2  |   ✅   |   ✅    |   ✅   |    🚫    |
-| 1.20.x  |   ✅   |   ✅    |   ✅   |    ⛔     |
-| 1.21.x  |   ✅   |   ✅    |   ✅   |    ✅     |
+> [!IMPORTANT]
+> We only support the most popular versions of Minecraft.
 
-✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A**
+| Version | Forge | Fabric | NeoForge |
+|:-------:|:-----:|:------:|:--------:|
+| 1.16.5  |  🚨   |   🚨   |    🚫    |
+| 1.18.2  |   ✅   |   ✅    |    🚫    |
+| 1.19.2  |   ✅   |   ✅    |    🚫    |
+| 1.20.x  |   ✅   |   ✅    |    ⛔     |
+|  1.21   |   ✅   |   ✅    |    ✅     |
+
+✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A** ||| 🚨 - **DROPPING**
 
 # INSTALLATION
-You can use two ways to install this mod in your project
+We use JitPack.io to build and distribute artifacts using direct GitHub tags or branches.
+<br>Check all available versions here: https://github.com/WaterMediaTeam/watermedia/tags
 
-## CURSEMAVEN
-CurseMaven uses CurseForge network to download 
-any released version even if it wasn't approved.
-This option doesn't include JavaDoc or Sources, 
-so all stacktrace doesn't going to match with your decompiled bytecode
-checkout what is the latest version file ID here: https://www.curseforge.com/minecraft/mc-mods/watermedia
-
-**SETUP IN YOUR GRADLE**
-```gradle
-repositories {
-    maven {
-        url "https://www.cursemaven.com"
-        content { includeGroup "curse.maven" }
-    }
-}
-
-dependencies {
-    // doesn't require fg.debof() or any debofuscation tool
-    implementation "curse.maven:watermedia-869524:latest-version-file-id"
-}
-```
-
-## JITPACK.IO
-JitPack.io is a third-party tool to build and distribute artifacts
-using direct GitHub tags or branches
-This option includes JavaDoc and Sources <br>
-Check all available versions [here](https://github.com/SrRapero720/watermedia/tags)
-
-**SETUP IN YOUR GRADLE**
+**IN YOUR GRADLE**
 ```gradle
 repositories {
     maven { url 'https://jitpack.io' }
@@ -75,7 +45,8 @@ repositories {
 
 dependencies {
     // doesn't require fg.debof() or any debofuscation tool
-    implementation 'com.github.SrRapero720.watermedia:build:<version>'
+    // watermedia is minecraft-agnostic (we don't believe in notch, or agnes)
+    implementation 'com.github.WaterMediaTeam.watermedia:build:<version>'
 }
 ```
 
@@ -83,9 +54,9 @@ dependencies {
 Our API is based in pure JAVA, except video decoding; we use VideoLAN for that.
 It requires VideoLan (libVLC) binaries to load and use video features.
 
-We feature on Windows x64 a pre-installation of VLC in our JAR, 
-so they don't have to download it manually. 
-But some OS+Arch requires manual installation of VLC, 
+We feature on Windows x64 a pre-installation of VLC in our JAR,
+so they don't have to download it manually.
+But some OS+Arch requires manual installation of VLC,
 and others aren't supported by VLC limitations.
 
 Ensure your OS is supported in this list.<br>
@@ -94,32 +65,55 @@ Linux users: check https://www.videolan.org/vlc/#download
 > [!WARNING]
 > FLATPAK is not supported (or any archlinux thing), use apt-get or manual installation for VLC and Minecraft (or any game)
 
-|   Operative System    | Support status |
-|:---------------------:|:--------------:|
-| Windows 7 ~ 11 (x64)  |       ✅        |
-| Windows 7 ~ 11 (x32)  |       ❎        |
-| Windows 10 ~ 11 (ARM) |       🚫       |
-|      MacOS (x64)      |       ❎        |
-| MacOS (Apple Silicon) |       ❎        |
-|      Linux (x64)      |       ❎        |
-|      Linux (ARM)      |       ❎        |
+> [!WARNING]
+> MacOS should install universal arch version (avoiding arch concerns)
+> Download the universal version [here](https://get.videolan.org/vlc/3.0.21/macosx/vlc-3.0.21-universal.dmg)
+
+| Operative System | Support status |
+|:----------------:|:--------------:|
+|  Win  1x (x64)   |       ✅        |
+|  Win  1x (x32)   |       ⛔        |
+|  Win  1x (ARM)   |       🚫       |
+|   MacOS (x64)    |       ❎        |
+|   MacOS (ARM)    |       ❎        |
+|   Linux (x64)    |       ❎        |
+|   Linux (ARM)    |       ❎        |
+| Android (Pojav)  |       ⚠        |
 
 - ✅ **SUPPORTED**
 - ❎ **LIMITED:** Needs manually VLC 3 installation
-- 🚫 **NOT COMPATIBLE:** Only in VLC 4 (support planned in 3.x)
-- ⛔ **UNSUPPORTED:** we do not provide support
+- ⚠ **PLANNED:** Requires some research
+- 🚫 **NOT COMPATIBLE:** Due to VLC limitations
+- ⛔ **UNSUPPORTED:** Not even planned
 
 # Projects using WATERMeDIA
-- [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - Version using: 1.3.x, 2.0.x
-- [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - Version using: 1.3.x, 2.0.x
-- [FancyMenu: Video Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-video) (obsolete) - Version using: 1.3.x
-- [FancyMenu: Multimedia Extension](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu-multimedia) - Version using: 2.0.x
-- [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - Version using: 2.0.x
+- [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - By SrRapero720
+- [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - By NGoedix
+- [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - By CreativeMD
+- [PictureSign](https://legacy.curseforge.com/minecraft/mc-mods/picturesign) - By Motschen (TeamMidnightDust) 
+- [FancyMenu (Coming Soon)](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu) - By Keksuccino
 
-# Libraries used
-**Important:** All libraries are relocated and wrapped using shadowJar. You can skip our API and directly use
- all native libraries... highly no recommended. Find it all on``me.lib720.libraryname`` package
+# MAINTAINERS
+- [SrRapero720](https://github.com/SrRapero720) - Donations: https://paypal.me/SrRapero720
+- [NGoedix](https://github.com/NGoedix) - Donations: https://paypal.me/ngoedix
+
+# CONTRIBUTORS
+- [zenoarrows](https://github.com/ZenoArrows) - Buffer Eater
+- [cyyynthia](https://github.com/cyyynthia) - Deadlock hunter
+
+# SHADED DEPENDENCIES
+**Important:** All libraries are relocated and wrapped using shadowJar.
 - [VLCJ](https://github.com/caprica/vlcj/tree/vlcj-4.x)
 - [Java-youtube-downloader](https://github.com/sealedtx/java-youtube-downloader)
-- [Retrofit2](https://square.github.io/retrofit/)
 - [Jackson Databind](https://github.com/FasterXML/jackson-databind)
+- commons-io
+- commons-lang3
+- commons-codec
+
+# NO SHADED DEPENDENCIES
+- LWJGL
+- jna
+- jna-platform
+- gson
+- log4j-api
+- log4j-core
