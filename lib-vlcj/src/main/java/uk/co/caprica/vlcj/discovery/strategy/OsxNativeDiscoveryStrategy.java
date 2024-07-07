@@ -25,6 +25,8 @@ import uk.co.caprica.vlcj.VideoLan4J;
 import uk.co.caprica.vlcj.binding.lib.LibC;
 import uk.co.caprica.vlcj.discovery.provider.DirectoryProviderDiscoveryStrategy;
 
+import java.io.File;
+
 /**
  * Default implementation of a native discovery strategy that searches directories on the OSX operating system.
  */
@@ -54,6 +56,9 @@ public class OsxNativeDiscoveryStrategy extends DirectoryProviderDiscoveryStrate
     @Override
     public boolean onFound(String path) { // WATERMeDIA Patch: uhhhhhhhh
         try {
+            if (new File("config/watermedia/macos_no_forceload.dummy").exists()) {
+                return true;
+            }
             forceLoadLibVlcCore(path);
         } catch (Error e) {
             return false;
