@@ -1,3 +1,8 @@
+# UPDATE 2.0.66
+- Reverted patch on setVolume for macOS users (breaks modern users)
+- Added special handling for exceptions on MacOS workarrounds
+- Added a simple filecheck toggling MacOS workarrounds
+
 # UPDATE 2.0.65
 - Disabled async play on MacOS (may cause FPS Drops on playing videos)
 
