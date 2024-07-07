@@ -26,7 +26,7 @@ public class NeoForgeLoader implements ILoader {
 
     @Override
     public String name() {
-        return "NeoForge (Fabric 2)";
+        return "NeoForge";
     }
 
     @Override

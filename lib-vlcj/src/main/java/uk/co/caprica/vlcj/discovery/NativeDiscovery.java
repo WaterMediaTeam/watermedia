@@ -114,14 +114,14 @@ public class NativeDiscovery {
         if (alreadyFound) {
             return true;
         } else {
-            for (NativeDiscoveryStrategy discoveryStrategy : discoveryStrategies) {
+            for (NativeDiscoveryStrategy discoveryStrategy: discoveryStrategies) {
                 if (discoveryStrategy.supported()) {
                     String path = discoveryStrategy.discover();
                     if (path != null) {
                         if (discoveryStrategy.onFound(path)) {
                             NativeLibrary.addSearchPath(VideoLan4J.LIBVLC_NAME, path);
+                            tryPluginPath(path, discoveryStrategy);
                         }
-                        tryPluginPath(path, discoveryStrategy);
                         if (tryLoadingLibrary()) {
                             successfulStrategy = discoveryStrategy;
                             discoveredPath = path;

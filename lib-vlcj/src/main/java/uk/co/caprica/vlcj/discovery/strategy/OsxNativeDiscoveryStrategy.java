@@ -52,8 +52,12 @@ public class OsxNativeDiscoveryStrategy extends DirectoryProviderDiscoveryStrate
     }
 
     @Override
-    public boolean onFound(String path) {
-        forceLoadLibVlcCore(path);
+    public boolean onFound(String path) { // WATERMeDIA Patch: uhhhhhhhh
+        try {
+            forceLoadLibVlcCore(path);
+        } catch (Error e) {
+            return false;
+        }
         return true;
     }
 

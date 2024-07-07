@@ -152,7 +152,11 @@ public class PlayerAPI extends WaterMediaAPI {
                 LOGGER.info(IT, "Binaries not extracted, extraction scheduled");
                 if (zipOutput.getParentFile().exists()) {
                     LOGGER.warn(IT, "Detected an old installation, cleaning up...");
-                    FileUtils.deleteDirectory(zipOutput.getParentFile());
+                    try {
+                        FileUtils.deleteDirectory(zipOutput.getParentFile());
+                    } catch (Exception e) {
+                        LOGGER.error(IT, "Failed to delete directories", e);
+                    }
                     LOGGER.warn(IT, "Cleaning up successfully");
                 }
             } else {
