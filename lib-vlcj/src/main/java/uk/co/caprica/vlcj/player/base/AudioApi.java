@@ -19,7 +19,6 @@
 
 package uk.co.caprica.vlcj.player.base;
 
-import com.sun.jna.Platform;
 import uk.co.caprica.vlcj.VideoLan4J;
 import uk.co.caprica.vlcj.binding.internal.libvlc_audio_output_device_t;
 import uk.co.caprica.vlcj.binding.internal.libvlc_equalizer_t;
@@ -178,13 +177,7 @@ public final class AudioApi extends BaseApi implements EqualizerListener {
      */
     public boolean setVolume(int volume) {
         this.masterVolume = volume; // WATERMeDIA PATCH
-        if (!Platform.isMac()) {
-            return LibVlc.libvlc_audio_set_volume(mediaPlayerInstance, volume) == 0;
-        } else {
-            // WATERMeDIA PATCH: see upstream vlcj issue #1206
-            // Since we also enfoces volume after player is ready, this change has no (much) effect
-            return false;
-        }
+        return LibVlc.libvlc_audio_set_volume(mediaPlayerInstance, volume) == 0;
     }
 
     /**
