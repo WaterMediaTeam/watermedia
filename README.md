@@ -90,7 +90,8 @@ Linux users: check https://www.videolan.org/vlc/#download
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - By SrRapero720
 - [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - By NGoedix
 - [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - By CreativeMD
-- [PictureSign](https://legacy.curseforge.com/minecraft/mc-mods/picturesign) - By Motschen (TeamMidnightDust) 
+- [PictureSign](https://www.curseforge.com/minecraft/mc-mods/picturesign) - By Motschen (TeamMidnightDust) 
+- [Nightmare Craft](https://www.curseforge.com/minecraft/modpacks/nightmare-craft-chapter-1) By divinegaminginc
 - [FancyMenu (Coming Soon)](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu) - By Keksuccino
 
 # MAINTAINERS
