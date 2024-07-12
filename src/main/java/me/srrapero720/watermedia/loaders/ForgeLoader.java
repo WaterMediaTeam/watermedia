@@ -76,8 +76,9 @@ public class ForgeLoader implements ILoader {
         boolean tlauncher = f.contains("tlauncher");
         boolean atlauncher = f.contains("atlauncher");
         boolean sklauncher = f.contains("skcraftlauncher");
+        boolean keventlauncher = f.contains("keventlauncher");
 
-        return tllike || (tlauncher && !atlauncher && !sklauncher);
+        return tllike || (tlauncher && !atlauncher && !sklauncher && !keventlauncher);
     }
 
     public boolean modInstalled(String id) {
