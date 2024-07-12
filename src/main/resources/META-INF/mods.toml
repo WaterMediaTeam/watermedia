@@ -1,17 +1,17 @@
-modLoader="javafml" #mandatory
-loaderVersion="${forgefmlrange}"
-license="${license}"
-logoFile="pack.png" #optional
-issueTrackerURL="https://github.com/SrRapero720/watermedia/issues"
-displayTest="IGNORE_SERVER_VERSION"
+modLoader="javafml"
+loaderVersion="$forgefmlrange"
+issueTrackerURL="https://github.com/${github}/issues"
+license="$license"
+logoFile="pack.png"
+
 [[mods]]
-    modId="${id}"
-    version="${version}"
-    displayName="${name}"
+    modId="$id"
+    version="$version"
+    displayName="$simplename"
     displayTest="IGNORE_SERVER_VERSION"
-    #updateJSONURL="https://change.me.example.invalid/updates.json"
+    updateJSONURL="https://forge.curseupdate.com/869524/watermedia"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/watermedia"
-    logoFile="pack.png" #optional
-    credits="${credits}"
-    authors="${authors}"
-    description='''${description}'''
+    credits="$credits"
+    authors="$authors"
+    logoFile="pack.png"
+    description='''$description'''

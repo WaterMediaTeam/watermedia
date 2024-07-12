@@ -32,6 +32,7 @@ sourcesJar {
 }
 
 println("Gradle Java: ${JavaVersion.current()}")
+println("Building project: ${properties.simplename}")
 println("Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}, Encoding: ${System.getProperty "file.encoding"}")
 
 repositories {
@@ -88,10 +89,9 @@ dependencies {
 }
 
 // Process target resources with mod info
-
 processResources {
     outputs.upToDateWhen { false }
-    filesMatching(['META-INF/*.toml', 'pack.mcmeta', 'fabric.mod.json', "watermedia/version.cfg"]) {
+    filesMatching(['META-INF/mods.toml', 'META-INF/neoforge.mods.toml', 'pack.mcmeta', 'fabric.mod.json', "watermedia/version.cfg"]) {
         expand(project.properties)
     }
 }
