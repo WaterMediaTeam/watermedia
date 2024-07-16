@@ -1,4 +1,4 @@
-name: Release To CF and MR
+name: ReleaseJar
 
 on:
   push:
@@ -27,3 +27,6 @@ jobs:
 
       - name: Test with Gradle
         run: ./gradlew releaseJar
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
