@@ -1,7 +1,7 @@
 # UPDATE 2.0.67
 - Fixed WaterMedia name appears as "build" on NeoForge dev environments (thanks jitpack)
 - Fixed KevenTLauncher triggers the TLauncher detector
-- made all info of mods.toml match
+- Made all info of mods.toml match
 
 # UPDATE 2.0.66
 - Reverted patch on setVolume for macOS users (breaks modern users)
