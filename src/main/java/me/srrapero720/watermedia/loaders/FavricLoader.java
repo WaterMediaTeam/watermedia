@@ -42,10 +42,11 @@ public class FavricLoader implements ClientModInitializer, ILoader {
         boolean tlauncher = f.contains("tlauncher");
         boolean atlauncher = f.contains("atlauncher");
         boolean sklauncher = f.contains("skcraftlauncher");
+        boolean keventlauncher = f.contains("keventlauncher");
 
         // TLSKINCAPE VALIDATION
         boolean tlskincape = FabricLoader.getInstance().isModLoaded("tlskincape") || FabricLoader.getInstance().isModLoaded("tlauncher_custom_cape_skin");
 
-        return tlskincape || (tlauncher && !atlauncher && !sklauncher);
+        return tlskincape || (tlauncher && !atlauncher && !sklauncher && !keventlauncher);
     }
 }
