@@ -1,3 +1,6 @@
+# UPDATE 2.0.68
+- Fixed KevenTLauncher triggers the TLauncher detector (on fabric)
+
 # UPDATE 2.0.67
 - Fixed WaterMedia name appears as "build" on NeoForge dev environments (thanks jitpack)
 - Fixed KevenTLauncher triggers the TLauncher detector
