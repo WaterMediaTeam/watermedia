@@ -1,10 +1,9 @@
 package me.srrapero720.watermedia.api.network;
 
 import com.google.gson.Gson;
-import me.lib720.watermod.safety.TryCore;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.network.patch.URLPatch;
-import me.srrapero720.watermedia.loaders.ILoader;
+import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -71,7 +70,11 @@ public class NetworkAPI extends WaterMediaAPI {
      * @return the instanced URL, null if was not a valid URL
      */
     public static URL parseUrl(String url) {
-        return TryCore.withReturn(defaultVar -> new URL(url), null);
+        try {
+            return new URL(url);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -80,7 +83,11 @@ public class NetworkAPI extends WaterMediaAPI {
      * @return if was valid
      */
     public static URL parseUrl(URI uri) {
-        return TryCore.withReturn(defaultVar -> uri.toURL(), null);
+        try {
+            return uri.toURL();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.api.image;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
-import me.srrapero720.watermedia.core.tools.DataTool;
+import me.srrapero720.watermedia.tools.DataTool;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;

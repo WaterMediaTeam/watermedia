@@ -5,7 +5,7 @@ import me.srrapero720.watermedia.api.WaterInternalAPI;
 import me.srrapero720.watermedia.api.config.values.ConfigField;
 import me.srrapero720.watermedia.api.config.values.RangeOf;
 import me.srrapero720.watermedia.api.config.values.WaterConfigFile;
-import me.srrapero720.watermedia.loaders.ILoader;
+import me.srrapero720.watermedia.loader.ILoader;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -138,7 +138,7 @@ public class ConfigAPI extends WaterInternalAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        loadConfiguration(bootCore.processDir().resolve("config/watermedia.wt"), config);
+        loadConfiguration(bootCore.cwd().resolve("config/watermedia.wt"), config);
     }
 
     @Override

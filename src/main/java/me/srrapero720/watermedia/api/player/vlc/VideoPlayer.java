@@ -3,7 +3,6 @@ package me.srrapero720.watermedia.api.player.vlc;
 import me.srrapero720.watermedia.api.player.PlayerAPI;
 import me.srrapero720.watermedia.api.player.SyncBasePlayer;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
-import me.srrapero720.watermedia.core.annotations.Experimental;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
@@ -27,7 +26,6 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
  * this class works same as SyncVideoPlayer but uses a PBO
  * Use it only to test + contribute to its functionality
  */
-@Experimental
 public class VideoPlayer extends SyncBasePlayer {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
 

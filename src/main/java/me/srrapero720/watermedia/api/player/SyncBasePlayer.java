@@ -1,10 +1,7 @@
 package me.srrapero720.watermedia.api.player;
 
 import com.sun.jna.Platform;
-import me.srrapero720.watermedia.api.url.UrlAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.core.annotations.Experimental;
-import me.srrapero720.watermedia.core.tools.ThreadTool;
+import me.srrapero720.watermedia.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -17,7 +14,6 @@ import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -216,7 +212,6 @@ public abstract class SyncBasePlayer {
      * that is supplied with our API but isn't enough, because another type of streams cannot be handled
      * @return if mrl was a livestream
      */
-    @Experimental
     public boolean isLive() {
         if (live) return true;
 

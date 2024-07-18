@@ -3,8 +3,8 @@ package me.srrapero720.watermedia.api.image;
 import me.srrapero720.watermedia.api.cache.CacheAPI;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.network.DynamicURL;
-import me.srrapero720.watermedia.core.tools.DataTool;
-import me.srrapero720.watermedia.core.tools.ThreadTool;
+import me.srrapero720.watermedia.tools.DataTool;
+import me.srrapero720.watermedia.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 

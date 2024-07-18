@@ -16,6 +16,6 @@ public class CustomDirectoryProvider implements DiscoveryDirectoryProvider {
 
     @Override
     public String[] directories() {
-        return new String[] {WaterMedia.getLoader().tempDir().resolve("videolan").toAbsolutePath().toString()};
+        return new String[] {WaterMedia.getLoader().tmp().resolve("videolan").toAbsolutePath().toString()};
     }
 }
