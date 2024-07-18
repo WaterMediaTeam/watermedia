@@ -19,6 +19,8 @@ import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -91,12 +93,16 @@ public abstract class SyncBasePlayer {
         started = false;
         Runnable action = () -> {
             if (rpa(url)) {
-                if (audioUrl != null) {
-                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                    raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
-                    raw.mediaPlayer().controls().start();
-                } else {
-                    raw.mediaPlayer().media().start(this.url, vlcArgs);
+                try {
+                    if (audioUrl != null) {
+                        raw.mediaPlayer().media().prepare(this.url.toURI(), vlcArgs);
+                        raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
+                        raw.mediaPlayer().controls().start();
+                    } else {
+                        raw.mediaPlayer().media().start(this.url.toURI(), vlcArgs);
+                    }
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
                 }
             }
             started = true;
@@ -113,14 +119,19 @@ public abstract class SyncBasePlayer {
         started = false;
         Runnable action = () -> {
             if (rpa(url)) {
-                if (audioUrl != null) {
-                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                    if (!raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString())) {
-                        LOGGER.warn(IT, "Failed to add audio slave {} for {}", audioUrl.toString(), this.url.toString());
+                try {
+                    if (audioUrl != null) {
+                        raw.mediaPlayer().media().prepare(this.url.toURI(), vlcArgs);
+                        if (!raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString())) {
+                            LOGGER.warn(IT, "Failed to add audio slave {} for {}", audioUrl.toString(), this.url.toString());
+                        }
+                        raw.mediaPlayer().controls().pause();
+                        raw.mediaPlayer().controls().start();
+                    } else {
+                        raw.mediaPlayer().media().startPaused(this.url.toURI(), vlcArgs);
                     }
-                    raw.mediaPlayer().controls().start();
-                } else {
-                    raw.mediaPlayer().media().start(this.url, vlcArgs);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
                 }
             }
             started = true;
