@@ -34,6 +34,8 @@ public class CacheAPI extends WaterInternalAPI {
     private static File dir;
     private static File index;
     private static boolean init = false;
+    private static boolean released = false;
+
 
     private static boolean refreshAll() {
         try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(Files.newOutputStream(index.toPath())))) {
@@ -147,6 +149,7 @@ public class CacheAPI extends WaterInternalAPI {
     @Override
     public void release() {
         refreshAll();
+        released = true;
     }
 
     public static final class Entry {
