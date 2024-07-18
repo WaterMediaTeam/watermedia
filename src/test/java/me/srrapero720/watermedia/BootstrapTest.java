@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.loaders.ILoader;
+import me.srrapero720.watermedia.loader.ILoader;
 
 public class BootstrapTest {
     public static void main(String... args) {

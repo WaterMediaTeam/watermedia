@@ -16,7 +16,7 @@ public class WaterConfig {
     public static String loadingGifFileName = "loading.gif";
 
     @ConfigField
-    public static String vlcInstallPath = WaterMedia.getLoader().tempDir().toAbsolutePath().toString();
+    public static String vlcInstallPath = WaterMedia.getLoader().tmp().toAbsolutePath().toString();
 
     @ConfigField
     public static CacheMode cacheMode = CacheMode.ENABLE;

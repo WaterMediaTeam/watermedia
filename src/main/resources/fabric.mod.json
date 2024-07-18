@@ -17,7 +17,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "me.srrapero720.watermedia.loaders.FavricLoader"
+      "me.srrapero720.watermedia.loaders.McFabricLoader"
     ]
   },
   "breaks": {

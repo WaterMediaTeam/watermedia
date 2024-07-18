@@ -1,14 +1,11 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.srrapero720.watermedia.OperativeSystem;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.config.WaterConfig;
 import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
-import me.srrapero720.watermedia.core.tools.IOTool;
-import me.srrapero720.watermedia.core.tools.JarTool;
-import me.srrapero720.watermedia.loaders.ILoader;
-import org.apache.commons.compress.utils.Lists;
+import me.srrapero720.watermedia.tools.IOTool;
+import me.srrapero720.watermedia.tools.JarTool;
+import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -19,11 +16,9 @@ import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 

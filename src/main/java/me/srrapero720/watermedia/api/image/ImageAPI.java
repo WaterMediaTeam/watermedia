@@ -5,9 +5,9 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.config.WaterConfig;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.math.MathAPI;
-import me.srrapero720.watermedia.core.tools.IOTool;
-import me.srrapero720.watermedia.core.tools.JarTool;
-import me.srrapero720.watermedia.loaders.ILoader;
+import me.srrapero720.watermedia.tools.IOTool;
+import me.srrapero720.watermedia.tools.JarTool;
+import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -47,7 +47,7 @@ public class ImageAPI extends WaterMediaAPI {
      * @return instance of the picture in a renderer
      */
     public static ImageRenderer loadingGif(String modId) {
-        Path processDir = WaterMedia.getLoader().processDir();
+        Path processDir = WaterMedia.getLoader().cwd();
         Path modConfig = processDir.resolve("config/watermedia/assets/" + modId + "/" + WaterConfig.loadingGifFileName);
 
         if (Files.exists(modConfig)) {
@@ -167,7 +167,7 @@ public class ImageAPI extends WaterMediaAPI {
 
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
-        this.loadingGifPath = bootCore.processDir().resolve("config/watermedia/assets/loading.gif");
+        this.loadingGifPath = bootCore.cwd().resolve("config/watermedia/assets/loading.gif");
         if (!loadingGifPath.toFile().exists()) {
             LOGGER.info(IT, "Extracting default loading gif...");
             JarTool.copyAsset("/pictures/loading.gif", loadingGifPath);

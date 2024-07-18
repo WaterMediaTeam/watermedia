@@ -2,28 +2,28 @@ package me.srrapero720.watermedia;
 
 import com.sun.jna.Platform;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.core.tools.DataTool;
-import me.srrapero720.watermedia.core.tools.JarTool;
-import me.srrapero720.watermedia.loaders.ILoader;
+import me.srrapero720.watermedia.tools.DataTool;
+import me.srrapero720.watermedia.tools.JarTool;
+import me.srrapero720.watermedia.loader.ILoader;
+import me.srrapero720.watermedia.loader.IModule;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
 
-public class WaterMedia {
+public final class WaterMedia {
+	private static final Marker IT = MarkerManager.getMarker("Bootstrap");
+
 	public static final String ID = "watermedia";
 	public static final String NAME = "WATERMeDIA";
 	public static final Logger LOGGER = LogManager.getLogger(ID);
-	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
-	private static final List<ClassLoader> CLASS_LOADERS = new ArrayList<>();
+	private static final Set<IModule> MODULES = new HashSet<>();
 
-	private static final String NO_BOOT_NAME = "watermedia.disableBoot";
-	private static final boolean NO_BOOT = Boolean.parseBoolean(System.getProperty(NO_BOOT_NAME));
+	private static final Pair<String, Boolean> NO_BOOT = getArgument("watermedia.disableBoot");
+	private static final Pair<String, Boolean> HARDFAIL = getArgument("watermedia.hardFail");
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -31,34 +31,36 @@ public class WaterMedia {
 
 	public static WaterMedia prepare(ILoader boot) {
 		if (boot == null) throw new NullPointerException("Bootstrap is null");
-		if (instance != null) throw new NullPointerException("WaterMedia is already prepared");
+		if (instance != null) throw new NullPointerException(NAME + " is already prepared");
 		LOGGER.info(IT, "Preparing '{}' on '{}'", NAME, boot.name());
 		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString("/watermedia/version.cfg"));
 		LOGGER.info(IT, "OS Detected: {} ({})", System.getProperty("os.name"), Platform.ARCH);
+
+		if (NO_BOOT.getRight())
+			LOGGER.warn(IT, "No boot was enabled, skipping bootstrap");
+
+		if (HARDFAIL.getRight())
+			LOGGER.warn(IT, "HardFail mode was enable, {} will crash at the minimum exception", NAME);
+
+		if (!boot.client() && !boot.name().contains("Fabric"))
+			throw new UnsupportedSideException();
+
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();
 	}
 
-	public static void attachClassLoader(Class<?> classFrom, ClassLoader classLoader) {
-		LOGGER.info(IT, "Attaching new search class loader from {}", classFrom.getName());
-		CLASS_LOADERS.add(classLoader);
+	public static void register(IModule module) {
+		MODULES.add(module);
 	}
 
-	public static void attachClassLoader(ClassLoader classLoader) {
-		LOGGER.info(IT, "Attaching new search class loader from {}", Thread.currentThread().getStackTrace()[2].getClassName());
-		CLASS_LOADERS.add(classLoader);
-	}
-
-	public static List<ClassLoader> getClassLoaders() {
-		return CLASS_LOADERS;
+	public static Set<IModule> modules() {
+		return MODULES;
 	}
 
 	public void start() throws Exception {
-		if (NO_BOOT) {
-			LOGGER.error(IT, "Refusing to bootstrap WATERMeDIA, detected D{}=true", NO_BOOT_NAME);
-			return;
-		}
+		if (NO_BOOT.getRight()) return;
+		if (!bootstrap.client()) return;
 
 		List<WaterMediaAPI> modules = DataTool.toList(ServiceLoader.load(WaterMediaAPI.class));
 		modules.sort(Comparator.comparingInt(e -> e.priority().ordinal()));
@@ -80,5 +82,32 @@ public class WaterMedia {
 
 	public static String asResource(String path) {
 		return WaterMedia.ID + ":" + path;
+	}
+
+	public static Pair<String, Boolean> getArgument(String argument) {
+		return Pair.of(argument, Boolean.parseBoolean(System.getProperty(argument)));
+	}
+
+	public static class UnsupportedSideException extends RuntimeException {
+		public UnsupportedSideException() {
+			super(NAME + " CANNOT be installed on SERVER-SIDE. Please remove " + NAME + " from the server, and keep it on client");
+			LOGGER.fatal(IT, "##############################  ILLEGAL ENVIRONMENT  ######################################");
+			LOGGER.fatal(IT, "{} is not designed to work on server-side, please remove it from server and keep it on client", NAME);
+			LOGGER.fatal(IT, "Dependent mods can work without {} ON SERVERS, remember keep the mod ONLY ON CLIENT-SIDE", NAME);
+			LOGGER.fatal(IT, "if dependent mods throws exceptions ON SERVER asking for WATERMeDIA, report it to the creators");
+			LOGGER.fatal(IT, "##############################  ILLEGAL ENVIRONMENT  ######################################");
+		}
+	}
+
+	public static class UnsupportedTLException extends Exception {
+		public UnsupportedTLException() {
+			super("TLauncher is NOT supported by " + NAME + ", please stop using it (and consider safe alternatives like SKLauncher or MultiMC)");
+			LOGGER.fatal(IT, "##############################  ILLEGAL LAUNCHER DETECTED ######################################");
+			LOGGER.fatal(IT, "{} refuses to load sensitive modules in a INFECTED launcher, please stop using TLauncher", NAME);
+			LOGGER.fatal(IT, "Because TLauncher infects sensitive files (which {} includes) and we prefer avoid any risk", NAME);
+			LOGGER.fatal(IT, "Consider use safe alternative like SKLauncher, MultiMC or Buy the game and use original launcher");
+			LOGGER.fatal(IT, "And please avoid Feather Launcher, TLauncher Legacy or any CRACKED LAUNCHER (except SKLauncher)");
+			LOGGER.fatal(IT, "##############################  ILLEGAL LAUNCHER DETECTED  ######################################");
+		}
 	}
 }

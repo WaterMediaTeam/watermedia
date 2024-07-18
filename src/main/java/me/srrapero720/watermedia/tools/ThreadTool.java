@@ -1,22 +1,17 @@
-package me.lib720.watermod.concurrent;
+package me.srrapero720.watermedia.tools;
 
-import me.lib720.watermod.safety.TryCore;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 
-/**
- * @deprecated No replacement
- */
-@Deprecated(forRemoval = true)
-public class ThreadCore {
-    private static final Logger LOGGER = LogManager.getLogger("ThreadCore");
-    private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> LOGGER.error("Failed running {}", t.getName(), e);
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
-    private static Thread THREAD_LOGGER = null;
+public class ThreadTool {
+    private static final Marker IT = MarkerManager.getMarker("ThreadTool");
+    private static final Thread.UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> LOGGER.error(IT, "Failed running {}", t.getName(), e);
+
     private static int TWC = 0;
 
     public static int maxThreads() { return Runtime.getRuntime().availableProcessors(); }
@@ -30,27 +25,9 @@ public class ThreadCore {
         return 8;
     }
 
-    public static <T> T executeLock(Lock lock, RunnableToReturn<T> runnable) {
-        lock.lock();
-        try {
-            return runnable.run();
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public static void executeLock(Lock lock, Runnable runnable) {
-        lock.lock();
-        try {
-            runnable.run();
-        } finally {
-            lock.unlock();
-        }
-    }
-
     private static Thread thread$basic(Runnable runnable) {
         Thread thread = new Thread(runnable);
-        thread.setName("WATERCoRE-worker-" + (++TWC));
+        thread.setName("WaterMedia-Task-" + (++TWC));
         thread.setUncaughtExceptionHandler(EXCEPTION_HANDLER);
         thread.setDaemon(true);
         return thread;
@@ -83,23 +60,5 @@ public class ThreadCore {
             t.setPriority(priority);
             return t;
         };
-    }
-
-    public static ThreadFactory factory(String name) {
-        return factory(name, 3);
-    }
-
-    public static void simple(TryCore.ActionSimple runnable, TryCore.CatchSimple catchSimple, TryCore.FinallySimple finallySimple) {
-        try {
-            runnable.run();
-        } catch (Exception e) {
-            if (catchSimple != null) catchSimple.run(e);
-        } finally {
-            if (finallySimple != null) finallySimple.run();
-        }
-    }
-
-    public interface RunnableToReturn<T> {
-        T run();
     }
 }

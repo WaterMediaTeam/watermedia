@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api;
 
 
 import me.srrapero720.watermedia.api.math.MathAPI;
-import me.srrapero720.watermedia.loaders.ILoader;
+import me.srrapero720.watermedia.loader.ILoader;
 
 /**
  * Boostrap class.
