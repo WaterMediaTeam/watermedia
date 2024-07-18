@@ -1,8 +1,6 @@
 {
     "pack": {
-        "description": {
-            "text": "${brandname} resources"
-        },
-        "pack_format": 5
+        "description": "$brandname resources",
+        "pack_format": 6
     }
 }
