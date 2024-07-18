@@ -17,6 +17,8 @@ import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -86,7 +88,13 @@ public abstract class SyncBasePlayer {
     public void start(CharSequence url, String[] vlcArgs) {
         started = false;
         Runnable action = () -> {
-            if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
+            if (rpa(url)) {
+                try {
+                    raw.mediaPlayer().media().start(this.url.toURI(), vlcArgs);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             started = true;
         };
         if (Platform.isMac()) {
@@ -100,7 +108,13 @@ public abstract class SyncBasePlayer {
     public void startPaused(CharSequence url, String[] vlcArgs) {
         started = false;
         Runnable action = () -> {
-            if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
+            if (rpa(url)) {
+                try {
+                    raw.mediaPlayer().media().startPaused(this.url.toURI(), vlcArgs);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             started = true;
         };
 

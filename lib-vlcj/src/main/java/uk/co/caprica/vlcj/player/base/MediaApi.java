@@ -26,6 +26,7 @@ import uk.co.caprica.vlcj.media.SubitemApi;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.media.callback.CallbackMedia;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean prepare(URL mrl, String... options) {
+    public boolean prepare(URI mrl, String... options) {
         return changeMedia(MediaFactory.newMedia(libvlcInstance, mrl, options));
     }
 
@@ -81,7 +82,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean play(URL mrl, String... options) {
+    public boolean play(URI mrl, String... options) {
         if (prepare(mrl, options)) {
             return play();
         } else {
@@ -98,7 +99,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean start(URL mrl, String... options) {
+    public boolean start(URI mrl, String... options) {
         if (prepare(mrl, options)) {
             return start();
         } else {
@@ -212,7 +213,7 @@ public final class MediaApi extends BaseApi {
      * @param options zero or more options to attach to the new media
      * @return <code>true</code> if successful; <code>false</code> on error
      */
-    public boolean startPaused(URL mrl, String... options) {
+    public boolean startPaused(URI mrl, String... options) {
         // Starting with start-paused will generate a "playing" event, which this start call waits for
         boolean started = start(mrl, startPausedOptions(options));
         if (started) {

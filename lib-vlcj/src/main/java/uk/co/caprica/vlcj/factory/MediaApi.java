@@ -27,6 +27,7 @@ import uk.co.caprica.vlcj.medialist.MediaList;
 import uk.co.caprica.vlcj.medialist.MediaListFactory;
 import uk.co.caprica.vlcj.medialist.MediaListRef;
 
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -47,7 +48,7 @@ public final class MediaApi extends BaseApi {
      * @param options options to add to the media
      * @return media reference, or <code>null</code> on error
      */
-    public MediaRef newMediaRef(URL mrl, String... options) {
+    public MediaRef newMediaRef(URI mrl, String... options) {
         return MediaFactory.newMediaRef(libvlcInstance, mrl, options);
     }
 
@@ -106,7 +107,7 @@ public final class MediaApi extends BaseApi {
      * @param options options to add to the media
      * @return media, or <code>null</code> on error
      */
-    public Media newMedia(URL mrl, String... options) {
+    public Media newMedia(URI mrl, String... options) {
         return MediaFactory.newMedia(libvlcInstance, mrl, options);
     }
 
