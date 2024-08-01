@@ -26,7 +26,8 @@ public class ForgeLoader implements ILoader {
 
     public ForgeLoader() {
         try {
-            Method pairOf = Class.forName("org.apache.commons.lang3.tuple.Pair").getMethod("of", Object.class, Object.class);
+            String pairClassName = concatPackage("org", "apache", "commons", "lang3", "tuple", "Pair");
+            Method pairOf = Class.forName(pairClassName).getMethod("of", Object.class, Object.class);
 
             Supplier<String> stringSupplier = () -> "";
             Supplier<Boolean> booleanSupplier = () -> true;
@@ -103,5 +104,18 @@ public class ForgeLoader implements ILoader {
             LOGGER.error(IT, "Cannot check if was developer env, assuming it wasn't");
             return false;
         }
+    }
+
+    private String concatPackage(String... pgk) {
+        StringBuilder r = new StringBuilder();
+        for (String s : pgk) {
+            r.append(s).append(".");
+        }
+
+        if (r.length() > 0) {
+            r.setLength(r.length() - 1);
+        }
+
+        return r.toString();
     }
 }
