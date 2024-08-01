@@ -1,3 +1,6 @@
+# UPDATE 2.0.69
+- Fixed package string being shadowed
+
 # UPDATE 2.0.68
 - Fixed KevenTLauncher triggers the TLauncher detector (on fabric)
 
