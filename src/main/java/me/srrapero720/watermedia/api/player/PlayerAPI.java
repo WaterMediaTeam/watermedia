@@ -24,8 +24,6 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class PlayerAPI extends WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());
-
-    private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     public static final Map<String, MediaPlayerFactory> FACTORIES = new LinkedHashMap<>();
 
     private static MediaPlayerFactory DEFAULT_FACTORY;
@@ -39,7 +37,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return if PlayerAPI and/or VLC was loaded
      */
     public static boolean isReady() {
-        return NativeDiscovery.alreadyFound;
+        return NativeDiscovery.isDiscovered();
     }
 
     /**
@@ -70,10 +68,10 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return MediaPlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
-        if (DISCOVERY.discover()) {
-            MediaPlayerFactory factory = new MediaPlayerFactory(DISCOVERY, vlcArgs);
+        if (NativeDiscovery.discovery()) {
+            MediaPlayerFactory factory = new MediaPlayerFactory(vlcArgs);
             MediaPlayerFactory oldFactory = FACTORIES.put(resLoc, factory);
-            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", DISCOVERY.discoveredPath(), Arrays.toString(vlcArgs));
+            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", NativeDiscovery.getDiscoveredPath(), Arrays.toString(vlcArgs));
             if (oldFactory != null) LOGGER.warn(IT, "Factory {} previously defined was overwritted", resLoc);
             return factory;
         }
