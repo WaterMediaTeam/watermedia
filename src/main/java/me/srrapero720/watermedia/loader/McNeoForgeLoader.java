@@ -7,8 +7,8 @@ import net.neoforged.fml.loading.FMLLoader;
 import java.nio.file.Path;
 
 @Mod(WaterMedia.ID)
-public class McNForgeLoader implements ILoader {
-    public McNForgeLoader() {
+public class McNeoForgeLoader implements ILoader {
+    public McNeoForgeLoader() {
         try {
             WaterMedia.prepare(this).start();
         } catch (Exception e) {
