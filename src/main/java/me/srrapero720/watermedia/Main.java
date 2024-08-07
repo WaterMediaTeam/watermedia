@@ -1,8 +1,7 @@
 package me.srrapero720.watermedia;
 
 import me.srrapero720.watermedia.api.math.MathAPI;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import me.srrapero720.watermedia.tools.IOTool;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -221,7 +220,7 @@ public class Main {
                 File wroot = root.resolve("watermedia_diagnosis").toFile().getAbsoluteFile();
 
                 if (wroot.exists()) {
-                    FileUtils.deleteDirectory(wroot);
+                    IOTool.rmdirs(wroot);
                 }
                 if (!wroot.exists() && !wroot.mkdirs()) {
                     throw new IOException("Cannot mkdir collected files dir");

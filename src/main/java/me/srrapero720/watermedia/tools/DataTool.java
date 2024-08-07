@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.tools;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,13 @@ public class DataTool {
             if (i != v) result[pos++] = i;
 
         return result;
+    }
+
+    public static <T> T[] concatArray(T[] array, T... values) {
+        Object t = Array.newInstance(array.getClass().getComponentType(), array.length + values.length);
+        System.arraycopy(array, 0, t, 0, array.length);
+        System.arraycopy(values, 0, t, array.length, values.length);
+        return (T[]) t;
     }
 
     public static <T> List<T> toList(ServiceLoader<T> s) {
