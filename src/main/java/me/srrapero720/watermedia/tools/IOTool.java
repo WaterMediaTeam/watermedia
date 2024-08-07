@@ -44,6 +44,22 @@ public class IOTool {
         return null;
     }
 
+    public static boolean rmdirs(Path path) {
+        return rmdirs(path.toFile());
+    }
+
+    public static boolean rmdirs(File root) {
+        File[] files = root.listFiles();
+
+        if (files == null || files.length == 0) return root.delete();
+        for (File f: files) {
+            File[] childs = f.listFiles();
+            if (childs != null && childs.length != 0 && !rmdirs(f)) return false;
+            if (!f.delete()) return false;
+        }
+        return true;
+    }
+
     public static void un7zip(Marker it, Path zipFilePath) throws IOException { un7zip(it, zipFilePath, zipFilePath.getParent()); }
     public static void un7zip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
         LOGGER.debug(it, "Un7zipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
