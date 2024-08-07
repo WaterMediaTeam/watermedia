@@ -6,7 +6,7 @@ import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.loader.ILoader;
 import me.srrapero720.watermedia.loader.IModule;
-import org.apache.commons.lang3.tuple.Pair;
+import me.srrapero720.watermedia.tools.PairTool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -22,8 +22,8 @@ public final class WaterMedia {
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	private static final Set<IModule> MODULES = new HashSet<>();
 
-	private static final Pair<String, Boolean> NO_BOOT = getArgument("watermedia.disableBoot");
-	private static final Pair<String, Boolean> HARDFAIL = getArgument("watermedia.hardFail");
+	private static final PairTool<String, Boolean> NO_BOOT = getArgument("watermedia.disableBoot");
+	private static final PairTool<String, Boolean> HARDFAIL = getArgument("watermedia.hardFail");
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -84,8 +84,8 @@ public final class WaterMedia {
 		return WaterMedia.ID + ":" + path;
 	}
 
-	public static Pair<String, Boolean> getArgument(String argument) {
-		return Pair.of(argument, Boolean.parseBoolean(System.getProperty(argument)));
+	public static PairTool<String, Boolean> getArgument(String argument) {
+		return new PairTool<>(argument, Boolean.parseBoolean(System.getProperty(argument)));
 	}
 
 	public static class UnsupportedSideException extends RuntimeException {
@@ -103,10 +103,10 @@ public final class WaterMedia {
 		public UnsupportedTLException() {
 			super("TLauncher is NOT supported by " + NAME + ", please stop using it (and consider safe alternatives like SKLauncher or MultiMC)");
 			LOGGER.fatal(IT, "##############################  ILLEGAL LAUNCHER DETECTED ######################################");
-			LOGGER.fatal(IT, "{} refuses to load sensitive modules in a INFECTED launcher, please stop using TLauncher", NAME);
+			LOGGER.fatal(IT, "{} refuses to load sensitive modules in a INFECTED launcher, please stop using TLauncher dammit", NAME);
 			LOGGER.fatal(IT, "Because TLauncher infects sensitive files (which {} includes) and we prefer avoid any risk", NAME);
-			LOGGER.fatal(IT, "Consider use safe alternative like SKLauncher, MultiMC or Buy the game and use original launcher");
-			LOGGER.fatal(IT, "And please avoid Feather Launcher, TLauncher Legacy or any CRACKED LAUNCHER (except SKLauncher)");
+			LOGGER.fatal(IT, "Consider use safe alternative like SKLauncher or BUY the game and use the CurseForge Launcher");
+			LOGGER.fatal(IT, "And please avoid Feather Launcher, TLauncher Legacy or any CRACKED LAUNCHER WITH A BAD REPUTATION");
 			LOGGER.fatal(IT, "##############################  ILLEGAL LAUNCHER DETECTED  ######################################");
 		}
 	}

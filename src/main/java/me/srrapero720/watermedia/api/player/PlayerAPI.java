@@ -3,20 +3,16 @@ package me.srrapero720.watermedia.api.player;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
+import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.loader.ILoader;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.file.PathUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -130,7 +126,7 @@ public class PlayerAPI extends WaterMediaAPI {
                 if (zipOutput.getParentFile().exists()) {
                     LOGGER.warn(IT, "Detected an old installation, cleaning up...");
                     try {
-                        FileUtils.deleteDirectory(zipOutput.getParentFile());
+                        IOTool.rmdirs(zipOutput.getParentFile());
                     } catch (Exception e) {
                         LOGGER.error(IT, "Failed to delete directories", e);
                     }
@@ -164,21 +160,10 @@ public class PlayerAPI extends WaterMediaAPI {
             }
         }
 
-        // LOGGER INIT
-        LOGGER.info(IT, "Processing VideoLAN log files...");
-        if (Files.exists(dir.resolve("logs/videolan.log"))) {
-            Path parent = dir.resolve("logs");
-            try {
-                PathUtils.deleteDirectory(parent);
-            } catch (IOException e) {
-                LOGGER.warn(IT, "Failed to delete VLC logs directory", e);
-            }
-        }
-
         try {
             String[] args = JarTool.readArray("videolan/arguments.json");
             registerFactory(WaterMedia.asResource("default"), args);
-            registerFactory(WaterMedia.asResource("sound_only"), ArrayUtils.addAll(args, "--vout=none"));
+            registerFactory(WaterMedia.asResource("sound_only"), DataTool.concatArray(args, "--vout=none"));
 
             Runtime.getRuntime().addShutdownHook(new Thread(this::release));
         } catch (Exception e) {
