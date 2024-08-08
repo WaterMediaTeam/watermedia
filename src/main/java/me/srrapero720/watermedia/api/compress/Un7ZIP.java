@@ -1,15 +1,14 @@
 package me.srrapero720.watermedia.api.compress;
 
-import me.srrapero720.watermedia.api.compress.spi.IDecompress;
+import me.srrapero720.watermedia.api.compress.spi.IDecompressor;
 import net.sf.sevenzipjbinding.*;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 
-public class Un7ZIP implements IDecompress, Runnable, Closeable {
+public class Un7ZIP implements IDecompressor, Runnable, Closeable {
     RandomAccessFile file;
     IInArchive archive;
     final long size;

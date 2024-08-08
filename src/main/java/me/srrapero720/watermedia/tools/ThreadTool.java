@@ -3,6 +3,8 @@ package me.srrapero720.watermedia.tools;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,11 +20,12 @@ public class ThreadTool {
     public static int minThreads() {
         int count = maxThreads();
         if (count <= 2) return 1;
-        if (count <= 8) return 2;
-        if (count <= 16) return 3;
-        if (count <= 32) return 4;
-        if (count <= 64) return 6;
-        return 8;
+        if (count <= 4) return 2;
+        if (count <= 8) return 3;
+        if (count <= 16) return 4;
+        if (count <= 32) return 6;
+        if (count <= 64) return 8;
+        return 10;
     }
 
     private static Thread thread$basic(Runnable runnable) {
@@ -44,6 +47,10 @@ public class ThreadTool {
         Thread thread = thread$basic(runnable);
         thread.start();
         return thread;
+    }
+
+    public static ScheduledExecutorService executorReduced(String name) {
+        return Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("wm-worker-" + name, Thread.NORM_PRIORITY));
     }
 
     public static ThreadFactory factory(String name, int priority) {
