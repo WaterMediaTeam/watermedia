@@ -4,7 +4,6 @@ import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
 import me.srrapero720.watermedia.loader.ILoader;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
@@ -37,7 +36,7 @@ public class RenderAPI extends WaterMediaAPI {
     /**
      * Resizes direct buffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
      *
-     * <p>In case class was missing causes a {@link NotImplementedException}</p>
+     * <p>In case class was missing causes a {@link UnsupportedOperationException}</p>
      * @param buffer buffer to be resized
      * @param newSize new size of the buffer
      * @return resized DirectByteBuffer
