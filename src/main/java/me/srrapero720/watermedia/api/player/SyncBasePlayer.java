@@ -91,9 +91,12 @@ public abstract class SyncBasePlayer {
         started = false;
         Runnable action = () -> {
             if (rpa(url)) {
-                raw.mediaPlayer().media().start(this.url, vlcArgs);
                 if (audioUrl != null) {
+                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
                     raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
+                    raw.mediaPlayer().controls().start();
+                } else {
+                    raw.mediaPlayer().media().start(this.url, vlcArgs);
                 }
             }
             started = true;
@@ -109,7 +112,15 @@ public abstract class SyncBasePlayer {
     public void startPaused(CharSequence url, String[] vlcArgs) {
         started = false;
         Runnable action = () -> {
-            if (rpa(url)) raw.mediaPlayer().media().startPaused(this.url, vlcArgs);
+            if (rpa(url)) {
+                if (audioUrl != null) {
+                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
+                    raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
+                    raw.mediaPlayer().controls().start();
+                } else {
+                    raw.mediaPlayer().media().start(this.url, vlcArgs);
+                }
+            }
             started = true;
         };
 
@@ -167,6 +178,11 @@ public abstract class SyncBasePlayer {
      */
     public boolean isSafeUse() { return started; }
 
+    public boolean isLoading() {
+        if (raw == null) return false;
+        return raw.mediaPlayer().status().state().equals(State.OPENING)
+    }
+
     public boolean isBuffering() {
         if (raw == null) return false;
         return raw.mediaPlayer().status().state().equals(State.BUFFERING);
@@ -214,7 +230,7 @@ public abstract class SyncBasePlayer {
     @Experimental
     public boolean isLive() {
         if (live) return true;
-
+        // TODO: made a M3U8 headers reader, VLC can't provide this information
         if (url.getPath().endsWith(".m3u8") || url.getPath().endsWith(".m3u")) {
             if (getMediaInfoDuration() == -1) return true;
             if (getTime() > getDuration()) return true;
