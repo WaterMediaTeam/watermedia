@@ -5,9 +5,9 @@
   "--swscale-mode=0",
 
   "--network-synchronisation",
-  "--network-caching=3000",
-  "--live-caching=3000",
-  "--file-caching=800",
+  "--network-caching=5000",
+  "--live-caching=1000",
+  "--file-caching=1000",
 
   "--aout", "directsound,waveout,mmdevice",
 
