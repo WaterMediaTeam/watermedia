@@ -180,7 +180,7 @@ public abstract class SyncBasePlayer {
 
     public boolean isLoading() {
         if (raw == null) return false;
-        return raw.mediaPlayer().status().state().equals(State.OPENING)
+        return raw.mediaPlayer().status().state().equals(State.OPENING);
     }
 
     public boolean isBuffering() {
