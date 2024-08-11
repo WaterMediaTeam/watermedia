@@ -174,7 +174,9 @@ public class ImageCache {
 
             ImageRenderer imageRenderer = this.renderer;
             this.renderer = null;
-            this.releaseListeners.forEach(consumer -> consumer.accept(renderer));
+            if (!this.isVideo()) {
+                this.releaseListeners.forEach(consumer -> consumer.accept(imageRenderer));
+            }
             if (renderer != null) this.renderThreadEx.execute(imageRenderer::release);
             CACHE.remove(url);
         }
