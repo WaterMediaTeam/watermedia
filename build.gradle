@@ -158,7 +158,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     mainFile.releaseType = versiontype
     mainFile.addModLoader("Forge", "NeoForge", "Fabric")
     mainFile.addJavaVersion("Java 21", "Java 17", "Java 11", "Java 8")
-    mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21", "client")
+    mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1", "client")
     mainFile.addIncompatibility("fancyvideo-api")
     def sourcesFile = mainFile.withAdditionalFile(sourcesJar)
     sourcesFile.displayName = "$brandname/$version-sources"
@@ -175,7 +175,7 @@ modrinth {
     versionType = versiontype
     uploadFile = shadowJar
     loaders = [ "forge", "neoforge", "fabric" ]
-    gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21" ]
+    gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1" ]
     additionalFiles = [ sourcesJar ]
 
     group = 'publishing'
