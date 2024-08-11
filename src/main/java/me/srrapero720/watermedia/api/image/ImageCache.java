@@ -35,7 +35,7 @@ public class ImageCache {
      */
     @Deprecated
     public static void reloadAll() {
-        for (ImageCache imageCache : CACHE.values()) { imageCache.reload(); }
+        CACHE.values().forEach(ImageCache::reload);
     }
 
     // INFO;
@@ -103,7 +103,12 @@ public class ImageCache {
 
     public Status getStatus() { return status; }
     public Exception getException() { return exception; }
-    public ImageRenderer getRenderer() { return renderer; }
+    public ImageRenderer getRenderer() {
+        if (this.isVideo()) {
+            return ImageAPI.failedVLC();
+        }
+        return renderer;
+    }
 
     public ImageCache addOnReleaseListener(Consumer<ImageRenderer> consumer) {
         this.releaseListeners.add(consumer);
