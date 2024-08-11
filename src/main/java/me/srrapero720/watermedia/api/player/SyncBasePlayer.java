@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.InfoApi;
+import uk.co.caprica.vlcj.media.MediaSlavePriority;
+import uk.co.caprica.vlcj.media.MediaSlaveType;
 import uk.co.caprica.vlcj.media.MediaType;
 import uk.co.caprica.vlcj.player.base.EmbededMediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
@@ -27,6 +29,7 @@ public abstract class SyncBasePlayer {
 
     // PLAYER
     protected volatile URL url;
+    protected volatile URL audioUrl;
     private volatile CallbackMediaPlayerComponent raw;
     public CallbackMediaPlayerComponent raw() { return raw; }
 
@@ -74,6 +77,7 @@ public abstract class SyncBasePlayer {
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
             this.url = result.url;
+            this.audioUrl = result.audioUrl;
             this.live = result.assumeStream;
             return true;
         } catch (Exception e) {
@@ -86,7 +90,12 @@ public abstract class SyncBasePlayer {
     public void start(CharSequence url, String[] vlcArgs) {
         started = false;
         Runnable action = () -> {
-            if (rpa(url)) raw.mediaPlayer().media().start(this.url, vlcArgs);
+            if (rpa(url)) {
+                raw.mediaPlayer().media().start(this.url, vlcArgs);
+                if (audioUrl != null) {
+                    raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
+                }
+            }
             started = true;
         };
         if (Platform.isMac()) {

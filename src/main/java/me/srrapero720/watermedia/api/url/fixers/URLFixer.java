@@ -57,6 +57,7 @@ public abstract class URLFixer {
 
     public static class Result {
         public final URL url;
+        public URL audioUrl;
         public final Quality quality;
         public final boolean assumeStream;
         public final boolean assumeVideo;
@@ -68,10 +69,16 @@ public abstract class URLFixer {
             this.assumeStream = assumeStream;
         }
 
+        public Result setAudioTrack(URL url) {
+            this.audioUrl = url;
+            return this;
+        }
+
         @Override
         public String toString() {
             return "Result{" +
                     "url=" + url +
+                    ", audioUrl=" + audioUrl +
                     ", quality=" + quality +
                     ", assumeStream=" + assumeStream +
                     ", assumeVideo=" + assumeVideo +
