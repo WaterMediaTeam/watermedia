@@ -100,7 +100,6 @@ public class ImageCache {
     }
 
     public int getUsages() { return uses.get(); }
-
     public Status getStatus() { return status; }
     public Exception getException() { return exception; }
     public ImageRenderer getRenderer() {
@@ -153,7 +152,6 @@ public class ImageCache {
         synchronized (fetch) {
             if (!this.status.equals(Status.READY) && !this.status.equals(Status.FAILED)) return; // ONLY READY OR FAILED CACHE CAN BE RELOADED
             this.status = Status.WAITING;
-            this.video = false;
             this.exception = null;
 
             ImageRenderer imageRenderer = this.renderer;
@@ -166,18 +164,16 @@ public class ImageCache {
         if (fetch == null) return;
         synchronized (fetch) {
             if (uses.get() > 0) {
-                LOGGER.warn(IT, "Cache of '{}' released with {} usages remaining", this.url, this.uses.get());
+                LOGGER.warn(IT, "Cache of '{}' is released with {} usages remaining", this.url, this.uses.get());
             }
-            this.status = Status.FORGOTTEN;
-            this.video = false;
-            this.exception = null;
 
             ImageRenderer imageRenderer = this.renderer;
             this.renderer = null;
-            if (!this.isVideo()) {
+            if (imageRenderer != null) {
                 this.releaseListeners.forEach(consumer -> consumer.accept(imageRenderer));
+                this.renderThreadEx.execute(imageRenderer::release);
             }
-            if (renderer != null) this.renderThreadEx.execute(imageRenderer::release);
+            this.status = Status.FORGOTTEN;
             CACHE.remove(url);
         }
     }
