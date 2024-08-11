@@ -94,6 +94,8 @@ public class ImageCache {
         return this;
     }
 
+    public int getUsages() { return uses.get(); }
+
     public Status getStatus() { return status; }
     public Exception getException() { return exception; }
     public ImageRenderer getRenderer() { return renderer; }
