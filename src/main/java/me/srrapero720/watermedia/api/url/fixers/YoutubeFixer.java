@@ -47,18 +47,32 @@ public class YoutubeFixer extends URLFixer {
                 } else {
                     // BEST WITH ALL
                     VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
+                    if (bestAll != null) return new Result(new URL(bestAll.url()), true, false);
 
                     // WITHOUT AUDIO
                     VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
                     if (bestWithoutAudio != null) {
-                        // WITHOUT VIDEO
-                        AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
-                        if (bestWithoutVideo != null) return new Result(new URL(bestWithoutAudio.url()), true, false).setAudioTrack(new URL(bestWithoutVideo.url()));
-
-                        if (bestAll != null) return new Result(new URL(bestAll.url()), true, false);
-
                         return new Result(new URL(bestWithoutAudio.url()), true, false);
                     }
+
+                    // WITHOUT VIDEO
+                    AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
+                    if (bestWithoutVideo != null) return new Result(new URL(bestWithoutAudio.url()), true, false).setAudioTrack(new URL(bestWithoutVideo.url()));
+
+//                    // BEST WITH ALL
+//                    VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
+//
+//                    // WITHOUT AUDIO
+//                    VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
+//                    if (bestWithoutAudio != null) {
+//                        // WITHOUT VIDEO
+//                        AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
+//                        if (bestWithoutVideo != null) return new Result(new URL(bestWithoutAudio.url()), true, false).setAudioTrack(new URL(bestWithoutVideo.url()));
+//
+//                        if (bestAll != null) return new Result(new URL(bestAll.url()), true, false);
+//
+//                        return new Result(new URL(bestWithoutAudio.url()), true, false);
+//                    }
 
                     if (bestAll != null) return new Result(new URL(bestAll.url()), true, false);
                 }
