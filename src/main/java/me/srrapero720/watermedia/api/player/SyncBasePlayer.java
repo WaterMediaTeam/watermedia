@@ -115,7 +115,9 @@ public abstract class SyncBasePlayer {
             if (rpa(url)) {
                 if (audioUrl != null) {
                     raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                    raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
+                    if (!raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString())) {
+                        LOGGER.warn(IT, "Failed to add audio slave {} for {}", audioUrl.toString(), this.url.toString());
+                    }
                     raw.mediaPlayer().controls().start();
                 } else {
                     raw.mediaPlayer().media().start(this.url, vlcArgs);
