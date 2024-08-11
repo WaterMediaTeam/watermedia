@@ -1,3 +1,8 @@
+# UPDATE 2.0.70
+- Added getUsages on ImageCache
+- Added onReleaseListeners on ImageCache (when WaterMedia is about to release renderers)
+- Fixed GPU memory leak, textures never got released.
+
 # UPDATE 2.0.69
 - Fixed package string being shadowed
 
