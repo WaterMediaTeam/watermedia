@@ -1,9 +1,12 @@
 package me.srrapero720.watermedia.api.image;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.api.image.ImageAPI.IT;
@@ -47,6 +50,8 @@ public class ImageCache {
 
     private volatile ImageRenderer renderer;
     private volatile Exception exception;
+
+    private final List<Consumer<ImageRenderer>> releaseListeners = new ArrayList<>();
 
     @Deprecated
     public ImageCache(String url, Executor runnable) {
@@ -99,6 +104,11 @@ public class ImageCache {
     public Status getStatus() { return status; }
     public Exception getException() { return exception; }
     public ImageRenderer getRenderer() { return renderer; }
+
+    public ImageCache addOnReleaseListener(Consumer<ImageRenderer> consumer) {
+        this.releaseListeners.add(consumer);
+        return this;
+    }
 
     public void load() {
         if (fetch == null) return;
@@ -159,6 +169,7 @@ public class ImageCache {
 
             ImageRenderer imageRenderer = this.renderer;
             this.renderer = null;
+            this.releaseListeners.forEach(consumer -> consumer.accept(renderer));
             if (renderer != null) this.renderThreadEx.execute(imageRenderer::release);
             CACHE.remove(url);
         }
