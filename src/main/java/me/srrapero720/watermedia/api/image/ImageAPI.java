@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.image;
 
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.config.WaterConfig;
+import me.srrapero720.watermedia.core.config.WaterConfig;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.tools.IOTool;

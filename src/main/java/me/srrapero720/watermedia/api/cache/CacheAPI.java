@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.cache;
 
-import me.srrapero720.watermedia.api.WaterInternalAPI;
+import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.api.config.WaterConfig;
+import me.srrapero720.watermedia.core.config.WaterConfig;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -21,7 +21,7 @@ import java.util.zip.GZIPOutputStream;
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 @SuppressWarnings({"unused"})
-public class CacheAPI extends WaterInternalAPI {
+public class CacheAPI extends WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker(CacheAPI.class.getSimpleName());
     private static final Map<String, Entry> ENTRIES = new HashMap<>();
 

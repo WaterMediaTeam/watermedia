@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.config.values;
+package me.srrapero720.watermedia.core.config.values;
 
 import java.lang.annotation.*;
 

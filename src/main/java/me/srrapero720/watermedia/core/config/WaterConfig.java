@@ -1,9 +1,9 @@
-package me.srrapero720.watermedia.api.config;
+package me.srrapero720.watermedia.core.config;
 
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.config.values.ConfigField;
-import me.srrapero720.watermedia.api.config.values.WaterConfigFile;
+import me.srrapero720.watermedia.core.config.values.ConfigField;
+import me.srrapero720.watermedia.core.config.values.WaterConfigFile;
 
 @WaterConfigFile
 public class WaterConfig {

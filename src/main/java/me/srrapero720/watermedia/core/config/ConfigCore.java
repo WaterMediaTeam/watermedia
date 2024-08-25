@@ -1,10 +1,10 @@
-package me.srrapero720.watermedia.api.config;
+package me.srrapero720.watermedia.core.config;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.WaterInternalAPI;
-import me.srrapero720.watermedia.api.config.values.ConfigField;
-import me.srrapero720.watermedia.api.config.values.RangeOf;
-import me.srrapero720.watermedia.api.config.values.WaterConfigFile;
+import me.srrapero720.watermedia.core.WaterInternalAPI;
+import me.srrapero720.watermedia.core.config.values.ConfigField;
+import me.srrapero720.watermedia.core.config.values.RangeOf;
+import me.srrapero720.watermedia.core.config.values.WaterConfigFile;
 import me.srrapero720.watermedia.loader.ILoader;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-public class ConfigAPI extends WaterInternalAPI {
+public class ConfigCore extends WaterInternalAPI {
 
     private static WaterConfig config = new WaterConfig();
 
