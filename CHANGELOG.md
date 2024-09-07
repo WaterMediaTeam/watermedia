@@ -1,3 +1,6 @@
+# UPDATE 2.0.71
+- Removed old TLauncher detector
+
 # UPDATE 2.0.70
 - Added getUsages on ImageCache
 - Added onReleaseListeners on ImageCache (when WaterMedia is about to release renderers)
