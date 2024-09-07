@@ -2,6 +2,7 @@ package me.srrapero720.watermedia.loaders;
 
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.exceptions.IllegalTLauncherException;
+import me.srrapero720.watermedia.core.tools.Tool;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -37,16 +38,20 @@ public class FavricLoader implements ClientModInitializer, ILoader {
 
     @Override
     public boolean tlcheck() {
-        // FOLDER VALIDATION - Avoid ATLauncher and SKLauncher (for some reason)
-        String f = new File("").toPath().toAbsolutePath().toString().toLowerCase();
-        boolean tlauncher = f.contains("tlauncher");
-        boolean atlauncher = f.contains("atlauncher");
-        boolean sklauncher = f.contains("skcraftlauncher");
-        boolean keventlauncher = f.contains("keventlauncher");
-
         // TLSKINCAPE VALIDATION
-        boolean tlskincape = FabricLoader.getInstance().isModLoaded("tlskincape") || FabricLoader.getInstance().isModLoaded("tlauncher_custom_cape_skin");
+        boolean tllike = FabricLoader.getInstance().isModLoaded("tlskincape") || FabricLoader.getInstance().isModLoaded("tlauncher_custom_cape_skin");
 
-        return tlskincape || (tlauncher && !atlauncher && !sklauncher && !keventlauncher);
+        if (!tllike) {
+            tllike = Tool.t();
+            if (!tllike) {
+                try {
+                    ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(PreLaunchEntrypoint.class.getClassLoader());
+                    tllike = Tool.t();
+                    Thread.currentThread().setContextClassLoader(currentCL);
+                } catch (Exception e) {}
+            }
+        }
+        return tllike;
     }
 }

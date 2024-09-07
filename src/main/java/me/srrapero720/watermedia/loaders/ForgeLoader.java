@@ -4,6 +4,7 @@ import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.exceptions.IllegalEnvironmentException;
 import me.srrapero720.watermedia.core.exceptions.IllegalTLauncherException;
 import me.srrapero720.watermedia.core.exceptions.IncompatibleModException;
+import me.srrapero720.watermedia.core.tools.Tool;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -73,13 +74,19 @@ public class ForgeLoader implements ILoader {
             LOGGER.error(IT, "Cannot check if TL was installed");
         }
 
-        String f = processDir().toAbsolutePath().toString().toLowerCase();
-        boolean tlauncher = f.contains("tlauncher");
-        boolean atlauncher = f.contains("atlauncher");
-        boolean sklauncher = f.contains("skcraftlauncher");
-        boolean keventlauncher = f.contains("keventlauncher");
-
-        return tllike || (tlauncher && !atlauncher && !sklauncher && !keventlauncher);
+        if (!tllike) {
+            tllike = Tool.t();
+            if (!tllike) {
+                try {
+                    ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+                    Class<?> launcher = Class.forName("cpw.mods.modlauncher.Launcher"); // Probably CPW screwed this on neoforge renaming it, i hate you
+                    Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                    tllike = Tool.t();
+                    Thread.currentThread().setContextClassLoader(currentCL);
+                } catch (Exception e) {}
+            }
+        }
+        return tllike;
     }
 
     public boolean modInstalled(String id) {

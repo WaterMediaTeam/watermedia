@@ -3,11 +3,13 @@ package me.srrapero720.watermedia.loaders;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.exceptions.IllegalEnvironmentException;
 import me.srrapero720.watermedia.core.exceptions.IllegalTLauncherException;
+import me.srrapero720.watermedia.core.tools.Tool;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.function.BinaryOperator;
 
 @Mod(value = WaterMedia.ID)
 public class NeoForgeLoader implements ILoader {
@@ -41,7 +43,18 @@ public class NeoForgeLoader implements ILoader {
 
     @Override
     public boolean tlcheck() {
-        return false;
+        boolean tllike;
+        tllike = Tool.t();
+        if (!tllike) {
+            try {
+                ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+                Class<?> launcher = Class.forName("cpw.mods.modlauncher.Launcher"); // Probably CPW screwed this on neoforge renaming it, i hate you
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                tllike = Tool.t();
+                Thread.currentThread().setContextClassLoader(currentCL);
+            } catch (Exception e) {}
+        }
+        return tllike;
     }
 
     @Override
