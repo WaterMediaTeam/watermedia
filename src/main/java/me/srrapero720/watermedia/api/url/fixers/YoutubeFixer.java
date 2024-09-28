@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class YoutubeFixer extends URLFixer {
+    private static final YoutubeDownloader DOWNLOADER = new YoutubeDownloader();
     private static final Pattern PATTERN = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|shorts/|feeds/api/videos/|watch\\?v=|watch\\?.+&v=))([^/?&#]+)");
 
     @Override
@@ -37,7 +38,7 @@ public class YoutubeFixer extends URLFixer {
         if (matcher.find()) {
             try {
                 String videoId = matcher.group(1);
-                VideoInfo videoInfo = new YoutubeDownloader().getVideoInfo(new RequestVideoInfo(videoId)).data();
+                VideoInfo videoInfo = DOWNLOADER.getVideoInfo(new RequestVideoInfo(videoId)).data();
                 VideoDetails videoDetails = videoInfo.details();
 
                 if (videoDetails.isLive()) {
