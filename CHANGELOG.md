@@ -1,3 +1,8 @@
+# UPDATE 2.0.72
+- Fixed youtube links was broken (thanks to blake and fuck you youtube)
+- Added streamable support
+- Enhanced Youtube Fixer code
+
 # UPDATE 2.0.71
 - Removed old TLauncher detector
 
