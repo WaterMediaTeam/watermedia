@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.network.patches;
 
-import me.srrapero720.watermedia.api.MediaModContext;
+import me.srrapero720.watermedia.api.MediaContext;
+import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.uri.MediaSource;
 
 public class ImgurPatch extends AbstractPatch {
     @Override
@@ -11,12 +11,12 @@ public class ImgurPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaSource source) {
+    public boolean validate(MediaURI source) {
         return source.getUri().getHost().equals("imgur.com"); // i.imgur.com - doesn't need patches
     }
 
     @Override
-    public MediaSource patch(MediaSource source, MediaModContext context) throws URIPatchException {
+    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
         //            String path = url.getPath();
 //            if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
 //

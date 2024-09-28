@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.network.patches;
 
-import me.srrapero720.watermedia.api.MediaModContext;
-import me.srrapero720.watermedia.api.uri.MediaSource;
+import me.srrapero720.watermedia.api.MediaContext;
+import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
 
 import java.net.URI;
@@ -17,7 +17,7 @@ public abstract class AbstractPatch {
      * @return class name by default
      */
     public String name() {
-        return getClass().getSimpleName();
+        return this.getClass().getSimpleName();
     }
 
     /**
@@ -27,13 +27,13 @@ public abstract class AbstractPatch {
     public abstract String platform();
 
     /**
-     * Check if given {@link MediaSource} can be patched by this patcher
+     * Check if given {@link MediaURI} can be patched by this patcher
      * @param source MediaSource instance to be patched.
-     * @see MediaSource
-     * @see MediaSource#get(MediaModContext, URI)
+     * @see MediaURI
+     * @see MediaURI#get(MediaContext, URI)
      * @return Same provided MediaSource instance but patched
      */
-    public abstract boolean validate(MediaSource source);
+    public abstract boolean validate(MediaURI source);
 
     /**
      * Patches the provided MediaSource
@@ -41,7 +41,7 @@ public abstract class AbstractPatch {
      * @return static URL
      * @throws URIPatchException if URL is null or invalid in this patch
      */
-    public abstract MediaSource patch(MediaSource source, MediaModContext context) throws URIPatchException;
+    public abstract MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException;
 
     /**
      * Returns the name of the Fixer

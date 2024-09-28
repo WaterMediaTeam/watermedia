@@ -1,9 +1,8 @@
 package me.srrapero720.watermedia.api.network;
 
-import me.srrapero720.watermedia.api.MediaModContext;
+import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.network.patches.AbstractPatch;
-import me.srrapero720.watermedia.api.uri.MediaSource;
 import me.srrapero720.watermedia.loader.ILoader;
 import me.srrapero720.watermedia.tools.DataTool;
 import org.apache.logging.log4j.Marker;
@@ -23,7 +22,7 @@ public class NetworkAPI extends WaterMediaAPI {
 
     private static final ServiceLoader<AbstractPatch> PATCHES = ServiceLoader.load(AbstractPatch.class);
 
-    public static void patchSource(MediaSource url, MediaModContext context) {
+    public static void patchSource(MediaSource url, MediaContext context) {
         try {
             for (AbstractPatch patch: PATCHES) {
                 if (!patch.validate(url)) continue;

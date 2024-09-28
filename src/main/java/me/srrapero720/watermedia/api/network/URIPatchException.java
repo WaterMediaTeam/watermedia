@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api.network;
 
-import me.srrapero720.watermedia.api.uri.MediaSource;
-
 import java.net.URI;
 
 public class URIPatchException extends Exception {
@@ -21,11 +19,11 @@ public class URIPatchException extends Exception {
         this(source.toString(), message);
     }
 
-    public URIPatchException(MediaSource source, String message) {
+    public URIPatchException(MediaURI source, String message) {
         this(source.getUri(), message);
     }
 
-    public URIPatchException(MediaSource source, Exception e) {
+    public URIPatchException(MediaURI source, Exception e) {
         this(source.getUri(), e);
     }
 }

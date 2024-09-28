@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.network.patches;
 
-import me.srrapero720.watermedia.api.MediaModContext;
+import me.srrapero720.watermedia.api.MediaContext;
+import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.uri.MediaSource;
 
 public class KickPatch extends AbstractPatch {
     private static final String API_URL = "https://kick.com/api/v1/";
@@ -13,12 +13,12 @@ public class KickPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaSource source) {
+    public boolean validate(MediaURI source) {
         return source.getUri().getHost().equals("kick.com");
     }
 
     @Override
-    public MediaSource patch(MediaSource source, MediaModContext context) throws URIPatchException {
+    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
         /*
 
         try {

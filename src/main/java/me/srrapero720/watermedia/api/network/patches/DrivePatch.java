@@ -1,10 +1,8 @@
 package me.srrapero720.watermedia.api.network.patches;
 
-import me.srrapero720.watermedia.api.MediaModContext;
+import me.srrapero720.watermedia.api.MediaContext;
+import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.uri.MediaSource;
-
-import java.net.URL;
 
 public class DrivePatch extends AbstractPatch {
     private static final String API_KEY = "AIzaSyBiFNT6TTo506kCYYwA2NHqs36TlXC1DMo";
@@ -16,14 +14,14 @@ public class DrivePatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaSource source) {
+    public boolean validate(MediaURI source) {
         var host = source.getUri().getHost();
         var path = source.getUri().getPath();
         return host.equals("drive.google.com") && path.startsWith("/file/d/");
     }
 
     @Override
-    public MediaSource patch(MediaSource source, MediaModContext context) throws URIPatchException {
+    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
         var uri = source.getUri();
         final int start = uri.getPath().indexOf("/file/d/") + 4;
 

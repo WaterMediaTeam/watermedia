@@ -4,17 +4,15 @@ import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
 
-public class DropboxPatch extends AbstractPatch {
+public class StreamablePatch extends AbstractPatch {
     @Override
     public String platform() {
-        return "Dropbox (quickfix)";
+        return "Streamable";
     }
 
     @Override
     public boolean validate(MediaURI source) {
-        var host = source.getUri().getHost();
-        var query = source.getUri().getQuery();
-        return host.contains("dropbox.com") && query.equals("dl=0");
+        return false;
     }
 
     @Override

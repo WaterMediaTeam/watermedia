@@ -3,7 +3,7 @@ package me.srrapero720.watermedia.api;
 /**
  * Quality preference.
  */
-public enum MediaQuality {
+public enum Quality {
     /**
      * Unknown quality, highest by default, we don't know what is.
      */
@@ -35,5 +35,23 @@ public enum MediaQuality {
     /**
      * If mrl has available 1440p, 2K and 4K variants, patchers will select 4K
      */
-    HIGHEST,
+    HIGHEST;
+
+    public static final Quality[] VALUES = values();
+
+    public Quality getNext() {
+        var ordinal = this.ordinal();
+        if (ordinal >= VALUES.length) {
+            return null;
+        }
+        return VALUES[ordinal];
+    }
+
+    public Quality getBack() {
+        var ordinal = this.ordinal();
+        if (ordinal == 0) {
+            return null;
+        }
+        return VALUES[ordinal];
+    }
 }

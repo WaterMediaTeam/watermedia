@@ -1,12 +1,11 @@
 package me.srrapero720.watermedia.api.network.patches;
 
-import me.srrapero720.watermedia.api.MediaModContext;
+import me.srrapero720.watermedia.api.MediaContext;
+import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
 import me.srrapero720.watermedia.api.network.models.pornhub.VideoQuality;
-import me.srrapero720.watermedia.api.uri.MediaSource;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,14 +21,14 @@ public class PornHubPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaSource source) {
+    public boolean validate(MediaURI source) {
         var host = source.getUri().getHost();
         var path = source.getUri().getPath();
         return (host.contains(".pornhub.com") || host.equals("pornhub.com")) && path.endsWith("/view_video.php");
     }
 
     @Override
-    public MediaSource patch(MediaSource source, MediaModContext context) throws URIPatchException {
+    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
 
         try (InputStream i = null/*DynamicRequest connection = new DynamicRequest(dynamicURL); InputStream reader = connection.getInputStream()*/) {
 //            String source = new String(ByteTools.readAllBytes(reader), StandardCharsets.UTF_8);

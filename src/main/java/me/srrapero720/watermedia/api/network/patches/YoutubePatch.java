@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.network.patches;
 
-import me.srrapero720.watermedia.api.MediaModContext;
-import me.srrapero720.watermedia.api.uri.MediaSource;
+import me.srrapero720.watermedia.api.MediaContext;
+import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
 
 import java.util.regex.Matcher;
@@ -16,12 +16,12 @@ public class YoutubePatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaSource source) {
+    public boolean validate(MediaURI source) {
         return PATTERN.matcher(source.toString()).find();
     }
 
     @Override
-    public MediaSource patch(MediaSource source, MediaModContext context) throws URIPatchException {
+    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
         Matcher matcher = PATTERN.matcher(source.toString());
         if (!matcher.find()) {
             throw new URIPatchException(source, "Invalid Youtube URI");

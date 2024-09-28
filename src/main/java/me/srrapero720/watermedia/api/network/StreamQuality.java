@@ -142,15 +142,20 @@ public class StreamQuality implements Comparable<StreamQuality> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof StreamQuality)) return false;
-        StreamQuality that = (StreamQuality) o;
+        if (!(o instanceof StreamQuality that)) return false;
         return bandwidth == that.bandwidth && width == that.width && height == that.height && framerate == that.framerate && Objects.equals(codecs, that.codecs) && Objects.equals(url, that.url);
     }
 
     @Override
     public String toString() {
-        return String.format("Bandwidth: %d, Resolution: %dx%d, Framerate: %d, Codecs: %s, URL: %s",
-                bandwidth, width, height, framerate, codecs, url);
+        return "StreamQuality{" +
+                "bandwidth=" + bandwidth +
+                ", width=" + width +
+                ", height=" + height +
+                ", framerate=" + framerate +
+                ", codecs='" + codecs + '\'' +
+                ", url='" + url + '\'' +
+                '}';
     }
 
     @Override

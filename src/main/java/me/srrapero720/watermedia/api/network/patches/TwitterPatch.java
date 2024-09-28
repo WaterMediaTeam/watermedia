@@ -1,10 +1,10 @@
 package me.srrapero720.watermedia.api.network.patches;
 
 import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.MediaModContext;
+import me.srrapero720.watermedia.api.MediaContext;
+import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.NetworkAPI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.uri.MediaSource;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
@@ -37,7 +37,7 @@ public class TwitterPatch extends AbstractPatch {
     }
 
     @Override
-    public MediaSource patch(MediaSource source, MediaModContext context) throws URIPatchException {
+    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
 
 
 
