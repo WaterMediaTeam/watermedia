@@ -13,6 +13,7 @@ import java.net.URL;
 
 public class KickFixer extends URLFixer {
     private static final String API_URL = "https://kick.com/api/v1/";
+    private static final Gson GSON = new Gson();
 
     @Override
     public String platform() {
@@ -46,13 +47,13 @@ public class KickFixer extends URLFixer {
 
     public KickChannel getChannelInfo(String channel) throws IOException {
         try (InputStreamReader in = new InputStreamReader(getInputStream(new URL(API_URL + "channels/" + channel)))) {
-            return new Gson().fromJson(in, KickChannel.class);
+            return GSON.fromJson(in, KickChannel.class);
         }
     }
 
     public KickVideo getVideoInfo(String videoId) throws IOException {
         try (InputStreamReader in = new InputStreamReader(getInputStream(new URL(API_URL + "video/" + videoId)))) {
-            return new Gson().fromJson(in, KickVideo.class);
+            return GSON.fromJson(in, KickVideo.class);
         }
     }
 
