@@ -2,22 +2,7 @@ package me.srrapero720.watermedia.tools;
 
 import java.util.function.Supplier;
 
-public class PairTool<K, V> implements Supplier<V> {
-
-    private final K left;
-    private final V right;
-    public PairTool(K left, V right) {
-        this.left = left;
-        this.right = right;
-    }
-
-    public K getLeft() {
-        return left;
-    }
-
-    public V getRight() {
-        return right;
-    }
+public record PairTool<K, V>(K left, V right) implements Supplier<V> {
 
     public K getKey() {
         return left;

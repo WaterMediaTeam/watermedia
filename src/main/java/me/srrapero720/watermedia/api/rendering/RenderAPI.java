@@ -2,12 +2,12 @@ package me.srrapero720.watermedia.api.rendering;
 
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
-import me.srrapero720.watermedia.api.rendering.memory.MemoryAlloc;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,17 +20,18 @@ import java.nio.IntBuffer;
  * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
  */
 public class RenderAPI extends WaterMediaAPI {
-    public static final Marker IT = MarkerManager.getMarker(RenderAPI.class.getSimpleName());
+    private static final Marker IT = MarkerManager.getMarker(RenderAPI.class.getSimpleName());
+    private static final MemoryUtil.MemoryAllocator ALLOCATOR = MemoryUtil.getAllocator(false);
 
     /**
      * Creates a DirectByteBuffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
      *
-     * <p>In case class was missing uses instead {@link java.nio.DirectByteBuffer#allocateDirect(int) DirectByteBuffer#allocateDirect(int)}</p>
+     * <p>In case class was missing uses instead {@link java.nio.ByteBuffer#allocateDirect(int) DirectByteBuffer#allocateDirect(int)}</p>
      * @param size size of the buffer
      * @return DirectByteBuffer
      */
     public static ByteBuffer createByteBuffer(int size) {
-        return MemoryAlloc.create(size);
+        return create(size);
     }
 
     /**
@@ -42,7 +43,7 @@ public class RenderAPI extends WaterMediaAPI {
      * @return resized DirectByteBuffer
      */
     public static ByteBuffer resizeByteBuffer(ByteBuffer buffer, int newSize) {
-        return MemoryAlloc.resize(buffer, newSize);
+        return resize(buffer, newSize);
     }
 
     /**
@@ -52,7 +53,7 @@ public class RenderAPI extends WaterMediaAPI {
      * @param buffer buffer to free
      */
     public static void freeByteBuffer(ByteBuffer buffer) {
-        MemoryAlloc.free(buffer);
+        free(buffer);
     }
 
     public static BufferedImage convertImageFormat(BufferedImage originalImage) {
@@ -274,6 +275,29 @@ public class RenderAPI extends WaterMediaAPI {
 
     public static void deleteTexture(int[] textures) {
         GL11.glDeleteTextures(textures);
+    }
+
+    public static ByteBuffer create(int pSize) {
+        long i = ALLOCATOR.malloc(pSize);
+        if (i == 0L) {
+            throw new OutOfMemoryError("Failed to allocate " + pSize + " bytes");
+        } else {
+            return MemoryUtil.memByteBuffer(i, pSize);
+        }
+    }
+
+    public static ByteBuffer resize(ByteBuffer pBuffer, int pByteSize) {
+        long i = ALLOCATOR.realloc(MemoryUtil.memAddress0(pBuffer), pByteSize);
+        if (i == 0L) {
+            throw new OutOfMemoryError("Failed to resize buffer from " + pBuffer.capacity() + " bytes to " + pByteSize + " bytes");
+        } else {
+            return MemoryUtil.memByteBuffer(i, pByteSize);
+        }
+    }
+
+    public static void free(ByteBuffer pBuffer) {
+        if (pBuffer == null) return;
+        ALLOCATOR.free(MemoryUtil.memAddress0(pBuffer));
     }
 
     @Override

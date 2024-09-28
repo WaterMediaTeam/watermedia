@@ -65,7 +65,7 @@ dependencies {
 
     // DEPENDENCIES
     shadow "com.github.WaterMediaTeam:videolan-natives:$vlcj_natives_version"
-    shadow "com.github.WaterMediaTeam:ytdl-java:$jyd_version"
+    shadow "com.github.WaterMediaTeam:ffmpeg4j:$ffmpeg4j_version"
     shadow "net.sf.sevenzipjbinding:sevenzipjbinding:16.02-2.01"
     shadow "net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:16.02-2.01"
     shadow project(":lib-vlcj")

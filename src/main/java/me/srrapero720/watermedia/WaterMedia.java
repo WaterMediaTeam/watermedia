@@ -19,6 +19,9 @@ public final class WaterMedia {
 
 	public static final String ID = "watermedia";
 	public static final String NAME = "WATERMeDIA";
+	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
+	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/112.0.0.0 Edg/112.0.1722.68 WaterMedia/" + VERSION;
+
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	private static final Set<IModule> MODULES = new HashSet<>();
 
@@ -32,19 +35,18 @@ public final class WaterMedia {
 	public static WaterMedia prepare(ILoader boot) {
 		if (boot == null) throw new NullPointerException("Bootstrap is null");
 		if (instance != null) throw new NullPointerException(NAME + " is already prepared");
-		LOGGER.info(IT, "Preparing '{}' on '{}'", NAME, boot.name());
-		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString("/watermedia/version.cfg"));
-		LOGGER.info(IT, "OS Detected: {} ({})", System.getProperty("os.name"), Platform.ARCH);
+		LOGGER.info(IT, "Preparing '{}' for '{}'", NAME, boot.name());
+		LOGGER.info(IT, "Loading {} version '{}'", NAME, VERSION);
+		LOGGER.info(IT, "Detected OS: {} ({})", System.getProperty("os.name"), Platform.ARCH);
 
-		if (NO_BOOT.getRight())
-			LOGGER.warn(IT, "No boot was enabled, skipping bootstrap");
+		if (NO_BOOT.right())
+			LOGGER.warn(IT, "disableBoot argument detected, skipping booting");
 
-		if (HARDFAIL.getRight())
-			LOGGER.warn(IT, "HardFail mode was enable, {} will crash at the minimum exception", NAME);
+		if (HARDFAIL.right())
+			LOGGER.warn(IT, "HardFail argument detected, {} will crash at the minimum exception", NAME);
 
 		if (!boot.client() && !boot.name().contains("Fabric"))
 			throw new UnsupportedSideException();
-
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();
@@ -59,7 +61,7 @@ public final class WaterMedia {
 	}
 
 	public void start() throws Exception {
-		if (NO_BOOT.getRight()) return;
+		if (NO_BOOT.right()) return;
 		if (!bootstrap.client()) return;
 
 		List<WaterMediaAPI> modules = DataTool.toList(ServiceLoader.load(WaterMediaAPI.class));

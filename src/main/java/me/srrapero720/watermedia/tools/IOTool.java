@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +30,24 @@ public class IOTool {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String readFromURL(String url) throws IOException {
+        URL u = new URL(url);
+        HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+        conn.setRequestMethod("GET");
+
+        int code = conn.getResponseCode();
+        if (code != HttpURLConnection.HTTP_OK) return null;
+
+        InputStream in = conn.getInputStream();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        int size;
+        while ((size = in.read(buf)) != -1) {
+            output.write(buf, 0, size);
+        }
+        return output.toString(StandardCharsets.UTF_8);
     }
 
     public static GifDecoder readGif(Path path) {
@@ -85,38 +105,36 @@ public class IOTool {
                 }
             }
         }
-
     }
 
-    public static void unzip(Marker it, Path zipFilePath) throws IOException { unzip(it, zipFilePath, zipFilePath.getParent()); }
-    public static void unzip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
-        LOGGER.debug(it, "Unzipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
-        if (zipFilePath.toString().endsWith(".7z")) throw new IOException("Attempted to extract a 7z as a .zip");
-        File destDir = destDirectory.toFile();
-        if (!destDir.exists()) destDir.mkdirs();
+    public static void unzip(Path zip) throws IOException { unzip(zip, zip.getParent()); }
+    public static void unzip(Path zip, Path dest) throws IOException {
+        LOGGER.debug(IT, "Unzipping '{}' to directory '{}'", zip, dest);
 
-        try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(zipFilePath))) {
-            ZipEntry entry = zipIn.getNextEntry();
-            // iterates over entries in the zip file
-            while (entry != null) {
-                String filePath = destDirectory + File.separator + entry.getName();
-                if (!entry.isDirectory()) {
-                    // if the entry is a file, extracts it
-                    unzip$extract(zipIn, filePath);
+        if (!zip.toString().endsWith(".zip"))
+            throw new IOException("Attempted to extract a non .zip file");
+        if (!dest.toFile().exists() && !dest.toFile().mkdirs())
+            throw new IOException("Failed to make required directories");
+
+        try (var in = new ZipInputStream(Files.newInputStream(zip))) {
+            ZipEntry en = in.getNextEntry();
+            while (en != null) { // iterates over entries in the zip file
+                String desPath = dest + File.separator + en.getName();
+                if (!en.isDirectory()) {
+                    unzip$extract(in, desPath); // if the entry is a file, extracts it
                 } else {
-                    // if the entry is a directory, make the directory
-                    File dir = new File(filePath);
+                    File dir = new File(desPath); // if the entry is a directory, make the directory
                     dir.mkdirs();
                 }
-                zipIn.closeEntry();
-                entry = zipIn.getNextEntry();
+                in.closeEntry();
+                en = in.getNextEntry();
             }
         }
     }
 
     private static void unzip$extract(ZipInputStream zipIn, String filePath) throws IOException {
         try (BufferedOutputStream output = new BufferedOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
-            byte[] bytesIn = new byte[4096];
+            byte[] bytesIn = new byte[1024 * 8];
             int read;
             while ((read = zipIn.read(bytesIn)) != -1) output.write(bytesIn, 0, read);
         }

@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.api.player;
 
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
@@ -61,7 +60,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
      * @param resLoc the identifier (ResourceLocation#toString())
      * @param vlcArgs arguments used to create new VLC player instances
-     * @return MediaPlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
+     * @return MediaPlayerFactory to create custom VLC players.
      */
     public static MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
         if (NativeDiscovery.discovery()) {
@@ -74,24 +73,6 @@ public class PlayerAPI extends WaterMediaAPI {
 
         LOGGER.fatal(IT, "[VLC IS MISSING]: Cannot create MediaPlayerFactory instance");
         return null;
-    }
-
-    /**
-     * Use your own VLCArgs at your own risk
-     * By default this method makes a ReleaseHook to release factory on process shutdown
-     * Suggestion: Use the same VLC arguments for logging but with another filename
-     * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
-     * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
-     * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
-     * @deprecated use instead {@link PlayerAPI#registerFactory(String, String[])}. Fallback here is not efficient
-     */
-    public static MediaPlayerFactory customFactory(String[] vlcArgs) {
-        int fakeID = 0;
-        while (FACTORIES.containsKey(WaterMedia.asResource("unidentified_" + fakeID))) {
-            fakeID++;
-        }
-        return registerFactory(WaterMedia.asResource("unidentified_" + fakeID), vlcArgs);
     }
 
     // LOADING

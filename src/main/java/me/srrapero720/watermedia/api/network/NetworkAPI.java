@@ -1,13 +1,16 @@
 package me.srrapero720.watermedia.api.network;
 
-import com.google.gson.Gson;
+import me.srrapero720.watermedia.api.MediaModContext;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.network.patch.URLPatch;
+import me.srrapero720.watermedia.api.network.patches.AbstractPatch;
+import me.srrapero720.watermedia.api.uri.MediaSource;
 import me.srrapero720.watermedia.loader.ILoader;
+import me.srrapero720.watermedia.tools.DataTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,32 +20,26 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class NetworkAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker(NetworkAPI.class.getSimpleName());
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
-    public static final Gson GSON = new Gson();
-    private static final ServiceLoader<URLPatch> URL_PATCHES = ServiceLoader.load(URLPatch.class);
-    static {
-        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
-    }
 
-    public static DynamicURL patchURL(DynamicURL url) {
-        if (url.isLocal()) return url;
+    private static final ServiceLoader<AbstractPatch> PATCHES = ServiceLoader.load(AbstractPatch.class);
+
+    public static void patchSource(MediaSource url, MediaModContext context) {
         try {
-            for (URLPatch patcher: URL_PATCHES) {
-                if (!patcher.isValid(url)) continue;
-                return patcher.patch(url, URLPatch.Quality.HIGHEST);
+            for (AbstractPatch patch: PATCHES) {
+                if (!patch.validate(url)) continue;
+                patch.patch(url, context);
             }
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed to patch URL '{}'", url.getSource(), e);
+            LOGGER.error(IT, "Failed to patch URL '{}'", url.getSource(context), e);
         }
-        return url;
     }
 
     public static String[] getPatchNames() {
-        ArrayList<String> result = new ArrayList<>();
-        for (URLPatch patcher: URL_PATCHES) {
-            result.add(patcher.name());
+        ArrayList<String> r = new ArrayList<>();
+        for (AbstractPatch patch: PATCHES) {
+            r.add(patch.name());
         }
-        return result.toArray(new String[0]);
+        return r.toArray(new String[0]);
     }
 
     /**
@@ -51,43 +48,39 @@ public class NetworkAPI extends WaterMediaAPI {
      * @return map with all values as a String
      */
     public static Map<String, String> parseQuery(String query) {
-        Map<String, String> queryParams = new HashMap<>();
-        String[] params = query.split("&");
-        for (String param : params) {
-            String[] keyValue = param.split("=");
-            if (keyValue.length == 2) {
-                String key = keyValue[0];
-                String value = keyValue[1];
-                queryParams.put(key, value);
+        final var result = new HashMap<String, String>();
+        final var params = query.split("&");
+        for (String p: params) {
+            var keyVal = p.split("=");
+            if (keyVal.length == 2) {
+                result.put(keyVal[0], keyVal[1]);
             }
         }
-        return queryParams;
+        return result;
     }
 
     /**
-     * Gets a URL instance based on a given string, null if is malformed or invalid
-     * @param url string url
-     * @return the instanced URL, null if was not a valid URL
+     * Encodes a map of string into a Query string
+     * @param map map of params
+     * @return encoded string with all values
      */
-    public static URL parseUrl(String url) {
-        try {
-            return new URL(url);
-        } catch (Exception e) {
-            return null;
-        }
-    }
+    public static String encodeQuery(Map<String, ?> map) {
+        var builder = new StringBuilder();
+        map.forEach((k, v) -> {
+            builder.append(k).append("=");
+            if (v instanceof Map valueMap) {
+                builder.append(DataTool.GSON.toJson(valueMap));
+            } else {
+                builder.append(v);
+            }
 
-    /**
-     * Gets a URL instance based on a given string, null if is malformed or invalid
-     * @param uri string url
-     * @return if was valid
-     */
-    public static URL parseUrl(URI uri) {
-        try {
-            return uri.toURL();
-        } catch (Exception e) {
-            return null;
+            builder.append("&");
+        });
+
+        if (builder.charAt(builder.length() - 1) == '&') {
+            builder.deleteCharAt(builder.length() - 1);
         }
+        return "?" + URLEncoder.encode(builder.toString(), StandardCharsets.UTF_8);
     }
 
     @Override
@@ -97,12 +90,13 @@ public class NetworkAPI extends WaterMediaAPI {
 
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
-        return false;
+        return true;
     }
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-
+        // TODO: Google drive hates this
+        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
     }
 
     @Override

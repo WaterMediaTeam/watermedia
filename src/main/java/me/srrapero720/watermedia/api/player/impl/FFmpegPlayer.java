@@ -2,12 +2,14 @@ package me.srrapero720.watermedia.api.player.impl;
 
 import me.srrapero720.watermedia.api.player.IMediaPlayer;
 
-public abstract class VLCPlayer implements IMediaPlayer {
+import java.io.FileInputStream;
+import java.io.InputStream;
 
-    private boolean paused = false;
-    private boolean muted = false;
-    private boolean live = false;
-    private boolean started = false;
+public class FFmpegPlayer implements IMediaPlayer {
+
+    public FFmpegPlayer() {
+
+    }
 
     @Override
     public boolean start() {

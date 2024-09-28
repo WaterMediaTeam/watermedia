@@ -1,15 +1,20 @@
 package me.srrapero720.watermedia.tools;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
+
+import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class DataTool {
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
+    public static final Gson GSON = new Gson();
     private static final int DEFAULT_BUFFER_SIZE = 8192;
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
@@ -24,17 +29,18 @@ public class DataTool {
 
     public static int[] filterValue(int[] its, int v) {
         int size = 0;
-        for (int i : its) if (i != v) size++;
+        for (int i: its) if (i != v) size++;
 
         int[] result = new int[size];
 
         int pos = 0;
-        for (int i : its)
+        for (int i: its)
             if (i != v) result[pos++] = i;
 
         return result;
     }
 
+    @SuppressWarnings("all")
     public static <T> T[] concatArray(T[] array, T... values) {
         Object t = Array.newInstance(array.getClass().getComponentType(), array.length + values.length);
         System.arraycopy(array, 0, t, 0, array.length);
@@ -42,7 +48,7 @@ public class DataTool {
         return (T[]) t;
     }
 
-    public static <T> List<T> toList(ServiceLoader<T> s) {
+    public static <T> List<T> toList(Iterable<T> s) {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);
         return r;
@@ -50,9 +56,6 @@ public class DataTool {
 
     public static byte[] readAllBytes(InputStream stream) throws IOException {
         int len = Integer.MAX_VALUE;
-        if (len < 0) {
-            throw new IllegalArgumentException("len < 0");
-        }
 
         List<byte[]> bufs = null;
         byte[] result = null;
@@ -111,6 +114,24 @@ public class DataTool {
         }
 
         return result;
+    }
+
+    public static String encodeStringToHex(String string) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = digest.digest(string.getBytes(StandardCharsets.UTF_8));
+
+            char[] hexChars = new char[bytes.length * 2];
+            for (int j = 0; j < bytes.length; j++) {
+                int v = bytes[j] & 0xFF;
+                hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+                hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+            }
+            return new String(hexChars);
+        } catch (Exception e) {
+            LOGGER.error("Failed to digest and encode string {}", string, e);
+            return null;
+        }
     }
 
     public static String encodeHexString(byte[] bytes) {

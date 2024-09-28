@@ -10,7 +10,7 @@ public class MathAPI extends WaterMediaAPI {
 
     static {
         for (int i = 0; i < SIN_SIZE; i++) {
-            SIN[i] = (float) Math.sin(i * Math.PI * 2.0 / SIN_SIZE);
+             SIN[i] = (float) Math.sin(i * Math.PI * 2.0 / SIN_SIZE);
         }
     }
 
@@ -235,19 +235,6 @@ public class MathAPI extends WaterMediaAPI {
      * @return HEX color
      */
     public static int argb(int a, int r, int g, int b) { return (a << 24) | (r << 16) | (g << 8) | b; }
-
-    /**
-     * Creates a hexadecimal color based on gave params
-     * All values need to be in a range of 0 ~ 255
-     * @param a Alpha
-     * @param r Red
-     * @param g Green
-     * @param b Blue
-     * @return HEX color
-     * @deprecated renamed to {@link MathAPI#argb(int, int, int, int)}
-     */
-    @Deprecated(forRemoval = true)
-    public static int getColorARGB(int a, int r, int g, int b) { return (a << 24) | (r << 16) | (g << 8) | b; }
 
     /**
      * Converts arguments into an ease-in value usable on animations.

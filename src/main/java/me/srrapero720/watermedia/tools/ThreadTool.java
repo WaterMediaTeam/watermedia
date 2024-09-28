@@ -28,40 +28,17 @@ public class ThreadTool {
         return 10;
     }
 
-    @Deprecated
-    public static Thread thread(int priority, Runnable runnable) {
-        Thread thread = thread$basic(runnable);
-        thread.setPriority(priority);
-        thread.start();
-        return thread;
-    }
-
-    @Deprecated
-    public static Thread thread(Runnable runnable) {
-        Thread thread = thread$basic(runnable);
-        thread.start();
-        return thread;
-    }
-
-    private static Thread thread$basic(Runnable runnable) {
-        Thread thread = new Thread(runnable);
-        thread.setName("WaterMedia-Task-" + (++TWC));
-        thread.setUncaughtExceptionHandler(EXCEPTION_HANDLER);
-        thread.setDaemon(true);
-        return thread;
-    }
-
     public static ScheduledExecutorService executorReduced(String name) {
-        return Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("wm-worker-" + name, Thread.NORM_PRIORITY));
+        return Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("WaterMedia-Worker-" + name, Thread.NORM_PRIORITY));
     }
 
     public static ThreadFactory factory(String name, int priority) {
-        AtomicInteger count = new AtomicInteger();
-        Thread.UncaughtExceptionHandler handler = Thread.currentThread().getUncaughtExceptionHandler();
+        final var count = new AtomicInteger();
+        final var handler = Thread.currentThread().getUncaughtExceptionHandler();
         return r -> {
             Thread t = new Thread(r);
             t.setName(name + "-" + count.incrementAndGet());
-            t.setDaemon(true);
+            t.setDaemon(true); // we must not keep working
             t.setUncaughtExceptionHandler(((t1, e2) -> {
                 EXCEPTION_HANDLER.uncaughtException(t1, e2);
                 handler.uncaughtException(t1, e2);
@@ -69,5 +46,29 @@ public class ThreadTool {
             t.setPriority(priority);
             return t;
         };
+    }
+
+    @Deprecated
+    public static Thread thread(int priority, Runnable runnable) {
+        Thread t = thread$basic(runnable);
+        t.setPriority(priority);
+        t.start();
+        return t;
+    }
+
+    @Deprecated
+    public static Thread thread(Runnable runnable) {
+        Thread t = thread$basic(runnable);
+        t.start();
+        return t;
+    }
+
+    @Deprecated
+    private static Thread thread$basic(Runnable runnable) {
+        Thread t = new Thread(runnable);
+        t.setName("WaterMedia-Task-" + (++TWC));
+        t.setUncaughtExceptionHandler(EXCEPTION_HANDLER);
+        t.setDaemon(true);
+        return t;
     }
 }
