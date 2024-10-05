@@ -4,9 +4,13 @@ import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
 
+import java.net.URI;
+
 public class DrivePatch extends AbstractPatch {
-    private static final String API_KEY = "AIzaSyBiFNT6TTo506kCYYwA2NHqs36TlXC1DMo";
+    private static final String API_KEY = "AIzaSyBiFNT6TTo506kCYYwA2NHqs36TlXC1DMo"; // Get your own api key, is easy and free.
     private static final String API_URL = "https://www.googleapis.com/drive/v3/files/%s?alt=media&key=%s";
+    private static final String PATH_PREFIX = "/file/d/";
+    private static final String PATH_SUFFIX = "/view";
 
     @Override
     public String platform() {
@@ -23,12 +27,22 @@ public class DrivePatch extends AbstractPatch {
     @Override
     public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
         var uri = source.getUri();
-        final int start = uri.getPath().indexOf("/file/d/") + 4;
+        var path = uri.getPath();
 
-        int end = uri.getPath().indexOf('/', start);
-        if (end == -1) end = uri.getPath().length();
-        String fileID = uri.getPath().substring(start, end);
+        var pre = path.substring(PATH_PREFIX.length());
+        var fileId = pre.substring(0, pre.length() - PATH_SUFFIX.length());
 
-        return null;
+        try {
+            // PATCH BUILDING
+            var patch = new MediaURI.Patch();
+            patch.addSource()
+                    .setUri(new URI(String.format(API_URL, fileId, API_KEY)))
+                    .build();
+            source.apply(patch);
+        } catch (Exception e) {
+            throw new URIPatchException(source, e);
+        }
+
+        return source;
     }
 }

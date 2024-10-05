@@ -1,43 +1,70 @@
 package me.srrapero720.watermedia.api;
 
+import me.srrapero720.watermedia.api.network.StreamQuality;
+
 /**
  * Quality preference.
  */
 public enum Quality {
     /**
-     * Unknown quality, highest by default, we don't know what is.
+     * Qualities same or below 240p threshold
      */
-    UNKNOWN,
+    LOWEST(240),
 
     /**
-     * If mrl has available 240p and 120p variants, patchers will select 120p
+     * Qualities same or below 480p threshold
      */
-    LOWEST,
-    /**
-     * If mrl has available 240p, 480p and 540p, patchers will select 480p.<br>
-     * In case 480p isn't available, then 240p is the chosen one.
-     */
-    LOW,
+    LOWER(480),
 
     /**
-     * If mrl has available 480p, 540p and 720p, patchers will select 540p.<br>
-     * In case 540p isn't available, then 720p is the chosen one.
+     * Qualities below 540p threshold
      */
-    AVERAGE,
+    LOW(540),
+
     /**
-     * If mrl has available 720p, 1080p and 1440p, patchers will select 1440p.<br>
-     * In case 1440p isn't available, then 1080p is the chosen one.<br><br>
-     * <p>
-     * If even 1080p or 1440p isn't available, 2K is the next option in case 4K exists
-     * When 1080p to 2K was missing then fallbacks to 720p; in case it also doesn't exist, then it uses highest (4K)
+     * Qualities same or below 720p threshold
      */
-    HIGH,
+    AVERAGE(720),
+
     /**
-     * If mrl has available 1440p, 2K and 4K variants, patchers will select 4K
+     * Qualities same or below 1080p threshold
      */
-    HIGHEST;
+    HIGH(1080),
+
+    /**
+     * Qualities same or below 2K threshold
+     */
+    HIGHER(1440),
+
+    /**
+     * Qualities same or below 4K threshold
+     */
+    HIGHEST(2160);
+
+    private final int threadshool;
+    Quality(int threshold) {
+        this.threadshool = threshold;
+    }
 
     public static final Quality[] VALUES = values();
+
+    public static Quality calculate(int width) {
+        if (width >= LOWEST.threadshool  && width < LOWER.threadshool) {
+            return LOWEST;
+        } else if (width >= LOWER.threadshool && width < LOW.threadshool) {
+            return LOWER;
+        } else if (width >= LOW.threadshool && width < AVERAGE.threadshool) {
+            return LOW;
+        } else if (width >= AVERAGE.threadshool && width < HIGH.threadshool) {
+            return AVERAGE;
+        } else if (width >= HIGH.threadshool && width < HIGHER.threadshool) {
+            return HIGH;
+        } else if (width >= HIGHER.threadshool && width < HIGHEST.threadshool) {
+            return HIGHER;
+        } else {
+            return HIGHEST;
+        }
+    }
 
     public Quality getNext() {
         var ordinal = this.ordinal();

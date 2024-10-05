@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class MediaURI implements Comparable<URI>, Serializable {
     public static final int NO_EXPIRES = -1;
+    public static final String UNKNOWN = "unknown";
     private static final Map<URI, MediaURI> ACTIVE_SOURCES = new HashMap<>();
 
     public static MediaURI get(MediaContext context, URI uri) {
@@ -38,7 +40,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
             }
             return media;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to process URI '" + mrl + "'", e);
+            throw new IllegalArgumentException("Failed to process URI '" + url + "'", e);
         }
     }
 
@@ -46,7 +48,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
     private final URI uri;
     private final Source defaultSource;
     private final List<Source> sources = new ArrayList<>();
-    private Metadata metadata = new Metadata();
+    private Metadata metadata;
     private long expires;
     private boolean patched;
 
@@ -89,6 +91,10 @@ public class MediaURI implements Comparable<URI>, Serializable {
         private final URI source;
         private final List<Slave> slaves;
         private final Map<Quality, URI> qualities;
+        private MediaType type;
+        private URI fallbackUri;
+        private MediaType fallbackType;
+        private boolean live;
 
         public Source(URI uri) {
             this.source = uri;
@@ -100,6 +106,14 @@ public class MediaURI implements Comparable<URI>, Serializable {
             this.source = uri;
             this.slaves = slaves;
             this.qualities = qualities;
+        }
+
+        public URI fallbackUri() {
+            return this.fallbackUri;
+        }
+
+        public boolean live() {
+            return this.live;
         }
 
         public int size() {
@@ -151,16 +165,9 @@ public class MediaURI implements Comparable<URI>, Serializable {
 
     public record Slave(MediaType type, URI slave) {}
 
-    public record Metadata(String name, String author, String platform, String description, String thumbnailURL, long duration) {
-        public URI thumbnailURI() {
-            try {
-                return new URI(this.thumbnailURL);
-            } catch (Exception e) {
-                throw new IllegalStateException("Record is bastardised or thumbnailURL has a invalid URL: '" + this.thumbnailURL + "'");
-            }
-        }
-    }
+    public record Metadata(String name, String author, String platform, String description, URI thumbnailURI, long duration) {
 
+    }
 
     public static class Patch {
         private final List<Source> sources = new ArrayList<>();
@@ -178,8 +185,12 @@ public class MediaURI implements Comparable<URI>, Serializable {
 
         public class SourceBuilder {
             private URI uri;
-            private final List<Slave> slaves = new ArrayList<>();
+            private MediaType type;
+            private MediaType fallbackType;
+            private URI fallbackUri;
+            private boolean isLive;
             private final Map<Quality, URI> qualities = new HashMap<>();
+            private final List<Slave> slaves = new ArrayList<>();
 
             private SourceBuilder() {}
 
@@ -193,8 +204,38 @@ public class MediaURI implements Comparable<URI>, Serializable {
                 return this;
             }
 
+            public SourceBuilder setFallbackUri(URI uri) {
+                this.fallbackUri = uri;
+                return this;
+            }
+
+            public SourceBuilder setIsLive(boolean live) {
+                this.isLive = live;
+                return this;
+            }
+
+            public SourceBuilder setType(MediaType type) {
+                this.type = type;
+                return this;
+            }
+
+            public SourceBuilder setFallbackType(MediaType fallbackType) {
+                this.fallbackType = fallbackType;
+                return this;
+            }
+
             public SourceBuilder putQuality(Quality quality, URI uri) {
                 this.qualities.put(quality, uri);
+                return this;
+            }
+
+            public SourceBuilder putQualityIfAbsent(Quality quality, Function<Quality, URI> uri) {
+                this.qualities.computeIfAbsent(quality, uri);
+                return this;
+            }
+
+            public SourceBuilder putQualityIfAbsent(Quality quality, URI uri) {
+                this.qualities.computeIfAbsent(quality, q -> uri);
                 return this;
             }
 
@@ -207,6 +248,11 @@ public class MediaURI implements Comparable<URI>, Serializable {
                 }
 
                 var source = new Source(uri, slaves, qualities);
+                source.fallbackUri = this.fallbackUri;
+                source.live = this.isLive;
+                source.type = this.type;
+                source.fallbackType = this.fallbackType;
+
                 Patch.this.sources.add(source);
                 return Patch.this;
             }

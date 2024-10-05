@@ -22,14 +22,14 @@ public class NetworkAPI extends WaterMediaAPI {
 
     private static final ServiceLoader<AbstractPatch> PATCHES = ServiceLoader.load(AbstractPatch.class);
 
-    public static void patchSource(MediaSource url, MediaContext context) {
+    public static void patchSource(MediaURI url, MediaContext context) {
         try {
             for (AbstractPatch patch: PATCHES) {
                 if (!patch.validate(url)) continue;
                 patch.patch(url, context);
             }
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed to patch URL '{}'", url.getSource(context), e);
+            LOGGER.error(IT, "Failed to patch URL '{}'", url.getUri(), e);
         }
     }
 

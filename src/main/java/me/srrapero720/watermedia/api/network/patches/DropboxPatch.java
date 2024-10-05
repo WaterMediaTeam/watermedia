@@ -4,10 +4,12 @@ import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
 
+import java.net.URI;
+
 public class DropboxPatch extends AbstractPatch {
     @Override
     public String platform() {
-        return "Dropbox (quickfix)";
+        return "Dropbox";
     }
 
     @Override
@@ -19,6 +21,19 @@ public class DropboxPatch extends AbstractPatch {
 
     @Override
     public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
-        return null;
+        var url = source.getUri().toString();
+        try {
+            var r = url.replace("dl=0", "dl=1");
+            var uri = new URI(r);
+
+            source.apply(new MediaURI.Patch()
+                    .addSource()
+                    .setUri(uri)
+                    .build()
+            );
+        } catch (Exception e) {
+            throw new URIPatchException(source, e);
+        }
+        return source;
     }
 }

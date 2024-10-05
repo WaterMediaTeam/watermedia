@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -25,6 +27,26 @@ public class DataTool {
         } catch (NumberFormatException e) {
             return o;
         }
+    }
+
+    public static String orEmpty(String s) {
+        return s == null ? "" : s;
+    }
+
+    public static String orOrEmpty(String s, String s2) {
+        return s == null ? s2 == null ? "" : s2 : s;
+    }
+
+    public static String orElse(String s, String s1) {
+        return s == null ? s1 : s;
+    }
+
+    public static <T> T fromJSON(String s, Type t) {
+        return GSON.fromJson(s, t);
+    }
+
+    public static <T> T fromJSON(InputStreamReader s, Type t) {
+        return GSON.fromJson(s, t);
     }
 
     public static int[] filterValue(int[] its, int v) {
@@ -52,6 +74,12 @@ public class DataTool {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);
         return r;
+    }
+
+    public static byte[] readAllBytesAndClose(InputStream stream) throws IOException {
+        try (stream) {
+            return readAllBytes(stream);
+        }
     }
 
     public static byte[] readAllBytes(InputStream stream) throws IOException {

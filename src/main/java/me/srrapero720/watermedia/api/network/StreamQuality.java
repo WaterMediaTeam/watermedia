@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StreamQuality implements Comparable<StreamQuality> {
+public final class StreamQuality implements Comparable<StreamQuality> {
     private static final Pattern M3U8_STREAM_INF_RE = Pattern.compile("^#EXT-X-STREAM-INF:(.*)");
     private static final Pattern M3U8_INF_VALUE_RE = Pattern.compile("([A-Z-]+)=(?:([^,]+)|\"([^\"]+?)\")");
     private static final Pattern HTTP_URL_RE = Pattern.compile("https?://.*");
@@ -64,6 +64,10 @@ public class StreamQuality implements Comparable<StreamQuality> {
         return height;
     }
 
+    public int getPixelDensity() {
+        return width * height;
+    }
+
     public int getFramerate() {
         return framerate;
     }
@@ -73,8 +77,8 @@ public class StreamQuality implements Comparable<StreamQuality> {
     }
 
     public static List<StreamQuality> parse(String playlistData) {
-        List<StreamQuality> streamQualities = new ArrayList<>();
-        if (playlistData == null || playlistData.isEmpty()) return streamQualities;
+        List<StreamQuality> result = new ArrayList<>();
+        if (playlistData == null || playlistData.isEmpty()) return result;
 
         String[] lines = playlistData.split("\n");
         StreamQuality currentQuality = null;
@@ -94,42 +98,33 @@ public class StreamQuality implements Comparable<StreamQuality> {
                     // Note: using `parseFloat` to have a more lax parser which does not panic on "60.000".
                     // Twitch sends framerate using this notation which causes parseInt to throw.
                     switch (key) {
-                        case "BANDWIDTH":
-                            currentQuality.setBandwidth((int) Float.parseFloat(value));
-                            break;
-                        case "RESOLUTION":
-                            currentQuality.setResolution(value);
-                            break;
-                        case "CODECS":
-                            currentQuality.setCodecs(value);
-                            break;
-                        case "FRAME-RATE":
-                            currentQuality.setFramerate((int) Float.parseFloat(value));
-                            break;
+                        case "BANDWIDTH" -> currentQuality.setBandwidth((int) Float.parseFloat(value));
+                        case "RESOLUTION" -> currentQuality.setResolution(value);
+                        case "CODECS" -> currentQuality.setCodecs(value);
+                        case "FRAME-RATE" -> currentQuality.setFramerate((int) Float.parseFloat(value));
                     }
                 }
             } else if (HTTP_URL_RE.matcher(line).matches()) {
                 if (currentQuality != null) {
                     currentQuality.setUrl(line);
-                    streamQualities.add(currentQuality);
+                    result.add(currentQuality);
                     currentQuality = null;
                 }
             }
         }
 
-        // Sort them (in reverse) based on their width and framerate
-        // Assumptions made here:
-        // - All videos have the same aspect ratio
-        //   => as height is proportional to width don't need to take it into account
-        // - Video resolution is more important than framerate
-        //   => in practice higher resolutions always come with higher framerate (we parse from YT and Twitch)
-        streamQualities.sort((q1, q2) -> {
-            int res = q2.width - q1.width;
-            if (res == 0) res = q2.framerate - q1.framerate;
-            return res;
+        // Sort them (in reverse) based on their pixel density and framerate
+        result.sort((q1, q2) -> {
+            int den1 = q1.getPixelDensity();
+            int den2 = q2.getPixelDensity();
+
+            int diff = den1 - den2;
+
+            if (diff == 0) diff = q2.framerate - q1.framerate;
+            return diff;
         });
 
-        return streamQualities;
+        return result;
     }
 
     @Override

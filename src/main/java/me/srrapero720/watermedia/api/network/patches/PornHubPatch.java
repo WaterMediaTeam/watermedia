@@ -3,7 +3,6 @@ package me.srrapero720.watermedia.api.network.patches;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.network.models.pornhub.VideoQuality;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -77,5 +76,9 @@ public class PornHubPatch extends AbstractPatch {
         }
 
         return null;
+    }
+
+    private record VideoQuality(String resolution, String uri) {
+
     }
 }
