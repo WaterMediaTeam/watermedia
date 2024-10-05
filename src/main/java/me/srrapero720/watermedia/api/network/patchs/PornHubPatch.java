@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.network.patches;
+package me.srrapero720.watermedia.api.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.network.MediaURI;

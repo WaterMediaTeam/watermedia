@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.network.patches;
+package me.srrapero720.watermedia.api.network.patchs;
 
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
@@ -15,10 +15,13 @@ import java.net.URI;
 import java.util.regex.Pattern;
 
 public class TwitterPatch extends AbstractPatch {
-    private static final String API_URL = "https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s&lang=es";
-    private static final String API_KEY = "4Z6CrvjrjrEpXgH5Ldm6hLEWH";
-    private static final Pattern ID_PATTERN = Pattern.compile("/[a-zA-Z0-9_]+/status/[0-9]+");
+    private static final String API_URL = "https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s&lang=en";
+    private static final String API_KEY = "watermedia-java-x-access-token";
+    private static final Pattern ID_PATTERN = Pattern.compile("^/([A-Za-z0-9_]+)/status/(\\d+)$");
     private static final Pattern RES_PATTERN = Pattern.compile("(\\d+)x(\\d+)");
+
+    private static final String __TYPE_T = "Tweet";
+    private static final String __TYTE_TOMB = "TweetTombstone";
 
     @Override
     public String platform() {
@@ -35,9 +38,11 @@ public class TwitterPatch extends AbstractPatch {
 
     @Override
     public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
-        final var url = String.format(API_URL, ID_PATTERN.matcher(source.getUri().toString()).group(1), API_KEY);
-
         try {
+            final var m = ID_PATTERN.matcher(source.getUri().getPath());
+            if (!m.matches()) throw new Exception("No twitter ID match found");
+            final var url = String.format(API_URL, m.group(2), API_KEY);
+
             final var conn = NetTool.connect(url, "GET");
 
             int code = conn.getResponseCode();
@@ -45,16 +50,20 @@ public class TwitterPatch extends AbstractPatch {
                 case HttpURLConnection.HTTP_INTERNAL_ERROR -> throw new Exception("Twitter died");
                 case HttpURLConnection.HTTP_NOT_FOUND -> throw new NullPointerException("Tweet not found");
                 case HttpURLConnection.HTTP_FORBIDDEN, HttpURLConnection.HTTP_UNAUTHORIZED ->
-                        throw new UnsupportedOperationException("Twitter blocked us access to this tweet");
+                        throw new UnsupportedOperationException("Twitter blocked us API access - URL: " + url);
                 default -> {
                     if (code != HttpURLConnection.HTTP_OK)
-                        throw new UnsupportedOperationException("Unexpected response from twitter, Status code: " + code);
+                        throw new UnsupportedOperationException("Unexpected response from twitter (" + code + ") - URL: " + url);
                 }
             }
 
             try (final InputStream in = conn.getInputStream()) {
                 final var tweet = DataTool.<Tweet>fromJSON(new String(DataTool.readAllBytes(in)), Tweet.class);
                 final var patch = new MediaURI.Patch();
+
+                if (tweet.typename.equals(__TYTE_TOMB)) {
+                    throw new UnsupportedOperationException("Tomb received: " + tweet.tombstone.text);
+                }
 
                 // METADATA BUILDING
                 final var metadata = new MediaURI.Metadata(
@@ -83,12 +92,13 @@ public class TwitterPatch extends AbstractPatch {
                                     mediaSource.putQualityIfAbsent(Quality.calculate(Integer.parseInt(width)), new URI(videoVariant.url));
                                     mediaSource.setFallbackUri(new URI(details.mediaUrlHttps));
                                     mediaSource.setFallbackType(MediaType.IMAGE);
-                                    mediaSource.build();
                                 }
                             }
                         }
                         default -> throw new UnsupportedOperationException("Unsupported media type!");
-                    };
+                    }
+
+                    mediaSource.build();
                 }
 
                 source.apply(patch.setMetadata(metadata));
@@ -136,6 +146,8 @@ public class TwitterPatch extends AbstractPatch {
         @SerializedName("video")
         public TwitterPatch.Video video;
 
+        @SerializedName("tombstone")
+        public Tombstone tombstone;
     }
 
     private static class Video {
@@ -231,5 +243,18 @@ public class TwitterPatch extends AbstractPatch {
 
         @SerializedName("url")
         public String url;
+    }
+
+    private static class Tombstone {
+        @SerializedName("text")
+        public Text text;
+    }
+
+    private static class Text {
+        @SerializedName("text")
+        public String text;
+
+        @SerializedName("rtl")
+        public boolean rtl;
     }
 }

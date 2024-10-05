@@ -1,6 +1,7 @@
-package me.srrapero720.watermedia.api.network.patches;
+package me.srrapero720.watermedia.api.network.patchs;
 
 import com.google.gson.JsonParser;
+import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import me.srrapero720.watermedia.api.Quality;
@@ -8,7 +9,6 @@ import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.NetworkAPI;
 import me.srrapero720.watermedia.api.network.StreamQuality;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.network.patches.models.twich.GQLData;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
@@ -137,5 +137,18 @@ public class TwitchPatch extends AbstractPatch {
         query.put("player_version", "1.21.0");
 
         return NetworkAPI.encodeQuery(query);
+    }
+
+    public static class GQLData {
+        @SerializedName(value = "videoPlaybackAccessToken", alternate = "streamPlaybackAccessToken")
+        public Token accessToken;
+
+        public static class Token {
+            @SerializedName("signature")
+            public String signature;
+
+            @SerializedName("value")
+            public String value;
+        }
     }
 }

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tests.compress;
+package org.watermedia;
 
 import me.srrapero720.watermedia.tools.IOTool;
 import org.apache.logging.log4j.Marker;

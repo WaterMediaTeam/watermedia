@@ -1,5 +1,6 @@
-package me.srrapero720.watermedia;
+package org.watermedia;
 
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.image.ImageAPI;
 import me.srrapero720.watermedia.api.image.ImageCache;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
@@ -31,7 +32,7 @@ public class TestApp implements Executor {
     private long window;
 
     // The media loader
-    private static final String NAME = "TestApp";
+    private static final String NAME = "org.watermedia.TestApp";
 
     public void run(String url) {
         try {

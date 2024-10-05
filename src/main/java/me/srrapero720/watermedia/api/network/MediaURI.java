@@ -7,10 +7,7 @@ import me.srrapero720.watermedia.api.MediaType;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -160,6 +157,19 @@ public class MediaURI implements Comparable<URI>, Serializable {
 
         public Slave[] slaves() {
             return slaves.stream().filter(slave -> slave.type == MediaType.AUDIO || slave.type == MediaType.SUBTITLES).toArray(v -> new Slave[0]);
+        }
+
+        @Override
+        public String toString() {
+            return "Source{" +
+                    "source=" + source +
+                    ", slaves=" + Arrays.toString(slaves.toArray(new Slave[0])) +
+                    ", qualities=" + Arrays.toString(qualities.values().toArray(new URI[0])) +
+                    ", type=" + type +
+                    ", fallbackUri=" + fallbackUri +
+                    ", fallbackType=" + fallbackType +
+                    ", live=" + live +
+                    '}';
         }
     }
 

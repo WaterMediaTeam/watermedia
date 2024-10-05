@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.network.patches.AbstractPatch;
+import me.srrapero720.watermedia.api.network.patchs.AbstractPatch;
 import me.srrapero720.watermedia.loader.ILoader;
 import me.srrapero720.watermedia.tools.DataTool;
 import org.apache.logging.log4j.Marker;

@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tests.easing;
+package org.watermedia;
 
 import me.srrapero720.watermedia.api.math.MathAPI;
 import org.junit.jupiter.api.Test;

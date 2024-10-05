@@ -1,18 +1,20 @@
-package me.srrapero720.watermedia.api.network.patches;
+package me.srrapero720.watermedia.api.network.patchs;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.network.patches.models.kick.Channel;
-import me.srrapero720.watermedia.api.network.patches.models.kick.Video;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -118,6 +120,155 @@ public class KickPatch extends AbstractPatch {
             return new String(DataTool.readAllBytes(in), StandardCharsets.UTF_8);
         } finally {
             conn.disconnect();
+        }
+    }
+
+    public static class Channel implements Serializable {
+
+        @SerializedName("id")
+        @Expose
+        public int id;
+
+        @SerializedName("user_id")
+        @Expose
+        public int userId;
+
+        @SerializedName("slug")
+        @Expose
+        public String slug;
+
+        @SerializedName("playback_url")
+        @Expose
+        public String url;
+
+        @SerializedName("livestream")
+        @Expose
+        public Livestream livestream;
+
+        @SerializedName("user")
+        @Expose
+        public User user;
+
+        @SerializedName("offline_banner_image")
+        @Expose
+        public OfflineBanner offline_banner;
+
+        public static class Livestream implements Serializable {
+            @SerializedName("id")
+            @Expose
+            public int id;
+
+            @SerializedName("slug")
+            @Expose
+            public String slug;
+
+            @SerializedName("is_live")
+            @Expose
+            public boolean is_live;
+
+            @SerializedName("duration")
+            @Expose
+            public long duration;
+
+            @SerializedName("session_title")
+            @Expose
+            public String title;
+        }
+
+        public static class OfflineBanner implements Serializable {
+
+            @SerializedName("src")
+            @Expose
+            public String src;
+
+            @SerializedName("srcset")
+            @Expose
+            public String srcset;
+
+            public URI[] getSrcset() throws URISyntaxException {
+                String[] urls = srcset.split(" ");
+                URI[] result = new URI[urls.length / 2];
+
+                for (int i = 0, j = 0; i < urls.length; i = i + 2, j++) {
+                    result[j] = new URI(urls[i]);
+                }
+
+                return result;
+            }
+        }
+    }
+
+    public static class User {
+
+        @SerializedName("username")
+        @Expose
+        public String username;
+
+        @SerializedName("profile_pic")
+        @Expose
+        public String profile_pic;
+    }
+
+    public static class Video implements Serializable {
+        @SerializedName("id")
+        @Expose
+        public int id;
+
+        @SerializedName("slug")
+        @Expose
+        public int name;
+
+        @SerializedName("live_stream_id")
+        @Expose
+        public int streamId;
+
+        @SerializedName("source")
+        @Expose
+        public String url;
+
+        @SerializedName("livestream")
+        @Expose
+        public Livestream livestream;
+
+
+        public static class Livestream {
+            @SerializedName("id")
+            @Expose
+            public int id;
+
+            @SerializedName("slug")
+            @Expose
+            public String slug;
+
+            @SerializedName("session_title")
+            @Expose
+            public String title;
+
+            @SerializedName("is_live")
+            @Expose
+            public boolean is_live;
+
+            @SerializedName("duration")
+            @Expose
+            public long duration;
+
+            @SerializedName("channel")
+            @Expose
+            public Channel channel;
+
+            @SerializedName("thumbnail")
+            @Expose
+            public String thumbnail;
+
+            public static class Channel {
+                @SerializedName("id")
+                @Expose
+                public int id;
+
+                @SerializedName("slug")
+                @Expose
+                public String name;
+            }
         }
     }
 }

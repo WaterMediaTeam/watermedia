@@ -1,18 +1,17 @@
-package me.srrapero720.watermedia.api.network.patches;
+package me.srrapero720.watermedia.api.network.patchs;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import me.srrapero720.watermedia.api.network.MediaURI;
 import me.srrapero720.watermedia.api.network.URIPatchException;
-import me.srrapero720.watermedia.api.network.patches.models.streamable.Video;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import static java.net.HttpURLConnection.*;
 
@@ -70,5 +69,75 @@ public class StreamablePatch extends AbstractPatch {
         } catch (Exception e) {
             throw new URIPatchException(source, e);
         }
+    }
+
+    public static class File {
+        @SerializedName("status")
+        @Expose
+        public int status;
+
+        @SerializedName("url")
+        @Expose
+        public String url;
+
+        @SerializedName("framerate")
+        @Expose
+        public int framerate;
+
+        @SerializedName("width")
+        @Expose
+        public int width;
+
+        @SerializedName("height")
+        @Expose
+        public int height;
+
+        @SerializedName("bitrate")
+        @Expose
+        public int bitrate;
+
+        @SerializedName("size")
+        @Expose
+        public int size;
+
+        @SerializedName("duration")
+        @Expose
+        public float duration;
+    }
+
+    public static class Media {
+        @SerializedName("mp4")
+        @Expose
+        public File mp4;
+
+        @SerializedName("mp4-mobile")
+        @Expose
+        public File mp4_mobile;
+    }
+
+    public static class Video {
+        @SerializedName("status")
+        @Expose
+        public int status;
+
+        @SerializedName("percent")
+        @Expose
+        public int percent;
+
+        @SerializedName("message")
+        @Expose
+        public String message;
+
+        @SerializedName("files")
+        @Expose
+        public Media files;
+
+        @SerializedName("thumbnail_url")
+        @Expose
+        public String thumbnail_url;
+
+        @SerializedName("title")
+        @Expose
+        public String title;
     }
 }
