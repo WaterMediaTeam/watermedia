@@ -128,7 +128,7 @@ public class PlayerAPI extends WaterMediaAPI {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
-                IOTool.un7zip(IT, zipOutput.toPath());
+                IOTool.un7zip(zipOutput.toPath());
                 if (!zipOutput.delete()) {
                     LOGGER.error(IT, "Failed to delete binaries zip file...");
                 }

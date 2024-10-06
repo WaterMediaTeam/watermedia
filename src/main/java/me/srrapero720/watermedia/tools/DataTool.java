@@ -70,6 +70,24 @@ public class DataTool {
         return (T[]) t;
     }
 
+    public static int[] unboxArray(List<Integer> arr) {
+        int[] result = new int[arr.size()];
+        for (int i = 0; i < arr.size(); i++) {
+            result[i] = arr.get(i);
+        }
+        return result;
+    }
+
+    public static int[] unboxArray(Integer[] arr) {
+        int[] result = new int[arr.length];
+        int i = 0;
+        while (i < arr.length) {
+            result[i] = arr[i];
+            i++;
+        }
+        return result;
+    }
+
     public static <T> List<T> toList(Iterable<T> s) {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);

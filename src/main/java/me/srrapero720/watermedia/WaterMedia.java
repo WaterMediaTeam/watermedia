@@ -39,10 +39,10 @@ public final class WaterMedia {
 		LOGGER.info(IT, "Loading {} version '{}'", NAME, VERSION);
 		LOGGER.info(IT, "Detected OS: {} ({})", System.getProperty("os.name"), Platform.ARCH);
 
-		if (NO_BOOT.right())
+		if (NO_BOOT.value())
 			LOGGER.warn(IT, "disableBoot argument detected, skipping booting");
 
-		if (HARDFAIL.right())
+		if (HARDFAIL.value())
 			LOGGER.warn(IT, "HardFail argument detected, {} will crash at the minimum exception", NAME);
 
 		if (!boot.client() && !boot.name().contains("Fabric"))

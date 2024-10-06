@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 public record PairTool<K, V>(K left, V right) implements Supplier<V> {
 
-    public K getKey() {
-        return left;
+    public K key() {
+        return key();
     }
 
-    public V getValue() {
+    public V value() {
         return right;
     }
 
