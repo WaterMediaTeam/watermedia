@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.loader;
 
-import me.srrapero720.watermedia.WaterMedia;
+import org.watermedia.WaterMedia;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.Marker;
