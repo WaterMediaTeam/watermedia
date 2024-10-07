@@ -1,7 +1,5 @@
 package me.srrapero720.watermedia.api;
 
-import me.srrapero720.watermedia.api.network.StreamQuality;
-
 /**
  * Quality preference.
  */
@@ -48,7 +46,7 @@ public enum Quality {
 
     public static final Quality[] VALUES = values();
 
-    public static Quality calculate(int width) {
+    public static Quality calculate(int width) { // TODO: evaluate height for tiktok reels
         if (width >= LOWEST.threadshool  && width < LOWER.threadshool) {
             return LOWEST;
         } else if (width >= LOWER.threadshool && width < LOW.threadshool) {

@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.loader;
 
-import me.srrapero720.watermedia.WaterMedia;
+import org.watermedia.WaterMedia;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
 

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class CacheCore extends WaterInternalAPI {
     private static final Marker IT = MarkerManager.getMarker(CacheCore.class.getSimpleName());

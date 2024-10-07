@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class VideoPlayer extends VLCPlayer {
     private static final Marker IT = MarkerManager.getMarker("SyncVideoPlayer");

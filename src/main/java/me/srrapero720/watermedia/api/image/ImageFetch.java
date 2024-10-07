@@ -1,7 +1,6 @@
 package me.srrapero720.watermedia.api.image;
 
 import me.srrapero720.watermedia.core.cache.CacheCore;
-import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
@@ -25,8 +24,8 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.WaterMedia.USER_AGENT;
+import static org.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.USER_AGENT;
 
 /**
  * Tool to fetch new images from internet
@@ -80,15 +79,15 @@ public class ImageFetch {
 
             try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
                 if (type != null && type.equalsIgnoreCase("gif")) {
-                    GifDecoder gif = new GifDecoder();
-                    int status = gif.read(in);
-
-                    if (status == GifDecoder.STATUS_OK) {
-                        if (successful != null) successful.run(ImageAPI.renderer(gif));
-                    } else {
-                        LOGGER.error(IT, "Failed to read gif: {}", status);
-                        throw new GifDecodingException();
-                    }
+//                    GifDecoder gif = new GifDecoder();
+//                    int status = gif.read(in);
+//
+//                    if (status == GifDecoder.STATUS_OK) {
+//                        if (successful != null) successful.run(ImageAPI.renderer(gif));
+//                    } else {
+//                        LOGGER.error(IT, "Failed to read gif: {}", status);
+//                        throw new GifDecodingException();
+//                    }
                 } else {
                     try {
                         BufferedImage image = ImageIO.read(in);

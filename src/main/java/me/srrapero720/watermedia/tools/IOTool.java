@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class IOTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");

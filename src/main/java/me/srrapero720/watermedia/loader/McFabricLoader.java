@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.loader;
 
-import me.srrapero720.watermedia.WaterMedia;
+import org.watermedia.WaterMedia;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;

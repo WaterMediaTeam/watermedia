@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.core.config;
 
-import me.srrapero720.watermedia.WaterMedia;
+import org.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.WaterInternalAPI;
 import me.srrapero720.watermedia.core.config.values.ConfigField;
 import me.srrapero720.watermedia.core.config.values.RangeOf;

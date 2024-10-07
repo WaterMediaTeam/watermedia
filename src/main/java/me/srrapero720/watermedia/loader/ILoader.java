@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.loader;
 
 import java.io.File;
 import java.nio.file.Path;
-import me.srrapero720.watermedia.WaterMedia;
+import org.watermedia.WaterMedia;
 
 /**
  * Custom impl for {@link WaterMedia} loaders

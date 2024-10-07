@@ -1,6 +1,5 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import me.srrapero720.watermedia.tools.DataTool;
@@ -15,7 +14,7 @@ public class ImageRenderer {
     public final int[] textures;
     public final long[] delay;
     public final long duration;
-    private ByteBuffer[] images;
+    private final ByteBuffer[] images;
 
     public boolean flushed;
     public int remaining;
@@ -34,23 +33,6 @@ public class ImageRenderer {
         this.delay = new long[1];
         this.duration = 1;
         this.remaining = this.images.length;
-    }
-
-    /**
-     * creates a new instance of an ImageRenderer
-     * @param decoder picture to use
-     * method is going to begin package-protected
-     */
-    ImageRenderer(GifDecoder decoder) {
-        if (decoder == null) throw new NullPointerException();
-        this.images = RenderAPI.getRawImageBuffer(decoder.getFrames());
-        this.width = decoder.getWidth();
-        this.height = decoder.getHeight();
-        this.textures = new int[decoder.getFrameCount()];
-        this.delay = decoder.getDelayFrames();
-        this.duration = decoder.getDuration();
-        this.remaining = this.images.length;
-        Arrays.fill(textures, -1);
     }
 
     /**
@@ -140,10 +122,10 @@ public class ImageRenderer {
      */
     protected void flush() {
         if (flushed) throw new IllegalStateException("Buffers are already flushed");
-        for (ByteBuffer buffer: this.images) {
-            RenderAPI.freeByteBuffer(buffer);
+        for (int i = 0; i < this.images.length; i++) {
+            RenderAPI.freeByteBuffer(this.images[i]);
+            this.images[i] = null;
         }
-        this.images = new ByteBuffer[this.images.length];
         this.flushed = true;
     }
 
@@ -179,10 +161,6 @@ public class ImageRenderer {
 
         Absolute(BufferedImage image) {
             super(image);
-        }
-
-        Absolute(GifDecoder decoder) {
-            super(decoder);
         }
 
         @Override public void release() {}

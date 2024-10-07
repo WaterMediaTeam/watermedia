@@ -7,61 +7,59 @@ import me.srrapero720.watermedia.api.MediaType;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Function;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-
 public class MediaURI implements Comparable<URI>, Serializable {
-    public static final int NO_EXPIRES = -1;
-    public static final String UNKNOWN = "unknown";
-    private static final Map<URI, MediaURI> ACTIVE_SOURCES = new HashMap<>();
+    private static final Map<URI, MediaURI> MEDIA_URIS = new HashMap<>();
 
-    public static MediaURI get(MediaContext context, URI uri) {
-        return ACTIVE_SOURCES.computeIfAbsent(uri, MediaURI::new);
-    }
-
-    public static MediaURI get(MediaContext context, File file) {
-        return get(context, file.toURI());
-    }
-
-    public static MediaURI get(MediaContext context, String url) {
+    public static MediaURI get(File file) { return get(file.toURI()); }
+    public static MediaURI get(URI uri) { return MEDIA_URIS.computeIfAbsent(uri, MediaURI::new); }
+    public static MediaURI get(String url) {
         try {
-            var uri = new URI(url);
-            var media = ACTIVE_SOURCES.get(uri);
-            if (media == null) {
-                LOGGER.warn(NetworkAPI.IT, "Mod {} is using a experimental URI creation, may experiment issues computing URIs", context.id());
-                media = new MediaURI(uri);
-                ACTIVE_SOURCES.put(uri, media);
-                return media;
-            }
-            return media;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to process URI '" + url + "'", e);
+            return MEDIA_URIS.computeIfAbsent(new URI(url), MediaURI::get);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("URL is not valid '" + url + "'", e);
         }
     }
 
     // instance
     private final URI uri;
-    private final Source defaultSource;
     private final List<Source> sources = new ArrayList<>();
+    private final List<MediaContext> usages = new ArrayList<>();
     private Metadata metadata;
     private long expires;
     private boolean patched;
 
     private MediaURI(URI uri) {
         this.uri = uri;
-        this.defaultSource = new Source(uri);
+        this.sources.add(new Source(uri));
     }
 
-    public int size() {
-        return sources.isEmpty() ? 1 : sources.size();
+    public MediaURI addUsage(MediaContext context) {
+        this.usages.add(context);
+        return this;
+    }
+
+    public MediaURI removeUsage(MediaContext context) {
+        this.usages.remove(context);
+        return this;
+    }
+
+    public int usages() {
+        return this.usages.size();
+    }
+
+    public boolean hasUsages() {
+        return !this.usages.isEmpty();
+    }
+
+    public URI getUri() {
+        return uri;
     }
 
     public Source[] getSources() {
-        if (sources.isEmpty())
-            return new Source[] { defaultSource };
-
         return sources.toArray(new Source[0]);
     }
 
@@ -70,13 +68,14 @@ public class MediaURI implements Comparable<URI>, Serializable {
     }
 
     public void apply(Patch patch) {
+        this.sources.clear();
         this.sources.addAll(patch.sources);
         this.metadata = patch.metadata;
-        patched = true;
+        this.patched = true;
     }
 
-    public URI getUri() {
-        return uri;
+    public int size() {
+        return sources.size();
     }
 
     @Override
@@ -85,22 +84,23 @@ public class MediaURI implements Comparable<URI>, Serializable {
     }
 
     public static class Source {
-        private final URI source;
+        private final URI uri;
         private final List<Slave> slaves;
         private final Map<Quality, URI> qualities;
         private MediaType type;
+
         private URI fallbackUri;
         private MediaType fallbackType;
         private boolean live;
 
         public Source(URI uri) {
-            this.source = uri;
+            this.uri = uri;
             this.slaves = new ArrayList<>();
             this.qualities = new HashMap<>();
         }
 
         public Source(URI uri, List<Slave> slaves, Map<Quality, URI> qualities) {
-            this.source = uri;
+            this.uri = uri;
             this.slaves = slaves;
             this.qualities = qualities;
         }
@@ -118,7 +118,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
         }
 
         public URI uri(MediaContext context, Quality quality) {
-            if (qualities.isEmpty()) return this.source;
+            if (qualities.isEmpty()) return this.uri;
 
             URI uri = qualities.get(quality);
             Quality currentQuality = context.preferLowerQuality() ? quality.getBack() : quality.getNext();
@@ -126,11 +126,11 @@ public class MediaURI implements Comparable<URI>, Serializable {
                 uri = qualities.get(currentQuality);
                 currentQuality = context.preferLowerQuality() ? currentQuality.getBack() : currentQuality.getNext();
             }
-            return uri == null ? this.source : uri;
+            return uri == null ? this.uri : uri;
         }
 
         public URI highQualityUri() {
-            if (qualities.isEmpty()) return this.source;
+            if (qualities.isEmpty()) return this.uri;
 
             URI uri = qualities.get(Quality.HIGHEST);
             Quality currentQuality = Quality.HIGH;
@@ -139,11 +139,11 @@ public class MediaURI implements Comparable<URI>, Serializable {
                 currentQuality = currentQuality.getBack();
             }
 
-            return uri == null ? this.source : uri;
+            return uri == null ? this.uri : uri;
         }
 
         public URI lowerQualityUri() {
-            if (qualities.isEmpty()) return this.source;
+            if (qualities.isEmpty()) return this.uri;
 
             URI uri = qualities.get(Quality.LOWEST);
             Quality currentQuality = Quality.LOW;
@@ -152,7 +152,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
                 currentQuality = currentQuality.getNext();
             }
 
-            return uri == null ? this.source : uri;
+            return uri == null ? this.uri : uri;
         }
 
         public Slave[] slaves() {
@@ -162,7 +162,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
         @Override
         public String toString() {
             return "Source{" +
-                    "source=" + source +
+                    "source=" + uri +
                     ", slaves=" + Arrays.toString(slaves.toArray(new Slave[0])) +
                     ", qualities=" + Arrays.toString(qualities.values().toArray(new URI[0])) +
                     ", type=" + type +

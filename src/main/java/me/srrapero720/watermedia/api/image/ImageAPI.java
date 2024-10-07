@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
+import org.watermedia.WaterMedia;
+import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.config.WaterConfig;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import me.srrapero720.watermedia.api.math.MathAPI;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class ImageAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker(ImageAPI.class.getSimpleName());
@@ -57,7 +57,6 @@ public class ImageAPI extends WaterMediaAPI {
                 return renderer;
             }
 
-            renderer = renderer(IOTool.readGif(modConfig.toAbsolutePath()));
             LOADING_CACHE.put(modId, renderer);
             return renderer;
         } else {
@@ -139,26 +138,6 @@ public class ImageAPI extends WaterMediaAPI {
         return new ImageRenderer.Absolute(image);
     }
 
-    /**
-     * Creates an instance of an ImageRenderer only for gifs
-     * @param image image to use
-     * @return built instance
-     */
-    public static ImageRenderer renderer(GifDecoder image) {
-        return renderer(image, false);
-    }
-
-    /**
-     * Creates an instance of an ImageRenderer only for gifs
-     * @param image image to use
-     * @param absolute disabled flush and release methods, by default false
-     * @return built instance
-     */
-    public static ImageRenderer renderer(GifDecoder image, boolean absolute) {
-        if (!absolute) return new ImageRenderer(image);
-        return new ImageRenderer.Absolute(image);
-    }
-
     private Path loadingGifPath;
     @Override
     public Priority priority() {
@@ -183,10 +162,6 @@ public class ImageAPI extends WaterMediaAPI {
         }
 
         LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
-
-        IMG_LOADING = renderer(IOTool.readGif(loadingGifPath), true);
-        IMG_VLC_FAIL = renderer(JarTool.readGif("/pictures/videolan/failed.gif"), true);
-        IMG_VLC_FAIL_LAND = renderer(JarTool.readGif("/pictures/videolan/failed-land.gif"), true);
 
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         image.setRGB(0, 0, MathAPI.argb(255, 0, 0, 0));

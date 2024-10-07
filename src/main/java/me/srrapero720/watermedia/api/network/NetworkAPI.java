@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
+import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.network.patchs.AbstractPatch;
 import me.srrapero720.watermedia.loader.ILoader;
 import me.srrapero720.watermedia.tools.DataTool;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class NetworkAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker(NetworkAPI.class.getSimpleName());

@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.srrapero720.watermedia.WaterMedia.USER_AGENT;
+import static org.watermedia.WaterMedia.USER_AGENT;
 
 public class TwitchPatch extends AbstractPatch {
     public static final String API_AUTH_URL = "https://gql.twitch.tv/gql";

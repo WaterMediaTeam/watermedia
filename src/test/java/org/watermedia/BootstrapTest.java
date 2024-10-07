@@ -1,6 +1,5 @@
 package org.watermedia;
 
-import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.junit.jupiter.api.BeforeAll;
 

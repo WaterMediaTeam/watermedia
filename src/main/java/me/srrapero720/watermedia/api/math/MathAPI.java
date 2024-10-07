@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.math;
 
-import me.srrapero720.watermedia.api.WaterMediaAPI;
+import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.loader.ILoader;
 
 public class MathAPI extends WaterMediaAPI {

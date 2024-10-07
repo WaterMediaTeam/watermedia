@@ -1,11 +1,10 @@
-package me.srrapero720.watermedia;
+package org.watermedia;
 
 import com.sun.jna.Platform;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
+import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.loader.ILoader;
-import me.srrapero720.watermedia.loader.IModule;
 import me.srrapero720.watermedia.tools.PairTool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +22,6 @@ public final class WaterMedia {
 	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/112.0.0.0 Edg/112.0.1722.68 WaterMedia/" + VERSION;
 
 	public static final Logger LOGGER = LogManager.getLogger(ID);
-	private static final Set<IModule> MODULES = new HashSet<>();
 
 	private static final PairTool<String, Boolean> NO_BOOT = getArgument("watermedia.disableBoot");
 	private static final PairTool<String, Boolean> HARDFAIL = getArgument("watermedia.hardFail");
@@ -50,14 +48,6 @@ public final class WaterMedia {
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();
-	}
-
-	public static void register(IModule module) {
-		MODULES.add(module);
-	}
-
-	public static Set<IModule> modules() {
-		return MODULES;
 	}
 
 	public void start() throws Exception {

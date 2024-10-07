@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.core.config.support;
 
-import me.srrapero720.watermedia.WaterMedia;
+import org.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.config.WaterConfig;
 import uk.co.caprica.vlcj.discovery.ProviderPriority;
 import uk.co.caprica.vlcj.discovery.providers.DiscoveryPathProvider;

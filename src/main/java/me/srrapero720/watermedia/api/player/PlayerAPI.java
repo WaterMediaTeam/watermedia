@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
+import org.watermedia.WaterMedia;
+import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.IOTool;
 import me.srrapero720.watermedia.tools.JarTool;
@@ -15,7 +15,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class PlayerAPI extends WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());

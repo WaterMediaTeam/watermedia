@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.tools;
 
-import me.srrapero720.watermedia.WaterMedia;
+import org.watermedia.WaterMedia;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

@@ -20,7 +20,7 @@ import uk.co.caprica.vlcj.player.embedded.videosurface.callback.SimpleBufferForm
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public abstract class VLCPlayer {
     protected static final Marker IT = MarkerManager.getMarker("SyncMediaPlayer");

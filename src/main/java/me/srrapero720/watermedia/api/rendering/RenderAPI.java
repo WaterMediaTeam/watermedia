@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.rendering;
 
-import me.srrapero720.watermedia.api.WaterMediaAPI;
+import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.image.ImageRenderer;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
