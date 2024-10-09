@@ -1,3 +1,6 @@
+# UPDATE 2.0.74
+- Fixed kick.com support
+
 # UPDATE 2.0.73
 - Updated Youtube extractor library (must fix 90% of youtube links issues)
 - Fixed Twitter support (backported from dev v3)
