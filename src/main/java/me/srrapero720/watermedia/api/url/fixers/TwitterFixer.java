@@ -1,38 +1,229 @@
 package me.srrapero720.watermedia.api.url.fixers;
 
-import com.google.gson.Gson;
-import me.srrapero720.watermedia.api.network.twitter.TweetScrapper;
+import com.google.gson.annotations.SerializedName;
+import me.srrapero720.watermedia.core.tools.DataTool;
+import me.srrapero720.watermedia.core.tools.NetTool;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TwitterFixer extends URLFixer {
+    private static final String API_URL = "https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s&lang=en";
+    private static final String API_KEY = "watermedia-java-x-access-token";
+    private static final Pattern ID_PATTERN = Pattern.compile("^/([A-Za-z0-9_]+)/status/(\\d+)$");
+    private static final Pattern RES_PATTERN = Pattern.compile("(\\d+)x(\\d+)");
 
-    private static final Gson gson = new Gson();
-
-    static {
-        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
-    }
+    private static final String __TYPE_T = "Tweet";
+    private static final String __TYTE_TOMB = "TweetTombstone";
 
     @Override
     public String platform() {
-        return "Twitter";
+        return "Twitter (X)";
     }
 
     @Override
-    public boolean isValid(URL url) {
-        return (url.getHost().equals("www.x.com") || url.getHost().equals("x.com") || url.getHost().equals("www.twitter.com") || url.getHost().equals("twitter.com")) && url.getPath().matches("/[a-zA-Z0-9_]+/status/[0-9]+");
+    public boolean isValid(URL source) {
+        String host = source.getHost();
+        String path = source.getPath();
+        return (host.equals("www.x.com") || host.equals("x.com") || host.equals("www.twitter.com") || host.equals("twitter.com"))
+                && ID_PATTERN.matcher(path).matches();
     }
 
     @Override
-    public Result patch(URL url, Quality preferQuality) throws FixingURLException {
-        super.patch(url, preferQuality);
+    public Result patch(URL url, Quality prefQuality) throws FixingURLException {
         try {
-            return new Result(new URL(new TweetScrapper(gson).extractVideo(String.valueOf(url)).get(0)), true, false);
+            final Matcher m = ID_PATTERN.matcher(url.getPath());
+            if (!m.matches()) throw new Exception("No twitter ID match found");
+            final String apiURL = String.format(API_URL, m.group(2), API_KEY);
+
+            final HttpURLConnection conn = NetTool.connect(apiURL, "GET");
+
+            int code = conn.getResponseCode();
+            switch (code) {
+                case HttpURLConnection.HTTP_INTERNAL_ERROR: throw new Exception("Twitter died");
+                case HttpURLConnection.HTTP_NOT_FOUND: throw new NullPointerException("Tweet not found");
+                case HttpURLConnection.HTTP_FORBIDDEN:
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                        throw new UnsupportedOperationException("Twitter blocked us API access - URL: " + apiURL);
+                default:
+                    if (code != HttpURLConnection.HTTP_OK)
+                        throw new UnsupportedOperationException("Unexpected response from twitter (" + code + ") - URL: " + apiURL);
+            }
+
+            try (final InputStream in = conn.getInputStream()) {
+                final Tweet tweet = DataTool.fromJSON(new String(DataTool.readAllBytes(in)), Tweet.class);
+
+                if (tweet.typename.equals(__TYTE_TOMB)) {
+                    throw new UnsupportedOperationException("Tomb received: " + tweet.tombstone.text);
+                }
+
+                if (tweet.mediaDetails == null || tweet.mediaDetails.length == 0) {
+                    throw new NullPointerException("No media was detected");
+                }
+
+                MediaDetail media = tweet.mediaDetails[0];
+
+                if (media.type.equals("photo")) {
+                    return new Result(new URL(media.mediaUrlHttps), false, false);
+                } else if (media.type.equals("video")) {
+                    return new Result(new URL(media.videoInfo.variants[0].url), true, false);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported media type was detected");
+                }
+            } finally {
+                conn.disconnect();
+            }
         } catch (Exception e) {
-            throw new FixingURLException(url.toString(), e);
+            throw new FixingURLException(url, e);
         }
+    }
+
+    private static class Tweet {
+        @SerializedName("__typename")
+        public String typename;
+
+        @SerializedName("lang")
+        public String lang;
+
+        @SerializedName("favorite_count")
+        public int favoriteCount;
+
+        @SerializedName("possibly_sensitive")
+        public boolean possiblySensitive;
+
+        @SerializedName("created_at")
+        public String createdAt;
+
+        @SerializedName("id_str")
+        public String idStr;
+
+        @SerializedName("text")
+        public String text;
+
+        @SerializedName("user")
+        public User user;
+
+        @SerializedName("mediaDetails")
+        public MediaDetail[] mediaDetails;
+
+        @SerializedName("photos")
+        public Photo[] photos;
+
+        @SerializedName("video")
+        public Video video;
+
+        @SerializedName("tombstone")
+        public Tombstone tombstone;
+    }
+
+    private static class Video {
+        @SerializedName("aspectRatio")
+        public int[] aspectRatio;
+
+        @SerializedName("contentType")
+        public String contentType;
+
+        @SerializedName("durationMs")
+        public long durationMs;
+
+        @SerializedName("poster")
+        public String poster;
+
+        @SerializedName("variants")
+        public VideoVariant[] variants;
+    }
+
+    private static class Photo {
+        @SerializedName("url")
+        public String url;
+
+        @SerializedName("width")
+        public int width;
+
+        @SerializedName("height")
+        public int height;
+    }
+
+    private static class VideoVariant {
+        @SerializedName("bitrate")
+        public int bitrate;
+
+        @SerializedName("content_type")
+        public String contentType;
+
+        @SerializedName("url")
+        public String url;
+    }
+
+    private static class VideoInfo {
+        @SerializedName("duration_millis")
+        public int durationMillis;
+
+        @SerializedName("variants")
+        public VideoVariant[] variants;
+    }
+
+    private static class MediaDetail {
+        @SerializedName("display_url")
+        public String displayUrl;
+
+        @SerializedName("expanded_url")
+        public String expandedUrl;
+
+        @SerializedName("media_url_https")
+        public String mediaUrlHttps;
+
+        @SerializedName("type")
+        public String type;
+
+        @SerializedName("video_info")
+        public VideoInfo videoInfo;
+    }
+
+    private static class User {
+        @SerializedName("id_str")
+        public String idStr;
+
+        @SerializedName("name")
+        public String name;
+
+        @SerializedName("profile_image_url_https")
+        public String profileImageUrlHttps;
+
+        @SerializedName("screen_name")
+        public String screenName;
+
+        @SerializedName("verified")
+        public boolean verified;
+
+        @SerializedName("is_blue_verified")
+        public boolean isBlueVerified;
+    }
+
+    private static class Media {
+        @SerializedName("display_url")
+        public String displayUrl;
+
+        @SerializedName("expanded_url")
+        public String expandedUrl;
+
+        @SerializedName("url")
+        public String url;
+    }
+
+    private static class Tombstone {
+        @SerializedName("text")
+        public Text text;
+    }
+
+    private static class Text {
+        @SerializedName("text")
+        public String text;
+
+        @SerializedName("rtl")
+        public boolean rtl;
     }
 }

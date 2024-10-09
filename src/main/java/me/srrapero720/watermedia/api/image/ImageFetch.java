@@ -27,8 +27,7 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.core.tools.DataTool.USER_AGENT;
+import static me.srrapero720.watermedia.WaterMedia.*;
 
 /**
  * Tool to fetch new images from internet

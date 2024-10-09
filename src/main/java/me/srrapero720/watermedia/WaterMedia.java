@@ -20,6 +20,9 @@ public class WaterMedia {
 	public static final String NAME = "WATERMeDIA";
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
+	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
+	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/112.0.0.0 Edg/112.0.1722.68 WaterMedia/" + VERSION;
+
 	private static final List<ClassLoader> CLASS_LOADERS = new ArrayList<>();
 
 	private static final String NO_BOOT_NAME = "watermedia.disableBoot";
@@ -33,7 +36,7 @@ public class WaterMedia {
 		if (boot == null) throw new NullPointerException("Bootstrap is null");
 		if (instance != null) throw new NullPointerException("WaterMedia is already prepared");
 		LOGGER.info(IT, "Preparing '{}' on '{}'", NAME, boot.name());
-		LOGGER.info(IT, "WaterMedia version '{}'", JarTool.readString("/watermedia/version.cfg"));
+		LOGGER.info(IT, "WaterMedia version '{}'", VERSION);
 		LOGGER.info(IT, "OS Detected: {} ({})", System.getProperty("os.name"), Platform.ARCH);
 
 		WaterMedia.bootstrap = boot;

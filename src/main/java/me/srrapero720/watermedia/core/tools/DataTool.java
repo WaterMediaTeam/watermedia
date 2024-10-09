@@ -1,14 +1,18 @@
 package me.srrapero720.watermedia.core.tools;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 
 public class DataTool {
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68";
+    public static final Gson GSON = new Gson();
     private static final int DEFAULT_BUFFER_SIZE = 8192;
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
@@ -19,6 +23,14 @@ public class DataTool {
         } catch (NumberFormatException e) {
             return o;
         }
+    }
+
+    public static <T> T fromJSON(String s, Type t) {
+        return GSON.fromJson(s, t);
+    }
+
+    public static <T> T fromJSON(InputStreamReader s, Type t) {
+        return GSON.fromJson(s, t);
     }
 
     public static int[] filterValue(int[] its, int v) {
