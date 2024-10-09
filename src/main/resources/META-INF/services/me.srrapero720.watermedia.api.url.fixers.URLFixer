@@ -6,6 +6,7 @@ me.srrapero720.watermedia.api.url.fixers.TwitchFixer
 me.srrapero720.watermedia.api.url.fixers.TwitterFixer
 me.srrapero720.watermedia.api.url.fixers.DropboxFixer
 me.srrapero720.watermedia.api.url.fixers.StreamableFixer
+me.srrapero720.watermedia.api.url.fixers.KickFixer
 
 # SPECIAL FIXERS
 me.srrapero720.watermedia.api.url.fixers.special.PHFixer
