@@ -58,7 +58,7 @@ public class YoutubeFixer extends URLFixer {
 
                     // WITHOUT VIDEO
                     AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
-                    if (bestWithoutVideo != null) return new Result(new URL(bestWithoutAudio.url()), true, false).setAudioTrack(new URL(bestWithoutVideo.url()));
+                    if (bestWithoutVideo != null) return new Result(new URL(bestWithoutVideo.url()), true, false);
 
 //                    // BEST WITH ALL
 //                    VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
