@@ -1,3 +1,7 @@
+# UPDATE 2.0.73
+- Updated Youtube extractor library (must fix 90% of youtube links issues)
+- Fixed Twitter support (backported from dev v3)
+
 # UPDATE 2.0.72
 - Fixed youtube links was broken (thanks to blake and fuck you youtube)
 - Added streamable support
