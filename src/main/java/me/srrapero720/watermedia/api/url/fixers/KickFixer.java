@@ -3,13 +3,11 @@ package me.srrapero720.watermedia.api.url.fixers;
 import com.google.gson.Gson;
 import me.srrapero720.watermedia.api.network.kick.KickChannel;
 import me.srrapero720.watermedia.api.network.kick.KickVideo;
+import me.srrapero720.watermedia.core.tools.DataTool;
+import me.srrapero720.watermedia.core.tools.NetTool;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
 public class KickFixer extends URLFixer {
     private static final String API_URL = "https://kick.com/api/v1/";
@@ -58,13 +56,14 @@ public class KickFixer extends URLFixer {
     }
 
     public InputStream getInputStream(URL url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            String msg = String.format("Server response with status code (%s): %s", connection.getResponseCode(), connection.getResponseMessage());
-            connection.setRequestMethod("GET");
+        HttpURLConnection connection = NetTool.connect(url, "GET");
+        try {
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new ConnectException(String.format("Server url %s response with status code (%s): %s", url, connection.getResponseCode(), connection.getResponseMessage()));
+            }
+            return new ByteArrayInputStream(DataTool.readAllBytes(connection.getInputStream()));
+        } finally {
             connection.disconnect();
-            throw new ConnectException(msg);
         }
-        return connection.getInputStream();
     }
 }
