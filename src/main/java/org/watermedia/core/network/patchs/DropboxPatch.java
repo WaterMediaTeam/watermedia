@@ -1,8 +1,8 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.URIPatchException;
 
 import java.net.URI;
 
@@ -13,6 +13,11 @@ public class DropboxPatch extends AbstractPatch {
     }
 
     @Override
+    public boolean active(MediaContext context) {
+        return true;
+    }
+
+    @Override
     public boolean validate(MediaURI source) {
         var host = source.getUri().getHost();
         var query = source.getUri().getQuery();
@@ -20,7 +25,7 @@ public class DropboxPatch extends AbstractPatch {
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
         var url = source.getUri().toString();
         try {
             var r = url.replace("dl=0", "dl=1");
@@ -34,6 +39,10 @@ public class DropboxPatch extends AbstractPatch {
         } catch (Exception e) {
             throw new URIPatchException(source, e);
         }
-        return source;
+    }
+
+    @Override
+    public void test(MediaContext context, String url) {
+
     }
 }

@@ -1,9 +1,9 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.URIPatchException;
 
 public class OneDrivePatch extends AbstractPatch {
 
@@ -13,13 +13,23 @@ public class OneDrivePatch extends AbstractPatch {
     }
 
     @Override
+    public boolean active(MediaContext context) {
+        return false;
+    }
+
+    @Override
     public boolean validate(MediaURI source) {
         return false;
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
-        return null;
+    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
+
+    }
+
+    @Override
+    public void test(MediaContext context, String url) {
+
     }
 
     public static class Item {

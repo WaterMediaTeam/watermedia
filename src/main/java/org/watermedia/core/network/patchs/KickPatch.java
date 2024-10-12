@@ -1,11 +1,11 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.URIPatchException;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
@@ -28,12 +28,17 @@ public class KickPatch extends AbstractPatch {
     }
 
     @Override
+    public boolean active(MediaContext context) {
+        return true;
+    }
+
+    @Override
     public boolean validate(MediaURI source) {
         return source.getUri().getHost().equals("kick.com");
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
         var path = source.getUri().getPath();
 
         try {
@@ -99,8 +104,11 @@ public class KickPatch extends AbstractPatch {
         } catch (Exception e) {
             throw new URIPatchException(source, e);
         }
+    }
 
-        return source;
+    @Override
+    public void test(MediaContext context, String url) {
+
     }
 
     public String connectToKick(String url) throws IOException {

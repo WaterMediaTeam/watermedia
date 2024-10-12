@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.network;
+package org.watermedia.api.network;
 
 import java.util.ArrayList;
 import java.util.List;

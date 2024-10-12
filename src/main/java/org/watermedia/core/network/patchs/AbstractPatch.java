@@ -1,8 +1,8 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.URIPatchException;
 
 import java.net.URI;
 
@@ -27,21 +27,33 @@ public abstract class AbstractPatch {
     public abstract String platform();
 
     /**
-     * Check if given {@link MediaURI} can be patched by this patcher
+     * Provides the active status for the patch in case patch has any temporal restriction or runs out for
+     * custom online validation on bootstrap
+     */
+    public abstract boolean active(MediaContext context);
+
+    /**
+     * Validates if the {@link MediaURI} can be processed by this patcher
      * @param source MediaSource instance to be patched.
      * @see MediaURI
-     * @see MediaURI#get(MediaContext, URI)
-     * @return Same provided MediaSource instance but patched
+     * @see MediaURI#get(URI)
      */
     public abstract boolean validate(MediaURI source);
 
     /**
      * Patches the provided MediaSource
      * @param source URL to patch
-     * @return static URL
      * @throws URIPatchException if URL is null or invalid in this patch
      */
-    public abstract MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException;
+    public abstract void patch(MediaContext context, MediaURI source) throws URIPatchException;
+
+    /**
+     * Executes a patch test, validating patch is working and up-to-date
+     * Not working patches are not added on the patches registry
+     * @param url media url, preferred an HTTP url
+     * @param context test context
+     */
+    public abstract void test(MediaContext context, String url);
 
     /**
      * Returns the name of the Fixer

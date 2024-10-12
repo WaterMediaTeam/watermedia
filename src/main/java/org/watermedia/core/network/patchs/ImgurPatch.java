@@ -1,10 +1,10 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.URIPatchException;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
@@ -30,12 +30,17 @@ public class ImgurPatch extends AbstractPatch {
     }
 
     @Override
+    public boolean active(MediaContext context) {
+        return true;
+    }
+
+    @Override
     public boolean validate(MediaURI source) {
         return source.getUri().getHost().equals("imgur.com"); // i.imgur.com - doesn't need patches
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
         final var path = source.getUri().getPath();
         final var fragment = source.getUri().getFragment();
 
@@ -109,8 +114,11 @@ public class ImgurPatch extends AbstractPatch {
         } catch (Exception e) {
             throw new URIPatchException(source, e);
         }
+    }
 
-        return source;
+    @Override
+    public void test(MediaContext context, String url) {
+
     }
 
     public String connectResponse(String url) throws IOException {

@@ -1,8 +1,8 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.URIPatchException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,12 +16,17 @@ public class YoutubePatch extends AbstractPatch {
     }
 
     @Override
+    public boolean active(MediaContext context) {
+        return true;
+    }
+
+    @Override
     public boolean validate(MediaURI source) {
         return PATTERN.matcher(source.toString()).find();
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
         Matcher matcher = PATTERN.matcher(source.toString());
         if (!matcher.find()) {
             throw new URIPatchException(source, "Invalid Youtube URI");
@@ -29,5 +34,10 @@ public class YoutubePatch extends AbstractPatch {
 
         throw new URIPatchException(source, "Path not implemented yet");
 //        return source;
+    }
+
+    @Override
+    public void test(MediaContext context, String url) {
+
     }
 }

@@ -1,8 +1,8 @@
 package org.watermedia.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.patchs.TwitterPatch;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.core.network.patchs.TwitterPatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

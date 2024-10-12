@@ -1,14 +1,14 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import me.srrapero720.watermedia.api.Quality;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.NetworkAPI;
-import me.srrapero720.watermedia.api.network.StreamQuality;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.NetworkAPI;
+import org.watermedia.api.network.StreamQuality;
+import org.watermedia.api.network.URIPatchException;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
@@ -34,6 +34,11 @@ public class TwitchPatch extends AbstractPatch {
     }
 
     @Override
+    public boolean active(MediaContext context) {
+        return true;
+    }
+
+    @Override
     public boolean validate(MediaURI source) {
         final var host = source.getUri().getHost();
         final var path = source.getUri().getPath();
@@ -41,7 +46,7 @@ public class TwitchPatch extends AbstractPatch {
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
         var path = source.getUri().getPath().substring(1).split("/");
         var video = path[0].equals("videos") && path.length >= 2;
         var id = video ? path[1] : path[0];
@@ -72,9 +77,11 @@ public class TwitchPatch extends AbstractPatch {
         } catch (Exception e) {
             throw new URIPatchException(source, e);
         }
+    }
 
+    @Override
+    public void test(MediaContext context, String url) {
 
-        return source;
     }
 
     private static String getStreamString(String apiUrl) throws IOException {

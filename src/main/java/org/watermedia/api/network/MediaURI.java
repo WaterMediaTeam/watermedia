@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api.network;
+package org.watermedia.api.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.Quality;
@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.function.Function;
 
@@ -29,6 +30,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
     private final List<Source> sources = new ArrayList<>();
     private final List<MediaContext> usages = new ArrayList<>();
     private Metadata metadata;
+    private URLConnection connection;
     private long expires;
     private boolean patched;
 
@@ -57,6 +59,10 @@ public class MediaURI implements Comparable<URI>, Serializable {
 
     public URI getUri() {
         return uri;
+    }
+
+    public URLConnection openConnection(Quality quality) {
+        this.getSources()
     }
 
     public Source[] getSources() {

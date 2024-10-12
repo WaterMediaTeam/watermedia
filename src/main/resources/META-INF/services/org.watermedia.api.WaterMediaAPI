@@ -3,5 +3,5 @@ me.srrapero720.watermedia.core.cache.CacheCore
 me.srrapero720.watermedia.api.image.ImageAPI
 me.srrapero720.watermedia.core.config.ConfigCore
 me.srrapero720.watermedia.api.image.ImageAPI
-me.srrapero720.watermedia.api.network.NetworkAPI
+org.watermedia.api.network.NetworkAPI
 me.srrapero720.watermedia.api.rendering.RenderAPI

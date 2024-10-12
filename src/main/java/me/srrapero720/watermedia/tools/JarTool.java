@@ -2,7 +2,6 @@ package me.srrapero720.watermedia.tools;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -86,18 +85,6 @@ public class JarTool {
             else throw new FileNotFoundException("result of BufferedImage was null");
         } catch (Exception e) {
             throw new IllegalStateException("Failed loading BufferedImage from resources", e);
-        }
-    }
-
-    public static GifDecoder readGif(String path) {
-        try (BufferedInputStream in = new BufferedInputStream(readResourceAsStream(path))) {
-            GifDecoder gif = new GifDecoder();
-            int status = gif.read(in);
-            if (status == GifDecoder.STATUS_OK) return gif;
-
-            throw new IOException("Failed to process GIF - Decoder status: " + status);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed loading GIF from resources", e);
         }
     }
 

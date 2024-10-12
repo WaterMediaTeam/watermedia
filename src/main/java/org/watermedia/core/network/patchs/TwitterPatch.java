@@ -1,11 +1,11 @@
-package me.srrapero720.watermedia.api.network.patchs;
+package org.watermedia.core.network.patchs;
 
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import me.srrapero720.watermedia.api.Quality;
-import me.srrapero720.watermedia.api.network.MediaURI;
-import me.srrapero720.watermedia.api.network.URIPatchException;
+import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.URIPatchException;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
@@ -29,6 +29,11 @@ public class TwitterPatch extends AbstractPatch {
     }
 
     @Override
+    public boolean active(MediaContext context) {
+        return true;
+    }
+
+    @Override
     public boolean validate(MediaURI source) {
         var host = source.getUri().getHost();
         var path = source.getUri().getPath();
@@ -37,7 +42,7 @@ public class TwitterPatch extends AbstractPatch {
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
         try {
             final var m = ID_PATTERN.matcher(source.getUri().getPath());
             if (!m.matches()) throw new Exception("No twitter ID match found");
@@ -108,8 +113,11 @@ public class TwitterPatch extends AbstractPatch {
         } catch (Exception e) {
             throw new URIPatchException(source, e);
         }
+    }
 
-        return source;
+    @Override
+    public void test(MediaContext context, String url) {
+
     }
 
     private static class Tweet {
