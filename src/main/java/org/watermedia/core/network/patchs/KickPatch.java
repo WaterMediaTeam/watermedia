@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import org.watermedia.api.network.MediaURI;
-import org.watermedia.api.network.URIPatchException;
+import org.watermedia.core.network.URIPatchException;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 

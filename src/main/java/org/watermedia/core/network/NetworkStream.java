@@ -1,4 +1,4 @@
-package org.watermedia.api.network;
+package org.watermedia.core.network;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class StreamQuality implements Comparable<StreamQuality> {
+public final class NetworkStream implements Comparable<NetworkStream> {
     private static final Pattern M3U8_STREAM_INF_RE = Pattern.compile("^#EXT-X-STREAM-INF:(.*)");
     private static final Pattern M3U8_INF_VALUE_RE = Pattern.compile("([A-Z-]+)=(?:([^,]+)|\"([^\"]+?)\")");
     private static final Pattern HTTP_URL_RE = Pattern.compile("https?://.*");
@@ -76,18 +76,18 @@ public final class StreamQuality implements Comparable<StreamQuality> {
         return url;
     }
 
-    public static List<StreamQuality> parse(String playlistData) {
-        List<StreamQuality> result = new ArrayList<>();
+    public static List<NetworkStream> parse(String playlistData) {
+        List<NetworkStream> result = new ArrayList<>();
         if (playlistData == null || playlistData.isEmpty()) return result;
 
         String[] lines = playlistData.split("\n");
-        StreamQuality currentQuality = null;
+        NetworkStream currentQuality = null;
 
         for (String line: lines) {
             Matcher matcher = M3U8_STREAM_INF_RE.matcher(line);
             if (matcher.matches()) {
                 String streamInformation = matcher.group(1);
-                currentQuality = new StreamQuality();
+                currentQuality = new NetworkStream();
 
                 Matcher valueMatcher = M3U8_INF_VALUE_RE.matcher(streamInformation);
                 while (valueMatcher.find()) {
@@ -128,7 +128,7 @@ public final class StreamQuality implements Comparable<StreamQuality> {
     }
 
     @Override
-    public int compareTo(StreamQuality streamQuality) {
+    public int compareTo(NetworkStream streamQuality) {
         int res = streamQuality.width - width;
         if (res == 0) res = streamQuality.framerate - framerate;
         return res;
@@ -137,7 +137,7 @@ public final class StreamQuality implements Comparable<StreamQuality> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof StreamQuality that)) return false;
+        if (!(o instanceof NetworkStream that)) return false;
         return bandwidth == that.bandwidth && width == that.width && height == that.height && framerate == that.framerate && Objects.equals(codecs, that.codecs) && Objects.equals(url, that.url);
     }
 

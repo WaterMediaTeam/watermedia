@@ -7,8 +7,8 @@ import me.srrapero720.watermedia.api.MediaType;
 import me.srrapero720.watermedia.api.Quality;
 import org.watermedia.api.network.MediaURI;
 import org.watermedia.api.network.NetworkAPI;
-import org.watermedia.api.network.StreamQuality;
-import org.watermedia.api.network.URIPatchException;
+import org.watermedia.core.network.NetworkStream;
+import org.watermedia.core.network.URIPatchException;
 import me.srrapero720.watermedia.tools.DataTool;
 import me.srrapero720.watermedia.tools.NetTool;
 
@@ -61,7 +61,7 @@ public class TwitchPatch extends AbstractPatch {
             // PATCH BUILDING
             var patch = new MediaURI.Patch().setMetadata(metadata);
 
-            for (StreamQuality quality: StreamQuality.parse(getStreamString(url))) {
+            for (NetworkStream quality: NetworkStream.parse(getStreamString(url))) {
                 var uri = new URI(quality.getUrl());
                 var sourceBuilder = patch.addSource();
                 sourceBuilder.setType(MediaType.VIDEO);

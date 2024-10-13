@@ -1,4 +1,6 @@
-package org.watermedia.api.network;
+package org.watermedia.core.network;
+
+import org.watermedia.api.network.MediaURI;
 
 import java.net.URI;
 

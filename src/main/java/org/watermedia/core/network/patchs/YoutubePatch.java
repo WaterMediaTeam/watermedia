@@ -2,7 +2,7 @@ package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MediaURI;
-import org.watermedia.api.network.URIPatchException;
+import org.watermedia.core.network.URIPatchException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -5,9 +5,12 @@ import me.srrapero720.watermedia.api.Quality;
 import me.srrapero720.watermedia.api.MediaType;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 import java.util.function.Function;
@@ -30,7 +33,6 @@ public class MediaURI implements Comparable<URI>, Serializable {
     private final List<Source> sources = new ArrayList<>();
     private final List<MediaContext> usages = new ArrayList<>();
     private Metadata metadata;
-    private URLConnection connection;
     private long expires;
     private boolean patched;
 
@@ -93,6 +95,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
         private final URI uri;
         private final List<Slave> slaves;
         private final Map<Quality, URI> qualities;
+        private URLConnection connection;
         private MediaType type;
 
         private URI fallbackUri;
@@ -117,6 +120,15 @@ public class MediaURI implements Comparable<URI>, Serializable {
 
         public boolean live() {
             return this.live;
+        }
+
+        public InputStreamc openConnection(MediaContext context, Quality quality) throws IOException {
+            if (this.connection != null) {
+                var in = this.connection.getInputStream();
+                in.mark(Integer.MAX_VALUE);
+                return this.connection; // TODO: ensure connection is always working despite begin timeout
+            }
+            return this.connection = this.uri(context, quality).toURL().openConnection();
         }
 
         public int size() {
