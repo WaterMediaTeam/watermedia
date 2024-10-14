@@ -1,3 +1,6 @@
+# UPDATE 2.0.75
+- Added Ligthshot (prnt.sc) support
+
 # UPDATE 2.0.74
 - Fixed kick.com support
 
