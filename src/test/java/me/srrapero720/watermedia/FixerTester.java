@@ -8,7 +8,7 @@ public class FixerTester {
     public static void main(String[] args) throws Exception {
         WaterMedia.prepare(ILoader.DEFAULT).start();
 
-        URLFixer.Result result = UrlAPI.fixURL("https://kick.com/w0lvez");
+        URLFixer.Result result = UrlAPI.fixURL("https://prnt.sc/shUvGz-9FsIn");
         WaterMedia.LOGGER.info("Result is: {}", result);
 
         System.exit(0);
