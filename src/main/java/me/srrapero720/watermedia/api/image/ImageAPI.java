@@ -4,9 +4,8 @@ import org.watermedia.WaterMedia;
 import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.config.WaterConfig;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
-import me.srrapero720.watermedia.api.math.MathAPI;
-import me.srrapero720.watermedia.tools.IOTool;
-import me.srrapero720.watermedia.tools.JarTool;
+import org.watermedia.api.math.MathAPI;
+import org.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -149,7 +148,7 @@ public class ImageAPI extends WaterMediaAPI {
         this.loadingGifPath = bootCore.cwd().resolve("config/watermedia/assets/loading.gif");
         if (!loadingGifPath.toFile().exists()) {
             LOGGER.info(IT, "Extracting default loading gif...");
-            JarTool.copyAsset("/pictures/loading.gif", loadingGifPath);
+            JarTool.extract("/pictures/loading.gif", loadingGifPath);
             LOGGER.info(IT, "Extracted successfully");
         }
         return true;

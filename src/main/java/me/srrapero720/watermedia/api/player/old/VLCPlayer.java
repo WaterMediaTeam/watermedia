@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.player.old;
 
 import com.sun.jna.Platform;
 import me.srrapero720.watermedia.api.player.PlayerAPI;
-import me.srrapero720.watermedia.tools.ThreadTool;
+import org.watermedia.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;

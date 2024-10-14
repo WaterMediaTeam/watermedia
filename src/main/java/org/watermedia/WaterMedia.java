@@ -2,10 +2,10 @@ package org.watermedia;
 
 import com.sun.jna.Platform;
 import org.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.JarTool;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.loader.ILoader;
-import me.srrapero720.watermedia.tools.PairTool;
+import org.watermedia.tools.PairTool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -15,16 +15,14 @@ import java.util.*;
 
 public final class WaterMedia {
 	private static final Marker IT = MarkerManager.getMarker("Bootstrap");
-
 	public static final String ID = "watermedia";
 	public static final String NAME = "WATERMeDIA";
 	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
-	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/112.0.0.0 Edg/112.0.1722.68 WaterMedia/" + VERSION;
-
+	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0";
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
-	private static final PairTool<String, Boolean> NO_BOOT = getArgument("watermedia.disableBoot");
-	private static final PairTool<String, Boolean> HARDFAIL = getArgument("watermedia.hardFail");
+	private static final PairTool<String, Boolean> NO_BOOT = DataTool.getArgument("watermedia.no_boot");
+	private static final PairTool<String, Boolean> FAIL_HARD = DataTool.getArgument("watermedia.fail_hard");
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -32,16 +30,16 @@ public final class WaterMedia {
 
 	public static WaterMedia prepare(ILoader boot) {
 		if (boot == null) throw new NullPointerException("Bootstrap is null");
-		if (instance != null) throw new NullPointerException(NAME + " is already prepared");
+		if (instance != null) throw new IllegalStateException(NAME + " is already prepared");
 		LOGGER.info(IT, "Preparing '{}' for '{}'", NAME, boot.name());
 		LOGGER.info(IT, "Loading {} version '{}'", NAME, VERSION);
 		LOGGER.info(IT, "Detected OS: {} ({})", System.getProperty("os.name"), Platform.ARCH);
 
 		if (NO_BOOT.value())
-			LOGGER.warn(IT, "disableBoot argument detected, skipping booting");
+			LOGGER.warn(IT, "{} argument detected, API booting is disabled", NO_BOOT.key());
 
-		if (HARDFAIL.value())
-			LOGGER.warn(IT, "HardFail argument detected, {} will crash at the minimum exception", NAME);
+		if (FAIL_HARD.value())
+			LOGGER.warn(IT, "{} argument detected, crashes will be threw at the minimal exception", NO_BOOT.key());
 
 		if (!boot.client() && !boot.name().contains("Fabric"))
 			throw new UnsupportedSideException();
@@ -54,7 +52,7 @@ public final class WaterMedia {
 		if (NO_BOOT.right()) return;
 		if (!bootstrap.client()) return;
 
-		List<WaterMediaAPI> modules = DataTool.toList(ServiceLoader.load(WaterMediaAPI.class));
+		final var modules = DataTool.toList(ServiceLoader.load(WaterMediaAPI.class));
 		modules.sort(Comparator.comparingInt(e -> e.priority().ordinal()));
 
 		for (WaterMediaAPI m: modules) {
@@ -71,14 +69,7 @@ public final class WaterMedia {
 
 	public static ILoader getLoader() { return bootstrap; }
 
-
-	public static String asResource(String path) {
-		return WaterMedia.ID + ":" + path;
-	}
-
-	public static PairTool<String, Boolean> getArgument(String argument) {
-		return new PairTool<>(argument, Boolean.parseBoolean(System.getProperty(argument)));
-	}
+	public static String asResource(String path) { return WaterMedia.ID + ":" + path; }
 
 	public static class UnsupportedSideException extends RuntimeException {
 		public UnsupportedSideException() {

@@ -2,9 +2,9 @@ package me.srrapero720.watermedia.api.player;
 
 import org.watermedia.WaterMedia;
 import org.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.IOTool;
-import me.srrapero720.watermedia.tools.JarTool;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.IOTool;
+import org.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -127,13 +127,13 @@ public class PlayerAPI extends WaterMediaAPI {
     public void start(ILoader bootCore) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
-            if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
+            if ((!zipOutput.exists() && JarTool.extract(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
                 IOTool.un7zip(zipOutput.toPath());
                 if (!zipOutput.delete()) {
                     LOGGER.error(IT, "Failed to delete binaries zip file...");
                 }
 
-                JarTool.copyAsset(configInput, configOutput.toPath());
+                JarTool.extract(configInput, configOutput.toPath());
 
                 LOGGER.info(IT, "VideoLAN binaries extracted successfully");
             } else {
@@ -144,7 +144,7 @@ public class PlayerAPI extends WaterMediaAPI {
         try {
             String[] args = JarTool.readArray("videolan/arguments.json");
             registerFactory(WaterMedia.asResource("default"), args);
-            registerFactory(WaterMedia.asResource("sound_only"), DataTool.concatArray(args, "--vout=none"));
+            registerFactory(WaterMedia.asResource("sound_only"), DataTool.concat(args, "--vout=none"));
 
             Runtime.getRuntime().addShutdownHook(new Thread(this::release));
         } catch (Exception e) {

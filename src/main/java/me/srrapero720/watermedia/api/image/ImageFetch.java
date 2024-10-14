@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.image;
 
 import me.srrapero720.watermedia.core.cache.CacheCore;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.ThreadTool;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -149,7 +149,7 @@ public class ImageFetch {
 
             // EXPIRATION GETTER FIRST
             if (maxAge != null && !maxAge.isEmpty()) {
-                long parsed = DataTool.parseLongOr(maxAge, -1);
+                long parsed = DataTool.orElse(maxAge, -1);
                 if (parsed != -1)
                     expTimestamp = requestTime + Long.parseLong(maxAge) * 100;
             }

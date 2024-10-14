@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.api.player;
 
 import java.nio.ByteBuffer;
 
-public interface IVideoPlayer extends IMediaPlayer, IAudioPlayer {
+public interface IVideoPlayer extends IAudioPlayer, IMediaPlayer {
 
     int width();
 

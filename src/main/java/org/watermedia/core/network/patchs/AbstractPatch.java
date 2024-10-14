@@ -2,7 +2,7 @@ package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MediaURI;
-import org.watermedia.core.network.URIPatchException;
+import org.watermedia.core.network.NetworkPatchException;
 
 import java.net.URI;
 
@@ -43,9 +43,9 @@ public abstract class AbstractPatch {
     /**
      * Patches the provided MediaSource
      * @param source URL to patch
-     * @throws URIPatchException if URL is null or invalid in this patch
+     * @throws NetworkPatchException if URL is null or invalid in this patch
      */
-    public abstract void patch(MediaContext context, MediaURI source) throws URIPatchException;
+    public abstract void patch(MediaContext context, MediaURI source) throws NetworkPatchException;
 
     /**
      * Executes a patch test, validating patch is working and up-to-date

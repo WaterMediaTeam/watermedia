@@ -1,7 +1,7 @@
 package me.srrapero720.watermedia;
 
-import me.srrapero720.watermedia.api.math.MathAPI;
-import me.srrapero720.watermedia.tools.IOTool;
+import org.watermedia.api.math.MathAPI;
+import org.watermedia.tools.IOTool;
 import org.watermedia.WaterMedia;
 
 import javax.swing.*;

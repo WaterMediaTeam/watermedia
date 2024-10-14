@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tools;
+package org.watermedia.tools;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.watermedia.WaterMedia.LOGGER;
 
@@ -31,7 +30,7 @@ public class JarTool {
         }
     }
 
-    public static boolean copyAsset(String origin, Path dest) {
+    public static boolean extract(String origin, Path dest) {
         try (InputStream is = readResourceAsStream(origin)) {
             if (is == null) throw new FileNotFoundException("Resource was not found in " + origin);
 
@@ -45,37 +44,25 @@ public class JarTool {
         return false;
     }
 
-    public static List<String> readStringList(String path) {
-        List<String> result = new ArrayList<>();
+    public static <T> List<T> readList(String path) {
+        List<T> result = new ArrayList<>();
         try (InputStreamReader reader = new InputStreamReader(readResourceAsStream(path))) {
-            result.addAll(new Gson().fromJson(reader, new TypeToken<List<String>>() {}.getType()));
+            result.addAll(new Gson().fromJson(reader, new TypeToken<List<T>>() {}.getType()));
         } catch (Exception e) {
-            LOGGER.fatal(IT, "Exception trying to read JSON from {}", path, e);
+            LOGGER.fatal(IT, "Exception trying to read list JSON from {}", path, e);
         }
 
         return result;
     }
 
-    public static String[] readArrayAndParse(String path, Map<String, String> values) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResourceAsStream(path)))) {
-            String[] keyset = values.keySet().toArray(new String[0]);
-            String[] str = new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
-
-            String v;
-            for (int i = 0; i < str.length; i++) {
-                v = str[i];
-                for (String s : keyset) {
-                    str[i] = v.replace("{" + s + "}", values.get(s));
-                }
-            }
-            return str;
-        }
-    }
-
-    public static String[] readArray(String path) throws IOException {
+    public static String[] readArray(String path) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResourceAsStream(path)))) {
             return new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
+        } catch (IOException e) {
+            LOGGER.fatal(IT, "Exception trying to read array JSON from {}", path, e);
         }
+
+        return new String[0];
     }
 
     public static BufferedImage readImage(String path) {

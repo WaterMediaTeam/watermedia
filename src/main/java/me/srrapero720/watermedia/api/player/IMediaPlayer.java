@@ -66,6 +66,6 @@ public interface IMediaPlayer {
 
     void release();
 
-    enum Status {
+    static enum Status {
     }
 }

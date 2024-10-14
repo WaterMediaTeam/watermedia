@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.srrapero720.watermedia.api.math.MathAPI;
+import org.watermedia.api.math.MathAPI;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
-import me.srrapero720.watermedia.tools.DataTool;
+import org.watermedia.tools.DataTool;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
@@ -152,7 +152,7 @@ public class ImageRenderer {
             Arrays.fill(this.textures, -1);
         } else {
             this.flush();
-            RenderAPI.deleteTexture(DataTool.filterValue(this.textures, -1));
+            RenderAPI.deleteTexture(DataTool.filter(this.textures, -1));
             Arrays.fill(this.textures, -1);
         }
     }

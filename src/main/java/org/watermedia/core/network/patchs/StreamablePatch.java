@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import org.watermedia.api.network.MediaURI;
-import org.watermedia.core.network.URIPatchException;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.NetTool;
+import org.watermedia.core.network.NetworkPatchException;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.NetTool;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -29,7 +29,7 @@ public class StreamablePatch extends AbstractPatch {
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws URIPatchException {
+    public MediaURI patch(MediaURI source, MediaContext context) throws NetworkPatchException {
         String videoId = source.getUri().getPath().substring(1);
         try {
             HttpURLConnection conn = NetTool.connect(API_URL + videoId, "GET");
@@ -67,7 +67,7 @@ public class StreamablePatch extends AbstractPatch {
                 conn.disconnect();
             }
         } catch (Exception e) {
-            throw new URIPatchException(source, e);
+            throw new NetworkPatchException(source, e);
         }
     }
 

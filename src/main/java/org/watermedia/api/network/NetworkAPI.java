@@ -4,7 +4,7 @@ import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.WaterMediaAPI;
 import org.watermedia.core.network.patchs.AbstractPatch;
 import me.srrapero720.watermedia.loader.ILoader;
-import me.srrapero720.watermedia.tools.DataTool;
+import org.watermedia.tools.DataTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 

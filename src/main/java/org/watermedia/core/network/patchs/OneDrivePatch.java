@@ -3,7 +3,7 @@ package org.watermedia.core.network.patchs;
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MediaURI;
-import org.watermedia.core.network.URIPatchException;
+import org.watermedia.core.network.NetworkPatchException;
 
 public class OneDrivePatch extends AbstractPatch {
 
@@ -23,7 +23,7 @@ public class OneDrivePatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
 
     }
 

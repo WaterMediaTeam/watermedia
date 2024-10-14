@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import me.srrapero720.watermedia.api.MediaType;
 import org.watermedia.api.network.MediaURI;
-import org.watermedia.core.network.URIPatchException;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.NetTool;
+import org.watermedia.core.network.NetworkPatchException;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.NetTool;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ public class KickPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
         var path = source.getUri().getPath();
 
         try {
@@ -102,7 +102,7 @@ public class KickPatch extends AbstractPatch {
                 );
             }
         } catch (Exception e) {
-            throw new URIPatchException(source, e);
+            throw new NetworkPatchException(source, e);
         }
     }
 

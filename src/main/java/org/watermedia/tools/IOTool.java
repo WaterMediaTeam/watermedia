@@ -1,14 +1,11 @@
-package me.srrapero720.watermedia.tools;
+package org.watermedia.tools;
 
-import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import net.sf.sevenzipjbinding.*;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,37 +28,6 @@ public class IOTool {
         }
     }
 
-    public static String readFromURL(String url) throws IOException {
-        URL u = new URL(url);
-        HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-        conn.setRequestMethod("GET");
-
-        int code = conn.getResponseCode();
-        if (code != HttpURLConnection.HTTP_OK) return null;
-
-        InputStream in = conn.getInputStream();
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buf = new byte[1024];
-        int size;
-        while ((size = in.read(buf)) != -1) {
-            output.write(buf, 0, size);
-        }
-        return output.toString(StandardCharsets.UTF_8);
-    }
-
-    public static GifDecoder readGif(Path path) {
-        try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path.toFile().toPath()))) {
-            GifDecoder gif = new GifDecoder();
-            int status = gif.read(in);
-            if (status == GifDecoder.STATUS_OK) return gif;
-
-            throw new IOException("Failed to process GIF - Decoder status: " + status);
-        } catch (Exception e) {
-            LOGGER.error(IT, "Failed loading GIF from WaterMedia resources", e);
-        }
-        return null;
-    }
-
     public static boolean rmdirs(Path path) {
         return rmdirs(path.toFile());
     }
@@ -80,7 +46,7 @@ public class IOTool {
 
     public static void un7zip(Path zipPath) throws IOException { un7zip(zipPath, zipPath.getParent()); }
     public static void un7zip(Path zipPath, Path destPath) throws IOException {
-        LOGGER.debug(IT, "Unzipping '{}' to directory '{}'", zipPath, destPath);
+        LOGGER.debug(IT, "Unzipping ZIP file '{}' to directory '{}'", zipPath, destPath);
 
         try (var file = new RandomAccessFile(zipPath.toFile(), "r");
              var archive = SevenZip.openInArchive(null, new RandomAccessFileInStream(file))
@@ -96,13 +62,13 @@ public class IOTool {
                 }
             }
 
-            archive.extract(DataTool.unboxArray(extractIds), false, new Seven7ExtractCallback(destPath, archive));
+            archive.extract(DataTool.unbox(extractIds), false, new Seven7ExtractCallback(destPath, archive));
         }
     }
 
     public static void unzip(Path zip) throws IOException { unzip(zip, zip.getParent()); }
     public static void unzip(Path zipPath, Path destPath) throws IOException {
-        LOGGER.debug(IT, "Unzipping '{}' to directory '{}'", zipPath, destPath);
+        LOGGER.debug(IT, "Unzipping 7z file '{}' to directory '{}'", zipPath, destPath);
 
         if (!zipPath.toString().endsWith(".zip"))
             throw new IOException("Attempted to extract a non .zip file");

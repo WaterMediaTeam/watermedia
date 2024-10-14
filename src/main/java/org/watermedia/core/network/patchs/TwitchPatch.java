@@ -8,9 +8,9 @@ import me.srrapero720.watermedia.api.Quality;
 import org.watermedia.api.network.MediaURI;
 import org.watermedia.api.network.NetworkAPI;
 import org.watermedia.core.network.NetworkStream;
-import org.watermedia.core.network.URIPatchException;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.NetTool;
+import org.watermedia.core.network.NetworkPatchException;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.NetTool;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -46,7 +46,7 @@ public class TwitchPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws URIPatchException {
+    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
         var path = source.getUri().getPath().substring(1).split("/");
         var video = path[0].equals("videos") && path.length >= 2;
         var id = video ? path[1] : path[0];
@@ -75,7 +75,7 @@ public class TwitchPatch extends AbstractPatch {
 
             source.apply(patch);
         } catch (Exception e) {
-            throw new URIPatchException(source, e);
+            throw new NetworkPatchException(source, e);
         }
     }
 

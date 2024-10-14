@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tools;
+package org.watermedia.tools;
 
 import java.util.function.Supplier;
 

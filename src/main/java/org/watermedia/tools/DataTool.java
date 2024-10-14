@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.tools;
+package org.watermedia.tools;
 
 import com.google.gson.Gson;
 
@@ -21,20 +21,36 @@ public class DataTool {
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
-    public static long parseLongOr(String s, long o) {
+    public static int sumArray(int[] arr) {
+        int r = 0;
+        for (int i: arr) {
+            r += i;
+        }
+        return r;
+    }
+
+    public static long sumArray(long[] arr) {
+        long r = 0;
+        for (long i: arr) {
+            r += i;
+        }
+        return r;
+    }
+
+    public static long orElse(String s, int o) {
         try {
-            return Long.parseLong(s);
+            return Integer.parseInt(s);
         } catch (NumberFormatException e) {
             return o;
         }
     }
 
-    public static String orEmpty(String s) {
-        return s == null ? "" : s;
-    }
-
-    public static String orOrEmpty(String s, String s2) {
-        return s == null ? s2 == null ? "" : s2 : s;
+    public static long orElse(String s, long o) {
+        try {
+            return Long.parseLong(s);
+        } catch (NumberFormatException e) {
+            return o;
+        }
     }
 
     public static String orElse(String s, String s1) {
@@ -49,7 +65,7 @@ public class DataTool {
         return GSON.fromJson(s, t);
     }
 
-    public static int[] filterValue(int[] its, int v) {
+    public static int[] filter(int[] its, int v) {
         int size = 0;
         for (int i: its) if (i != v) size++;
 
@@ -63,14 +79,14 @@ public class DataTool {
     }
 
     @SuppressWarnings("all")
-    public static <T> T[] concatArray(T[] array, T... values) {
+    public static <T> T[] concat(T[] array, T... values) {
         Object t = Array.newInstance(array.getClass().getComponentType(), array.length + values.length);
         System.arraycopy(array, 0, t, 0, array.length);
         System.arraycopy(values, 0, t, array.length, values.length);
         return (T[]) t;
     }
 
-    public static int[] unboxArray(List<Integer> arr) {
+    public static int[] unbox(List<Integer> arr) {
         int[] result = new int[arr.size()];
         for (int i = 0; i < arr.size(); i++) {
             result[i] = arr.get(i);
@@ -78,7 +94,7 @@ public class DataTool {
         return result;
     }
 
-    public static int[] unboxArray(Integer[] arr) {
+    public static int[] unbox(Integer[] arr) {
         int[] result = new int[arr.length];
         int i = 0;
         while (i < arr.length) {
@@ -92,12 +108,6 @@ public class DataTool {
         List<T> r = new ArrayList<>();
         for (T t: s) r.add(t);
         return r;
-    }
-
-    public static byte[] readAllBytesAndClose(InputStream stream) throws IOException {
-        try (stream) {
-            return readAllBytes(stream);
-        }
     }
 
     public static byte[] readAllBytes(InputStream stream) throws IOException {
@@ -162,25 +172,19 @@ public class DataTool {
         return result;
     }
 
-    public static String encodeStringToHex(String string) {
+    public static String encodeHex(String string) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] bytes = digest.digest(string.getBytes(StandardCharsets.UTF_8));
 
-            char[] hexChars = new char[bytes.length * 2];
-            for (int j = 0; j < bytes.length; j++) {
-                int v = bytes[j] & 0xFF;
-                hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-                hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-            }
-            return new String(hexChars);
+            return encodeHex(bytes);
         } catch (Exception e) {
             LOGGER.error("Failed to digest and encode string {}", string, e);
             return null;
         }
     }
 
-    public static String encodeHexString(byte[] bytes) {
+    public static String encodeHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -188,5 +192,9 @@ public class DataTool {
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static PairTool<String, Boolean> getArgument(String argument) {
+        return new PairTool<>(argument, Boolean.parseBoolean(System.getProperty(argument)));
     }
 }

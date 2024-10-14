@@ -3,8 +3,8 @@ package me.srrapero720.watermedia.core.cache;
 import me.srrapero720.watermedia.core.WaterInternalAPI;
 import me.srrapero720.watermedia.core.config.WaterConfig;
 import me.srrapero720.watermedia.loader.ILoader;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.PairTool;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.PairTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -154,7 +154,7 @@ public class CacheCore extends WaterInternalAPI {
         }
 
         private static File entry$genFile(String url) {
-            String n = DataTool.encodeStringToHex(url);
+            String n = DataTool.encodeHex(url);
             return new File(dir, n != null ? n : Base64.getEncoder().encodeToString(url.getBytes()));
         }
     }
