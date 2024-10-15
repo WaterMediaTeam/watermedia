@@ -3,8 +3,8 @@ package org.watermedia.core.network.patchs;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.MediaType;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.media.meta.MediaType;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
@@ -24,12 +24,12 @@ public class StreamablePatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         return source.getUri().getHost().equals("streamable.com");
     }
 
     @Override
-    public MediaURI patch(MediaURI source, MediaContext context) throws NetworkPatchException {
+    public MRL patch(MRL source, MediaContext context) throws NetworkPatchException {
         String videoId = source.getUri().getPath().substring(1);
         try {
             HttpURLConnection conn = NetTool.connect(API_URL + videoId, "GET");
@@ -49,10 +49,10 @@ public class StreamablePatch extends AbstractPatch {
                 Video video = DataTool.fromJSON(in, Video.class);
 
                 // METADATA BUILDING
-                var metadata = new MediaURI.Metadata(video.title, "", this.platform(), "", new URI(video.thumbnail_url), (long) (video.files.mp4.duration * 1000));
+                var metadata = new MRL.Metadata(video.title, "", this.platform(), "", new URI(video.thumbnail_url), (long) (video.files.mp4.duration * 1000));
 
                 // PATCH BUILDING
-                var patch = new MediaURI.Patch();
+                var patch = new MRL.Patch();
                 patch.setMetadata(metadata);
                 patch.addSource()
                         .setUri(new URI(video.files.mp4.url))

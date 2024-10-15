@@ -1,4 +1,4 @@
-package me.srrapero720.watermedia.api;
+package org.watermedia.api.media.meta;
 
 public enum MediaType {
     IMAGE,

@@ -1,9 +1,9 @@
-package me.srrapero720.watermedia.api;
+package org.watermedia.api.media.meta;
 
 /**
  * Quality preference.
  */
-public enum Quality {
+public enum MediaQuality {
     /**
      * Qualities same or below 240p threshold
      */
@@ -40,13 +40,13 @@ public enum Quality {
     HIGHEST(2160);
 
     private final int threadshool;
-    Quality(int threshold) {
+    MediaQuality(int threshold) {
         this.threadshool = threshold;
     }
 
-    public static final Quality[] VALUES = values();
+    public static final MediaQuality[] VALUES = values();
 
-    public static Quality calculate(int width) { // TODO: evaluate height for tiktok reels
+    public static MediaQuality calculate(int width) { // TODO: evaluate height for tiktok reels
         if (width >= LOWEST.threadshool  && width < LOWER.threadshool) {
             return LOWEST;
         } else if (width >= LOWER.threadshool && width < LOW.threadshool) {
@@ -64,7 +64,7 @@ public enum Quality {
         }
     }
 
-    public Quality getNext() {
+    public MediaQuality getNext() {
         var ordinal = this.ordinal();
         if (ordinal >= VALUES.length) {
             return null;
@@ -72,7 +72,7 @@ public enum Quality {
         return VALUES[ordinal];
     }
 
-    public Quality getBack() {
+    public MediaQuality getBack() {
         var ordinal = this.ordinal();
         if (ordinal == 0) {
             return null;

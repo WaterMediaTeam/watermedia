@@ -2,9 +2,9 @@ package org.watermedia.core.network.patchs;
 
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.MediaType;
-import me.srrapero720.watermedia.api.Quality;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.media.meta.MediaType;
+import org.watermedia.api.media.meta.MediaQuality;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
@@ -34,7 +34,7 @@ public class TwitterPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         var host = source.getUri().getHost();
         var path = source.getUri().getPath();
         return (host.equals("www.x.com") || host.equals("x.com") || host.equals("www.twitter.com") || host.equals("twitter.com"))
@@ -42,7 +42,7 @@ public class TwitterPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
         try {
             final var m = ID_PATTERN.matcher(source.getUri().getPath());
             if (!m.matches()) throw new Exception("No twitter ID match found");
@@ -64,14 +64,14 @@ public class TwitterPatch extends AbstractPatch {
 
             try (final InputStream in = conn.getInputStream()) {
                 final var tweet = DataTool.<Tweet>fromJSON(new String(DataTool.readAllBytes(in)), Tweet.class);
-                final var patch = new MediaURI.Patch();
+                final var patch = new MRL.Patch();
 
                 if (tweet.typename.equals(__TYTE_TOMB)) {
                     throw new UnsupportedOperationException("Tomb received: " + tweet.tombstone.text);
                 }
 
                 // METADATA BUILDING
-                final var metadata = new MediaURI.Metadata(
+                final var metadata = new MRL.Metadata(
                         null,
                         tweet.user.name,
                         this.platform(),
@@ -94,7 +94,7 @@ public class TwitterPatch extends AbstractPatch {
                                 var matcher = RES_PATTERN.matcher(videoVariant.url);
                                 if (videoVariant.url.contains(".mp4") && matcher.find()) {
                                     String width = matcher.group(1);
-                                    mediaSource.putQualityIfAbsent(Quality.calculate(Integer.parseInt(width)), new URI(videoVariant.url));
+                                    mediaSource.putQualityIfAbsent(MediaQuality.calculate(Integer.parseInt(width)), new URI(videoVariant.url));
                                     mediaSource.setFallbackUri(new URI(details.mediaUrlHttps));
                                     mediaSource.setFallbackType(MediaType.IMAGE);
                                 }

@@ -1,7 +1,7 @@
 package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.NetworkPatchException;
 
 import java.io.InputStream;
@@ -25,14 +25,14 @@ public class PornHubPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         var host = source.getUri().getHost();
         var path = source.getUri().getPath();
         return (host.contains(".pornhub.com") || host.equals("pornhub.com")) && path.endsWith("/view_video.php");
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
 
         try (InputStream i = null/*DynamicRequest connection = new DynamicRequest(dynamicURL); InputStream reader = connection.getInputStream()*/) {
 //            String source = new String(ByteTools.readAllBytes(reader), StandardCharsets.UTF_8);

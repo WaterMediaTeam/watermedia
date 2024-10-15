@@ -3,8 +3,8 @@ package org.watermedia.core.network.patchs;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.MediaType;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.media.meta.MediaType;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
@@ -33,12 +33,12 @@ public class KickPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         return source.getUri().getHost().equals("kick.com");
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
         var path = source.getUri().getPath();
 
         try {
@@ -48,7 +48,7 @@ public class KickPatch extends AbstractPatch {
                 Video video = DataTool.fromJSON(this.connectToKick(API_URL + "video/" + videoId), Video.class);
 
                 // METADATA BUILDING
-                var metadata = new MediaURI.Metadata(
+                var metadata = new MRL.Metadata(
                         video.livestream.title,
                         video.livestream.channel.name,
                         this.platform(),
@@ -58,7 +58,7 @@ public class KickPatch extends AbstractPatch {
                 );
 
                 // PATCH BUILDING
-                var patch = new MediaURI.Patch();
+                var patch = new MRL.Patch();
                 patch.setMetadata(metadata);
 
                 // PATCH APPLY
@@ -79,7 +79,7 @@ public class KickPatch extends AbstractPatch {
                 }
 
                 // METADATA BUILDING
-                var metadata = new MediaURI.Metadata(
+                var metadata = new MRL.Metadata(
                         ch.livestream.title,
                         ch.user.username,
                         this.platform(),
@@ -89,7 +89,7 @@ public class KickPatch extends AbstractPatch {
                 );
 
                 // PATCH BUILDING
-                var patch = new MediaURI.Patch();
+                var patch = new MRL.Patch();
                 patch.setMetadata(metadata);
 
                 // PATCH APPLY

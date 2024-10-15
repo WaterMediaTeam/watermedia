@@ -2,8 +2,8 @@ package org.watermedia.core.network.patchs;
 
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.MediaType;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.media.meta.MediaType;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
@@ -35,12 +35,12 @@ public class ImgurPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         return source.getUri().getHost().equals("imgur.com"); // i.imgur.com - doesn't need patches
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
         final var path = source.getUri().getPath();
         final var fragment = source.getUri().getFragment();
 
@@ -63,7 +63,7 @@ public class ImgurPatch extends AbstractPatch {
                     throw new NullPointerException("Response is successfully but data is null or images are empty");
 
                 // METADATA BUILDING
-                var metadata = new MediaURI.Metadata(
+                var metadata = new MRL.Metadata(
                         res.data.title,
                         res.data.accountUrl,
                         this.platform(),
@@ -73,7 +73,7 @@ public class ImgurPatch extends AbstractPatch {
                         );
 
                 // PATCH BUILDING
-                var patch = new MediaURI.Patch();
+                var patch = new MRL.Patch();
                 for (Image image: res.data.images) {
                     patch.addSource()
                             .setUri(new URI(image.link))
@@ -92,7 +92,7 @@ public class ImgurPatch extends AbstractPatch {
                     throw new NullPointerException("Response is successfully but data is null or images are empty");
 
                 // METADATA BUILDING
-                var metadata = new MediaURI.Metadata(
+                var metadata = new MRL.Metadata(
                         res.data.title,
                         res.data.accountUrl,
                         this.platform(),
@@ -102,7 +102,7 @@ public class ImgurPatch extends AbstractPatch {
                 );
 
                 // PATCH BUILDING
-                var patch = new MediaURI.Patch();
+                var patch = new MRL.Patch();
                 patch.addSource()
                         .setUri(new URI(res.data.link))
                         .setType(MediaType.getByMimetype(res.data.type))

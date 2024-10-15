@@ -1,28 +1,25 @@
 package org.watermedia.api.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.Quality;
-import me.srrapero720.watermedia.api.MediaType;
+import org.watermedia.api.media.meta.MediaQuality;
+import org.watermedia.api.media.meta.MediaType;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 import java.util.function.Function;
 
-public class MediaURI implements Comparable<URI>, Serializable {
-    private static final Map<URI, MediaURI> MEDIA_URIS = new HashMap<>();
+public class MRL implements Comparable<URI>, Serializable {
+    private static final Map<URI, MRL> MEDIA_URIS = new HashMap<>();
 
-    public static MediaURI get(File file) { return get(file.toURI()); }
-    public static MediaURI get(URI uri) { return MEDIA_URIS.computeIfAbsent(uri, MediaURI::new); }
-    public static MediaURI get(String url) {
+    public static MRL get(File file) { return get(file.toURI()); }
+    public static MRL get(URI uri) { return MEDIA_URIS.computeIfAbsent(uri, MRL::new); }
+    public static MRL get(String url) {
         try {
-            return MEDIA_URIS.computeIfAbsent(new URI(url), MediaURI::get);
+            return MEDIA_URIS.computeIfAbsent(new URI(url), MRL::get);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("URL is not valid '" + url + "'", e);
         }
@@ -36,17 +33,17 @@ public class MediaURI implements Comparable<URI>, Serializable {
     private long expires;
     private boolean patched;
 
-    private MediaURI(URI uri) {
+    private MRL(URI uri) {
         this.uri = uri;
         this.sources.add(new Source(uri));
     }
 
-    public MediaURI addUsage(MediaContext context) {
+    public MRL addUsage(MediaContext context) {
         this.usages.add(context);
         return this;
     }
 
-    public MediaURI removeUsage(MediaContext context) {
+    public MRL removeUsage(MediaContext context) {
         this.usages.remove(context);
         return this;
     }
@@ -61,10 +58,6 @@ public class MediaURI implements Comparable<URI>, Serializable {
 
     public URI getUri() {
         return uri;
-    }
-
-    public URLConnection openConnection(Quality quality) {
-        this.getSources()
     }
 
     public Source[] getSources() {
@@ -94,7 +87,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
     public static class Source {
         private final URI uri;
         private final List<Slave> slaves;
-        private final Map<Quality, URI> qualities;
+        private final Map<MediaQuality, URI> qualities;
         private URLConnection connection;
         private MediaType type;
 
@@ -108,7 +101,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
             this.qualities = new HashMap<>();
         }
 
-        public Source(URI uri, List<Slave> slaves, Map<Quality, URI> qualities) {
+        public Source(URI uri, List<Slave> slaves, Map<MediaQuality, URI> qualities) {
             this.uri = uri;
             this.slaves = slaves;
             this.qualities = qualities;
@@ -122,24 +115,15 @@ public class MediaURI implements Comparable<URI>, Serializable {
             return this.live;
         }
 
-        public InputStreamc openConnection(MediaContext context, Quality quality) throws IOException {
-            if (this.connection != null) {
-                var in = this.connection.getInputStream();
-                in.mark(Integer.MAX_VALUE);
-                return this.connection; // TODO: ensure connection is always working despite begin timeout
-            }
-            return this.connection = this.uri(context, quality).toURL().openConnection();
-        }
-
         public int size() {
             return qualities.isEmpty() ? 1 : qualities.size();
         }
 
-        public URI uri(MediaContext context, Quality quality) {
+        public URI uri(MediaContext context, MediaQuality quality) {
             if (qualities.isEmpty()) return this.uri;
 
             URI uri = qualities.get(quality);
-            Quality currentQuality = context.preferLowerQuality() ? quality.getBack() : quality.getNext();
+            MediaQuality currentQuality = context.preferLowerQuality() ? quality.getBack() : quality.getNext();
             while (uri == null && currentQuality != null) {
                 uri = qualities.get(currentQuality);
                 currentQuality = context.preferLowerQuality() ? currentQuality.getBack() : currentQuality.getNext();
@@ -150,8 +134,8 @@ public class MediaURI implements Comparable<URI>, Serializable {
         public URI highQualityUri() {
             if (qualities.isEmpty()) return this.uri;
 
-            URI uri = qualities.get(Quality.HIGHEST);
-            Quality currentQuality = Quality.HIGH;
+            URI uri = qualities.get(MediaQuality.HIGHEST);
+            MediaQuality currentQuality = MediaQuality.HIGH;
             while (uri == null && currentQuality != null) {
                 uri = qualities.get(currentQuality);
                 currentQuality = currentQuality.getBack();
@@ -163,8 +147,8 @@ public class MediaURI implements Comparable<URI>, Serializable {
         public URI lowerQualityUri() {
             if (qualities.isEmpty()) return this.uri;
 
-            URI uri = qualities.get(Quality.LOWEST);
-            Quality currentQuality = Quality.LOW;
+            URI uri = qualities.get(MediaQuality.LOWEST);
+            MediaQuality currentQuality = MediaQuality.LOW;
             while (uri == null && currentQuality != null) {
                 uri = qualities.get(currentQuality);
                 currentQuality = currentQuality.getNext();
@@ -217,7 +201,7 @@ public class MediaURI implements Comparable<URI>, Serializable {
             private MediaType fallbackType;
             private URI fallbackUri;
             private boolean isLive;
-            private final Map<Quality, URI> qualities = new HashMap<>();
+            private final Map<MediaQuality, URI> qualities = new HashMap<>();
             private final List<Slave> slaves = new ArrayList<>();
 
             private SourceBuilder() {}
@@ -252,17 +236,17 @@ public class MediaURI implements Comparable<URI>, Serializable {
                 return this;
             }
 
-            public SourceBuilder putQuality(Quality quality, URI uri) {
+            public SourceBuilder putQuality(MediaQuality quality, URI uri) {
                 this.qualities.put(quality, uri);
                 return this;
             }
 
-            public SourceBuilder putQualityIfAbsent(Quality quality, Function<Quality, URI> uri) {
+            public SourceBuilder putQualityIfAbsent(MediaQuality quality, Function<MediaQuality, URI> uri) {
                 this.qualities.computeIfAbsent(quality, uri);
                 return this;
             }
 
-            public SourceBuilder putQualityIfAbsent(Quality quality, URI uri) {
+            public SourceBuilder putQualityIfAbsent(MediaQuality quality, URI uri) {
                 this.qualities.computeIfAbsent(quality, q -> uri);
                 return this;
             }

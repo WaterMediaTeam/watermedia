@@ -1,7 +1,7 @@
 package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.NetworkPatchException;
 
 import java.net.URI;
@@ -23,14 +23,14 @@ public class DrivePatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         var host = source.getUri().getHost();
         var path = source.getUri().getPath();
         return host.equals("drive.google.com") && path.startsWith("/file/d/");
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
         var uri = source.getUri();
         var path = uri.getPath();
 
@@ -39,7 +39,7 @@ public class DrivePatch extends AbstractPatch {
 
         try {
             // PATCH BUILDING
-            var patch = new MediaURI.Patch();
+            var patch = new MRL.Patch();
             patch.addSource()
                     .setUri(new URI(String.format(API_URL, fileId, API_KEY)))
                     .build();

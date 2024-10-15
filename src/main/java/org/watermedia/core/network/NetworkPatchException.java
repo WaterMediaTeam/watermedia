@@ -1,6 +1,6 @@
 package org.watermedia.core.network;
 
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.MRL;
 
 import java.net.URI;
 
@@ -21,11 +21,11 @@ public class NetworkPatchException extends Exception {
         this(source.toString(), message);
     }
 
-    public NetworkPatchException(MediaURI source, String message) {
+    public NetworkPatchException(MRL source, String message) {
         this(source.getUri(), message);
     }
 
-    public NetworkPatchException(MediaURI source, Exception e) {
+    public NetworkPatchException(MRL source, Exception e) {
         this(source.getUri(), e);
     }
 }

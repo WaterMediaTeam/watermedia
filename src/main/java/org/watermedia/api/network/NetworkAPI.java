@@ -22,7 +22,7 @@ public class NetworkAPI extends WaterMediaAPI {
 
     private static final ServiceLoader<AbstractPatch> PATCHES = ServiceLoader.load(AbstractPatch.class);
 
-    public static void patchSource(MediaURI url, MediaContext context) {
+    public static void patchSource(MRL url, MediaContext context) {
         try {
             for (AbstractPatch patch: PATCHES) {
                 if (!patch.validate(url)) continue;

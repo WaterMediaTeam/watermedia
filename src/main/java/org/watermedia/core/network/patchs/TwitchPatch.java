@@ -3,9 +3,9 @@ package org.watermedia.core.network.patchs;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.MediaType;
-import me.srrapero720.watermedia.api.Quality;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.media.meta.MediaType;
+import org.watermedia.api.media.meta.MediaQuality;
+import org.watermedia.api.network.MRL;
 import org.watermedia.api.network.NetworkAPI;
 import org.watermedia.core.network.NetworkStream;
 import org.watermedia.core.network.NetworkPatchException;
@@ -39,14 +39,14 @@ public class TwitchPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         final var host = source.getUri().getHost();
         final var path = source.getUri().getPath();
         return (host.contains(".twitch.tv") || host.equals("twitch.tv")) && (path.startsWith("/") && path.length() > 5);
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
         var path = source.getUri().getPath().substring(1).split("/");
         var video = path[0].equals("videos") && path.length >= 2;
         var id = video ? path[1] : path[0];
@@ -56,17 +56,17 @@ public class TwitchPatch extends AbstractPatch {
             final String url = String.format(video ? API_STREAM_VOD : API_STEAM_LIVE, id) + getQuery(data.accessToken.signature, data.accessToken.value);
 
             // TODO: METADATA BUILDING
-            MediaURI.Metadata metadata = null; //new MediaURI.Metadata();
+            MRL.Metadata metadata = null; //new MediaURI.Metadata();
 
             // PATCH BUILDING
-            var patch = new MediaURI.Patch().setMetadata(metadata);
+            var patch = new MRL.Patch().setMetadata(metadata);
 
             for (NetworkStream quality: NetworkStream.parse(getStreamString(url))) {
                 var uri = new URI(quality.getUrl());
                 var sourceBuilder = patch.addSource();
                 sourceBuilder.setType(MediaType.VIDEO);
                 sourceBuilder.setIsLive(!video);
-                sourceBuilder.putQualityIfAbsent(Quality.calculate(quality.getWidth()), q -> uri);
+                sourceBuilder.putQualityIfAbsent(MediaQuality.calculate(quality.getWidth()), q -> uri);
                 // TODO: put offline banner as fallback URI
 //                sourceBuilder.setFallbackUri(new URI());
 //                sourceBuilder.setFallbackType(MediaType.IMAGE);

@@ -1,7 +1,7 @@
 package org.watermedia.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.patchs.TwitterPatch;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class TwitterPatchTest {
 
     @Test
     public void testTwitterConnection() {
-        MediaURI source = MediaURI.get(CONTEXT, EXAMPLE_URI);
+        MRL source = MRL.get(CONTEXT, EXAMPLE_URI);
         TwitterPatch patch = new TwitterPatch();
 
         assertTrue(patch.validate(source));
@@ -28,7 +28,7 @@ public class TwitterPatchTest {
         var sources = source.getSources();
         assertEquals(4, sources.length);
 
-        for (MediaURI.Source s: sources) {
+        for (MRL.Source s: sources) {
             LOGGER.debug(s.toString());
         }
     }

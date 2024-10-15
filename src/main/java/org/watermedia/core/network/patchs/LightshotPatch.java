@@ -1,8 +1,8 @@
 package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import me.srrapero720.watermedia.api.MediaType;
-import org.watermedia.api.network.MediaURI;
+import org.watermedia.api.media.meta.MediaType;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
@@ -28,18 +28,20 @@ public class LightshotPatch extends AbstractPatch {
     }
 
     @Override
-    public boolean validate(MediaURI source) {
+    public boolean validate(MRL source) {
         var host = source.getUri().getHost();
         return host.equals("prnt.sc");
     }
 
     @Override
-    public void patch(MediaContext context, MediaURI source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
         try {
             var html = connectToLightshot(source.getUri());
             var matcher = HTML_PATTERN.matcher(html);
 
-            source.apply(new MediaURI.Patch()
+            if (!matcher.find()) throw new NullPointerException("No match found");
+
+            source.apply(new MRL.Patch()
                     .addSource()
                     .setUri(new URI(matcher.group(1)))
                     .setType(MediaType.IMAGE)
