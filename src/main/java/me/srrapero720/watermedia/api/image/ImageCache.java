@@ -8,35 +8,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 import static me.srrapero720.watermedia.api.image.ImageAPI.IT;
 
 public class ImageCache {
     static final Map<String, ImageCache> CACHE = new HashMap<>();
     static final ImageCache EMPTY_INSTANCE = new ImageCache(null);
-
-    /**
-     * Gets a cache for a URL
-     * if no exists then creates an unready one
-     * @param originalURL url of the picture
-     * @param renderThreadEx concurrent executor
-     * @deprecated use instead {@link ImageAPI#getCache(String, Executor)}
-     * @return cache instance
-     */
-    @Deprecated
-    public static ImageCache get(String originalURL, Executor renderThreadEx) {
-        return ImageAPI.getCache(originalURL, renderThreadEx);
-    }
-
-    /**
-     * Reloads all ImageCache instanced
-     * This might cause lag
-     * @deprecated use instead {@link ImageAPI#reloadCache()}
-     */
-    @Deprecated
-    public static void reloadAll() {
-        CACHE.values().forEach(ImageCache::reload);
-    }
 
     // INFO;
     public final String url;
@@ -53,16 +30,14 @@ public class ImageCache {
 
     private final List<Consumer<ImageRenderer>> releaseListeners = new ArrayList<>();
 
-    @Deprecated
-    public ImageCache(String url, Executor runnable) {
+    ImageCache(String url, Executor runnable) {
         this.url = url;
         this.renderThreadEx = runnable;
         this.fetch = new ImageFetch(url);
         CACHE.put(url, this);
     }
 
-    @Deprecated
-    public ImageCache(ImageRenderer renderer) {
+    ImageCache(ImageRenderer renderer) {
         this.url = "";
         this.fetch = null;
         this.renderThreadEx = null;

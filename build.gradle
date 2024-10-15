@@ -65,7 +65,7 @@ dependencies {
 
     // DEPENDENCIES
     shadow "com.github.WaterMediaTeam:videolan-natives:$vlcj_natives_version"
-    shadow "com.github.WaterMediaTeam:ytdl-java:$jyd_version"
+    shadow "com.github.WaterMediaTeam:ffmpeg4j:$ffmpeg4j_version"
     shadow "net.sf.sevenzipjbinding:sevenzipjbinding:16.02-2.01"
     shadow "net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:16.02-2.01"
     shadow project(":lib-vlcj")
@@ -104,10 +104,6 @@ shadowJar {
     // Add relocation rules for each dependency
     relocate 'com.github', 'me.lib720'
     relocate 'com.alibaba', 'me.lib720.alibaba'
-    relocate 'com.fasterxml', 'me.lib720'
-    relocate 'org.apache.commons', 'me.lib720.apache'
-    relocate 'org.tukaani', 'me.lib720.tukaani'
-    relocate 'uk.co.caprica', 'me.lib720.caprica'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
