@@ -2,7 +2,6 @@ package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.NetworkPatchException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class PornHubPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws PatchException {
 
         try (InputStream i = null/*DynamicRequest connection = new DynamicRequest(dynamicURL); InputStream reader = connection.getInputStream()*/) {
 //            String source = new String(ByteTools.readAllBytes(reader), StandardCharsets.UTF_8);

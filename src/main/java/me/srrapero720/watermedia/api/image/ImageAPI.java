@@ -4,7 +4,7 @@ import org.watermedia.WaterMedia;
 import org.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.core.config.WaterConfig;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
-import org.watermedia.api.math.MathAPI;
+import org.watermedia.api.MathAPI;
 import org.watermedia.tools.JarTool;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;

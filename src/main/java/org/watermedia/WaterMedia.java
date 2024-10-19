@@ -18,7 +18,7 @@ public final class WaterMedia {
 	public static final String ID = "watermedia";
 	public static final String NAME = "WATERMeDIA";
 	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
-	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0";
+	public static final String USER_AGENT = "WaterMedia/" + VERSION;
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
 	private static final PairTool<String, Boolean> NO_BOOT = DataTool.getArgument("watermedia.no_boot");

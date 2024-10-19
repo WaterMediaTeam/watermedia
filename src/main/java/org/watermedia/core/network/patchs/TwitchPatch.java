@@ -6,9 +6,8 @@ import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.media.meta.MediaType;
 import org.watermedia.api.media.meta.MediaQuality;
 import org.watermedia.api.network.MRL;
-import org.watermedia.api.network.NetworkAPI;
+import org.watermedia.api.NetworkAPI;
 import org.watermedia.core.network.NetworkStream;
-import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
 
@@ -20,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.watermedia.WaterMedia.USER_AGENT;
+import static org.watermedia.tools.NetTool.USER_AGENT;
 
 public class TwitchPatch extends AbstractPatch {
     public static final String API_AUTH_URL = "https://gql.twitch.tv/gql";
@@ -46,7 +45,7 @@ public class TwitchPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws PatchException {
         var path = source.getUri().getPath().substring(1).split("/");
         var video = path[0].equals("videos") && path.length >= 2;
         var id = video ? path[1] : path[0];
@@ -75,7 +74,7 @@ public class TwitchPatch extends AbstractPatch {
 
             source.apply(patch);
         } catch (Exception e) {
-            throw new NetworkPatchException(source, e);
+            throw new PatchException(source, e);
         }
     }
 

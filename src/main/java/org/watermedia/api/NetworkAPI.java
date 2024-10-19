@@ -1,7 +1,7 @@
-package org.watermedia.api.network;
+package org.watermedia.api;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import org.watermedia.api.WaterMediaAPI;
+import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.patchs.AbstractPatch;
 import me.srrapero720.watermedia.loader.ILoader;
 import org.watermedia.tools.DataTool;
@@ -22,14 +22,14 @@ public class NetworkAPI extends WaterMediaAPI {
 
     private static final ServiceLoader<AbstractPatch> PATCHES = ServiceLoader.load(AbstractPatch.class);
 
-    public static void patchSource(MRL url, MediaContext context) {
+    public static void patchMRL(MRL mrl, MediaContext context) {
         try {
             for (AbstractPatch patch: PATCHES) {
-                if (!patch.validate(url)) continue;
-                patch.patch(url, context);
+                if (!patch.validate(mrl)) continue;
+                patch.patch(context, mrl);
             }
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed to patch URL '{}'", url.getUri(), e);
+            LOGGER.error(IT, "Failed to patch URL '{}'", mrl.getUri(), e);
         }
     }
 
@@ -46,7 +46,7 @@ public class NetworkAPI extends WaterMediaAPI {
      * @param query query string
      * @return map with all values as a String
      */
-    public static Map<String, String> parseQuery(String query) {
+    public static Map<String, String> decodeQuery(String query) {
         final var result = new HashMap<String, String>();
         final var params = query.split("&");
         for (String p: params) {
@@ -94,8 +94,7 @@ public class NetworkAPI extends WaterMediaAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        // TODO: Google drive hates this
-        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+
     }
 
     @Override

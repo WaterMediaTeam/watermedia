@@ -3,7 +3,6 @@ package org.watermedia.core.network.patchs;
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.media.meta.MediaType;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
 
@@ -34,7 +33,7 @@ public class LightshotPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws PatchException {
         try {
             var html = connectToLightshot(source.getUri());
             var matcher = HTML_PATTERN.matcher(html);
@@ -48,7 +47,7 @@ public class LightshotPatch extends AbstractPatch {
                     .build()
             );
         } catch (Exception e) {
-            throw new NetworkPatchException(source, e);
+            throw new PatchException(source, e);
         }
     }
 

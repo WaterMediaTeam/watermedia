@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.media.meta.MediaType;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
 
@@ -29,7 +28,7 @@ public class StreamablePatch extends AbstractPatch {
     }
 
     @Override
-    public MRL patch(MRL source, MediaContext context) throws NetworkPatchException {
+    public MRL patch(MRL source, MediaContext context) throws PatchException {
         String videoId = source.getUri().getPath().substring(1);
         try {
             HttpURLConnection conn = NetTool.connect(API_URL + videoId, "GET");
@@ -67,7 +66,7 @@ public class StreamablePatch extends AbstractPatch {
                 conn.disconnect();
             }
         } catch (Exception e) {
-            throw new NetworkPatchException(source, e);
+            throw new PatchException(source, e);
         }
     }
 

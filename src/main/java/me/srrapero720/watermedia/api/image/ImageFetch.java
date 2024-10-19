@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.watermedia.WaterMedia.LOGGER;
-import static org.watermedia.WaterMedia.USER_AGENT;
+import static org.watermedia.tools.NetTool.USER_AGENT;
 
 /**
  * Tool to fetch new images from internet

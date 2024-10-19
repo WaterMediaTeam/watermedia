@@ -1,6 +1,6 @@
 package org.watermedia.math;
 
-import org.watermedia.api.math.MathAPI;
+import org.watermedia.api.MathAPI;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

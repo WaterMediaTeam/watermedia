@@ -1,7 +1,5 @@
-package org.watermedia.api.render;
+package org.watermedia.api;
 
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.system.MemoryUtil;
@@ -12,12 +10,10 @@ import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
 
 public class RenderAPI {
-    private static final Marker IT = MarkerManager.getMarker(RenderAPI.class.getSimpleName());
     private static final MemoryUtil.MemoryAllocator ALLOCATOR = MemoryUtil.getAllocator(false);
 
-
     /**
-     * Creates a DirectByteBuffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
+     * Creates a DirectByteBuffer unsafe using {@link MemoryUtil.MemoryAllocator MemoryAllocator}
      * @param size size of the buffer
      * @return native buffer
      */

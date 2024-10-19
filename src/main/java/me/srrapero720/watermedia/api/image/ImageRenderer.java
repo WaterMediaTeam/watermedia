@@ -1,6 +1,6 @@
 package me.srrapero720.watermedia.api.image;
 
-import org.watermedia.api.math.MathAPI;
+import org.watermedia.api.MathAPI;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.watermedia.tools.DataTool;
 

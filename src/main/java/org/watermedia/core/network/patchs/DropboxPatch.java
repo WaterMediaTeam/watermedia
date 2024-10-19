@@ -2,7 +2,6 @@ package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.NetworkPatchException;
 
 import java.net.URI;
 
@@ -25,7 +24,7 @@ public class DropboxPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws PatchException {
         var url = source.getUri().toString();
         try {
             var r = url.replace("dl=0", "dl=1");
@@ -37,7 +36,7 @@ public class DropboxPatch extends AbstractPatch {
                     .build()
             );
         } catch (Exception e) {
-            throw new NetworkPatchException(source, e);
+            throw new PatchException(source, e);
         }
     }
 

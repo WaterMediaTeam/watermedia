@@ -1,8 +1,7 @@
-package org.watermedia.core.network;
+package org.watermedia.core;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.WaterMediaCore;
 import org.watermedia.core.network.patchs.AbstractPatch;
 
 import java.util.ServiceLoader;

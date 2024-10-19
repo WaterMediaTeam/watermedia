@@ -1,4 +1,4 @@
-package org.watermedia.api.search;
+package org.watermedia.api;
 
 public class SearchAPI {
     public static void search(String term) {

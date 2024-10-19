@@ -5,7 +5,6 @@ import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.media.meta.MediaType;
 import org.watermedia.api.media.meta.MediaQuality;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.NetworkPatchException;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.NetTool;
 
@@ -42,7 +41,7 @@ public class TwitterPatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws PatchException {
         try {
             final var m = ID_PATTERN.matcher(source.getUri().getPath());
             if (!m.matches()) throw new Exception("No twitter ID match found");
@@ -111,7 +110,7 @@ public class TwitterPatch extends AbstractPatch {
                 conn.disconnect();
             }
         } catch (Exception e) {
-            throw new NetworkPatchException(source, e);
+            throw new PatchException(source, e);
         }
     }
 

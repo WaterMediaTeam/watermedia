@@ -2,7 +2,6 @@ package org.watermedia.core.network.patchs;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.NetworkPatchException;
 
 import java.net.URI;
 
@@ -30,7 +29,7 @@ public class DrivePatch extends AbstractPatch {
     }
 
     @Override
-    public void patch(MediaContext context, MRL source) throws NetworkPatchException {
+    public void patch(MediaContext context, MRL source) throws PatchException {
         var uri = source.getUri();
         var path = uri.getPath();
 
@@ -45,7 +44,7 @@ public class DrivePatch extends AbstractPatch {
                     .build();
             source.apply(patch);
         } catch (Exception e) {
-            throw new NetworkPatchException(source, e);
+            throw new PatchException(source, e);
         }
     }
 
