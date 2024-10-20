@@ -20,9 +20,6 @@
       "me.srrapero720.watermedia.loaders.McFabricLoader"
     ]
   },
-  "breaks": {
-    "fancyvideo_api": "*"
-  },
   "depends": {
     "java": "$javarange"
   }

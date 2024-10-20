@@ -1,12 +1,10 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.srrapero720.watermedia.WaterMedia;
-import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.IOTool;
-import me.srrapero720.watermedia.tools.JarTool;
-import me.srrapero720.watermedia.loader.ILoader;
+import org.watermedia.WaterMedia;
+import org.watermedia.api.WaterMediaAPI;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.IOTool;
+import org.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -16,7 +14,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class PlayerAPI extends WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());
@@ -61,7 +59,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
      * @param resLoc the identifier (ResourceLocation#toString())
      * @param vlcArgs arguments used to create new VLC player instances
-     * @return MediaPlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
+     * @return MediaPlayerFactory to create custom VLC players.
      */
     public static MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
         if (NativeDiscovery.discovery()) {
@@ -74,24 +72,6 @@ public class PlayerAPI extends WaterMediaAPI {
 
         LOGGER.fatal(IT, "[VLC IS MISSING]: Cannot create MediaPlayerFactory instance");
         return null;
-    }
-
-    /**
-     * Use your own VLCArgs at your own risk
-     * By default this method makes a ReleaseHook to release factory on process shutdown
-     * Suggestion: Use the same VLC arguments for logging but with another filename
-     * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
-     * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
-     * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
-     * @deprecated use instead {@link PlayerAPI#registerFactory(String, String[])}. Fallback here is not efficient
-     */
-    public static MediaPlayerFactory customFactory(String[] vlcArgs) {
-        int fakeID = 0;
-        while (FACTORIES.containsKey(WaterMedia.asResource("unidentified_" + fakeID))) {
-            fakeID++;
-        }
-        return registerFactory(WaterMedia.asResource("unidentified_" + fakeID), vlcArgs);
     }
 
     // LOADING
@@ -113,7 +93,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
         LOGGER.info(IT, "Binaries are {}", wrapped ? "wrapped" : "not wrapped");
         if (wrapped) {
             String versionInJar = JarTool.readString(configInput);
@@ -143,16 +123,16 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start(ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader bootCore) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
-            if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
-                IOTool.un7zip(IT, zipOutput.toPath());
+            if ((!zipOutput.exists() && JarTool.extract(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
+                IOTool.un7zip(zipOutput.toPath());
                 if (!zipOutput.delete()) {
                     LOGGER.error(IT, "Failed to delete binaries zip file...");
                 }
 
-                JarTool.copyAsset(configInput, configOutput.toPath());
+                JarTool.extract(configInput, configOutput.toPath());
 
                 LOGGER.info(IT, "VideoLAN binaries extracted successfully");
             } else {
@@ -163,7 +143,7 @@ public class PlayerAPI extends WaterMediaAPI {
         try {
             String[] args = JarTool.readArray("videolan/arguments.json");
             registerFactory(WaterMedia.asResource("default"), args);
-            registerFactory(WaterMedia.asResource("sound_only"), DataTool.concatArray(args, "--vout=none"));
+            registerFactory(WaterMedia.asResource("sound_only"), DataTool.concat(args, "--vout=none"));
 
             Runtime.getRuntime().addShutdownHook(new Thread(this::release));
         } catch (Exception e) {
