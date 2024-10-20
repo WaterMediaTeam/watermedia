@@ -21,11 +21,8 @@ public class WaterMedia {
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
 	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
-	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0";
 
-	private static final List<ClassLoader> CLASS_LOADERS = new ArrayList<>();
-
-	private static final String NO_BOOT_NAME = "watermedia.disableBoot";
+    private static final String NO_BOOT_NAME = "watermedia.disableBoot";
 	private static final boolean NO_BOOT = Boolean.parseBoolean(System.getProperty(NO_BOOT_NAME));
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
@@ -41,20 +38,6 @@ public class WaterMedia {
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();
-	}
-
-	public static void attachClassLoader(Class<?> classFrom, ClassLoader classLoader) {
-		LOGGER.info(IT, "Attaching new search class loader from {}", classFrom.getName());
-		CLASS_LOADERS.add(classLoader);
-	}
-
-	public static void attachClassLoader(ClassLoader classLoader) {
-		LOGGER.info(IT, "Attaching new search class loader from {}", Thread.currentThread().getStackTrace()[2].getClassName());
-		CLASS_LOADERS.add(classLoader);
-	}
-
-	public static List<ClassLoader> getClassLoaders() {
-		return CLASS_LOADERS;
 	}
 
 	public void start() throws Exception {

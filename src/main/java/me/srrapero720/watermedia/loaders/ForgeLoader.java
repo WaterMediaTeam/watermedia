@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.loaders;
 
+import jdk.internal.loader.ClassLoaders;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.exceptions.IllegalEnvironmentException;
 import me.srrapero720.watermedia.core.exceptions.IllegalTLauncherException;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.MarkerManager;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.function.Supplier;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
@@ -41,7 +43,7 @@ public class ForgeLoader implements ILoader {
 
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
-            if (modInstalled("xenon")) throw new IncompatibleModException("xenon", "Xenon");
+            if (modInstalled("xenon")) throw new IncompatibleModException("xenon", "Xenon", "Embeddium (embeddium) or Sodium (sodium)");
 
             if (clientSide()) WaterMedia.prepare(this).start();
             else if (!developerMode()) throw new IllegalEnvironmentException();
@@ -67,26 +69,74 @@ public class ForgeLoader implements ILoader {
 
     @Override
     public boolean tlcheck() {
-        boolean tllike = false;
-        try {
-            tllike = modInstalled("tlskincape") || modInstalled("tlauncher_custom_cape_skin");
-        } catch (Throwable t2) {
-            LOGGER.error(IT, "Cannot check if TL was installed");
-        }
+        // first lookup attempt
+        boolean isT = Tool.t() || modInstalled("tlskincape") || modInstalled("tlauncher_custom_cape_skin");
 
-        if (!tllike) {
-            tllike = Tool.t();
-            if (!tllike) {
-                try {
-                    ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
-                    Class<?> launcher = Class.forName("cpw.mods.modlauncher.Launcher"); // Probably CPW screwed this on neoforge renaming it, i hate you
-                    Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
-                    tllike = Tool.t();
-                    Thread.currentThread().setContextClassLoader(currentCL);
-                } catch (Exception e) {}
+        try {
+            // second attempt
+            final ClassLoader current = Thread.currentThread().getContextClassLoader();
+            if (!isT) {
+                Class<?> launcher = Class.forName("cpw.mods.modlauncher.Launcher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
             }
-        }
-        return tllike;
+
+            // second point one attempt
+            if (!isT) {
+                Class<?> launcher = Class.forName("net.minecraftforge.modlauncher.Launcher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+
+            // third... too deep
+            if (!isT) {
+                Class<?> launcher = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+
+            // third point one... too deep but not deeper
+            if (!isT) {
+                Class<?> launcher = Class.forName("net.minecraftforge.bootstraplauncher.BootstrapLauncher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+
+            try {
+                // see you all in hell
+                if (!isT) {
+                    Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
+                    isT = Tool.t();
+                    Thread.currentThread().setContextClassLoader(current);
+                }
+
+                // welcome to hell
+                if (!isT) {
+                    Thread.currentThread().setContextClassLoader(ClassLoaders.appClassLoader());
+                    isT = Tool.t();
+                    Thread.currentThread().setContextClassLoader(current);
+                }
+            } catch (Throwable ignore) {}
+
+            // I CHOOSE VIOLENCE TODAY
+            if (!isT) {
+                Collection<StackTraceElement[]> traceElements = Thread.getAllStackTraces().values();
+                for (StackTraceElement[] elements: traceElements) {
+                    for (StackTraceElement e: elements) {
+                        if (e.getClassName().startsWith("org.tlauncher")) {
+                            isT = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception ignored) {}
+        return isT;
     }
 
     public boolean modInstalled(String id) {

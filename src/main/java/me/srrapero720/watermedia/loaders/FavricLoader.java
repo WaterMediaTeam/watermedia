@@ -1,5 +1,6 @@
 package me.srrapero720.watermedia.loaders;
 
+import jdk.internal.loader.ClassLoaders;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.core.exceptions.IllegalTLauncherException;
 import me.srrapero720.watermedia.core.tools.Tool;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collection;
 
 public class FavricLoader implements ClientModInitializer, ILoader {
     private static final Marker IT = MarkerManager.getMarker("FabricLoader");
@@ -39,19 +41,59 @@ public class FavricLoader implements ClientModInitializer, ILoader {
     @Override
     public boolean tlcheck() {
         // TLSKINCAPE VALIDATION
-        boolean tllike = FabricLoader.getInstance().isModLoaded("tlskincape") || FabricLoader.getInstance().isModLoaded("tlauncher_custom_cape_skin");
+        boolean cape = FabricLoader.getInstance().isModLoaded("tlskincape") || FabricLoader.getInstance().isModLoaded("tlauncher_custom_cape_skin");
 
-        if (!tllike) {
-            tllike = Tool.t();
-            if (!tllike) {
-                try {
-                    ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(PreLaunchEntrypoint.class.getClassLoader());
-                    tllike = Tool.t();
-                    Thread.currentThread().setContextClassLoader(currentCL);
-                } catch (Exception e) {}
+        // first lookup attempt
+        boolean isT = Tool.t() || cape;
+
+        try {
+            // second attempt
+            final ClassLoader current = Thread.currentThread().getContextClassLoader();
+            if (!isT) {
+                Class<?> launcher = Class.forName("cpw.mods.modlauncher.Launcher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
             }
-        }
-        return tllike;
+
+            // third... too deep
+            if (!isT) {
+                Class<?> launcher = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+
+            try {
+                // see you all in hell
+                if (!isT) {
+                    Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
+                    isT = Tool.t();
+                    Thread.currentThread().setContextClassLoader(current);
+                }
+
+                // welcome to hell
+                if (!isT) {
+                    Thread.currentThread().setContextClassLoader(ClassLoaders.appClassLoader());
+                    isT = Tool.t();
+                    Thread.currentThread().setContextClassLoader(current);
+                }
+            } catch (Throwable ignore) {}
+
+            // I CHOOSE VIOLENCE TODAY
+            if (!isT) {
+                Collection<StackTraceElement[]> traceElements = Thread.getAllStackTraces().values();
+                for (StackTraceElement[] elements: traceElements) {
+                    for (StackTraceElement e: elements) {
+                        if (e.getClassName().startsWith("org.tlauncher")) {
+                            isT = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception ignored) {}
+        return isT;
     }
 }

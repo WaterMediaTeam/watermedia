@@ -1,9 +1,8 @@
 package me.srrapero720.watermedia.api.player;
 
 import com.sun.jna.Platform;
-import me.srrapero720.watermedia.api.url.UrlAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
-import me.srrapero720.watermedia.core.annotations.Experimental;
+import me.srrapero720.watermedia.api.network.NetworkAPI;
+import me.srrapero720.watermedia.api.network.patchs.AbstractPatch;
 import me.srrapero720.watermedia.core.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -73,7 +72,7 @@ public abstract class SyncBasePlayer {
     private boolean rpa(CharSequence url) { // request player action
         if (raw == null) return false;
         try {
-            URLFixer.Result result = UrlAPI.fixURL(url.toString());
+            AbstractPatch.Result result = NetworkAPI.patch(url.toString());
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
             this.url = result.url;
@@ -229,7 +228,6 @@ public abstract class SyncBasePlayer {
      * that is supplied with our API but isn't enough, because another type of streams cannot be handled
      * @return if mrl was a livestream
      */
-    @Experimental
     public boolean isLive() {
         if (live) return true;
         // TODO: made a M3U8 headers reader, VLC can't provide this information

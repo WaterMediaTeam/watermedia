@@ -1,13 +1,12 @@
 package me.srrapero720.watermedia.api.player;
 
-import me.srrapero720.watermedia.OperativeSystem;
+import com.sun.jna.Platform;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
 import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
 import me.srrapero720.watermedia.core.tools.IOTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.loaders.ILoader;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,11 +17,9 @@ import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
@@ -31,10 +28,6 @@ public class PlayerAPI extends WaterMediaAPI {
 
     private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     public static final Map<String, MediaPlayerFactory> FACTORIES = new LinkedHashMap<>();
-
-    private static MediaPlayerFactory DEFAULT_FACTORY;
-    private static MediaPlayerFactory DEFAULT_SONG_FACTORY;
-
 
     /**
      * Check if PlayerAPI and/or VLC is loaded and ready to be used.
@@ -54,6 +47,16 @@ public class PlayerAPI extends WaterMediaAPI {
      */
     public static MediaPlayerFactory getFactory() {
         return FACTORIES.get(WaterMedia.asResource("default"));
+    }
+
+    /**
+     * Returns default WATERMeDIA's MediaPlayer factory instance
+     * uses DirectSound by default, witch provides an individual volume for each player
+     * by default uses on video output "mem"
+     * @return default factory
+     */
+    public static MediaPlayerFactory getFactory(String resourceLocation) {
+        return FACTORIES.get(resourceLocation);
     }
 
     /**
@@ -113,20 +116,20 @@ public class PlayerAPI extends WaterMediaAPI {
     private final File zipOutput;
     private final File configOutput;
 
-    private final boolean wrapped;
-    private boolean extract;
+    private boolean extract = false;
+    // NOTE: this got hardcoded because V3 will use FFMPEG with all platform binaries
+    private final boolean wrapped = Platform.isWindows() && Platform.is64Bit();
     public PlayerAPI() {
         super();
         ILoader bootstrap = WaterMedia.getLoader();
-        String zFilename = OperativeSystem.getFile();
+        String zFilename = "win-x64.7z";
 
         this.dir = bootstrap.tempDir().resolve("videolan");
 
-        this.wrapped = zFilename != null;
-        this.zipInput = "videolan/" + zFilename;
+        this.zipInput = "videolan/" + "win-x64.7z";
         this.configInput = "videolan/version.cfg";
 
-        if (wrapped) {
+        if (this.wrapped) {
             this.zipOutput = dir.resolve(zFilename).toFile();
             this.configOutput = dir.resolve("version.cfg").toFile();
         } else {
@@ -171,7 +174,7 @@ public class PlayerAPI extends WaterMediaAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        if (extract) {
+        if (wrapped) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
                 IOTool.un7zip(IT, zipOutput.toPath());
@@ -184,17 +187,6 @@ public class PlayerAPI extends WaterMediaAPI {
                 LOGGER.info(IT, "VideoLAN binaries extracted successfully");
             } else {
                 LOGGER.error(IT, "Failed to extract VideoLAN binaries");
-            }
-        }
-
-        // LOGGER INIT
-        LOGGER.info(IT, "Processing VideoLAN log files...");
-        if (Files.exists(dir.resolve("logs/videolan.log"))) {
-            Path parent = dir.resolve("logs");
-            try {
-                PathUtils.deleteDirectory(parent);
-            } catch (IOException e) {
-                LOGGER.warn(IT, "Failed to delete VLC logs directory", e);
             }
         }
 

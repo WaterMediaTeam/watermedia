@@ -23,8 +23,7 @@ public class ImageCache {
      * @deprecated use instead {@link ImageAPI#getCache(String, Executor)}
      * @return cache instance
      */
-    @Deprecated
-    public static ImageCache get(String originalURL, Executor renderThreadEx) {
+    static ImageCache get(String originalURL, Executor renderThreadEx) {
         return ImageAPI.getCache(originalURL, renderThreadEx);
     }
 
@@ -33,8 +32,7 @@ public class ImageCache {
      * This might cause lag
      * @deprecated use instead {@link ImageAPI#reloadCache()}
      */
-    @Deprecated
-    public static void reloadAll() {
+    static void reloadAll() {
         CACHE.values().forEach(ImageCache::reload);
     }
 
@@ -53,16 +51,14 @@ public class ImageCache {
 
     private final List<Consumer<ImageRenderer>> releaseListeners = new ArrayList<>();
 
-    @Deprecated
-    public ImageCache(String url, Executor runnable) {
+    ImageCache(String url, Executor runnable) {
         this.url = url;
         this.renderThreadEx = runnable;
         this.fetch = new ImageFetch(url);
         CACHE.put(url, this);
     }
 
-    @Deprecated
-    public ImageCache(ImageRenderer renderer) {
+    ImageCache(ImageRenderer renderer) {
         this.url = "";
         this.fetch = null;
         this.renderThreadEx = null;

@@ -2,9 +2,10 @@ package me.srrapero720.watermedia.api.image;
 
 import me.srrapero720.watermedia.api.cache.CacheAPI;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
-import me.srrapero720.watermedia.api.url.UrlAPI;
-import me.srrapero720.watermedia.api.url.fixers.URLFixer;
+import me.srrapero720.watermedia.api.network.NetworkAPI;
+import me.srrapero720.watermedia.api.network.patchs.AbstractPatch;
 import me.srrapero720.watermedia.core.tools.DataTool;
+import me.srrapero720.watermedia.core.tools.NetTool;
 import me.srrapero720.watermedia.core.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -15,10 +16,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static me.srrapero720.watermedia.WaterMedia.*;
+import static java.net.HttpURLConnection.*;
 
 /**
  * Tool to fetch new images from internet
@@ -71,7 +70,7 @@ public class ImageFetch {
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            URLFixer.Result result = UrlAPI.fixURL(url);
+            AbstractPatch.Result result = NetworkAPI.patch(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
             if (result.assumeVideo) throw new NoPictureException();
 
@@ -110,35 +109,29 @@ public class ImageFetch {
         }
     }
 
-    private static byte[] load(String originalUrl, URL url) throws IOException, NoPictureException {
+    private static byte[] load(String originalUrl, URI uri) throws IOException, NoPictureException {
         CacheAPI.Entry entry = CacheAPI.getEntry(originalUrl);
         long requestTime = System.currentTimeMillis();
-        URLConnection request = url.openConnection();
-        request.setDefaultUseCaches(false);
-        request.setRequestProperty("Accept", "image/*");
-        int code = -1;
-
-        request.addRequestProperty("User-Agent", USER_AGENT);
-        if (request instanceof HttpURLConnection) {
-            final HttpURLConnection conn = (HttpURLConnection) request;
-            if (entry != null && entry.getFile().exists()) {
-                if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
-                else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
-            }
-            code = conn.getResponseCode();
+        HttpURLConnection conn = NetTool.connect(uri, "GET");
+        conn.setDefaultUseCaches(false);
+        conn.setRequestProperty("Accept", "image/*");
+        if (entry != null && entry.getFile().exists()) {
+            if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
+            else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
         }
+        int code = conn.getResponseCode();
 
-        try (InputStream in = request.getInputStream()) {
-            if (code == 400 || code == 403) throw new NoPictureException();
-            if (code != HttpURLConnection.HTTP_NOT_MODIFIED) {
-                String type = request.getContentType();
+        try (InputStream in = conn.getInputStream()) {
+            if (code == HTTP_BAD_REQUEST || code == HTTP_FORBIDDEN) throw new NoPictureException();
+            if (code != HTTP_NOT_MODIFIED) {
+                String type = conn.getContentType();
                 if (type == null) throw new ConnectException();
                 if (!type.startsWith("image/")) throw new NoPictureException();
             }
 
-            String tag = request.getHeaderField("ETag");
+            String tag = conn.getHeaderField("ETag");
             long lastTimestamp, expTimestamp = -1;
-            String maxAge = request.getHeaderField("max-age");
+            String maxAge = conn.getHeaderField("max-age");
 
             // EXPIRATION GETTER FIRST
             if (maxAge != null && !maxAge.isEmpty()) {
@@ -148,14 +141,14 @@ public class ImageFetch {
             }
 
             // EXPIRATION GETTER SECOND WAY
-            String expires = request.getHeaderField("Expires");
+            String expires = conn.getHeaderField("Expires");
             if (expires != null && !expires.isEmpty()) {
                 try {
                     expTimestamp = FORMAT.parse(expires).getTime();
                 } catch (ParseException | NumberFormatException ignored) {}
             }
             // LAST TIMESTAMP
-            String lastMod = request.getHeaderField("Last-Modified");
+            String lastMod = conn.getHeaderField("Last-Modified");
             if (lastMod != null && !lastMod.isEmpty()) {
                 try {
                     lastTimestamp = FORMAT.parse(lastMod).getTime();
@@ -186,7 +179,7 @@ public class ImageFetch {
             CacheAPI.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
-            if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();
+            conn.disconnect();
         }
     }
 

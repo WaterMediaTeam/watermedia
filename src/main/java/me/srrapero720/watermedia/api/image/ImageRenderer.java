@@ -96,23 +96,6 @@ public class ImageRenderer {
      * @param loop enable looping if tick count overflows duration
      * @return OpenGL texture ID
      */
-    public int texture(long tick, long deltaTime, boolean loop) {
-        long time = (tick * 50L) + deltaTime;
-        if (duration > 0 && time > duration && loop) time %= duration;
-        return texture(time);
-    }
-
-    /**
-     * Calculate texture based on tick time (1s/20t) plus deltaTime (missing ms on ticks)
-     * make tick count by yourself
-     * @param tick Tick count
-     * @param deltaTime extra ms to add
-     * @param loop enable looping if tick count overflows duration
-     * @deprecated <p>Tick type was changed from int to long following the time counting standard.</p>
-     * Use instead {@link ImageRenderer#texture(long, long, boolean)}
-     * @return OpenGL texture ID
-     */
-    @Deprecated
     public int texture(int tick, long deltaTime, boolean loop) {
         long time = (tick * 50L) + deltaTime;
         if (duration > 0 && time > duration && loop) time %= duration;
@@ -127,7 +110,7 @@ public class ImageRenderer {
      * @param loop enable looping if tick count overflows duration
      * @return OpenGL texture ID
      */
-    public int texture(long tick, float partialTicks, boolean loop) {
+    public int texture(int tick, float partialTicks, boolean loop) {
         return texture(tick, MathAPI.tickToMs(partialTicks), loop);
     }
 
