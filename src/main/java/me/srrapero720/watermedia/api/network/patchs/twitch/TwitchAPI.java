@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import me.srrapero720.watermedia.core.tools.NetTool;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +15,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import static me.srrapero720.watermedia.WaterMedia.USER_AGENT;
 
 public class TwitchAPI {
     public static final String GRAPH_QL_URL = "https://gql.twitch.tv/gql";
@@ -69,10 +68,9 @@ public class TwitchAPI {
     }
 
     private static JsonElement post(String id, boolean isVOD) throws IOException {
-        HttpURLConnection conn = initializeConnection(GRAPH_QL_URL, "POST");
+        HttpURLConnection conn = NetTool.connect(GRAPH_QL_URL, "POST");
         conn.setDoOutput(true);
         conn.setRequestProperty("Client-ID", CLIENT_ID);
-        conn.setRequestProperty("User-Agent", USER_AGENT);
         conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
         try (OutputStream os = conn.getOutputStream()) {
