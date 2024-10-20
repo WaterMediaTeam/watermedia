@@ -7,8 +7,7 @@ import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -94,6 +93,46 @@ public class RenderAPI extends WaterMediaAPI {
          */
         ((Buffer) buffer).flip();
         return buffer;
+    }
+
+    public static int genSimpleTexture() {
+        final int id = GL11.glGenTextures();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+
+        // Setup wrap mode
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+
+        // Setup texture scaling filtering
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+        // Unbind
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);  // Unbind
+
+        return id;
+    }
+
+    public static int genSimplePBO(int size) {
+        int id = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, id);
+        GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, size, GL15.GL_STREAM_DRAW); // Size
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);  // Unbind
+
+        return id;
+    }
+
+    public static void deletePBO(int id) {
+        GL15.glDeleteBuffers(id);
+    }
+
+    public static int uploadPBOTexture(int pbo, int texture, int width, int height) {
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pbo);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL11.GL_RGBA8, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        return texture;
     }
 
     /**

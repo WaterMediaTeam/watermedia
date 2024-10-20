@@ -6,6 +6,7 @@ import com.github.kiulian.downloader.model.videos.VideoDetails;
 import com.github.kiulian.downloader.model.videos.VideoInfo;
 import com.github.kiulian.downloader.model.videos.formats.AudioFormat;
 import com.github.kiulian.downloader.model.videos.formats.VideoFormat;
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.network.patchs.twitch.StreamQuality;
 
 import java.io.ByteArrayOutputStream;
@@ -47,36 +48,31 @@ public class YoutubePatch extends AbstractPatch {
                     String ytLivePlaylist = fetchLivePlaylist(videoDetails.liveUrl());
                     if (ytLivePlaylist != null) return new Result(new URI(StreamQuality.parse(ytLivePlaylist).get(0).getUrl()), true, true);
                 } else {
-                    // BEST WITH ALL
-                    VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
-                    if (bestAll != null) return new Result(new URI(bestAll.url()), true, false);
+                    if (WaterMedia.isSlavist()) {
+                        // WITHOUT AUDIO
+                        VideoFormat bestVideo = videoInfo.bestVideoFormat();
+                        AudioFormat bestAudio = videoInfo.bestAudioFormat();
 
-                    // WITHOUT AUDIO
-                    VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
-                    if (bestWithoutAudio != null) {
-                        return new Result(new URI(bestWithoutAudio.url()), true, false);
+                        if (bestVideo != null) {
+                            return new Result(new URI(bestVideo.url()), true, false).setAudioTrack(new URI(bestAudio.url()));
+                        } else if (bestAudio != null) {
+                            return new Result(new URI(bestAudio.url()), true, false);
+                        }
+                    } else {
+                        // BEST WITH ALL
+                        VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
+                        if (bestAll != null) return new Result(new URI(bestAll.url()), true, false);
+
+                        // AUDIO ONLY
+                        VideoFormat bestVideo = videoInfo.bestVideoFormat();
+                        if (bestVideo != null) {
+                            return new Result(new URI(bestVideo.url()), true, false);
+                        }
+
+                        // VIDEO ONLY
+                        AudioFormat bestAudio = videoInfo.bestAudioFormat();
+                        if (bestAudio != null) return new Result(new URI(bestAudio.url()), true, false);
                     }
-
-                    // WITHOUT VIDEO
-                    AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
-                    if (bestWithoutVideo != null) return new Result(new URI(bestWithoutVideo.url()), true, false);
-
-//                    // BEST WITH ALL
-//                    VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
-//
-//                    // WITHOUT AUDIO
-//                    VideoFormat bestWithoutAudio = videoInfo.bestVideoFormat();
-//                    if (bestWithoutAudio != null) {
-//                        // WITHOUT VIDEO
-//                        AudioFormat bestWithoutVideo = videoInfo.bestAudioFormat();
-//                        if (bestWithoutVideo != null) return new Result(new URL(bestWithoutAudio.url()), true, false).setAudioTrack(new URL(bestWithoutVideo.url()));
-//
-//                        if (bestAll != null) return new Result(new URL(bestAll.url()), true, false);
-//
-//                        return new Result(new URL(bestWithoutAudio.url()), true, false);
-//                    }
-
-                    if (bestAll != null) return new Result(new URI(bestAll.url()), true, false);
                 }
 
                 // VLC shouldn't use LUAC

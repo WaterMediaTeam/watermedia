@@ -3,21 +3,17 @@ package me.srrapero720.watermedia.api.player;
 import com.sun.jna.Platform;
 import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.WaterMediaAPI;
-import me.srrapero720.watermedia.api.player.vlc.SimplePlayer;
 import me.srrapero720.watermedia.core.tools.IOTool;
 import me.srrapero720.watermedia.core.tools.JarTool;
 import me.srrapero720.watermedia.loaders.ILoader;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import org.watermedia.videolan4j.factory.MediaPlayerFactory;
+import org.watermedia.videolan4j.discovery.NativeDiscovery;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -25,8 +21,6 @@ import static me.srrapero720.watermedia.WaterMedia.LOGGER;
 
 public class PlayerAPI extends WaterMediaAPI {
     private static final Marker IT = MarkerManager.getMarker(PlayerAPI.class.getSimpleName());
-
-    private static final NativeDiscovery DISCOVERY = new NativeDiscovery();
     public static final Map<String, MediaPlayerFactory> FACTORIES = new LinkedHashMap<>();
 
     /**
@@ -36,7 +30,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return if PlayerAPI and/or VLC was loaded
      */
     public static boolean isReady() {
-        return NativeDiscovery.alreadyFound;
+        return NativeDiscovery.isDiscovered();
     }
 
     /**
@@ -77,10 +71,10 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return MediaPlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
-        if (DISCOVERY.discover()) {
-            MediaPlayerFactory factory = new MediaPlayerFactory(DISCOVERY, vlcArgs);
+        if (NativeDiscovery.discovery()) {
+            MediaPlayerFactory factory = new MediaPlayerFactory(vlcArgs);
             MediaPlayerFactory oldFactory = FACTORIES.put(resLoc, factory);
-            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", DISCOVERY.discoveredPath(), Arrays.toString(vlcArgs));
+            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", NativeDiscovery.getDiscoveredPath(), Arrays.toString(vlcArgs));
             if (oldFactory != null) LOGGER.warn(IT, "Factory {} previously defined was overwritted", resLoc);
             return factory;
         }

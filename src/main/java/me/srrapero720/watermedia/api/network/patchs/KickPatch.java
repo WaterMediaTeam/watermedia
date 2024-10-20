@@ -1,6 +1,7 @@
 package me.srrapero720.watermedia.api.network.patchs;
 
 import com.google.gson.Gson;
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.network.patchs.kick.KickChannel;
 import me.srrapero720.watermedia.api.network.patchs.kick.KickVideo;
 import me.srrapero720.watermedia.core.tools.DataTool;
@@ -28,8 +29,9 @@ public class KickPatch extends AbstractPatch {
         super.patch(uri, prefQuality);
 
         try {
-            if (uri.getPath().contains("/video/")) {
-                String videoID = uri.getPath().replace("/video/", "");
+            if (uri.getPath().contains("/videos/")) {
+                String[] split = uri.getPath().split("/");
+                String videoID = split[split.length - 1];
                 KickVideo video = getVideoInfo(videoID);
                 return new Result(new URI(video.url), true, false);
             } else {
@@ -56,14 +58,16 @@ public class KickPatch extends AbstractPatch {
     }
 
     public InputStream getInputStream(URI url) throws IOException {
-        HttpURLConnection connection = NetTool.connect(url, "GET");
+        HttpURLConnection conn = NetTool.connect(url, "GET");
+        conn.setRequestProperty("User-Agent", WaterMedia.USER_AGENT);
+        conn.setRequestProperty("Accept", "application/json");
         try {
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new ConnectException(String.format("Server url %s response with status code (%s): %s", url, connection.getResponseCode(), connection.getResponseMessage()));
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new ConnectException(String.format("Server url %s response with status code (%s): %s", url, conn.getResponseCode(), conn.getResponseMessage()));
             }
-            return new ByteArrayInputStream(DataTool.readAllBytes(connection.getInputStream()));
+            return new ByteArrayInputStream(DataTool.readAllBytes(conn.getInputStream()));
         } finally {
-            connection.disconnect();
+            conn.disconnect();
         }
     }
 }

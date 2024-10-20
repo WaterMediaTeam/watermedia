@@ -1,12 +1,12 @@
 package me.srrapero720.watermedia.api.config.support;
 
 import me.srrapero720.watermedia.WaterMedia;
-import uk.co.caprica.vlcj.discovery.provider.DiscoveryDirectoryProvider;
+import org.watermedia.videolan4j.discovery.DiscoveryProvider;
 
-public class CustomDirectoryProvider implements DiscoveryDirectoryProvider {
+public class CustomDirectoryProvider implements DiscoveryProvider {
     @Override
-    public int priority() {
-        return 5;
+    public Priority priority() {
+        return Priority.OVERWRITE;
     }
 
     @Override

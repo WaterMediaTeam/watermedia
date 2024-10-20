@@ -21,9 +21,12 @@ public class WaterMedia {
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	public static final Marker IT = MarkerManager.getMarker("Bootstrap");
 	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
+	public static final String USER_AGENT = "WaterMedia/" + VERSION;
 
     private static final String NO_BOOT_NAME = "watermedia.disableBoot";
+	private static final String SLAVIST_NAME = "watermedia.slavist";
 	private static final boolean NO_BOOT = Boolean.parseBoolean(System.getProperty(NO_BOOT_NAME));
+	private static final boolean SLAVIST = Boolean.parseBoolean(System.getProperty(SLAVIST_NAME));
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -62,6 +65,10 @@ public class WaterMedia {
 	}
 
 	public static ILoader getLoader() { return bootstrap; }
+
+	public static boolean isSlavist() {
+		return SLAVIST;
+	}
 
 
 	public static String asResource(String path) {
