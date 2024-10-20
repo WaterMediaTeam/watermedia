@@ -17,10 +17,12 @@ import java.util.concurrent.Executor;
 public class VideoPlayer extends BasePlayer {
     private static final Marker IT = MarkerManager.getMarker("SyncVideoPlayer");
 
-    private final int texture;
     private int pbo = -1;
     private int width = 1;
     private int height = 1;
+    private final int texture;
+    private ByteBuffer buffer;
+    private final Object sync = new Object();
     protected final Executor renderThreadExecutor;
 
     /**
@@ -45,23 +47,18 @@ public class VideoPlayer extends BasePlayer {
         this.texture = RenderAPI.genSimpleTexture();
 
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
-            if (mediaPlayer.isReleased() || this.pbo == -1) return;
-            GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pbo);
-            ByteBuffer buffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY);
-
-            if (buffer != null) {
+            if (mediaPlayer.isReleased() || buffer == null || this.pbo == -1) return;
+            synchronized (sync) {
                 buffer.put(nativeBuffers[0]);
                 buffer.flip();
-                GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
             }
-            GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
-
         }, (sourceWidth, sourceHeight) -> {
             renderThreadExecutor.execute(() -> {
                 if (pbo == -1) RenderAPI.deletePBO(pbo);
                 pbo = RenderAPI.genSimplePBO(sourceWidth * sourceHeight * 4);
                 width = sourceWidth;
                 height = sourceHeight;
+                buffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY);
             });
 
             // TODO: This is wrong; https://wiki.videolan.org/Chroma/
@@ -87,7 +84,16 @@ public class VideoPlayer extends BasePlayer {
 
     public int preRender() {
         if (pbo == -1) return -1;
-        return RenderAPI.uploadPBOTexture(pbo, texture, width, height);
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pbo);
+        synchronized (sync) {
+            GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
+            RenderAPI.uploadPBOTexture(pbo, texture, width, height);
+            this.buffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY, buffer.capacity(), buffer);
+        }
+
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        return texture;
     }
 
     /**
