@@ -83,7 +83,7 @@ public class VideoPlayer extends BasePlayer {
     public int height() { return height; }
 
     public int preRender() {
-        if (pbo == -1) return -1;
+        if (pbo == -1 || buffer == null) return -1;
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pbo);
         synchronized (sync) {
             GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
