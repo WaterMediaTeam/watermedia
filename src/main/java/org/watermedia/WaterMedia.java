@@ -4,13 +4,14 @@ import com.sun.jna.Platform;
 import org.watermedia.api.WaterMediaAPI;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.JarTool;
-import me.srrapero720.watermedia.loader.ILoader;
 import org.watermedia.tools.PairTool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 
 public final class WaterMedia {
@@ -20,6 +21,15 @@ public final class WaterMedia {
 	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
 	public static final String USER_AGENT = "WaterMedia/" + VERSION;
 	public static final Logger LOGGER = LogManager.getLogger(ID);
+
+	private static final Path DEFAULT_TEMP = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
+	private static final Path DEFAULT_CWD = new File("run").toPath().toAbsolutePath();
+	public static final ILoader DEFAULT_LOADER = new ILoader() {
+		@Override public String name() { return "Default"; }
+		@Override public Path tmp() { return DEFAULT_TEMP; }
+		@Override public Path cwd() { return DEFAULT_CWD; }
+		@Override public boolean client() { return true; }
+	};
 
 	private static final PairTool<String, Boolean> NO_BOOT = DataTool.getArgument("watermedia.no_boot");
 	private static final PairTool<String, Boolean> FAIL_HARD = DataTool.getArgument("watermedia.fail_hard");
@@ -42,7 +52,7 @@ public final class WaterMedia {
 			LOGGER.warn(IT, "{} argument detected, crashes will be threw at the minimal exception", NO_BOOT.key());
 
 		if (!boot.client() && !boot.name().contains("Fabric"))
-			throw new UnsupportedSideException();
+			LOGGER.warn(IT, "{} is installed on server-side, please report issues to the dependent mod author instead of {} author", NAME, NAME);
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();
@@ -71,17 +81,6 @@ public final class WaterMedia {
 
 	public static String asResource(String path) { return WaterMedia.ID + ":" + path; }
 
-	public static class UnsupportedSideException extends RuntimeException {
-		public UnsupportedSideException() {
-			super(NAME + " CANNOT be installed on SERVER-SIDE. Please remove " + NAME + " from the server, and keep it on client");
-			LOGGER.fatal(IT, "##############################  ILLEGAL ENVIRONMENT  ######################################");
-			LOGGER.fatal(IT, "{} is not designed to work on server-side, please remove it from server and keep it on client", NAME);
-			LOGGER.fatal(IT, "Dependent mods can work without {} ON SERVERS, remember keep the mod ONLY ON CLIENT-SIDE", NAME);
-			LOGGER.fatal(IT, "if dependent mods throws exceptions ON SERVER asking for WATERMeDIA, report it to the creators");
-			LOGGER.fatal(IT, "##############################  ILLEGAL ENVIRONMENT  ######################################");
-		}
-	}
-
 	public static class UnsupportedTLException extends Exception {
 		public UnsupportedTLException() {
 			super("TLauncher is NOT supported by " + NAME + ", please stop using it (and consider safe alternatives like SKLauncher or MultiMC)");
@@ -92,5 +91,12 @@ public final class WaterMedia {
 			LOGGER.fatal(IT, "And please avoid Feather Launcher, TLauncher Legacy or any CRACKED LAUNCHER WITH A BAD REPUTATION");
 			LOGGER.fatal(IT, "##############################  ILLEGAL LAUNCHER DETECTED  ######################################");
 		}
+	}
+
+	public interface ILoader {
+		String name();
+		Path tmp();
+		Path cwd();
+		boolean client();
 	}
 }

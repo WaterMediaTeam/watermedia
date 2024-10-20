@@ -6,7 +6,6 @@ import me.srrapero720.watermedia.core.config.WaterConfig;
 import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
 import org.watermedia.api.MathAPI;
 import org.watermedia.tools.JarTool;
-import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -144,7 +143,7 @@ public class ImageAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
         this.loadingGifPath = bootCore.cwd().resolve("config/watermedia/assets/loading.gif");
         if (!loadingGifPath.toFile().exists()) {
             LOGGER.info(IT, "Extracting default loading gif...");
@@ -155,7 +154,7 @@ public class ImageAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start(ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader bootCore) throws Exception {
         if (IMG_LOADING != null) {
             // TODO: release images and try again
         }

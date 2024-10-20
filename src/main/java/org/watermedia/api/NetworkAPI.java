@@ -1,9 +1,9 @@
 package org.watermedia.api;
 
 import me.srrapero720.watermedia.api.MediaContext;
+import org.watermedia.WaterMedia;
 import org.watermedia.api.network.MRL;
 import org.watermedia.core.network.patchs.AbstractPatch;
-import me.srrapero720.watermedia.loader.ILoader;
 import org.watermedia.tools.DataTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -88,12 +88,12 @@ public class NetworkAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
         return true;
     }
 
     @Override
-    public void start(ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader bootCore) throws Exception {
 
     }
 

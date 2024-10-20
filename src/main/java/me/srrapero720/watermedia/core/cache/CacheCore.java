@@ -2,7 +2,7 @@ package me.srrapero720.watermedia.core.cache;
 
 import me.srrapero720.watermedia.core.WaterInternalAPI;
 import me.srrapero720.watermedia.core.config.WaterConfig;
-import me.srrapero720.watermedia.loader.ILoader;
+import org.watermedia.WaterMedia;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.PairTool;
 import org.apache.logging.log4j.Marker;
@@ -31,14 +31,14 @@ public class CacheCore extends WaterInternalAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
         dir = new File(WaterConfig.vlcInstallPath, "cache/pictures");
         index = new File(dir, "index");
         return true;
     }
 
     @Override
-    public void start(ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader bootCore) throws Exception {
         if (!dir.exists() && !dir.mkdirs())
             throw new IOException("Failed to create cache directories");
 

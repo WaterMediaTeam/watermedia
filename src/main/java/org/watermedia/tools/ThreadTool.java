@@ -32,6 +32,10 @@ public class ThreadTool {
         return Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("WaterMedia-Worker-" + name, Thread.NORM_PRIORITY));
     }
 
+    public static ScheduledExecutorService executorOne(String name) {
+        return Executors.newScheduledThreadPool(1, ThreadTool.factory("WaterMedia-" + name, Thread.NORM_PRIORITY));
+    }
+
     public static ThreadFactory factory(String name, int priority) {
         final var count = new AtomicInteger();
         final var handler = Thread.currentThread().getUncaughtExceptionHandler();

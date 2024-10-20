@@ -1,6 +1,6 @@
 package org.watermedia.api;
 
-import me.srrapero720.watermedia.loader.ILoader;
+import org.watermedia.WaterMedia;
 
 public class MathAPI extends WaterMediaAPI {
 
@@ -756,12 +756,12 @@ public class MathAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
         return true;
     }
 
     @Override
-    public void start(ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader bootCore) throws Exception {
 
     }
 

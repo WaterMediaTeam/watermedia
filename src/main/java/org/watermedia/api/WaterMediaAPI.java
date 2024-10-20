@@ -1,6 +1,6 @@
 package org.watermedia.api;
 
-import me.srrapero720.watermedia.loader.ILoader;
+import org.watermedia.WaterMedia;
 
 /**
  * Boostrap class.
@@ -20,14 +20,14 @@ public abstract class WaterMediaAPI {
      * @return true if can bot, otherwise false
      * @throws Exception the module fails to prepare itself, indicating a broken state
      */
-    public abstract boolean prepare(ILoader bootCore) throws Exception;
+    public abstract boolean prepare(WaterMedia.ILoader bootCore) throws Exception;
 
     /**
      * Starts module
      * @throws Exception on some cases a exception breaks WATERMeDIA's intended behavior and making
      * dependant mods life harder.
      */
-    public abstract void start(ILoader bootCore) throws Exception;
+    public abstract void start(WaterMedia.ILoader bootCore) throws Exception;
 
     /**
      * Releases all module resources

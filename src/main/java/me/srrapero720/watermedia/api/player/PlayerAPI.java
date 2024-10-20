@@ -5,7 +5,6 @@ import org.watermedia.api.WaterMediaAPI;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.IOTool;
 import org.watermedia.tools.JarTool;
-import me.srrapero720.watermedia.loader.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -94,7 +93,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
         LOGGER.info(IT, "Binaries are {}", wrapped ? "wrapped" : "not wrapped");
         if (wrapped) {
             String versionInJar = JarTool.readString(configInput);
@@ -124,7 +123,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start(ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader bootCore) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutput.exists() && JarTool.extract(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
