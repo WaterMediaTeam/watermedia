@@ -185,7 +185,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
     }
 
     public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, boolean lockBuffers, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        this(mediaPlayerFactory, null, null, lockBuffers, null, renderCallback, bufferFormatCallback == null ? null : new BufferFormatCallback() {
+        this(mediaPlayerFactory, null, null, lockBuffers, null, renderCallback, bufferFormatCallback == null ? null : bufferFormatCallback instanceof BufferFormatCallback ? (BufferFormatCallback) bufferFormatCallback : new BufferFormatCallback() {
             @Override
             public void allocatedBuffers(ByteBuffer[] buffers) {}
 

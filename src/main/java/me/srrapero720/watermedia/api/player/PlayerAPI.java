@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.watermedia.videolan4j.VideoLan4J;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;
 import org.watermedia.videolan4j.discovery.NativeDiscovery;
 

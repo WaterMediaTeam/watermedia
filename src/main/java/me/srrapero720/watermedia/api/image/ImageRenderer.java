@@ -27,7 +27,7 @@ public class ImageRenderer {
      */
     ImageRenderer(BufferedImage image) {
         if (image == null) throw new NullPointerException();
-        this.images = new ByteBuffer[] { RenderAPI.getRawImageBuffer(image) };
+        this.images = new ByteBuffer[] { RenderAPI.getImageBuffer(image) };
         this.width = image.getWidth();
         this.height = image.getHeight();
         this.textures = new int[] { -1 };
@@ -43,7 +43,7 @@ public class ImageRenderer {
      */
     ImageRenderer(GifDecoder decoder) {
         if (decoder == null) throw new NullPointerException();
-        this.images = RenderAPI.getRawImageBuffer(decoder.getFrames());
+        this.images = RenderAPI.getImageBuffer(decoder.getFrames());
         this.width = decoder.getWidth();
         this.height = decoder.getHeight();
         this.textures = new int[decoder.getFrameCount()];
@@ -79,7 +79,8 @@ public class ImageRenderer {
      */
     public int texture(int index) {
         if (this.textures[index] == -1) {
-            this.textures[index] = RenderAPI.uploadBufferTexture(this.images[index], width, height);
+            this.textures[index] = RenderAPI.createTexture();
+            RenderAPI.uploadBuffer(this.images[index], this.textures[index], width, height, true);
             this.remaining -= 1;
             if (this.remaining == 0) {
                 this.flush();
@@ -137,7 +138,7 @@ public class ImageRenderer {
         if (!flushed) throw new IllegalStateException("Buffers are not flushed");
         this.remaining = this.images.length;
         for (int i = 0; i < this.images.length; i++) {
-            this.images[i] = RenderAPI.getTextureBuffer(this.textures[i], width, height);
+            this.images[i] = RenderAPI.downloadBuffer(this.textures[i], width, height);
             RenderAPI.deleteTexture(this.textures);
             Arrays.fill(this.textures, -1);
         }
