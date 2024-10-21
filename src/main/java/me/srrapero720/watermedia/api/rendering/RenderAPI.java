@@ -117,8 +117,6 @@ public class RenderAPI extends WaterMediaAPI {
         int id = GL15.glGenBuffers();
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, id);
         GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, size, GL15.GL_STREAM_DRAW); // Size
-        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);  // Unbind
-
         return id;
     }
 
@@ -130,8 +128,6 @@ public class RenderAPI extends WaterMediaAPI {
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pbo);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
         GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL11.GL_RGBA8, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
-        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         return texture;
     }
 

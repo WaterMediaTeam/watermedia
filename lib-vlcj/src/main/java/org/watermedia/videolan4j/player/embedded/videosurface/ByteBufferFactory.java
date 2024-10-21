@@ -19,6 +19,7 @@
 
 package org.watermedia.videolan4j.player.embedded.videosurface;
 
+import org.watermedia.videolan4j.VideoLan4J;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -91,6 +92,7 @@ final class ByteBufferFactory {
             ((Buffer) buffer).position(newPosition);
             ((Buffer) buffer).limit(newPosition + capacity);
         }
+        VideoLan4J.LOGGER.info("BUFFER CREATED");
         result = buffer.slice().order(ByteOrder.nativeOrder());
         return result;
     }

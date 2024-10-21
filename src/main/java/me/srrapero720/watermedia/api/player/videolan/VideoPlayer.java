@@ -1,10 +1,11 @@
 package me.srrapero720.watermedia.api.player.videolan;
 
+import me.srrapero720.watermedia.WaterMedia;
 import me.srrapero720.watermedia.api.player.PlayerAPI;
-import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL21;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;
@@ -17,11 +18,13 @@ import java.util.concurrent.Executor;
 public class VideoPlayer extends BasePlayer {
     private static final Marker IT = MarkerManager.getMarker("SyncVideoPlayer");
 
-    private int pbo = -1;
-    private int width = 1;
-    private int height = 1;
+    private volatile int pbo = -1;
+    private volatile int width = 1;
+    private volatile int height = 1;
+    private volatile int size = width * height * 4;
     private final int texture;
     private ByteBuffer buffer;
+    private boolean first = false;
     private final Object sync = new Object();
     protected final Executor renderThreadExecutor;
 
@@ -44,22 +47,29 @@ public class VideoPlayer extends BasePlayer {
     public VideoPlayer(MediaPlayerFactory factory, Executor renderThreadExecutor) {
         super();
         this.renderThreadExecutor = renderThreadExecutor;
-        this.texture = RenderAPI.genSimpleTexture();
+        this.texture = genSimpleTexture();
 
         this.init(factory, (mediaPlayer, nativeBuffers, bufferFormat) -> {
-            if (mediaPlayer.isReleased() || buffer == null || this.pbo == -1) return;
+            // execyted off-thread
+            if (mediaPlayer.isReleased() || this.pbo == -1 || this.buffer == null) return;
             synchronized (sync) {
-                buffer.put(nativeBuffers[0]);
+                buffer.put(nativeBuffers[0].flip());
                 buffer.flip();
             }
         }, (sourceWidth, sourceHeight) -> {
-            renderThreadExecutor.execute(() -> {
-                if (pbo == -1) RenderAPI.deletePBO(pbo);
-                pbo = RenderAPI.genSimplePBO(sourceWidth * sourceHeight * 4);
-                width = sourceWidth;
-                height = sourceHeight;
-                buffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY);
-            });
+            int bufferSize = sourceWidth * sourceHeight * 4;
+            if (bufferSize != this.size) {
+                // executed off-thread too
+                renderThreadExecutor.execute(() -> {
+                    if (pbo != -1) deletePBO(pbo);
+                    this.pbo = genSimplePBO(bufferSize);
+                    this.width = sourceWidth;
+                    this.height = sourceHeight;
+                    this.buffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY);
+                    GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);  // Unbind
+                });
+                this.size = bufferSize;
+            }
 
             // TODO: This is wrong; https://wiki.videolan.org/Chroma/
             return new BufferFormat("RGBA", sourceWidth, sourceHeight, new int[]{sourceWidth * 4}, new int[]{sourceHeight});
@@ -83,12 +93,21 @@ public class VideoPlayer extends BasePlayer {
     public int height() { return height; }
 
     public int preRender() {
-        if (pbo == -1 || buffer == null) return -1;
+        if (pbo == -1) return -1;
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pbo);
         synchronized (sync) {
-            GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
-            RenderAPI.uploadPBOTexture(pbo, texture, width, height);
-            this.buffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY, buffer.capacity(), buffer);
+            if (buffer != null) {
+                GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+                if (!first) {
+                    GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL12.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) null);
+                    this.first = true;
+                } else {
+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, 0L);
+                }
+            }
+
+            this.buffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, GL15.GL_WRITE_ONLY);
         }
 
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
@@ -123,17 +142,58 @@ public class VideoPlayer extends BasePlayer {
         return raw().mediaPlayer().video().videoDimension();
     }
 
+    public static int genSimpleTexture() {
+        final int id = GL11.glGenTextures();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+
+        // Setup wrap mode
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+
+        // Setup texture scaling filtering
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+        // Unbind
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);  // Unbind
+
+        return id;
+    }
+
+    public void deletePBO(int id) {
+        if (this.buffer != null) {
+            GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, id);
+            GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
+        }
+        GL15.glDeleteBuffers(id);
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
+        this.buffer = null;
+    }
+
+    public static int genSimplePBO(int size) {
+        int id = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, id);
+        GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, size, GL15.GL_STREAM_DRAW); // Size
+        return id;
+    }
+
+    public static int uploadPBOTexture(int pbo, int texture, int width, int height) {
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pbo);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL11.GL_RGBA8, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
+        return texture;
+    }
+
     /**
      * Releases all resources of the player
      */
     @Override
     public void release() {
         if (pbo != -1) {
-            RenderAPI.deletePBO(pbo);
+            GL15.glDeleteBuffers(pbo);
         }
         renderThreadExecutor.execute(() -> {
             GL11.glDeleteTextures(texture);
-
         });
         super.release();
     }
