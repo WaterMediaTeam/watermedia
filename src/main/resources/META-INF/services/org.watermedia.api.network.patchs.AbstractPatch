@@ -1,0 +1,12 @@
+# NORMAL FIXERS
+org.watermedia.api.network.patchs.DiskPatch
+org.watermedia.api.network.patchs.OnedrivePatch
+org.watermedia.api.network.patchs.DrivePatch
+org.watermedia.api.network.patchs.YoutubePatch
+org.watermedia.api.network.patchs.TwitchPatch
+org.watermedia.api.network.patchs.TwitterPatch
+org.watermedia.api.network.patchs.DropboxPatch
+org.watermedia.api.network.patchs.StreamablePatch
+org.watermedia.api.network.patchs.KickPatch
+org.watermedia.api.network.patchs.LightshotPatch
+org.watermedia.api.network.patchs.PornHubPatch
