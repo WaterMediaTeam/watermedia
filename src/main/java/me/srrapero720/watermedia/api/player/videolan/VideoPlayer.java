@@ -3,8 +3,6 @@ package me.srrapero720.watermedia.api.player.videolan;
 import me.srrapero720.watermedia.api.rendering.RenderAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;
 import org.watermedia.videolan4j.player.base.MediaPlayer;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormat;
@@ -45,7 +43,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         this.renderExecutor = renderExecutor;
         this.init(factory, this, this);
         if (raw() == null) {
-            GL11.glDeleteTextures(texture);
+            RenderAPI.deleteTexture(texture);
         }
     }
 
@@ -99,15 +97,8 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         RenderAPI.bindTexture(this.texture);
         synchronized (renderSync) {
             if (refresh && buffers != null && buffers.length > 0) {
-                GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
-                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
-                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
-                if (first) {
-                    GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL12.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffers[0]);
-                    first = false;
-                } else {
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffers[0]);
-                }
+                RenderAPI.uploadBuffer(buffers[0], texture, width, height, first);
+                first = false;
             }
         }
         RenderAPI.bindTexture(RenderAPI.NONE);
@@ -136,7 +127,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
      */
     @Override
     public void release() {
-        renderExecutor.execute(() -> GL11.glDeleteTextures(texture));
+        renderExecutor.execute(() -> RenderAPI.deleteTexture(texture));
         super.release();
     }
 }
