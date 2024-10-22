@@ -15,7 +15,9 @@ public class PornHubPatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return (uri.getHost().equals("es.pornhub.com") || uri.getHost().equals("www.pornhub.com")) && uri.getPath().startsWith("/view_video.php");
+        String host = uri.getHost();
+        String path  = uri.getPath();
+        return host != null && (host.equals("es.pornhub.com") || host.equals("www.pornhub.com")) && path != null && path.startsWith("/view_video.php");
     }
 
     @Override

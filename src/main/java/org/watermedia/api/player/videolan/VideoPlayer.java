@@ -97,7 +97,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         RenderAPI.bindTexture(this.texture);
         synchronized (renderSync) {
             if (refresh && buffers != null && buffers.length > 0) {
-                RenderAPI.uploadBuffer(buffers[0], texture, width, height, first);
+                RenderAPI.uploadRevBuffer(buffers[0], texture, width, height, first);
                 first = false;
             }
         }

@@ -21,7 +21,8 @@ public class LightshotPatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return uri.getHost().equals("prnt.sc");
+        String host = uri.getHost();
+        return host != null && host.equals("prnt.sc");
     }
 
     @Override

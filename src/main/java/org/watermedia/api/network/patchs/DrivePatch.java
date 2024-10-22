@@ -13,7 +13,8 @@ public class DrivePatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return uri.getHost().equals("drive.google.com") && uri.getPath().startsWith("/file/d/");
+        String host = uri.getHost();
+        return host != null && host.equals("drive.google.com") && uri.getPath().startsWith("/file/d/");
     }
 
     @Override

@@ -13,7 +13,8 @@ public class DiskPatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return uri.getAuthority().equals("water");
+        String authority = uri.getAuthority();
+        return authority != null && authority.equals("water");
     }
 
     @Override

@@ -14,7 +14,6 @@ public class TwitterPatch extends AbstractPatch {
     private static final String API_URL = "https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s&lang=en";
     private static final String API_KEY = "watermedia-java-x-access-token";
     private static final Pattern ID_PATTERN = Pattern.compile("^/([A-Za-z0-9_]+)/status/(\\d+)$");
-    private static final Pattern RES_PATTERN = Pattern.compile("(\\d+)x(\\d+)");
 
     private static final String __TYPE_T = "Tweet";
     private static final String __TYTE_TOMB = "TweetTombstone";
@@ -28,7 +27,7 @@ public class TwitterPatch extends AbstractPatch {
     public boolean isValid(URI uri) {
         String host = uri.getHost();
         String path = uri.getPath();
-        return (host.equals("www.x.com") || host.equals("x.com") || host.equals("www.twitter.com") || host.equals("twitter.com"))
+        return host != null && path != null && (host.equals("www.x.com") || host.equals("x.com") || host.equals("www.twitter.com") || host.equals("twitter.com"))
                 && ID_PATTERN.matcher(path).matches();
     }
 

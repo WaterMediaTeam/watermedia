@@ -16,7 +16,9 @@ public class TwitchPatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return (uri.getHost().equals("www.twitch.tv") || uri.getHost().equals("twitch.tv")) && uri.getPath().startsWith("/");
+        String host = uri.getHost();
+        String path = uri.getPath();
+        return host != null && (host.equals("www.twitch.tv") || host.equals("twitch.tv")) && path != null && path.startsWith("/");
     }
 
     @Override

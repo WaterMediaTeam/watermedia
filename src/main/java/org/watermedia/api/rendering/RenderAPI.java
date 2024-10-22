@@ -117,7 +117,7 @@ public class RenderAPI extends WaterMediaAPI {
     }
 
     /**
-     * Uploads the buffer data to the gl texture
+     * Uploads the reversed buffer data to the gl texture
      * @param buffer ByteBuffer to be processed
      * @param texture texture ID from OpenGL
      * @param width buffer image width
@@ -125,6 +125,27 @@ public class RenderAPI extends WaterMediaAPI {
      * @param first when is the first frame first we have to initialize it
      */
     public static void uploadBuffer(ByteBuffer buffer, int texture, int width, int height, boolean first) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
+
+        if (first)
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, buffer);
+        else
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, buffer);
+    }
+
+    /**
+     * Uploads the reversed buffer data to the gl texture
+     * @param buffer ByteBuffer to be processed
+     * @param texture texture ID from OpenGL
+     * @param width buffer image width
+     * @param height buffer image height
+     * @param first when is the first frame first we have to initialize it
+     */
+    public static void uploadRevBuffer(ByteBuffer buffer, int texture, int width, int height, boolean first) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);

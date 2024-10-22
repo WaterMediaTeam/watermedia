@@ -29,7 +29,7 @@ public class YoutubePatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return (uri.getHost().endsWith("youtube.com") || uri.getHost().endsWith("youtu.be"));
+        return uri.getHost() != null && PATTERN.matcher(uri.toString()).find();
     }
 
     @Override

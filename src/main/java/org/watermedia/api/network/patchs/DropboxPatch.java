@@ -10,8 +10,9 @@ public class DropboxPatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        String q;
-        return uri.getHost().contains("dropbox.com") && ((q = uri.getQuery()) != null) && q.contains("dl=0");
+        String query = uri.getQuery();
+        String host = uri.getHost();
+        return host != null && host.contains("dropbox.com") && query != null && query.contains("dl=0");
     }
 
     @Override

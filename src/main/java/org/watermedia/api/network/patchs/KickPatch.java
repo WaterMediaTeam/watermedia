@@ -21,7 +21,8 @@ public class KickPatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return uri.getHost().endsWith(".kick.com") || uri.getHost().equals("kick.com");
+        String host = uri.getHost();
+        return host != null && (host.endsWith(".kick.com") || host.equals("kick.com"));
     }
 
     @Override

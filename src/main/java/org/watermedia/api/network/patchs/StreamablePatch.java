@@ -19,7 +19,8 @@ public class StreamablePatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        return uri.getHost().equals("streamable.com");
+        String host = uri.getHost();
+        return host != null && host.equals("streamable.com");
     }
 
     @Override

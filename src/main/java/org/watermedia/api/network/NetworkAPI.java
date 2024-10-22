@@ -65,10 +65,11 @@ public class NetworkAPI extends WaterMediaAPI {
      * @return URI instance
      */
     public static URI parseURI(String s) throws URISyntaxException {
+        File f = new File(s);
         // accept local paths as file uris
-        if (s.startsWith("c:\\") || s.startsWith("/")) {
+        if (!f.isDirectory() && f.exists())
             return new File(s).toURI();
-        }
+
         return new URI(s);
     }
 
