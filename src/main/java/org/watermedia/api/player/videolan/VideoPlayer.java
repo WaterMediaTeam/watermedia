@@ -1,5 +1,6 @@
 package org.watermedia.api.player.videolan;
 
+import org.lwjgl.opengl.GL12;
 import org.watermedia.api.rendering.RenderAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -97,7 +98,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         RenderAPI.bindTexture(this.texture);
         synchronized (renderSync) {
             if (refresh && buffers != null && buffers.length > 0) {
-                RenderAPI.uploadRevBuffer(buffers[0], texture, width, height, first);
+                RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
                 first = false;
             }
         }

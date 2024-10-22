@@ -1,5 +1,6 @@
 package org.watermedia.api.image;
 
+import org.lwjgl.opengl.GL12;
 import org.watermedia.api.image.decoders.GifDecoder;
 import org.watermedia.api.math.MathAPI;
 import org.watermedia.api.rendering.RenderAPI;
@@ -80,7 +81,7 @@ public class ImageRenderer {
     public int texture(int index) {
         if (this.textures[index] == -1) {
             this.textures[index] = RenderAPI.createTexture();
-            RenderAPI.uploadBuffer(this.images[index], this.textures[index], width, height, true);
+            RenderAPI.uploadBuffer(this.images[index], this.textures[index], GL12.GL_BGRA, width, height, true);
             this.remaining -= 1;
             if (this.remaining == 0) {
                 this.flush();
