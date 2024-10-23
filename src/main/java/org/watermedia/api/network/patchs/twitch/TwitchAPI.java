@@ -68,7 +68,7 @@ public class TwitchAPI {
     }
 
     private static JsonElement post(String id, boolean isVOD) throws IOException {
-        HttpURLConnection conn = NetTool.connect(GRAPH_QL_URL, "POST");
+        HttpURLConnection conn = NetTool.connectToHTTP(GRAPH_QL_URL, "POST");
         conn.setDoOutput(true);
         conn.setRequestProperty("Client-ID", CLIENT_ID);
         conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");

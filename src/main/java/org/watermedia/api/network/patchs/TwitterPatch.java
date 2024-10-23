@@ -38,7 +38,7 @@ public class TwitterPatch extends AbstractPatch {
             if (!m.matches()) throw new Exception("No twitter ID match found");
             final String apiURL = String.format(API_URL, m.group(2), API_KEY);
 
-            final HttpURLConnection conn = NetTool.connect(apiURL, "GET");
+            final HttpURLConnection conn = NetTool.connectToHTTP(apiURL, "GET");
 
             int code = conn.getResponseCode();
             switch (code) {

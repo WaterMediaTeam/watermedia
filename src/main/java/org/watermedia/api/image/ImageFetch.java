@@ -9,6 +9,7 @@ import org.watermedia.core.tools.NetTool;
 import org.watermedia.core.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import sun.net.www.protocol.file.FileURLConnection;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -112,16 +113,16 @@ public class ImageFetch {
     private static byte[] load(String originalUrl, URI uri) throws IOException, NoPictureException {
         CacheAPI.Entry entry = CacheAPI.getEntry(originalUrl);
         long requestTime = System.currentTimeMillis();
-        HttpURLConnection conn = NetTool.connect(uri, "GET");
+        URLConnection conn = NetTool.connectToAny(uri, "GET");
         conn.setDefaultUseCaches(false);
         conn.setRequestProperty("Accept", "image/*");
         if (entry != null && entry.getFile().exists()) {
             if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
             else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
         }
-        int code = conn.getResponseCode();
 
         try (InputStream in = conn.getInputStream()) {
+            int code = (conn instanceof HttpURLConnection) ? ((HttpURLConnection) conn).getResponseCode() : 200;
             if (code == HTTP_BAD_REQUEST || code == HTTP_FORBIDDEN) throw new NoPictureException();
             if (code != HTTP_NOT_MODIFIED) {
                 String type = conn.getContentType();
@@ -179,7 +180,15 @@ public class ImageFetch {
             CacheAPI.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
             return data;
         } finally {
-            conn.disconnect();
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).disconnect();
+            }
+            if (conn instanceof FileURLConnection) {
+                ((FileURLConnection) conn).close();
+            }
+            if (conn instanceof sun.net.www.URLConnection) {
+                ((sun.net.www.URLConnection) conn).close();
+            }
         }
     }
 

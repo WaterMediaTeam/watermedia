@@ -43,7 +43,7 @@ public class LightshotPatch extends AbstractPatch {
     }
 
     public String connectToLightshot(URI url) throws IOException {
-        HttpURLConnection conn = NetTool.connect(url, "GET");
+        HttpURLConnection conn = NetTool.connectToHTTP(url, "GET");
         int code = conn.getResponseCode();
 
         switch (code) {

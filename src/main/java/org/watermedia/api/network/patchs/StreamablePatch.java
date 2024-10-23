@@ -28,7 +28,7 @@ public class StreamablePatch extends AbstractPatch {
         String videoId = uri.getPath().substring(1);
 
         try {
-            HttpURLConnection connection = NetTool.connect(new URI(API_URL + videoId), "GET");
+            HttpURLConnection connection = NetTool.connectToHTTP(new URI(API_URL + videoId), "GET");
             if (connection.getResponseCode() == 404) throw new NullPointerException("Video doesn't exists");
 
             try (InputStreamReader is = new InputStreamReader(connection.getInputStream())) {

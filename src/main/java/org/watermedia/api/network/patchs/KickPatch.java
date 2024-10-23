@@ -59,7 +59,7 @@ public class KickPatch extends AbstractPatch {
     }
 
     public InputStream getInputStream(URI url) throws IOException {
-        HttpURLConnection conn = NetTool.connect(url, "GET");
+        HttpURLConnection conn = NetTool.connectToHTTP(url, "GET");
         conn.setRequestProperty("User-Agent", WaterMedia.USER_AGENT);
         conn.setRequestProperty("Accept", "application/json");
         try {
