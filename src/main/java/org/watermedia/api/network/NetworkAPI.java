@@ -64,13 +64,17 @@ public class NetworkAPI extends WaterMediaAPI {
      *
      * @return URI instance
      */
-    public static URI parseURI(String s) throws URISyntaxException {
+    public static URI parseURI(String s) {
         File f = new File(s);
         // accept local paths as file uris
         if (!f.isDirectory() && f.exists())
             return new File(s).toURI();
 
-        return new URI(s);
+        try {
+            return new URI(s);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
