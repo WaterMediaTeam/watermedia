@@ -71,6 +71,11 @@ public class ImageFetch implements Runnable {
             try {
                 int code = 200; // AS EXPECTED
                 conn = openConnection(patch.uri, cache);
+
+                // GENERIC
+                String type = conn.getContentType();
+                if (type == null || !type.startsWith("image/")) throw new NoImageException();
+
                 // HTTP ADDRESS
                 if (conn instanceof HttpURLConnection) {
                     HttpURLConnection http = (HttpURLConnection) conn;
@@ -81,9 +86,6 @@ public class ImageFetch implements Runnable {
                         case HTTP_NOT_FOUND:
                             throw new NoImageException();
                         case HTTP_OK:
-                            String type = conn.getContentType();
-                            if (type == null || !type.startsWith("image/")) throw new NoImageException();
-                            break;
                         case HTTP_NOT_MODIFIED:
                             break;
                         default:
