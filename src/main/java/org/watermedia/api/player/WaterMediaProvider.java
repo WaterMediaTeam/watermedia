@@ -1,9 +1,10 @@
-package org.watermedia.api.config.support;
+package org.watermedia.api.player;
 
+import com.sun.jna.Platform;
 import org.watermedia.WaterMedia;
 import org.watermedia.videolan4j.discovery.DiscoveryProvider;
 
-public class CustomDirectoryProvider implements DiscoveryProvider {
+public class WaterMediaProvider implements DiscoveryProvider {
     @Override
     public Priority priority() {
         return Priority.OVERWRITE;
@@ -11,7 +12,7 @@ public class CustomDirectoryProvider implements DiscoveryProvider {
 
     @Override
     public boolean supported() {
-        return true;
+        return Platform.isWindows() && Platform.is64Bit();
     }
 
     @Override
