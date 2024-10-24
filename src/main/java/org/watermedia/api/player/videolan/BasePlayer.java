@@ -56,7 +56,7 @@ public abstract class BasePlayer {
     protected void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
         if (PlayerAPI.isReady() && raw == null) {
             if (factory == null) factory = PlayerAPI.getFactory();
-            this.raw = new CallbackMediaPlayerComponent(factory, false, renderCallback, bufferFormatCallback);
+            this.raw = new CallbackMediaPlayerComponent(factory, true, renderCallback, bufferFormatCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(LISTENER);
         } else {
             LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
