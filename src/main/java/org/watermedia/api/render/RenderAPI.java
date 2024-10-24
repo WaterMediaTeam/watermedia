@@ -132,7 +132,6 @@ public class RenderAPI extends WaterMediaAPI {
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
-        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1); // ensuranse
 
         if (first)
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, format, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
