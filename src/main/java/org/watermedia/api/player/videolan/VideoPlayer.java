@@ -51,13 +51,10 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
     @Override
     public void display(MediaPlayer mediaPlayer, ByteBuffer[] nativeBuffers, BufferFormat bufferFormat) {
         synchronized (renderSync) {
-            this.refresh = true;
             for (ByteBuffer b: nativeBuffers) {
-                if (b.hasRemaining()) {
-                    this.refresh = false;
-                    return;
-                }
+                b.flip();
             }
+            this.refresh = true;
         }
     }
 
