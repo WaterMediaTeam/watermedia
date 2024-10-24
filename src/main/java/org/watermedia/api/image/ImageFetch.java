@@ -62,7 +62,7 @@ public class ImageFetch implements Runnable {
     public void run() {
         try {
             AbstractPatch.Result patch = NetworkAPI.patch(uri);
-            if (patch == null) throw new IllegalArgumentException("Invalaid URL");
+            if (patch == null) throw new IllegalArgumentException("Invalid URL");
             if (patch.assumeVideo) throw new VideoTypeException();
             final CacheAPI.Entry cache = CacheAPI.getEntry(uri);
 
@@ -179,6 +179,8 @@ public class ImageFetch implements Runnable {
                         // ADDRESS FOR GIF READER :) - GET FRAME DELAY
                         type = reader.getFormatName();
                         if (reader.getFormatName().equalsIgnoreCase("gif")) {
+                            // FIXME: ImageIO decoding gifs breaks malloc buffers (how the fuck is that even possible)
+                            if (true) throw new IllegalArgumentException("Gif format detected, forced-delegation to WM decoders");
                             Node root = metadata.getAsTree(format);
                             Node delayNode = fetchImageNode(root, "GraphicControlExtension");
 
@@ -201,6 +203,8 @@ public class ImageFetch implements Runnable {
 
                     if (noDelayFrames > 0) LOGGER.debug(IT, "Gif decoder reports {} frames without delaay", noDelayFrames);
                 } catch (Exception e) {
+                    if (type.equalsIgnoreCase("gif"))
+                        throw e;
                     LOGGER.error(IT, "Failed to decode image using reader {}({})", reader.getClass().getSimpleName(), reader.getFormatName());
                     LOGGER.debug(IT, "Error: ", e);
                     continue;

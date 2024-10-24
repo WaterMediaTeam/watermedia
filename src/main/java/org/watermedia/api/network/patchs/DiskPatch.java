@@ -13,8 +13,8 @@ public class DiskPatch extends AbstractPatch {
 
     @Override
     public boolean isValid(URI uri) {
-        String authority = uri.getAuthority();
-        return authority != null && authority.equals("water");
+        String scheme = uri.getScheme();
+        return scheme != null && scheme.equals("water");
     }
 
     @Override
@@ -22,13 +22,14 @@ public class DiskPatch extends AbstractPatch {
         super.patch(uri, prefQuality);
 
         try {
-            if (uri.getAuthority().equals("water")) {
+
+            if (uri.getScheme().equals("water")) {
                 switch (uri.getHost()) {
-                    case "local.wm":
+                    case "local":
                         return new AbstractPatch.Result(new File("").toPath().resolve(uri.getPath().substring(1)).toUri(), false, false);
-                    case "user.wm":
+                    case "user":
                         break; // NO-OP for now, requires security checks
-                    case "tmp.wm":
+                    case "temp":
                         return new AbstractPatch.Result(WaterMedia.getLoader().tempDir().resolve(uri.getPath().substring(1)).toUri(), false, false);
                 }
             }
