@@ -12,6 +12,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -74,16 +75,16 @@ public class ImageAPI extends WaterMediaAPI {
     /**
      * Gets a cache for a URL
      * if no exists then creates an unready one
-     * @param originalURL url of the picture
+     * @param uri url of the picture
      * @param renderThreadEx concurrent executor
      * @return cache instance, if url was null or empty then returns an empty instance
      */
-    public static ImageCache getCache(String originalURL, Executor renderThreadEx) {
-        if (originalURL == null || originalURL.isEmpty()) return ImageCache.EMPTY_INSTANCE;
+    public static ImageCache getCache(URI uri, Executor renderThreadEx) {
+        if (uri == null) return ImageCache.EMPTY_INSTANCE;
 
-        ImageCache image = ImageCache.CACHE.get(originalURL);
-        image = (image == null) ? new ImageCache(originalURL, renderThreadEx) : image.use();
-        ImageCache.CACHE.put(originalURL, image);
+        ImageCache image = ImageCache.CACHE.get(uri);
+        image = (image == null) ? new ImageCache(uri, renderThreadEx) : image.use();
+        ImageCache.CACHE.put(uri, image);
         return image;
     }
 
@@ -136,6 +137,28 @@ public class ImageAPI extends WaterMediaAPI {
     public static ImageRenderer renderer(BufferedImage image, boolean absolute) {
         if (absolute) return new ImageRenderer(image);
         return new ImageRenderer.Absolute(image);
+    }
+
+    /**
+     * Creates an instance of an ImageRenderer only for static pictures
+     * @param image image to use
+     * @param delays delays between images
+     * @return built instance
+     */
+    public static ImageRenderer renderer(BufferedImage[] image, long[] delays) {
+        return renderer(image, delays, false);
+    }
+
+    /**
+     * Creates an instance of an ImageRenderer only for static pictures
+     * @param image image to use
+     * @param delays delays between images
+     * @param absolute disabled flush and release methods, by default false
+     * @return built instance
+     */
+    public static ImageRenderer renderer(BufferedImage[] image, long[] delays, boolean absolute) {
+        if (absolute) return new ImageRenderer(image, delays);
+        return new ImageRenderer.Absolute(image, delays);
     }
 
     /**

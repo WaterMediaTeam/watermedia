@@ -39,6 +39,26 @@ public class ImageRenderer {
 
     /**
      * creates a new instance of an ImageRenderer
+     * @param images picture to use
+     * method is going to begin package-protected
+     */
+    ImageRenderer(BufferedImage[] images, long[] delay) {
+        if (images == null) throw new NullPointerException();
+        this.images = new ByteBuffer[images.length];
+        this.textures = new int[images.length];
+        this.delay = delay;
+        for (int i = 0; i < images.length; i++) {
+            this.images[i] = RenderAPI.getImageBuffer(images[i]);
+            this.textures[i] = -1;
+        }
+        this.duration = DataTool.sumArr(delay);
+        this.width = images[0].getWidth();
+        this.height = images[0].getHeight();
+        this.remaining = this.images.length;
+    }
+
+    /**
+     * creates a new instance of an ImageRenderer
      * @param decoder picture to use
      * method is going to begin package-protected
      */
@@ -164,6 +184,10 @@ public class ImageRenderer {
 
         Absolute(BufferedImage image) {
             super(image);
+        }
+
+        Absolute(BufferedImage[] image, long[] delays) {
+            super(image, delays);
         }
 
         Absolute(GifDecoder decoder) {

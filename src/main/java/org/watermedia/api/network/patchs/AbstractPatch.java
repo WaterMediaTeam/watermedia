@@ -56,14 +56,14 @@ public abstract class AbstractPatch {
     }
 
     public static class Result {
-        public final URI url;
+        public final URI uri;
         public URI audioUrl;
         public final Quality quality;
         public final boolean assumeStream;
         public final boolean assumeVideo;
 
-        public Result(URI url, boolean assumeVideo, boolean assumeStream) {
-            this.url = url;
+        public Result(URI uri, boolean assumeVideo, boolean assumeStream) {
+            this.uri = uri;
             this.quality = null;
             this.assumeVideo = assumeVideo;
             this.assumeStream = assumeStream;
@@ -77,7 +77,7 @@ public abstract class AbstractPatch {
         @Override
         public String toString() {
             return "Result{" +
-                    "url=" + url +
+                    "url=" + uri +
                     ", audioUrl=" + audioUrl +
                     ", quality=" + quality +
                     ", assumeStream=" + assumeStream +

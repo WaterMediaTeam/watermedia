@@ -3,10 +3,7 @@ package org.watermedia.api.image.decoders;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -296,6 +293,10 @@ public class GifDecoder {
             is.close();
         } catch (IOException e) {}
         return status;
+    }
+
+    public int read(byte[] data) {
+        return read(new ByteArrayInputStream(data));
     }
     
     /** Reads GIF image from stream

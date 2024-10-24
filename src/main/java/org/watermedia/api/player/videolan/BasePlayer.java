@@ -70,7 +70,7 @@ public abstract class BasePlayer {
             AbstractPatch.Result result = NetworkAPI.patch(url);
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
-            this.url = result.url;
+            this.url = result.uri;
             this.audioUrl = result.audioUrl;
             this.live = result.assumeStream;
             return true;

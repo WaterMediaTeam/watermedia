@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
+import java.net.URI;
 import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -33,7 +34,7 @@ public class TestApp implements Executor {
     // The media loader
     private static final String NAME = "TestApp";
 
-    public void run(String url) {
+    public void run(URI url) {
         try {
             WaterMedia.prepare(ILoader.DEFAULT).start();
         } catch (Exception e) {
@@ -158,7 +159,7 @@ public class TestApp implements Executor {
     }
 
     public static void main(String[] args) {
-        new TestApp().run(args[0]);
+        new TestApp().run(URI.create(args[0]));
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -22,7 +23,7 @@ import static org.watermedia.WaterMedia.LOGGER;
 @SuppressWarnings({"unused"})
 public class CacheAPI extends WaterInternalAPI {
     private static final Marker IT = MarkerManager.getMarker(CacheAPI.class.getSimpleName());
-    private static final Map<String, Entry> ENTRIES = new HashMap<>();
+    private static final Map<URI, Entry> ENTRIES = new HashMap<>();
 
     private static File dir;
     private static File index;
@@ -32,9 +33,9 @@ public class CacheAPI extends WaterInternalAPI {
         try(DataOutputStream out = new DataOutputStream(new GZIPOutputStream(Files.newOutputStream(index.toPath())))) {
             out.writeInt(ENTRIES.size());
 
-            for (Map.Entry<String, Entry> mapEntry : ENTRIES.entrySet()) {
+            for (Map.Entry<URI, Entry> mapEntry : ENTRIES.entrySet()) {
                 Entry entry = mapEntry.getValue();
-                out.writeUTF(entry.getUrl());
+                out.writeUTF(entry.getUri().toString());
                 out.writeUTF(entry.getTag() == null ? "" : entry.getTag());
                 out.writeLong(entry.getTime());
                 out.writeLong(entry.getExpireTime());
@@ -45,21 +46,21 @@ public class CacheAPI extends WaterInternalAPI {
         return false;
     }
 
-    private static File entry$getFile(String url) {
+    private static File entry$getFile(URI url) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			return new File(dir, DataTool.encodeHexString(digest.digest(url.getBytes(StandardCharsets.UTF_8))));
+			return new File(dir, DataTool.encodeHexString(digest.digest(url.toString().getBytes(StandardCharsets.UTF_8))));
 		} catch (NoSuchAlgorithmException e) { LOGGER.error(IT, "Failed to initalize digest", e); }
 
 		// Fallback to old naming
-		return new File(dir, Base64.getEncoder().encodeToString(url.getBytes()));
+		return new File(dir, Base64.getEncoder().encodeToString(url.toString().getBytes()));
     }
 
-    public static void saveFile(String url, String tag, long time, long expireTime, byte[] data) {
+    public static void saveFile(URI url, String tag, long time, long expireTime, byte[] data) {
         synchronized (ENTRIES) {
             Entry entry = new Entry(url, tag, time, expireTime);
             boolean saved = false;
-            File file = entry$getFile(entry.url);
+            File file = entry$getFile(entry.uri);
 
             try (OutputStream out = Files.newOutputStream(file.toPath())) {
                 out.write(data);
@@ -75,7 +76,7 @@ public class CacheAPI extends WaterInternalAPI {
         }
     }
 
-    public static Entry getEntry(String url) {
+    public static Entry getEntry(URI url) {
         synchronized (ENTRIES) {
             return ENTRIES.get(url);
         }
@@ -83,11 +84,11 @@ public class CacheAPI extends WaterInternalAPI {
 
     public static void updateEntry(Entry fresh) {
         synchronized (ENTRIES) {
-            ENTRIES.put(fresh.url, fresh);
+            ENTRIES.put(fresh.uri, fresh);
         }
     }
 
-    public static void deleteEntry(String url) {
+    public static void deleteEntry(URI url) {
         synchronized (ENTRIES) {
             ENTRIES.remove(url);
             File file = entry$getFile(url);
@@ -120,12 +121,12 @@ public class CacheAPI extends WaterInternalAPI {
                 int length = stream.readInt();
 
                 for (int i = 0; i < length; i++) {
-                    String url = stream.readUTF();
+                    String uri = stream.readUTF();
                     String tag = stream.readUTF();
                     long time = stream.readLong();
                     long expireTime = stream.readLong();
-                    Entry entry = new Entry(url, !tag.isEmpty() ? tag : null, time, expireTime);
-                    ENTRIES.put(entry.getUrl(), entry);
+                    Entry entry = new Entry(new URI(uri), !tag.isEmpty() ? tag : null, time, expireTime);
+                    ENTRIES.put(entry.getUri(), entry);
                 }
             } catch (Exception e) {
                 LOGGER.error(IT, "Failed to load indexes", e);
@@ -140,13 +141,13 @@ public class CacheAPI extends WaterInternalAPI {
     }
 
     public static final class Entry {
-        private final String url;
+        private final URI uri;
         private String tag;
         private long time;
         private long expireTime;
 
-        public Entry(String url, String tag, long time, long expireTime) {
-            this.url = url;
+        public Entry(URI uri, String tag, long time, long expireTime) {
+            this.uri = uri;
             this.tag = tag;
             this.time = time;
             this.expireTime = expireTime;
@@ -155,10 +156,13 @@ public class CacheAPI extends WaterInternalAPI {
         public void setTag(String tag) { this.tag = tag; }
         public void setTime(long time) { this.time = time; }
         public void setExpireTime(long expireTime) { this.expireTime = expireTime; }
-        public String getUrl() { return url; }
+        public URI getUri() { return uri; }
         public String getTag() { return tag; }
         public long getTime() { return time; }
         public long getExpireTime() { return expireTime; }
-        public File getFile() { return entry$getFile(url); }
+        public boolean isExpired() {
+            return System.currentTimeMillis() > expireTime;
+        }
+        public File getFile() { return entry$getFile(uri); }
     }
 }

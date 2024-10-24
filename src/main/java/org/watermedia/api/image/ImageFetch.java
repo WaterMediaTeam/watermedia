@@ -1,23 +1,26 @@
 package org.watermedia.api.image;
 
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.watermedia.api.cache.CacheAPI;
 import org.watermedia.api.image.decoders.GifDecoder;
 import org.watermedia.api.network.NetworkAPI;
 import org.watermedia.api.network.patchs.AbstractPatch;
 import org.watermedia.core.tools.DataTool;
-import org.watermedia.core.tools.NetTool;
 import org.watermedia.core.tools.ThreadTool;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import sun.net.www.protocol.file.FileURLConnection;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,204 +28,279 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static org.watermedia.WaterMedia.*;
 import static java.net.HttpURLConnection.*;
+import static org.watermedia.api.image.ImageAPI.IT;
 
-/**
- * Tool to fetch new images from internet
- * stores all loaded pictures in our cache to skip downloading image 2 times
- */
-public class ImageFetch {
-    private static final Marker IT = MarkerManager.getMarker("ImageAPI");
+public class ImageFetch implements Runnable {
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("ImageFetch-Worker", Thread.NORM_PRIORITY + 1));
 
-    private final String url;
-    private TaskSuccessful successful;
-    private TaskFailed failed;
+    public final URI uri;
+    public BiConsumer<ImageRenderer, Boolean> successConsumer;
+    public BiConsumer<Exception, Boolean> errConsumer;
 
-    /**
-     * Creates a new Fetch instance.
-     * The Task is ASYNC by default.
-     * You should concern about concurrency on callbacks
-     * @param url string url to fetch
-     */
-    public ImageFetch(String url) { this.url = url; }
 
-    /**
-     * Adds a new success callback
-     * @param task callback
-     * @return current instance
-     */
-    public ImageFetch setOnSuccessCallback(TaskSuccessful task) { successful = task; return this; }
+    public ImageFetch(URI uri) {
+        this.uri = uri;
+    }
 
-    /**
-     * Adds a new failed callback
-     * @param task callback
-     * @return current instance
-     */
-    public ImageFetch setOnFailedCallback(TaskFailed task) { failed = task; return this; }
+    public ImageFetch setSuccessCallback(BiConsumer<ImageRenderer, Boolean> consumer) {
+        this.successConsumer = consumer;
+        return this;
+    }
 
-    /**
-     * Start image fetch
-     * result is fired on callbacks
-     */
-    public void start() { EX.execute(this::run); }
-    private void run() {
+    public ImageFetch setErrorCallback(BiConsumer<Exception, Boolean> consumer) {
+        this.errConsumer = consumer;
+        return this;
+    }
+
+    @Override
+    public void run() {
         try {
-            AbstractPatch.Result result = NetworkAPI.patch(url);
-            if (result == null) throw new IllegalArgumentException("Invalid URL");
-            if (result.assumeVideo) throw new NoPictureException();
+            AbstractPatch.Result patch = NetworkAPI.patch(uri);
+            if (patch == null) throw new IllegalArgumentException("Invalaid URL");
+            if (patch.assumeVideo) throw new VideoTypeException();
+            final CacheAPI.Entry cache = CacheAPI.getEntry(uri);
 
-            byte[] data = load(url, result.url);
-            String type = readType(data);
-
-            try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
-                if (type != null && type.equalsIgnoreCase("gif")) {
-                    GifDecoder gif = new GifDecoder();
-                    int status = gif.read(in);
-
-                    if (status == GifDecoder.STATUS_OK) {
-                        if (successful != null) successful.run(ImageAPI.renderer(gif));
-                    } else {
-                        LOGGER.error(IT, "Failed to read gif: {}", status);
-                        throw new GifDecodingException();
-                    }
-                } else {
-                    try {
-                        BufferedImage image = ImageIO.read(in);
-                        if (image != null) {
-                            if (successful != null) successful.run(ImageAPI.renderer(image));
-                        }
-                    } catch (IOException e1) {
-                        LOGGER.error(IT, "Failed to parse BufferedImage from stream", e1);
-                        throw e1;
+            // READ FROM WHENEVER IT WAS LOCATED
+            URLConnection conn = null;
+            try {
+                int code = 200; // AS EXPECTED
+                conn = openConnection(patch.uri, cache);
+                // HTTP ADDRESS
+                if (conn instanceof HttpURLConnection) {
+                    HttpURLConnection http = (HttpURLConnection) conn;
+                    code = http.getResponseCode();
+                    switch (code) {
+                        case HTTP_BAD_REQUEST:
+                        case HTTP_FORBIDDEN:
+                        case HTTP_NOT_FOUND:
+                            throw new NoImageException();
+                        case HTTP_OK:
+                            String type = conn.getContentType();
+                            if (type == null || !type.startsWith("image/")) throw new NoImageException();
+                            break;
+                        case HTTP_NOT_MODIFIED:
+                            break;
+                        default:
+                            throw new IllegalStateException("HTTP Server responses an invalid status code: " + code);
                     }
                 }
+
+                // NOT MODIFIED SERVER
+                if (cache != null && code == HTTP_NOT_MODIFIED) {
+                    // JUST REFRESH ENTRY DATA, MAYBE EXPIRATION TIME IS EXTENDED
+                    CacheAPI.updateEntry(new CacheAPI.Entry(uri, getEtagOr(conn, cache.getTag()), getLastModificationTime(conn), getExpirationTime(conn)));
+
+                    // CONSUME
+                    successConsumer.accept(readImages(cache), true);
+                } else { // MODIFIED OR WHATEVER
+                    // READ DATA FROM SOURCE
+                    InputStream in = conn.getInputStream();
+                    byte[] data = DataTool.readAllBytes(in);
+
+                    // STORE CACHE
+                    CacheAPI.saveFile(uri, getEtagOr(conn, cache != null ? cache.getTag() : ""), getLastModificationTime(conn), getExpirationTime(conn), data);
+
+                    LOGGER.debug(IT, "Successfully downloaded image from '{}'", uri);
+
+                    // CONSUME
+                    successConsumer.accept(readImages(data), false);
+
+                    // CLOSE
+                    in.close();
+                }
+            } catch (Exception e) {
+                // READ FROM CACHE AS LAST RESORT
+                if (cache == null || !cache.getFile().exists()) {
+                    throw e;
+                }
+
+                LOGGER.error(IT, "Failed to fetch image, delegating to cache files");
+
+                successConsumer.accept(readImages(cache), true);
+            } finally {
+                if (conn instanceof HttpURLConnection) ((HttpURLConnection) conn).disconnect();
             }
+        } catch (NoImageException | InternalDecoderException e) {
+            LOGGER.error(IT, "Invalid image source from '{}'", uri, e);
+            errConsumer.accept(e, false);
+        } catch (VideoTypeException e) {
+            LOGGER.debug(IT, "Detected a video type from '{}'", uri, e);
+            errConsumer.accept(e, true);
         } catch (Exception e) {
-            if (!(e instanceof NoPictureException)) {
-                LOGGER.error(IT, "An exception occurred while loading image", e);
-            }
-            if (failed != null) failed.run(e);
-            CacheAPI.deleteEntry(url);
+            LOGGER.error(IT, "Unhandled exception occurred while loading image from '{}'", uri, e);
+            errConsumer.accept(e, false);
+        } catch (Throwable t) {
+            LOGGER.error(IT, "Fatal exception occurred while loading image from '{}'", uri, t);
+            errConsumer.accept(new Exception("Fatal exception running image loading", t), false);
         }
     }
 
-    private static byte[] load(String originalUrl, URI uri) throws IOException, NoPictureException {
-        CacheAPI.Entry entry = CacheAPI.getEntry(originalUrl);
-        long requestTime = System.currentTimeMillis();
-        URLConnection conn = NetTool.connectToAny(uri, "GET");
-        conn.setDefaultUseCaches(false);
-        conn.setRequestProperty("Accept", "image/*");
-        if (entry != null && entry.getFile().exists()) {
-            if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
-            else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
-        }
+    public void start() {
+        EX.execute(this);
+    }
 
-        try (InputStream in = conn.getInputStream()) {
-            int code = (conn instanceof HttpURLConnection) ? ((HttpURLConnection) conn).getResponseCode() : 200;
-            if (code == HTTP_BAD_REQUEST || code == HTTP_FORBIDDEN) throw new NoPictureException();
-            if (code != HTTP_NOT_MODIFIED) {
-                String type = conn.getContentType();
-                if (type == null) throw new ConnectException();
-                if (!type.startsWith("image/")) throw new NoPictureException();
-            }
-
-            String tag = conn.getHeaderField("ETag");
-            long lastTimestamp, expTimestamp = -1;
-            String maxAge = conn.getHeaderField("max-age");
-
-            // EXPIRATION GETTER FIRST
-            if (maxAge != null && !maxAge.isEmpty()) {
-                long parsed = DataTool.parseLongOr(maxAge, -1);
-                if (parsed != -1)
-                    expTimestamp = requestTime + Long.parseLong(maxAge) * 100;
-            }
-
-            // EXPIRATION GETTER SECOND WAY
-            String expires = conn.getHeaderField("Expires");
-            if (expires != null && !expires.isEmpty()) {
-                try {
-                    expTimestamp = FORMAT.parse(expires).getTime();
-                } catch (ParseException | NumberFormatException ignored) {}
-            }
-            // LAST TIMESTAMP
-            String lastMod = conn.getHeaderField("Last-Modified");
-            if (lastMod != null && !lastMod.isEmpty()) {
-                try {
-                    lastTimestamp = FORMAT.parse(lastMod).getTime();
-                } catch (ParseException | NumberFormatException e) {
-                    lastTimestamp = requestTime;
-                }
-            } else {
-                lastTimestamp = requestTime;
-            }
-
-            if (entry != null) {
-                String freshTag = entry.getTag();
-                if (tag != null && !tag.isEmpty()) freshTag = tag;
-
-                if (code == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                    File file = entry.getFile();
-
-                    if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
-                        return DataTool.readAllBytes(fileStream);
-                    } finally {
-                        CacheAPI.updateEntry(new CacheAPI.Entry(originalUrl, freshTag, lastTimestamp, expTimestamp));
-                    }
-                }
-            }
-
-
+    public ImageRenderer readImages(CacheAPI.Entry cache) throws Exception {
+        try (InputStream in = Files.newInputStream(cache.getFile().toPath())) {
             byte[] data = DataTool.readAllBytes(in);
-            CacheAPI.saveFile(originalUrl, tag, lastTimestamp, expTimestamp, data);
-            return data;
-        } finally {
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).disconnect();
-            }
-            if (conn instanceof FileURLConnection) {
-                ((FileURLConnection) conn).close();
-            }
-            if (conn instanceof sun.net.www.URLConnection) {
-                ((sun.net.www.URLConnection) conn).close();
-            }
+            return readImages(data);
         }
     }
 
-    private static String readType(byte[] input) throws IOException {
-        try (InputStream in = new ByteArrayInputStream(input)) {
-            return readType(in);
-        }
-    }
+    public ImageRenderer readImages(byte[] data) throws Exception {
+        String type = "";
 
-    private static String readType(InputStream input) throws IOException {
-        ImageReader reader = null;
-        try(ImageInputStream stream = ImageIO.createImageInputStream(input)) {
+        try (ImageInputStream stream = ImageIO.createImageInputStream(new ByteArrayInputStream(data))) {
             Iterator<ImageReader> iterator = ImageIO.getImageReaders(stream);
 
-            if (!iterator.hasNext()) return null;
+            // IMAGE IO DECODING
+            while (iterator.hasNext()) {
+                ImageReader reader = iterator.next();
 
-            reader = iterator.next();
-            if (reader.getFormatName().equalsIgnoreCase("gif")) return "gif";
+                reader.setInput(stream, false, false);
+                int frames = reader.getNumImages(true);
 
-            ImageReadParam param = reader.getDefaultReadParam();
-            reader.setInput(stream, true, true);
-            reader.read(0, param);
-        } catch (IOException e) {
-            LOGGER.error(IT, "Failed to parse input format", e);
-        } finally {
-            if (reader != null) reader.dispose();
+                BufferedImage[] images = new BufferedImage[frames];
+                long[] delay = new long[frames];
+                long lastDelay = 10; // assume delay is bad placed
+                int noDelayFrames = 0;
+
+                // ITERATE ALL FRAMES
+                try { // BUT MAY FAIL AND NEXT READER WILL WORK
+                    for (int i = 0; i < frames; i++) {
+                        IIOMetadata metadata = reader.getImageMetadata(i);
+                        String format = metadata.getNativeMetadataFormatName();
+
+                        // ADDRESS FOR GIF READER :) - GET FRAME DELAY
+                        type = reader.getFormatName();
+                        if (reader.getFormatName().equalsIgnoreCase("gif")) {
+                            Node root = metadata.getAsTree(format);
+                            Node delayNode = fetchImageNode(root, "GraphicControlExtension");
+
+                            if (delayNode != null) {
+                                NamedNodeMap attributes = delayNode.getAttributes();
+                                Node delayTimeNode = attributes.getNamedItem("delayTime");
+                                int delayTime = Integer.parseInt(delayTimeNode.getNodeValue());
+
+                                // STORE DELAY
+                                lastDelay = delay[i] = delayTime * 10L;
+                            } else {
+                                delay[i] = lastDelay;
+                                noDelayFrames++;
+                            }
+                        }
+
+                        // STORE FRAME
+                        images[i] = reader.read(i);
+                    }
+
+                    if (noDelayFrames > 0) LOGGER.debug(IT, "Gif decoder reports {} frames without delaay", noDelayFrames);
+                } catch (Exception e) {
+                    LOGGER.error(IT, "Failed to decode image using reader {}({})", reader.getClass().getSimpleName(), reader.getFormatName());
+                    LOGGER.debug(IT, "Error: ", e);
+                    continue;
+                }
+
+                return ImageAPI.renderer(images, delay);
+            }
+
+            throw new IOException("ImageFetcher was unable to read the image");
+        } catch (Exception e) {
+            if (!type.equalsIgnoreCase("gif"))
+                throw e;
+
+            LOGGER.error(IT, "Failed to decode gif via ImageIO, delegating to WaterMedia decoders");
+            LOGGER.debug(IT, "Error: ", e);
+
+            // IF WE FAILED TO DECODE GIF, DELEGATE TO OUR GIF DECODER (IDC ABOUT THE GIF ERROR)
+            GifDecoder gif = new GifDecoder();
+            int status = gif.read(data);
+
+            if (status == GifDecoder.STATUS_OK) {
+                return ImageAPI.renderer(gif);
+            } else {
+                throw new InternalDecoderException("Failed to decode gif, status code: " + status);
+            }
         }
-        input.reset();
-        if (reader == null) return null;
-        return reader.getFormatName();
     }
 
-    public static final class NoPictureException extends Exception {}
-    public static final class GifDecodingException extends Exception {}
-    public interface TaskSuccessful { void run(ImageRenderer renderer); }
-    public interface TaskFailed { void run(Exception e); }
+    private static String getEtagOr(URLConnection conn, String alt) {
+        String ETag = conn.getHeaderField("ETag");
+        if (ETag == null || ETag.isEmpty()) return alt;
+        return ETag;
+    }
+
+    private static long getExpirationTime(URLConnection conn) {
+        long time;
+
+        // FIRST WAY
+        String maxAge = conn.getHeaderField("max-age");
+        if (maxAge == null || maxAge.isEmpty()) maxAge = "-1";
+
+        long parsed = DataTool.parseLongOr(maxAge, -1);
+        time = parsed == -1 ? -1 : System.currentTimeMillis() + (parsed * 100);
+        if (time != -1)
+            return time;
+
+        // SECOND WAY
+        String expires = conn.getHeaderField("Expires");
+        if (expires != null && !expires.isEmpty()) {
+            try {
+                time = FORMAT.parse(expires).getTime();
+            } catch (ParseException | NumberFormatException ignored) {}
+        }
+
+        return time;
+    }
+
+    private static long getLastModificationTime(URLConnection conn) {
+        long time = -1;
+        String date = conn.getHeaderField("Last-Modified");
+        if (date != null && !date.isEmpty()) {
+            try {
+                time = FORMAT.parse(date).getTime();
+            } catch (ParseException | NumberFormatException ignored) {}
+        }
+
+        return time;
+    }
+
+    private static Node fetchImageNode(Node root, String nodeName) {
+        if (root.getNodeName().equalsIgnoreCase(nodeName))
+            return root;
+
+        Node child = root.getFirstChild();
+        while (child != null) {
+            Node result = fetchImageNode(child, nodeName);
+            if (result != null) {
+                return result;
+            }
+            child = child.getNextSibling();
+        }
+        return null;
+    }
+
+    private static URLConnection openConnection(URI uri, CacheAPI.Entry cache) throws IOException {
+        URLConnection conn = uri.toURL().openConnection();
+        conn.setDefaultUseCaches(false);
+        conn.setRequestProperty("Accept", "image/*");
+        if (cache != null && cache.getFile().exists()) {
+            if (cache.getTag() != null) conn.setRequestProperty("If-None-Match", cache.getTag());
+            else if (cache.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(cache.getTime())));
+        }
+        return conn;
+    }
+
+    private static class InternalDecoderException extends Exception {
+        public InternalDecoderException(String msg) {
+            super(msg);
+        }
+    }
+    private static class VideoTypeException extends Exception {}
+    private static class NoImageException extends Exception {}
 }

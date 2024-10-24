@@ -1,5 +1,6 @@
 package org.watermedia.api.image;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,20 +12,8 @@ import java.util.function.Consumer;
 import static org.watermedia.WaterMedia.LOGGER;
 
 public class ImageCache {
-    static final Map<String, ImageCache> CACHE = new HashMap<>();
+    static final Map<URI, ImageCache> CACHE = new HashMap<>();
     static final ImageCache EMPTY_INSTANCE = new ImageCache(null);
-
-    /**
-     * Gets a cache for a URL
-     * if no exists then creates an unready one
-     * @param originalURL url of the picture
-     * @param renderThreadEx concurrent executor
-     * @deprecated use instead {@link ImageAPI#getCache(String, Executor)}
-     * @return cache instance
-     */
-    static ImageCache get(String originalURL, Executor renderThreadEx) {
-        return ImageAPI.getCache(originalURL, renderThreadEx);
-    }
 
     /**
      * Reloads all ImageCache instanced
@@ -35,38 +24,42 @@ public class ImageCache {
         CACHE.values().forEach(ImageCache::reload);
     }
 
-    // INFO;
-    public final String url;
+    /**
+     * @nullable
+     */
+    public final URI uri;
     private final ImageFetch fetch;
     private final Executor renderThreadEx;
+    private final AtomicInteger uses = new AtomicInteger(1);
 
     // STATUS
-    private volatile boolean video = false;
-    private final AtomicInteger uses = new AtomicInteger(1);
     private volatile Status status = Status.WAITING;
+    private volatile boolean video = false;
+    private volatile boolean cache = false;
 
     private volatile ImageRenderer renderer;
     private volatile Exception exception;
 
     private final List<Consumer<ImageRenderer>> releaseListeners = new ArrayList<>();
 
-    ImageCache(String url, Executor runnable) {
-        this.url = url;
+    ImageCache(URI uri, Executor runnable) {
+        this.uri = uri;
         this.renderThreadEx = runnable;
-        this.fetch = new ImageFetch(url);
-        CACHE.put(url, this);
+        this.fetch = new ImageFetch(uri);
+        CACHE.put(uri, this);
     }
 
     ImageCache(ImageRenderer renderer) {
-        this.url = "";
+        this.uri = URI.create("water://media/");
         this.fetch = null;
         this.renderThreadEx = null;
         this.renderer = renderer;
     }
 
+    public boolean isCache() { return cache; }
     public boolean isVideo() { return video; }
     public boolean isUsed() { return uses.get() > 0; }
-    public ImageCache use() { uses.getAndIncrement(); return this; }
+    public ImageCache use() { uses.incrementAndGet(); return this; }
     public ImageCache deuse() {
         if (uses.decrementAndGet() <= 0) release();
         return this;
@@ -104,7 +97,7 @@ public class ImageCache {
         return renderer;
     }
 
-    public ImageCache addOnReleaseListener(Consumer<ImageRenderer> consumer) {
+    public ImageCache addReleaseCallback(Consumer<ImageRenderer> consumer) {
         this.releaseListeners.add(consumer);
         return this;
     }
@@ -114,22 +107,23 @@ public class ImageCache {
         synchronized (fetch) {
             if (!status.equals(Status.WAITING)) return;
             this.status = Status.LOADING;
-            fetch.setOnSuccessCallback(imageRenderer -> {
+            fetch.setSuccessCallback((imageRenderer, isCache) -> {
                 synchronized (fetch) {
                     if (!this.status.equals(Status.LOADING)) {
                         renderThreadEx.execute(imageRenderer::release);
                         return;
                     }
                     this.renderer = imageRenderer;
+                    this.cache = isCache;
                     this.video = false;
                     this.exception = null;
                     this.status = Status.READY;
                 }
-            }).setOnFailedCallback(exception -> {
+            }).setErrorCallback((exception, isVideo) -> {
                 synchronized (fetch) {
                     this.renderer = null;
                     if (!this.status.equals(Status.LOADING)) return;
-                    if (exception instanceof ImageFetch.NoPictureException) {
+                    if (isVideo) {
                         this.video = true;
                         this.exception = null;
                         this.status = Status.READY;
@@ -159,7 +153,7 @@ public class ImageCache {
         if (fetch == null) return;
         synchronized (fetch) {
             if (uses.get() > 0) {
-                LOGGER.warn(ImageAPI.IT, "Cache of '{}' is released with {} usages remaining", this.url, this.uses.get());
+                LOGGER.warn(ImageAPI.IT, "Cache of '{}' is released with {} usages remaining", this.uri, this.uses.get());
             }
 
             ImageRenderer imageRenderer = this.renderer;
@@ -169,7 +163,7 @@ public class ImageCache {
                 this.renderThreadEx.execute(imageRenderer::release);
             }
             this.status = Status.FORGOTTEN;
-            CACHE.remove(url);
+            CACHE.remove(uri);
         }
     }
 
