@@ -1,7 +1,7 @@
 package org.watermedia.api.player.videolan;
 
 import org.lwjgl.opengl.GL12;
-import org.watermedia.api.rendering.RenderAPI;
+import org.watermedia.api.render.RenderAPI;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;

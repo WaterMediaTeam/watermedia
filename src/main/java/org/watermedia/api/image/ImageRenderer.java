@@ -3,7 +3,7 @@ package org.watermedia.api.image;
 import org.lwjgl.opengl.GL12;
 import org.watermedia.api.image.decoders.GifDecoder;
 import org.watermedia.api.math.MathAPI;
-import org.watermedia.api.rendering.RenderAPI;
+import org.watermedia.api.render.RenderAPI;
 import org.watermedia.core.tools.DataTool;
 
 import java.awt.image.BufferedImage;

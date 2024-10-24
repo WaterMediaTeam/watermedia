@@ -1,4 +1,4 @@
-package org.watermedia.api.rendering.memory;
+package org.watermedia.api.render.memory;
 
 import org.lwjgl.system.MemoryUtil;
 

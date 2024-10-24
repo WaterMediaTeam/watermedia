@@ -2,4 +2,4 @@ org.watermedia.api.player.PlayerAPI
 org.watermedia.api.cache.CacheAPI
 org.watermedia.api.image.ImageAPI
 org.watermedia.api.network.NetworkAPI
-org.watermedia.api.rendering.RenderAPI
+org.watermedia.api.render.RenderAPI

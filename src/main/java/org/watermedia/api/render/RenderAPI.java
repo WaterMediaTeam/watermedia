@@ -1,7 +1,7 @@
-package org.watermedia.api.rendering;
+package org.watermedia.api.render;
 
 import org.watermedia.api.WaterMediaAPI;
-import org.watermedia.api.rendering.memory.MemoryAlloc;
+import org.watermedia.api.render.memory.MemoryAlloc;
 import org.watermedia.loaders.ILoader;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.Marker;
@@ -132,6 +132,7 @@ public class RenderAPI extends WaterMediaAPI {
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, GL11.GL_ZERO);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, GL11.GL_ZERO);
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1); // ensuranse
 
         if (first)
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, format, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
