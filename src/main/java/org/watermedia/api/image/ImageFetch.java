@@ -74,7 +74,15 @@ public class ImageFetch implements Runnable {
 
                 // GENERIC
                 String type = conn.getContentType();
-                if (type == null || !type.startsWith("image/")) throw new NoImageException();
+                if (type != null) {
+                    if (type.startsWith("video"))
+                        throw new VideoTypeException();
+
+                    if (!type.startsWith("image"))
+                        throw new NoImageException();
+                } else {
+                    throw new NoImageException();
+                }
 
                 // HTTP ADDRESS
                 if (conn instanceof HttpURLConnection) {
