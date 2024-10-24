@@ -77,10 +77,10 @@ public class ImageAPI extends WaterMediaAPI {
      * if no exists then creates an unready one
      * @param uri url of the picture
      * @param renderThreadEx concurrent executor
-     * @return cache instance, if url was null or empty then returns an empty instance
+     * @return cache instance, if url was null or empty then returns also null
      */
     public static ImageCache getCache(URI uri, Executor renderThreadEx) {
-        if (uri == null) return ImageCache.EMPTY_INSTANCE;
+        if (uri == null) return null;
 
         ImageCache image = ImageCache.CACHE.get(uri);
         image = (image == null) ? new ImageCache(uri, renderThreadEx) : image.use();
@@ -116,7 +116,7 @@ public class ImageAPI extends WaterMediaAPI {
      * This might cause lag
      */
     public static void reloadCache() {
-        for (ImageCache imageCache : ImageCache.CACHE.values()) { imageCache.reload(); }
+        for (ImageCache imageCache: ImageCache.CACHE.values()) { imageCache.reload(); }
     }
 
     /**

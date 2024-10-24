@@ -13,16 +13,6 @@ import static org.watermedia.WaterMedia.LOGGER;
 
 public class ImageCache {
     static final Map<URI, ImageCache> CACHE = new HashMap<>();
-    static final ImageCache EMPTY_INSTANCE = new ImageCache(null);
-
-    /**
-     * Reloads all ImageCache instanced
-     * This might cause lag
-     * @deprecated use instead {@link ImageAPI#reloadCache()}
-     */
-    static void reloadAll() {
-        CACHE.values().forEach(ImageCache::reload);
-    }
 
     /**
      * @nullable
