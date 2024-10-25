@@ -20,6 +20,7 @@
 package org.watermedia.videolan4j.support.version;
 
 import org.watermedia.videolan4j.binding.lib.LibVlc;
+import org.watermedia.videolan4j.tools.Version;
 
 /**
  * Holder for runtime LibVLC version information.

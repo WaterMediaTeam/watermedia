@@ -26,7 +26,6 @@ import org.watermedia.videolan4j.binding.lib.LibVlc;
 import org.watermedia.videolan4j.media.callback.CallbackMedia;
 
 import java.net.URI;
-import java.net.URL;
 
 /**
  * Factory to create {@link Media} and {@link MediaRef} instances.
@@ -67,7 +66,7 @@ public final class MediaFactory {
      * @return media reference
      */
     public static MediaRef newMediaRef(libvlc_instance_t libvlcInstance, URI mrl, String... options) {
-        return createMediaRef(libvlcInstance, newMediaInstance(libvlcInstance, mrl), options);
+        return createMediaRef(libvlcInstance, VideoLan4J.getMediaInstance(libvlcInstance, mrl), options);
     }
 
     /**
@@ -81,7 +80,7 @@ public final class MediaFactory {
      * @return media reference
      */
     public static MediaRef newMediaRef(libvlc_instance_t libvlcInstance, CallbackMedia callbackMedia, String... options) {
-        return createMediaRef(libvlcInstance, newMediaInstance(libvlcInstance, callbackMedia), options);
+        return createMediaRef(libvlcInstance, newInstance(libvlcInstance, callbackMedia), options);
     }
 
     /**
@@ -165,7 +164,7 @@ public final class MediaFactory {
      * @return media
      */
     public static Media newMedia(libvlc_instance_t libvlcInstance, URI mrl, String... options) {
-        return createMedia(libvlcInstance, newMediaInstance(libvlcInstance, mrl), options);
+        return createMedia(libvlcInstance, VideoLan4J.getMediaInstance(libvlcInstance, mrl), options);
     }
 
     /**
@@ -179,7 +178,7 @@ public final class MediaFactory {
      * @return media
      */
     public static Media newMedia(libvlc_instance_t libvlcInstance, CallbackMedia callbackMedia, String... options) {
-        return createMedia(libvlcInstance, newMediaInstance(libvlcInstance, callbackMedia), options);
+        return createMedia(libvlcInstance, newInstance(libvlcInstance, callbackMedia), options);
     }
 
     /**
@@ -230,15 +229,11 @@ public final class MediaFactory {
      * @param options options to add to the media
      * @return duplicated media
      */
-    public static Media duplicateMedia(libvlc_instance_t libvlcInstance, Media media, String... options) {
+    public static Media duplicate(libvlc_instance_t libvlcInstance, Media media, String... options) {
         return createMedia(libvlcInstance, LibVlc.libvlc_media_duplicate(media.mediaInstance()), options);
     }
 
-    private static libvlc_media_t newMediaInstance(libvlc_instance_t libvlcInstance, URI url) {
-        return VideoLan4J.getMediaInstance(libvlcInstance, url);
-    }
-
-    private static libvlc_media_t newMediaInstance(libvlc_instance_t libvlcInstance, CallbackMedia callbackMedia) {
+    private static libvlc_media_t newInstance(libvlc_instance_t libvlcInstance, CallbackMedia callbackMedia) {
         return LibVlc.libvlc_media_new_callbacks(libvlcInstance,
             callbackMedia.getOpen(),
             callbackMedia.getRead(),
