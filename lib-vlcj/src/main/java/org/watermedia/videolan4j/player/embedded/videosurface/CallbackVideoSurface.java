@@ -161,9 +161,7 @@ public class CallbackVideoSurface extends VideoSurface {
 
         @Override
         public void unlock(Pointer opaque, Pointer picture, Pointer plane) {
-            if (semaphore != null) semaphore.release(); // WATERMeDIA PATCH
         }
-
     }
 
     /**
@@ -176,6 +174,7 @@ public class CallbackVideoSurface extends VideoSurface {
 
         @Override
         public void display(Pointer opaque, Pointer picture) {
+            if (semaphore != null) semaphore.release(); // WATERMeDIA PATCH
             CallbackVideoSurface.this.renderCallback.display(mediaPlayer, nativeBuffers.buffers(), bufferFormat);
         }
 
