@@ -190,10 +190,10 @@ public class ImageAPI extends WaterMediaAPI {
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
         this.loadingGifPath = bootCore.processDir().resolve("config/watermedia/assets/loading.gif");
-        if (!loadingGifPath.toFile().exists()) {
-            LOGGER.info(IT, "Extracting default loading gif...");
-            JarTool.copyAsset("/pictures/loading.gif", loadingGifPath);
-            LOGGER.info(IT, "Extracted successfully");
+        if (loadingGifPath.toFile().exists()) {
+            LOGGER.info(IT, "Detected custom loading gif... overriding default one");
+        } else {
+            this.loadingGifPath = null;
         }
         return true;
     }
@@ -206,7 +206,7 @@ public class ImageAPI extends WaterMediaAPI {
 
         LOGGER.info(IT, "Loading image resources in a {} instance", ImageRenderer.class.getSimpleName());
 
-        IMG_LOADING = renderer(IOTool.readGif(loadingGifPath), true);
+        IMG_LOADING = renderer(loadingGifPath != null ? IOTool.readGif(loadingGifPath) : JarTool.readGif("/pictures/loading.gif"), true);
         IMG_VLC_FAIL = renderer(JarTool.readGif("/pictures/videolan/failed.gif"), true);
         IMG_VLC_FAIL_LAND = renderer(JarTool.readGif("/pictures/videolan/failed-land.gif"), true);
 
