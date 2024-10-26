@@ -83,24 +83,6 @@ public class PlayerAPI extends WaterMediaAPI {
         return null;
     }
 
-    /**
-     * Use your own VLCArgs at your own risk
-     * By default this method makes a ReleaseHook to release factory on process shutdown
-     * Suggestion: Use the same VLC arguments for logging but with another filename
-     * Example: <pre> "--logfile", "logs/vlc/mymod-latest.log",</pre>
-     * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
-     * @param vlcArgs arguments to make another VLC instance
-     * @return a PlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
-     * @deprecated use instead {@link PlayerAPI#registerFactory(String, String[])}. Fallback here is not efficient
-     */
-    public static MediaPlayerFactory customFactory(String[] vlcArgs) {
-        int fakeID = 0;
-        while (FACTORIES.containsKey(WaterMedia.asResource("unidentified_" + fakeID))) {
-            fakeID++;
-        }
-        return registerFactory(WaterMedia.asResource("unidentified_" + fakeID), vlcArgs);
-    }
-
     // LOADING
     private final Path dir;
 
@@ -168,7 +150,7 @@ public class PlayerAPI extends WaterMediaAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        if (wrapped) {
+        if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
                 IOTool.un7zip(IT, zipOutput.toPath());
