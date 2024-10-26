@@ -25,7 +25,7 @@ public class WaterMedia {
     private static final String NO_BOOT_NAME = "watermedia.disableBoot";
 	private static final String SLAVIST_NAME = "watermedia.slavist";
 	private static final boolean NO_BOOT = Boolean.parseBoolean(System.getProperty(NO_BOOT_NAME));
-	private static final boolean SLAVIST = Boolean.parseBoolean(System.getProperty(SLAVIST_NAME));
+	private static boolean SLAVIST = Boolean.parseBoolean(System.getProperty(SLAVIST_NAME));
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -67,6 +67,10 @@ public class WaterMedia {
 
 	public static boolean isSlavist() {
 		return SLAVIST;
+	}
+
+	public static void slavist(boolean beOne) {
+		SLAVIST = beOne;
 	}
 
 
