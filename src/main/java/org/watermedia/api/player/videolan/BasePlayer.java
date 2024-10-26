@@ -86,8 +86,8 @@ public abstract class BasePlayer {
         ThreadTool.thread(4, () -> {
             if (rpa(url)) {
                 if (audioUrl != null) {
-                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
                     raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
+                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
                     raw.mediaPlayer().controls().start();
                 } else {
                     raw.mediaPlayer().media().start(this.url, vlcArgs);

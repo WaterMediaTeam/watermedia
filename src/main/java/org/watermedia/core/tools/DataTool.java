@@ -17,6 +17,14 @@ public class DataTool {
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
+    public static String[] concat(String[] arr, String[] arr2) {
+        String[] r = new String[arr.length + arr2.length];
+        for (int i = 0; i < (arr.length + arr2.length); i++) {
+            r[i] = i < arr.length ? arr[i] : arr2[i - arr.length];
+        }
+        return r;
+    }
+
     public static long sumArr(long[] arr) {
         long r = 0;
         for (long l: arr) {
