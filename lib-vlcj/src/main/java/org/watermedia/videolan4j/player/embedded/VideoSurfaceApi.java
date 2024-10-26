@@ -78,13 +78,12 @@ public final class VideoSurfaceApi extends BaseApi {
     public void attachVideoSurface() {
         if (videoSurface != null) {
             videoSurface.attach(mediaPlayer);
-        }
-        else {
+        } else {
             // This is not necessarily an error
         }
     }
 
-    VideoSurface getVideoSurface() {
+    public VideoSurface getVideoSurface() {
         return videoSurface;
     }
 

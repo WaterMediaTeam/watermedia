@@ -21,10 +21,14 @@ package org.watermedia.videolan4j.player.embedded.videosurface;
 
 import org.watermedia.videolan4j.player.base.MediaPlayer;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * Encapsulation of a video surface.
  */
 public abstract class VideoSurface {
+
+    protected Semaphore semaphore;
 
     /**
      * Operating System specific video surface adapter implementation.
@@ -49,4 +53,13 @@ public abstract class VideoSurface {
      */
     public abstract void attach(MediaPlayer mediaPlayer);
 
+    // WATERMeDIA Patch: JANKY HACK FOR BUFFER UPLOADING
+    public Semaphore getSemaphore() {
+        return semaphore;
+    }
+
+    // WATERMeDIA Patch: JANKY HACK FOR BUFFER UPLOADING
+    public void setSemaphore(Semaphore lock) {
+        this.semaphore = lock;
+    }
 }

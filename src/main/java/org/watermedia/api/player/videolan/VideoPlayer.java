@@ -13,6 +13,7 @@ import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCal
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Semaphore;
 
 public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFormatCallback {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
@@ -23,7 +24,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
     private boolean refresh = false;
     private boolean first = true;
     private final int texture;
-    private final Object renderSync = new Object();
+    private final Semaphore semaphore = new Semaphore(1);
     private final Executor renderExecutor;
     private ByteBuffer[] buffers;
 
@@ -45,35 +46,31 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         this.init(factory, this, this);
         if (raw() == null) {
             RenderAPI.deleteTexture(texture);
+        } else {
+            // HACK IN THE JANK
+            this.raw().mediaPlayer().videoSurface().getVideoSurface().setSemaphore(semaphore);
         }
     }
 
     @Override
     public void display(MediaPlayer mediaPlayer, ByteBuffer[] nativeBuffers, BufferFormat bufferFormat) {
-        synchronized (renderSync) {
-            for (ByteBuffer b: nativeBuffers) {
-                b.flip();
-            }
-            this.refresh = true;
-        }
+        this.refresh = true;
     }
 
     @Override
     public void allocatedBuffers(ByteBuffer[] buffers) {
-        synchronized (renderSync) {
-            this.buffers = buffers;
-        }
+        this.buffers = buffers;
     }
 
     @Override
     public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
-        synchronized (renderSync) {
-            this.width = sourceWidth;
-            this.height = sourceHeight;
-            this.size = sourceWidth * sourceHeight * 4;
-        }
+        this.width = sourceWidth;
+        this.height = sourceHeight;
+        this.size = sourceWidth * sourceHeight * 4;
 
-        // TODO: This is wrong; https://wiki.videolan.org/Chroma/
+        // TODO: This might be wrong; https://wiki.videolan.org/Chroma/
+        // TODO: is not wrong but is undocumented...
+        //  WHY?
         return new BufferFormat("RGBA", sourceWidth, sourceHeight, new int[]{sourceWidth * 4}, new int[]{sourceHeight});
     }
 
@@ -101,11 +98,11 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
      */
     public int preRender() {
         RenderAPI.bindTexture(this.texture);
-        synchronized (renderSync) {
-            if (refresh && buffers != null && buffers.length > 0) {
-                RenderAPI.uploadBuffer(buffers[1], texture, GL12.GL_RGBA, width, height, first);
-                first = false;
-            }
+        if (refresh && buffers != null && buffers.length > 0) {
+            semaphore.acquireUninterruptibly();
+            RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
+            first = false;
+            semaphore.release();
         }
         RenderAPI.bindTexture(RenderAPI.NONE);
         return texture;
