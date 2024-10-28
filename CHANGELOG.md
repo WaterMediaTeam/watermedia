@@ -1,3 +1,18 @@
+# 📦 BREAKING UPDATE 2.1.1
+### IMPORTANT: THIS IS (YET AGAIN) A BREAKING UPDATE! DEPENDENT MODS WILL NOT WORK IF THEY DIDN'T RELEASE A COMPATIBILITY UPDATE
+**WHY ANOTHER BREAKING UPDATE?**
+Release 2.1.0 has some critical stuff to begin addressed, we do a internal breaking change as a critical update
+Sorry for all devs already working on v2.1.0, no much changes are done
+- 🛠️ Changed the return type of `MathAPI#tickToMs(float): long` to `MathAPI#tickToMs(float): int`
+- 🛠️ Removed deprecated variant `MathAPI#tickToMs(int): long`
+- 🛠️ Removed deprecated method `WaterMediaAPI#math_colorARGB()`
+- ✨ Added `ImageCache` instances for the default resources in `ImageAPI`
+- ✨ Added `-Dwatermedia.disableVLC=<true/false>` to prevent VLC begin loaded/extracted by WATERMeDIA
+  - Overhaul all other arguments, making `-Dwatermedia.slavist=<true/false>` overrideable
+- 🐛 Fixed critical `EXCEPTION_ACCESS_VIOLATION` looping media on VLC
+  - Removed VLCJ videosurface argument in replace of a _custom-made_ callback interface for pre-buffers release
+- 🐛 Fixed Kick.com support (again)
+
 # 📦 BREAKING UPDATE 2.1.0
 ### IMPORTANT: THIS UPDATE IS A BREAKING UPDATE! DEPENDENT MODS WILL NOT WORK IF THEY DIDN'T RELEASE A COMPATIBILITY UPDATE
 **WHY UPDATE IS SMALL?**<br>
