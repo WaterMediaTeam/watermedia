@@ -31,13 +31,23 @@ public class ImageAPI extends WaterMediaAPI {
     private static ImageRenderer IMG_VLC_FAIL_LAND;
     private static ImageRenderer IMG_BLACK;
 
+    private static ImageCache IMG_CACHE_LOADING;
+    private static ImageCache IMG_CACHE_VLC_FAIL;
+    private static ImageCache IMG_CACHE_VLC_FAIL_LAND;
+
     // VLC
     public static ImageRenderer failedVLC() { return IMG_VLC_FAIL; }
     public static ImageRenderer failedVLCLandscape() { return IMG_VLC_FAIL_LAND; }
 
+    // VLC
+    public static ImageCache cacheFailedVLC() { return IMG_CACHE_VLC_FAIL; }
+    public static ImageCache cacheFailedVLCLandscape() { return IMG_CACHE_VLC_FAIL_LAND; }
+
     // LOADING GIFs
     public static ImageRenderer loadingGif() { return IMG_LOADING; }
     public static ImageRenderer blackPicture() { return IMG_BLACK; }
+
+    public static ImageCache cacheLoadingGif() { return IMG_CACHE_LOADING; }
 
     /**
      * Search for a custom loading gif for a mod, using mod id for unique storage.<br><br>
@@ -209,6 +219,10 @@ public class ImageAPI extends WaterMediaAPI {
         IMG_LOADING = renderer(loadingGifPath != null ? IOTool.readGif(loadingGifPath) : JarTool.readGif("/pictures/loading.gif"), true);
         IMG_VLC_FAIL = renderer(JarTool.readGif("/pictures/videolan/failed.gif"), true);
         IMG_VLC_FAIL_LAND = renderer(JarTool.readGif("/pictures/videolan/failed-land.gif"), true);
+
+        IMG_CACHE_LOADING = createCache(IMG_LOADING);
+        IMG_CACHE_VLC_FAIL = createCache(IMG_VLC_FAIL);
+        IMG_CACHE_VLC_FAIL_LAND = createCache(IMG_VLC_FAIL_LAND);
 
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         image.setRGB(0, 0, MathAPI.argb(255, 0, 0, 0));
