@@ -2,6 +2,7 @@ package org.watermedia;
 
 import com.sun.jna.Platform;
 import org.watermedia.api.WaterMediaAPI;
+import org.watermedia.core.tools.ArgTool;
 import org.watermedia.core.tools.DataTool;
 import org.watermedia.core.tools.JarTool;
 import org.watermedia.loaders.ILoader;
@@ -22,10 +23,10 @@ public class WaterMedia {
 	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
 	public static final String USER_AGENT = "WaterMedia/" + VERSION;
 
-    private static final String NO_BOOT_NAME = "watermedia.disableBoot";
-	private static final String SLAVIST_NAME = "watermedia.slavist";
-	private static final boolean NO_BOOT = Boolean.parseBoolean(System.getProperty(NO_BOOT_NAME));
-	private static boolean SLAVIST = Boolean.parseBoolean(System.getProperty(SLAVIST_NAME));
+	public static final ArgTool NO_BOOTING = new ArgTool("watermedia.disableBoot");
+	public static final ArgTool NO_VLC = new ArgTool("watermedia.disableVLC");
+	public static final ArgTool YES_SLAVISM = new ArgTool("watermedia.slavist");
+
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -43,8 +44,8 @@ public class WaterMedia {
 	}
 
 	public void start() throws Exception {
-		if (NO_BOOT) {
-			LOGGER.error(IT, "Refusing to bootstrap WATERMeDIA, detected D{}=true", NO_BOOT_NAME);
+		if (NO_BOOTING.getAsBoolean()) {
+			LOGGER.error(IT, "Refusing to bootstrap WATERMeDIA, detected {}", NO_BOOTING);
 			return;
 		}
 
@@ -65,12 +66,8 @@ public class WaterMedia {
 
 	public static ILoader getLoader() { return bootstrap; }
 
-	public static boolean isSlavist() {
-		return SLAVIST;
-	}
-
-	public static void slavist(boolean beOne) {
-		SLAVIST = beOne;
+	public static void setSlavismMode(boolean mode) {
+		YES_SLAVISM.override(String.valueOf(mode));;
 	}
 
 

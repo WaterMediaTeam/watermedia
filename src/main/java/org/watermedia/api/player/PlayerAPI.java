@@ -3,6 +3,7 @@ package org.watermedia.api.player;
 import com.sun.jna.Platform;
 import org.watermedia.WaterMedia;
 import org.watermedia.api.WaterMediaAPI;
+import org.watermedia.api.player.videolan.BasePlayer;
 import org.watermedia.core.tools.IOTool;
 import org.watermedia.core.tools.JarTool;
 import org.watermedia.loaders.ILoader;
@@ -68,7 +69,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
      * @param resLoc the identifier (ResourceLocation#toString())
      * @param vlcArgs arguments used to create new VLC player instances
-     * @return MediaPlayerFactory to create custom VLC players. {@link SimplePlayer} can accept factory for new instances
+     * @return MediaPlayerFactory to create custom VLC players. {@link BasePlayer} can accept factory for new instances
      */
     public static MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
         if (NativeDiscovery.discovery()) {
@@ -121,6 +122,11 @@ public class PlayerAPI extends WaterMediaAPI {
     @Override
     public boolean prepare(ILoader bootCore) throws Exception {
         LOGGER.info(IT, "Binaries are {}", wrapped ? "wrapped" : "not wrapped");
+        if (WaterMedia.NO_VLC.getAsBoolean()) {
+            LOGGER.warn(IT, "Detected {}, skipping PlayerAPI loading", WaterMedia.NO_VLC);
+            return false;
+        }
+
         if (wrapped) {
             String versionInJar = JarTool.readString(configInput);
             String versionInFile = IOTool.readString(configOutput.toPath());

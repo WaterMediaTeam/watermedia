@@ -48,7 +48,7 @@ public class YoutubePatch extends AbstractPatch {
                     String ytLivePlaylist = fetchLivePlaylist(videoDetails.liveUrl());
                     if (ytLivePlaylist != null) return new Result(new URI(StreamQuality.parse(ytLivePlaylist).get(0).getUrl()), true, true);
                 } else {
-                    if (WaterMedia.isSlavist()) {
+                    if (WaterMedia.YES_SLAVISM.getAsBoolean()) {
                         // WITHOUT AUDIO
                         VideoFormat bestVideo = videoInfo.bestVideoFormat();
                         AudioFormat bestAudio = videoInfo.bestAudioFormat();
