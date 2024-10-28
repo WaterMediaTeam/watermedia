@@ -7,7 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class NetTool {
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0";
 
     public static URLConnection connectToAny(URI uri, String method) throws IOException {
         return connectToAny(uri.toURL(), method);
@@ -27,6 +27,7 @@ public class NetTool {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod(method);
         conn.setRequestProperty("User-Agent", USER_AGENT);
+        conn.setRequestProperty("Cache-Control", "no-cache");
         return conn;
     }
 

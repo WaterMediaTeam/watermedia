@@ -18,7 +18,7 @@ public class FixerTester {
         WaterMedia.LOGGER.info("STRINGIED URI IS {}", stringedUri);
 
 
-        AbstractPatch.Result result = NetworkAPI.patch("https://www.twitch.tv/videos/2278364046");
+        AbstractPatch.Result result = NetworkAPI.patch("https://kick.com/brunenger");
         WaterMedia.LOGGER.info("Result is: {}", result);
 
         System.exit(0);
