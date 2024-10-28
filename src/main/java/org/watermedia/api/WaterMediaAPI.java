@@ -50,18 +50,4 @@ public abstract class WaterMediaAPI {
         MONITOR,
         BENCHMARK
     }
-
-    /**
-     * Returns the color of a specified level in range of 1 ~ 255
-     * @param a alpha level
-     * @param r red color
-     * @param g green color
-     * @param b blue color
-     * @deprecated IMPORANT: this method a bouncer of {@link MathAPI#argb(int, int, int, int)}. Please switch as soon as possible
-     * @return color int
-     */
-    @Deprecated(forRemoval = true)
-    public static int math_colorARGB(int a, int r, int g, int b) {
-        return MathAPI.argb(a, r, g, b);
-    }
 }

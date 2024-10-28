@@ -11,18 +11,6 @@ public class MathAPI extends WaterMediaAPI {
      *
      * @param ticks Minecraft Tick count
      * @return ticks converted to MS
-     * @deprecated <p>Tick type was changed from int to long following the time counting standard.</p>
-     * Use instead {@link MathAPI#tickToMs(long)}
-     */
-    @Deprecated
-    public static long tickToMs(int ticks) { return ticks * 50L; }
-
-    /**
-     * 1 seconds in Minecraft equals 20 ticks
-     * 20x50 equals 1000ms (1 sec)
-     *
-     * @param ticks Minecraft Tick count
-     * @return ticks converted to MS
      */
     public static long tickToMs(long ticks) { return ticks * 50L; }
 
@@ -33,7 +21,7 @@ public class MathAPI extends WaterMediaAPI {
      * @param partialTicks Minecraft Partial tick count
      * @return ticks converted to MS
      */
-    public static long tickToMs(float partialTicks) { return (long) (partialTicks * 50L); }
+    public static int tickToMs(float partialTicks) { return (int) (partialTicks * 50); }
 
     /**
      * 1000ms (1 sec) equals 20 ms in Minecraft
