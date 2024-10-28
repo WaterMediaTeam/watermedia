@@ -10,10 +10,10 @@ public class MusicPlayer extends BasePlayer {
 
 
     public MusicPlayer(MediaPlayerFactory factory) {
-        super(factory, null, null);
+        super(factory, null, null, null);
     }
 
     public MusicPlayer() {
-        super(PlayerAPI.getFactorySoundOnly(), null, null);
+        super(PlayerAPI.getFactorySoundOnly(), null, null, null);
     }
 }

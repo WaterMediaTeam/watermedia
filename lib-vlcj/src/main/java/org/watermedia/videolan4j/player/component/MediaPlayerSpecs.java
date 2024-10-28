@@ -21,6 +21,7 @@ package org.watermedia.videolan4j.player.component;
 
 import org.watermedia.videolan4j.player.component.callback.CallbackImagePainter;
 import org.watermedia.videolan4j.player.embedded.fullscreen.unsupported.UnsupportedFullScreenStrategy;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;
@@ -207,7 +208,7 @@ public final class MediaPlayerSpecs {
         CallbackImagePainter imagePainter;
         RenderCallback renderCallback;
         BufferFormatCallback bufferFormatCallback;
-        JComponent videoSurfaceComponent;
+        BufferCleanupCallback cleanupCallback;
 
         /**
          * Specify the media player factory to use.
@@ -334,17 +335,6 @@ public final class MediaPlayerSpecs {
          */
         public CallbackMediaPlayerSpec withBufferFormatCallback(BufferFormatCallback bufferFormatCallback) {
             this.bufferFormatCallback = bufferFormatCallback;
-            return this;
-        }
-
-        /**
-         * Specify the lightweight video surface component to use.
-         *
-         * @param videoSurfaceComponent video surface component
-         * @return this builder
-         */
-        public CallbackMediaPlayerSpec withVideoSurfaceComponent(JComponent videoSurfaceComponent) {
-            this.videoSurfaceComponent = videoSurfaceComponent;
             return this;
         }
 

@@ -22,6 +22,7 @@ package org.watermedia.videolan4j.player.component;
 import org.watermedia.videolan4j.medialist.MediaList;
 import org.watermedia.videolan4j.medialist.MediaListRef;
 import org.watermedia.videolan4j.player.component.callback.CallbackImagePainter;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
 import org.watermedia.videolan4j.player.list.MediaListPlayer;
@@ -71,10 +72,10 @@ public class CallbackMediaListPlayerComponent extends CallbackMediaListPlayerCom
      * @param imagePainter image painter (video renderer)
      * @param renderCallback render callback
      * @param bufferFormatCallback buffer format callback
-     * @param videoSurfaceComponent lightweight video surface component
+     * @param cleanupCallback lightweight video surface component
      */
-    public CallbackMediaListPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, CallbackImagePainter imagePainter, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, JComponent videoSurfaceComponent) {
-        super(mediaPlayerFactory, fullScreenStrategy, inputEvents, bufferFormatCallback, lockBuffers, imagePainter, videoSurfaceComponent, renderCallback);
+    public CallbackMediaListPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, CallbackImagePainter imagePainter, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
+        super(mediaPlayerFactory, fullScreenStrategy, inputEvents, bufferFormatCallback, lockBuffers, imagePainter, cleanupCallback, renderCallback);
 
         this.mediaListPlayer = mediaPlayerFactory().mediaPlayers().newMediaListPlayer();
         this.mediaListPlayer.mediaPlayer().setMediaPlayer(mediaPlayer());
@@ -110,10 +111,10 @@ public class CallbackMediaListPlayerComponent extends CallbackMediaListPlayerCom
      * @param lockBuffers <code>true</code> if the native video buffer should be locked; <code>false</code> if not
      * @param renderCallback render callback
      * @param bufferFormatCallback buffer format callback
-     * @param videoSurfaceComponent lightweight video surface component
+     * @param cleanupCallback lightweight video surface component
      */
-    public CallbackMediaListPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, JComponent videoSurfaceComponent) {
-        this(mediaPlayerFactory, fullScreenStrategy, inputEvents, lockBuffers, null, renderCallback, bufferFormatCallback, videoSurfaceComponent);
+    public CallbackMediaListPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
+        this(mediaPlayerFactory, fullScreenStrategy, inputEvents, lockBuffers, null, renderCallback, bufferFormatCallback, cleanupCallback);
     }
 
     /**
@@ -122,7 +123,7 @@ public class CallbackMediaListPlayerComponent extends CallbackMediaListPlayerCom
      * @param spec builder
      */
     public CallbackMediaListPlayerComponent(MediaPlayerSpecs.CallbackMediaPlayerSpec spec) {
-        this(spec.factory, spec.fullScreenStrategy, spec.inputEvents, spec.lockedBuffers, spec.imagePainter, spec.renderCallback, spec.bufferFormatCallback, spec.videoSurfaceComponent);
+        this(spec.factory, spec.fullScreenStrategy, spec.inputEvents, spec.lockedBuffers, spec.imagePainter, spec.renderCallback, spec.bufferFormatCallback, spec.cleanupCallback);
     }
 
     /**

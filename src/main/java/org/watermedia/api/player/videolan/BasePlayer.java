@@ -16,8 +16,9 @@ import org.watermedia.videolan4j.player.base.EmbededMediaPlayerEventListener;
 import org.watermedia.videolan4j.player.base.MediaPlayer;
 import org.watermedia.videolan4j.player.base.State;
 import org.watermedia.videolan4j.player.component.CallbackMediaPlayerComponent;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
-import org.watermedia.videolan4j.player.embedded.videosurface.callback.SimpleBufferFormatCallback;
 
 import java.net.URI;
 
@@ -37,13 +38,13 @@ public abstract class BasePlayer {
     protected volatile boolean live = false;
     protected volatile boolean started = false;
 
-    protected BasePlayer(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        this.init(factory, renderCallback, bufferFormatCallback);
+    protected BasePlayer(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
+        this.init(factory, renderCallback, bufferFormatCallback, cleanupCallback);
     }
 
     /**
-     * This constructor skips raw player creation, instead waits for {@link #init(MediaPlayerFactory, RenderCallback, SimpleBufferFormatCallback)} to create raw player
-     * Intended to be used just in case you need to do some special implementations of {@link RenderCallback} or {@link SimpleBufferFormatCallback}
+     * This constructor skips raw player creation, instead waits for {@link #init(MediaPlayerFactory, RenderCallback, BufferFormatCallback, Runnable cleanupCallback)} to create raw player
+     * Intended to be used just in case you need to do some special implementations of {@link RenderCallback} or {@link BufferFormatCallback}
      */
     protected BasePlayer() {}
 
@@ -53,10 +54,10 @@ public abstract class BasePlayer {
      * @param renderCallback this is executed when buffer loads media info (first time)
      * @param bufferFormatCallback creates a buffer for the frame
      */
-    protected void init(MediaPlayerFactory factory, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
+    protected void init(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
         if (PlayerAPI.isReady() && raw == null) {
             if (factory == null) factory = PlayerAPI.getFactory();
-            this.raw = new CallbackMediaPlayerComponent(factory, true, renderCallback, bufferFormatCallback);
+            this.raw = new CallbackMediaPlayerComponent(factory, true, renderCallback, bufferFormatCallback, cleanupCallback);
             raw.mediaPlayer().events().addMediaPlayerEventListener(LISTENER);
         } else {
             LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");

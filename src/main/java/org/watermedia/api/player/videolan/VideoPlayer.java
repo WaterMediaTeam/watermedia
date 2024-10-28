@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;
 import org.watermedia.videolan4j.player.base.MediaPlayer;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormat;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
@@ -15,7 +16,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
 
-public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFormatCallback {
+public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFormatCallback, BufferCleanupCallback {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
 
     private int width = 1;
@@ -43,7 +44,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         super();
         this.texture = RenderAPI.createTexture();
         this.renderExecutor = renderExecutor;
-        this.init(factory, this, this);
+        this.init(factory, this, this, this);
         if (raw() == null) {
             RenderAPI.deleteTexture(texture);
         } else {
@@ -60,6 +61,13 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
     @Override
     public void allocatedBuffers(ByteBuffer[] buffers) {
         this.buffers = buffers;
+    }
+
+    @Override
+    public void cleanupBuffers(ByteBuffer[] buffers) {
+        semaphore.acquireUninterruptibly();
+        this.buffers = null;
+        semaphore.release();
     }
 
     @Override

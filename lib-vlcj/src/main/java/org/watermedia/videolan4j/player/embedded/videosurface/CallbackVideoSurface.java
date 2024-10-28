@@ -22,6 +22,7 @@ package org.watermedia.videolan4j.player.embedded.videosurface;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormat;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
@@ -45,6 +46,7 @@ public class CallbackVideoSurface extends VideoSurface {
     private final libvlc_display_callback_t display = new DisplayCallback();
 
     private final BufferFormatCallback bufferFormatCallback;
+    private final BufferCleanupCallback cleanupCallback;
     private final RenderCallback renderCallback;
 
     private final NativeBuffers nativeBuffers;
@@ -56,17 +58,18 @@ public class CallbackVideoSurface extends VideoSurface {
     /**
      * Create a video surface.
      *
-     * @param bufferFormatCallback callback providing the video buffer format
+     * @param formatCallback callback providing the video buffer format
      * @param renderCallback callback used to render the video frame buffer
-     * @param lockBuffers <code>true</code> if the video buffer should be locked; <code>false</code> if not
-     * @param videoSurfaceAdapter adapter to attach a video surface to a native media player
+     * @param lock <code>true</code> if the video buffer should be locked; <code>false</code> if not
+     * @param surfaceAdapter adapter to attach a video surface to a native media player
      */
-    public CallbackVideoSurface(BufferFormatCallback bufferFormatCallback, RenderCallback renderCallback, boolean lockBuffers, VideoSurfaceAdapter videoSurfaceAdapter) {
-        super(videoSurfaceAdapter);
+    public CallbackVideoSurface(BufferFormatCallback formatCallback, RenderCallback renderCallback, boolean lock, VideoSurfaceAdapter surfaceAdapter, BufferCleanupCallback cleanupCallback) {
+        super(surfaceAdapter);
 
-        this.bufferFormatCallback = bufferFormatCallback;
+        this.bufferFormatCallback = formatCallback;
         this.renderCallback = renderCallback;
-        this.nativeBuffers = new NativeBuffers(lockBuffers);
+        this.nativeBuffers = new NativeBuffers(lock);
+        this.cleanupCallback = cleanupCallback;
     }
 
     @Override
@@ -128,6 +131,7 @@ public class CallbackVideoSurface extends VideoSurface {
 
         @Override
         public void cleanup(Pointer opaque) {
+            cleanupCallback.cleanupBuffers(nativeBuffers.buffers());
             nativeBuffers.free();
         }
 

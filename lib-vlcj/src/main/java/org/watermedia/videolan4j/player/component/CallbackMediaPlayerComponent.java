@@ -28,7 +28,6 @@ import org.watermedia.videolan4j.factory.MediaPlayerFactory;
 import org.watermedia.videolan4j.player.base.MediaPlayer;
 import org.watermedia.videolan4j.player.embedded.EmbeddedMediaPlayer;
 import org.watermedia.videolan4j.player.embedded.fullscreen.FullScreenStrategy;
-import org.watermedia.videolan4j.player.embedded.videosurface.callback.*;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.format.RV32BufferFormat;
 
 import javax.swing.*;
@@ -79,11 +78,6 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
     private CallbackImagePainter imagePainter;
 
     /**
-     * Component used as the video surface.
-     */
-    private final JComponent videoSurfaceComponent;
-
-    /**
      * Media player.
      */
     private final EmbeddedMediaPlayer mediaPlayer;
@@ -112,25 +106,22 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
      * @param imagePainter image painter (video renderer)
      * @param renderCallback render callback
      * @param bufferFormatCallback buffer format callback
-     * @param videoSurfaceComponent lightweight video surface component
+     * @param cleanupCallback executed BEFORE buffers got released
      */
-    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, CallbackImagePainter imagePainter, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, JComponent videoSurfaceComponent) {
+    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, CallbackImagePainter imagePainter, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
         this.ownFactory = mediaPlayerFactory == null;
         this.mediaPlayerFactory = initMediaPlayerFactory(mediaPlayerFactory);
 
-        validateArguments(imagePainter, renderCallback, bufferFormatCallback, videoSurfaceComponent);
+        validateArguments(imagePainter, renderCallback, bufferFormatCallback, cleanupCallback);
 
         if (renderCallback == null) {
             this.defaultRenderCallback = new DefaultRenderCallback();
             this.imagePainter          = imagePainter == null ? new ScaledCallbackImagePainter() : imagePainter;
-            this.videoSurfaceComponent = null;
             bufferFormatCallback       = new DefaultBufferFormatCallback();
             renderCallback             = this.defaultRenderCallback;
         } else {
             this.defaultRenderCallback = null;
             this.imagePainter          = null;
-            this.videoSurfaceComponent = videoSurfaceComponent;
-
             // WATERMeDIA PATCH - start
 
             // Here we patch callbacks adding a forced check for classloader
@@ -151,7 +142,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         bufferFormatCallback = init$buildClassLoaderSafeCallback(bufferFormatCallback);
         // WATERMeDIA PATCH - end
 
-        this.mediaPlayer.videoSurface().set(this.mediaPlayerFactory.videoSurfaces().newVideoSurface(bufferFormatCallback, renderCallback, lockBuffers));
+        this.mediaPlayer.videoSurface().set(this.mediaPlayerFactory.videoSurfaces().newVideoSurface(bufferFormatCallback, renderCallback, lockBuffers, cleanupCallback));
 
         // WATERMeDIA Patch - REMOVED JPanel impl
 
@@ -184,16 +175,8 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
         };
     }
 
-    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, boolean lockBuffers, RenderCallback renderCallback, SimpleBufferFormatCallback bufferFormatCallback) {
-        this(mediaPlayerFactory, null, null, lockBuffers, null, renderCallback, bufferFormatCallback == null ? null : bufferFormatCallback instanceof BufferFormatCallback ? (BufferFormatCallback) bufferFormatCallback : new BufferFormatCallback() {
-            @Override
-            public void allocatedBuffers(ByteBuffer[] buffers) {}
-
-            @Override
-            public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
-                return bufferFormatCallback.getBufferFormat(sourceWidth, sourceHeight);
-            }
-        }, null);
+    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, boolean lockBuffers, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
+        this(mediaPlayerFactory, null, null, lockBuffers, null, renderCallback, bufferFormatCallback, cleanupCallback);
     }
     // WATERMeDIA PATCH - end
 
@@ -219,10 +202,10 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
      * @param lockBuffers <code>true</code> if the native video buffer should be locked; <code>false</code> if not
      * @param renderCallback render callback
      * @param bufferFormatCallback buffer format callback
-     * @param videoSurfaceComponent lightweight video surface component
+     * @param cleanupCallback cleanup callback
      */
-    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, JComponent videoSurfaceComponent) {
-        this(mediaPlayerFactory, fullScreenStrategy, inputEvents, lockBuffers, null, renderCallback, bufferFormatCallback, videoSurfaceComponent);
+    public CallbackMediaPlayerComponent(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, boolean lockBuffers, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
+        this(mediaPlayerFactory, fullScreenStrategy, inputEvents, lockBuffers, null, renderCallback, bufferFormatCallback, cleanupCallback);
     }
 
     /**
@@ -231,7 +214,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
      * @param spec builder
      */
     public CallbackMediaPlayerComponent(MediaPlayerSpecs.CallbackMediaPlayerSpec spec) {
-        this(spec.factory, spec.fullScreenStrategy, spec.inputEvents, spec.lockedBuffers, spec.imagePainter, spec.renderCallback, spec.bufferFormatCallback, spec.videoSurfaceComponent);
+        this(spec.factory, spec.fullScreenStrategy, spec.inputEvents, spec.lockedBuffers, spec.imagePainter, spec.renderCallback, spec.bufferFormatCallback, spec.cleanupCallback);
     }
 
     /**
@@ -256,12 +239,11 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
      * @param imagePainter image painter (video renderer)
      * @param renderCallback render callback
      * @param bufferFormatCallback buffer format callback
-     * @param videoSurfaceComponent video surface component
      */
-    private void validateArguments(CallbackImagePainter imagePainter, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, JComponent videoSurfaceComponent) {
+    private void validateArguments(CallbackImagePainter imagePainter, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
         if (renderCallback == null) {
             if (bufferFormatCallback  != null) throw new IllegalArgumentException("Do not specify bufferFormatCallback without a renderCallback");
-            if (videoSurfaceComponent != null) throw new IllegalArgumentException("Do not specify videoSurfaceComponent without a renderCallback");
+            if (cleanupCallback != null) throw new IllegalArgumentException("Do not specify cleanupCallback without a renderCallback");
         } else {
             if (imagePainter          != null) throw new IllegalArgumentException("Do not specify imagePainter with a renderCallback");
             if (bufferFormatCallback  == null) throw new IllegalArgumentException("bufferFormatCallback is required with a renderCallback");
@@ -287,12 +269,6 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
                 mediaPlayer.input().enableMouseInputHandling(false);
                 // Case fall-through is by design
             case DEFAULT:
-                if (videoSurfaceComponent != null) {
-                    videoSurfaceComponent.addMouseListener(this);
-                    videoSurfaceComponent.addMouseMotionListener(this);
-                    videoSurfaceComponent.addMouseWheelListener(this);
-                    videoSurfaceComponent.addKeyListener(this);
-                }
                 break;
         }
     }
@@ -328,15 +304,6 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
      */
     public final void release() {
         onBeforeRelease();
-
-        // It is safe to remove listeners like this even if none were added (depends on configured InputEvents in the
-        // constructor)
-        if (videoSurfaceComponent != null) {
-            videoSurfaceComponent.removeMouseListener(this);
-            videoSurfaceComponent.removeMouseMotionListener(this);
-            videoSurfaceComponent.removeMouseWheelListener(this);
-            videoSurfaceComponent.removeKeyListener(this);
-        }
 
         mediaPlayer.release();
 
@@ -382,16 +349,13 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
     private void newVideoBuffer(int width, int height) {
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         defaultRenderCallback.setImageBuffer(image);
-        if (videoSurfaceComponent != null) {
-            videoSurfaceComponent.setPreferredSize(new Dimension(width, height));
-        }
     }
 
     /**
      * Default implementation of a render callback that copies video frame data directly to the data buffer of an image
      * raster.
      */
-    private class DefaultRenderCallback extends RenderCallbackAdapter {
+    private static class DefaultRenderCallback extends RenderCallbackAdapter {
 
         private void setImageBuffer(BufferedImage image) {
             setBuffer(((DataBufferInt) image.getRaster().getDataBuffer()).getData());
@@ -399,9 +363,7 @@ public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBa
 
         @Override
         protected void onDisplay(MediaPlayer mediaPlayer, int[] buffer) {
-            videoSurfaceComponent.repaint();
         }
-
     }
 
     /**

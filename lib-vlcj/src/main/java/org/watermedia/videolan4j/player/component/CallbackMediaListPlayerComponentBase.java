@@ -23,6 +23,7 @@ import org.watermedia.videolan4j.media.MediaRef;
 import org.watermedia.videolan4j.medialist.MediaList;
 import org.watermedia.videolan4j.medialist.MediaListEventListener;
 import org.watermedia.videolan4j.player.component.callback.CallbackImagePainter;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
 import org.watermedia.videolan4j.player.list.MediaListPlayer;
@@ -52,11 +53,11 @@ public class CallbackMediaListPlayerComponentBase extends CallbackMediaPlayerCom
      * @param bufferFormatCallback
      * @param lockBuffers
      * @param imagePainter
-     * @param videoSurfaceComponent
+     * @param cleanupCallback
      * @param renderCallback
      */
-    public CallbackMediaListPlayerComponentBase(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, BufferFormatCallback bufferFormatCallback, boolean lockBuffers, CallbackImagePainter imagePainter, JComponent videoSurfaceComponent, RenderCallback renderCallback) {
-        super(mediaPlayerFactory, fullScreenStrategy, inputEvents, lockBuffers, imagePainter, renderCallback, bufferFormatCallback, videoSurfaceComponent);
+    public CallbackMediaListPlayerComponentBase(MediaPlayerFactory mediaPlayerFactory, FullScreenStrategy fullScreenStrategy, InputEvents inputEvents, BufferFormatCallback bufferFormatCallback, boolean lockBuffers, CallbackImagePainter imagePainter, BufferCleanupCallback cleanupCallback, RenderCallback renderCallback) {
+        super(mediaPlayerFactory, fullScreenStrategy, inputEvents, lockBuffers, imagePainter, renderCallback, bufferFormatCallback, cleanupCallback);
     }
 
     // === MediaListPlayerEventListener =========================================

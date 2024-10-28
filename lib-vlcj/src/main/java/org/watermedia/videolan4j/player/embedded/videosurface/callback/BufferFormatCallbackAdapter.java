@@ -26,11 +26,8 @@ import java.nio.ByteBuffer;
  * <p>
  * This component simply provides an empty implementation for {@link #allocatedBuffers(ByteBuffer[])} since it is not
  * required in all cases.
- * @deprecated Deprecated by WATERMeDIA.<br>
- * Use instead {@link SimpleBufferFormatCallback}
  * This class is keep it just for internal usages
  */
-@Deprecated // WATERMeDIA PATCH
 public abstract class BufferFormatCallbackAdapter implements BufferFormatCallback {
 
     @Override

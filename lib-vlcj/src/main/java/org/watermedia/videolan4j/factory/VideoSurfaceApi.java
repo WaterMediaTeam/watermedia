@@ -23,6 +23,7 @@ import org.watermedia.videolan4j.player.embedded.videosurface.CallbackVideoSurfa
 import org.watermedia.videolan4j.player.embedded.videosurface.ComponentIdVideoSurface;
 import org.watermedia.videolan4j.player.embedded.videosurface.ComponentVideoSurface;
 import org.watermedia.videolan4j.player.embedded.videosurface.VideoSurfaceAdapters;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
 
@@ -69,8 +70,8 @@ public final class VideoSurfaceApi extends BaseApi {
      * @param lockBuffers <code>true</code> if the video buffer should be locked; <code>false</code> if it should not
      * @return video surface
      */
-    public CallbackVideoSurface newVideoSurface(BufferFormatCallback bufferFormatCallback, RenderCallback renderCallback, boolean lockBuffers) {
-        return new CallbackVideoSurface(bufferFormatCallback, renderCallback, lockBuffers, VideoSurfaceAdapters.getVideoSurfaceAdapter());
+    public CallbackVideoSurface newVideoSurface(BufferFormatCallback bufferFormatCallback, RenderCallback renderCallback, boolean lockBuffers, BufferCleanupCallback cleanupCallback) {
+        return new CallbackVideoSurface(bufferFormatCallback, renderCallback, lockBuffers, VideoSurfaceAdapters.getVideoSurfaceAdapter(), cleanupCallback);
     }
 
 }
