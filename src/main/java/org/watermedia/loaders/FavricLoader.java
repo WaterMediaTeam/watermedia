@@ -1,6 +1,7 @@
 package org.watermedia.loaders;
 
 import jdk.internal.loader.ClassLoaders;
+import net.fabricmc.api.ModInitializer;
 import org.watermedia.WaterMedia;
 import org.watermedia.core.exceptions.IllegalTLauncherException;
 import org.watermedia.core.tools.Tool;
@@ -14,7 +15,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 
-public class FavricLoader implements ClientModInitializer, ILoader {
+public class FavricLoader implements ClientModInitializer, ModInitializer, ILoader {
     private static final Marker IT = MarkerManager.getMarker("FabricLoader");
 
     private final Path tempPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");
@@ -94,5 +95,10 @@ public class FavricLoader implements ClientModInitializer, ILoader {
 
         } catch (Exception ignored) {}
         return isT;
+    }
+
+    @Override
+    public void onInitialize() {
+        WaterMedia.LOGGER.warn("Stub running successfully");
     }
 }

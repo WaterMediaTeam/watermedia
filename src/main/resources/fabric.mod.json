@@ -14,9 +14,12 @@
 
   "license": "$license",
   "icon": "pack.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "client": [
+      "org.watermedia.loaders.FavricLoader"
+    ],
+    "main": [
       "org.watermedia.loaders.FavricLoader"
     ]
   },
