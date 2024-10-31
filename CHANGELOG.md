@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.2
+- 🐛 Added stub for server-side fabric because fabric still doesn't add sided dependencies but likes breaks things 
+
 # 📦 BREAKING UPDATE 2.1.1
 ### IMPORTANT: THIS IS (YET AGAIN) A BREAKING UPDATE! DEPENDENT MODS WILL NOT WORK IF THEY DIDN'T RELEASE A COMPATIBILITY UPDATE
 **WHY ANOTHER BREAKING UPDATE?**
