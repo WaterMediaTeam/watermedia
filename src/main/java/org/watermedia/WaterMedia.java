@@ -4,7 +4,7 @@ import com.sun.jna.Platform;
 import org.watermedia.api.WaterMediaAPI;
 import org.watermedia.tools.DataTool;
 import org.watermedia.tools.JarTool;
-import org.watermedia.tools.PairTool;
+import org.watermedia.tools.ArgTool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -31,8 +31,8 @@ public final class WaterMedia {
 		@Override public boolean client() { return true; }
 	};
 
-	private static final PairTool<String, Boolean> NO_BOOT = DataTool.getArgument("watermedia.no_boot");
-	private static final PairTool<String, Boolean> FAIL_HARD = DataTool.getArgument("watermedia.fail_hard");
+	private static final ArgTool NO_BOOT = DataTool.getArgument("watermedia.no_boot");
+	private static final ArgTool FAIL_HARD = DataTool.getArgument("watermedia.fail_hard");
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 
@@ -45,13 +45,13 @@ public final class WaterMedia {
 		LOGGER.info(IT, "Loading {} version '{}'", NAME, VERSION);
 		LOGGER.info(IT, "Detected OS: {} ({})", System.getProperty("os.name"), Platform.ARCH);
 
-		if (NO_BOOT.value())
+		if (NO_BOOT.getAsBoolean())
 			LOGGER.warn(IT, "{} argument detected, API booting is disabled", NO_BOOT.key());
 
-		if (FAIL_HARD.value())
+		if (FAIL_HARD.getAsBoolean())
 			LOGGER.warn(IT, "{} argument detected, crashes will be threw at the minimal exception", NO_BOOT.key());
 
-		if (!boot.client() && !boot.name().contains("Fabric"))
+		if (!boot.client())
 			LOGGER.warn(IT, "{} is installed on server-side, please report issues to the dependent mod author instead of {} author", NAME, NAME);
 
 		WaterMedia.bootstrap = boot;
@@ -59,20 +59,20 @@ public final class WaterMedia {
 	}
 
 	public void start() throws Exception {
-		if (NO_BOOT.right()) return;
+		if (NO_BOOT.getAsBoolean()) return;
 		if (!bootstrap.client()) return;
 
 		final var modules = DataTool.toList(ServiceLoader.load(WaterMediaAPI.class));
 		modules.sort(Comparator.comparingInt(e -> e.priority().ordinal()));
 
 		for (WaterMediaAPI m: modules) {
-			LOGGER.info(IT, "Starting {}", m.getClass().getSimpleName());
+			LOGGER.info(IT, "Starting '{}'", m.getClass().getSimpleName());
 			if (!m.prepare(bootstrap)) {
-				LOGGER.warn(IT, "Module {} refuses to be loaded, skipping", m.getClass().getSimpleName());
+				LOGGER.warn(IT, "Module '{}' refuses to be loaded, skipping", m.getClass().getSimpleName());
 				continue;
 			}
 			m.start(bootstrap);
-			LOGGER.info(IT, "Module {} loaded successfully", m.getClass().getSimpleName());
+			LOGGER.info(IT, "Module '{}' loaded successfully", m.getClass().getSimpleName());
 		}
 		LOGGER.info(IT, "Startup finished");
 	}

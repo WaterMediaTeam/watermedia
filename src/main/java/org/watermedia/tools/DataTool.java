@@ -194,7 +194,7 @@ public class DataTool {
         return new String(hexChars);
     }
 
-    public static PairTool<String, Boolean> getArgument(String argument) {
-        return new PairTool<>(argument, Boolean.parseBoolean(System.getProperty(argument)));
+    public static ArgTool getArgument(String argument) {
+        return new ArgTool(argument);
     }
 }

@@ -39,7 +39,7 @@ public class JarTool {
             Files.copy(is, dest, StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (Exception e) {
-            LOGGER.fatal(IT, "Failed to extract from (JAR) {} to {} due to unexpected error", origin, dest, e);
+            LOGGER.error(IT, "Failed to extract from (JAR) '{}' to '{}' due to unexpected error", origin, dest, e);
         }
         return false;
     }
@@ -49,7 +49,7 @@ public class JarTool {
         try (InputStreamReader reader = new InputStreamReader(readResourceAsStream(path))) {
             result.addAll(new Gson().fromJson(reader, new TypeToken<List<T>>() {}.getType()));
         } catch (Exception e) {
-            LOGGER.fatal(IT, "Exception trying to read list JSON from {}", path, e);
+            LOGGER.error(IT, "Exception trying to read list JSON from {}", path, e);
         }
 
         return result;
@@ -59,7 +59,7 @@ public class JarTool {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(readResourceAsStream(path)))) {
             return new Gson().fromJson(reader, new TypeToken<String[]>() {}.getType());
         } catch (IOException e) {
-            LOGGER.fatal(IT, "Exception trying to read array JSON from {}", path, e);
+            LOGGER.error(IT, "Exception trying to read array JSON from {}", path, e);
         }
 
         return new String[0];

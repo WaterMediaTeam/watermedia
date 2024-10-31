@@ -36,7 +36,7 @@ public class StreamablePatch extends AbstractPatch {
             switch (code) {
                 case HTTP_NOT_FOUND -> throw new NullPointerException("Video doesn't exists");
                 case HTTP_FORBIDDEN, HTTP_UNAUTHORIZED -> throw new NullPointerException("Video isn't public or streamable denied us the access");
-                case HTTP_INTERNAL_ERROR, HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY -> throw new NullPointerException("Streamable is not available right now");
+                case HTTP_INTERNAL_ERROR, HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY -> throw new NullPointerException("Streamable is not available value now");
                 default -> {
                     if (code != HTTP_ACCEPTED) {
                         throw new UnsupportedOperationException("Streamable responses with the unexpected status code: " + code);

@@ -4,7 +4,7 @@ import me.srrapero720.watermedia.core.WaterInternalAPI;
 import me.srrapero720.watermedia.core.config.WaterConfig;
 import org.watermedia.WaterMedia;
 import org.watermedia.tools.DataTool;
-import org.watermedia.tools.PairTool;
+import org.watermedia.tools.ArgTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -88,18 +88,18 @@ public class CacheCore extends WaterInternalAPI {
             this(url, tag, getTypeExtension(mimetype), requestTime, expiration);
         }
 
-        private Entry(String url, String tag, PairTool<Type, String> typeExtension, long requestTime, long expiration) {
+        private Entry(String url, String tag, ArgTool<Type, String> typeExtension, long requestTime, long expiration) {
             this.url = url;
             this.file = entry$genFile(this.url);
             this.tag = tag;
-            this.type = typeExtension.left();
-            this.extension = typeExtension.right();
+            this.type = typeExtension.key();
+            this.extension = typeExtension.value();
             this.requestTime = requestTime;
             this.expiration = expiration;
         }
 
         // TODO: MADE BETTER MIMETYPE VALIDATION USING REGEX
-        private static PairTool<Type, String> getTypeExtension(String mimetype) {
+        private static ArgTool<Type, String> getTypeExtension(String mimetype) {
             if (mimetype == null)
                 throw new IllegalArgumentException("mimetype is null");
 
@@ -107,7 +107,7 @@ public class CacheCore extends WaterInternalAPI {
             if (typeExtension.length == 0) {
                 throw new IllegalArgumentException("Mimetype is empty");
             } else {
-                return new PairTool<>(Type.valueOf(typeExtension[0]), typeExtension.length == 1 ? "" : typeExtension[1]);
+                return new ArgTool<>(Type.valueOf(typeExtension[0]), typeExtension.length == 1 ? "" : typeExtension[1]);
             }
         }
 
@@ -147,7 +147,7 @@ public class CacheCore extends WaterInternalAPI {
         private static Entry read(DataInputStream in) throws IOException {
             String url = in.readUTF();
             String tag = in.readUTF();
-            PairTool<Type, String> typeExtension = new PairTool<>(Type.valueOf(in.readUTF()), in.readUTF());
+            ArgTool<Type, String> typeExtension = new ArgTool<>(Type.valueOf(in.readUTF()), in.readUTF());
             long time = in.readLong();
             long expireTime = in.readLong();
             return new Entry(url, !tag.isEmpty() ? tag : null, typeExtension, time, expireTime);
