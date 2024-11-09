@@ -1,153 +1,215 @@
 package org.watermedia.api.media;
 
+import org.watermedia.api.MathAPI;
+import org.watermedia.api.MemoryAPI;
+import org.watermedia.api.RenderAPI;
 import org.watermedia.tools.DataTool;
+import org.watermedia.tools.ThreadTool;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ImageSource extends MediaSource {
-    public final int[] textures;
-    private final ByteBuffer[] images;
+    private static final List<ImageSource> ACTIVE_MEDIA = new ArrayList<>();
 
-    // Clock calculation
-    private long currentMS;
-    private long marginTime = -1;
-    private long[] delays;
+    // media info
+    private final int[] widths;
+    private final int[] heights;
+    private final long[] delays;
+    public final int texture = RenderAPI.genTexture();
+    private final ByteBuffer[] buffers;
+
+    // State
+    private final long duration;
+    private int textureIndex = 0;
+    private float speed = 1.0f;
+    private boolean repeat = true;
+    private boolean firstFrame = true;
+    private State state = State.WAITING;
+    private final Deque<State> queueState = new ConcurrentLinkedDeque<>();
+
+    // CLOCK
+    private long time;
+    private long systemTime = System.currentTimeMillis();
+    private boolean clock = false;
 
     public ImageSource(BufferedImage image) {
-        super(image.getWidth(), image.getHeight());
-        this.duration = 0;
-        this.images = new ByteBuffer[] {  };
-        this.textures = new int[0];
+        this(new BufferedImage[] { image }, new long[1]);
     }
 
-    public ImageSource(ByteBuffer buffer, int width, int height, long duration) {
-        super(width, height);
-        this.images = new ByteBuffer[] { buffer };
-        this.textures = new int[0];
+    public ImageSource(BufferedImage[] images, long[] delays) {
+        this(
+                DataTool.getValueFrom(images, RenderAPI::getByteBuffer),
+                DataTool.getIntValueFrom(images, BufferedImage::getWidth),
+                DataTool.getIntValueFrom(images, BufferedImage::getHeight),
+                delays
+        );
     }
 
-    public ImageSource(ByteBuffer[] buffers, int width, int height, long[] delays) {
-        super(width, height);
-        this.images = buffers;
+    public ImageSource(ByteBuffer buffer, int width, int height) {
+        this(new ByteBuffer[] { buffer }, new int[] { width }, new int[] { height }, new long[1]);
+    }
+
+    public ImageSource(ByteBuffer[] buffers, int[] width, int[] height, long[] delays) {
+        this.widths = width;
+        this.heights = height;
+        this.buffers = buffers;
         this.delays = delays;
-        this.duration = DataTool.sumArray(delays);
-        this.textures = new int[0];
+        this.duration = MathAPI.sumArray(delays);
+    }
+
+    @Override
+    public int width() {
+        return widths[textureIndex];
+    }
+
+    @Override
+    public int height() {
+        return heights[textureIndex];
     }
 
     @Override
     public boolean start() {
-        return false;
+        this.state = State.PLAYING;
+        return true;
     }
 
     @Override
     public boolean startPaused() {
-        return false;
+        this.state = State.PAUSED;
+        return true;
     }
 
     @Override
     public boolean resume() {
-        return false;
+        // TODO: we should not ensure any other state?
+        this.state = State.PLAYING;
+        return true;
     }
 
     @Override
     public boolean pause() {
-        return false;
+        // TODO: we should not ensure any other state?
+        this.state = State.PAUSED;
+        return true;
     }
 
     @Override
     public boolean pause(boolean paused) {
+        // TODO: we should not ensure any other state?
+        this.state = paused ? State.PAUSED : State.PLAYING;
         return false;
     }
 
     @Override
     public boolean stop() {
-        return false;
+        // TODO: we should not ensure any other state?
+        this.state = State.STOPPED;
+        return true;
     }
 
     @Override
     public boolean togglePlay() {
-        return false;
+        if (this.state == State.PLAYING || this.state == State.PAUSED) {
+            this.state = this.state == State.PLAYING ? State.PAUSED : State.PLAYING;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean seek(long time) {
-        return false;
+        if (time > duration) {
+            time = time % duration;
+        }
+        if (time < 0) {
+            time = 0;
+        }
+        this.time = time;
+        return true;
     }
 
     @Override
     public boolean seekQuick(long time) {
-        return false;
+        return seek(time);
     }
 
     @Override
     public boolean foward() {
-        return false;
+        return seek(time + 5000L);
     }
 
     @Override
     public boolean rewind() {
-        return false;
+        return seek(time - 5000L);
     }
 
     @Override
     public boolean speed(float speed) {
-        return false;
+        if (speed < 0 || speed > 2) {
+            return false;
+        }
+        this.speed = speed;
+        return true;
     }
 
     @Override
-    public boolean repeaat() {
-        return false;
+    public boolean repeat() {
+        return this.repeat(true);
     }
 
     @Override
-    public boolean repeaat(boolean repeat) {
-        return false;
+    public boolean repeat(boolean repeat) {
+        this.repeat = repeat;
+        return true;
     }
 
     @Override
     public boolean usable() {
-        return false;
+        return true; // once created is ready
     }
 
     @Override
     public boolean loading() {
-        return false;
+        return this.state == State.LOADING; // once created is ready
     }
 
     @Override
     public boolean buffering() {
-        return false;
+        return this.state == State.BUFFERING; // no buffering
     }
 
     @Override
     public boolean ready() {
-        return false;
+        return this.state != State.ERROR; // once created is ready
     }
 
     @Override
     public boolean paused() {
-        return false;
+        return this.state == State.PAUSED;
     }
 
     @Override
     public boolean playing() {
-        return false;
+        return this.state == State.PLAYING;
     }
 
     @Override
     public boolean stopped() {
-        return false;
+        return this.state == State.STOPPED;
     }
 
     @Override
     public boolean ended() {
-        return false;
+        return this.state == State.ENDED;
     }
 
     @Override
     public boolean validSource() {
-        return false;
+        return true;
     }
 
     @Override
@@ -157,50 +219,91 @@ public class ImageSource extends MediaSource {
 
     @Override
     public boolean canSeek() {
-        return false;
+        return duration > 0;
     }
 
     @Override
     public long duration() {
-        return 0;
+        return duration;
     }
 
     @Override
     public long time() {
-        return 0;
+        return time;
     }
 
     @Override
     public void release() {
-
+        this.state = State.ENDED;
+        RenderAPI.delTexture(texture); // free GPU memory
+        MemoryAPI.deallocate(buffers); // free RAM
+        Arrays.fill(buffers, null);
     }
 
     @Override
     public int texture() {
-        if (marginTime == -1) {
-            currentMS = marginTime = System.currentTimeMillis();
-        }
-        long start = (currentMS - marginTime);
-        long end = System.currentTimeMillis() - marginTime;
-        long time = end - start;
-
-        this.currentMS = time;
-
         return textureInTime(time);
     }
 
-    private int textureInTime(long time) {
-        // if (textures == null) return 0;
-        // if (textures.length == 0) return texture(0);
-        for (int i = 0; i < delays.length; i++) {
-            time -= delays[i];
-            if (time <= 0)
-                return texture(i);
+    private void setState(State state) {
+        queueState.add(state);
+        switch (state) {
+
         }
-        return texture(/*images.length - 1*/);
     }
 
-    private int texture(int index) {
-        return 0;
+    // calculate texture
+    private int textureInTime(long time) {
+        for (int i = 0; i < delays.length; i++) {
+            time -= delays[i];
+            if (time <= 0) {
+                uploadTexture(i);
+                return texture;
+            }
+        }
+        uploadTexture(buffers.length - 1);
+        return texture;
+    }
+
+    // upload texture
+    private void uploadTexture(int index) {
+        if (buffers[index] == null)
+            throw new IllegalStateException("Current MediaSource is released");
+        RenderAPI.uploadBuffer(buffers[index], texture, widths[index], heights[index], firstFrame);
+        firstFrame = false;
+    }
+
+    private void run() {
+        // calculate delta
+        long delta = System.currentTimeMillis() - this.systemTime;
+
+        // Update state
+        State state = queueState.peek();
+        if (state != null) {
+            switch (state) {
+                case WAITING, LOADING, PAUSED, STOPPED, BUFFERING, ENDED, ERROR -> {
+                    clock = false;
+                }
+                case PLAYING -> clock = true;
+            }
+            this.state = state;
+        }
+
+        // compute clocking
+        if (clock) {
+            time = Math.max(time + delta, duration); // start counting
+        }
+        this.systemTime = System.currentTimeMillis();
+
+        if (time == duration) { // as expected
+            if (this.repeat) {
+                this.time = 0;
+            } else {
+                this.state = State.ENDED;
+                this.queueState.clear();
+            }
+        }
+
+
     }
 }

@@ -3,15 +3,13 @@ package org.watermedia.api.media;
 
 public abstract class MediaSource {
     public static final long NO_DURATION = -1;
+    public MediaSource() {
 
-    public final int width;
-    public final int height;
-    public long duration = NO_DURATION; // in MS
-
-    public MediaSource(int width, int height) {
-        this.width = width;
-        this.height = height;
     }
+
+    public abstract int width();
+
+    public abstract int height();
 
     public abstract boolean start();
 
@@ -37,9 +35,9 @@ public abstract class MediaSource {
 
     public abstract boolean speed(float speed);
 
-    public abstract boolean repeaat();
+    public abstract boolean repeat();
 
-    public abstract boolean repeaat(boolean repeat);
+    public abstract boolean repeat(boolean repeat);
 
     // status
     public abstract boolean usable();
@@ -75,4 +73,25 @@ public abstract class MediaSource {
      * @return OpenGL texture id
      */
     public abstract int texture();
+
+    public enum State {
+        WAITING,
+        LOADING,
+        BUFFERING,
+        PLAYING,
+        PAUSED,
+        STOPPED,
+        ENDED,
+        ERROR;
+
+        public static final State[] VALUES = values();
+
+        public static State of(int state) {
+            if (state > VALUES.length)
+                throw new IllegalArgumentException("You exceeded the allowed state numbers");
+            if (state < 0)
+                throw new IllegalArgumentException("What the fuck have in your brain to ask a negative state");
+            return VALUES[state];
+        }
+    }
 }

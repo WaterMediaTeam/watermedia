@@ -28,6 +28,10 @@ public class ThreadTool {
         return 10;
     }
 
+    public static ScheduledExecutorService executorReduced(String name, int priority) {
+        return Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("WaterMedia-Worker-" + name, priority));
+    }
+
     public static ScheduledExecutorService executorReduced(String name) {
         return Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("WaterMedia-Worker-" + name, Thread.NORM_PRIORITY));
     }

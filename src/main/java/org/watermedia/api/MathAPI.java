@@ -750,6 +750,22 @@ public class MathAPI extends WaterMediaAPI {
         return SIN[(int)(pValue * 10430.378F + 16384.0F) & '\uffff'];
     }
 
+    public static int sumArray(int[] arr) {
+        int r = 0;
+        for (int i: arr) {
+            r += i;
+        }
+        return r;
+    }
+
+    public static long sumArray(long[] arr) {
+        long r = 0;
+        for (long i: arr) {
+            r += i;
+        }
+        return r;
+    }
+
     @Override
     public Priority priority() {
         return Priority.LOWEST;

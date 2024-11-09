@@ -66,12 +66,12 @@ public class VideoSource extends MediaSource {
     }
 
     @Override
-    public boolean repeaat() {
+    public boolean repeat() {
         return false;
     }
 
     @Override
-    public boolean repeaat(boolean repeat) {
+    public boolean repeat(boolean repeat) {
         return false;
     }
 

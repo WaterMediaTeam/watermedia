@@ -74,6 +74,10 @@ public class RenderAPI extends WaterMediaAPI {
         return texture;
     }
 
+    public static void delTexture(int texture) {
+        GL11.glDeleteTextures(texture);
+    }
+
     /**
      * Process a buffer to be used in a OpenGL texture id
      * @param buffer ByteBuffer to be processed

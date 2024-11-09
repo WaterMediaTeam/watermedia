@@ -42,12 +42,15 @@ public class MemoryAPI extends WaterMediaAPI {
         }
     }
 
-    public static void deallocate(ByteBuffer buffer) {
+    public static void deallocate(ByteBuffer... buffers) {
         if (ALLOCATOR == null)
             throw new IllegalStateException("MemoryAPI is uninitialized");
 
-        if (buffer == null || !buffer.isDirect()) return;
-        ALLOCATOR.free(MemoryUtil.memAddress0(buffer));
+        if (buffers == null) return;
+        for (ByteBuffer b: buffers) {
+            if (!b.isDirect()) continue;
+            ALLOCATOR.free(MemoryUtil.memAddress0(b));
+        }
     }
 
     @Override

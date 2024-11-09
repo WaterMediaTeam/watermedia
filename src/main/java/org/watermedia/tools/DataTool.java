@@ -12,6 +12,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.watermedia.WaterMedia.LOGGER;
 
@@ -20,22 +21,6 @@ public class DataTool {
     private static final int DEFAULT_BUFFER_SIZE = 8192;
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-
-    public static int sumArray(int[] arr) {
-        int r = 0;
-        for (int i: arr) {
-            r += i;
-        }
-        return r;
-    }
-
-    public static long sumArray(long[] arr) {
-        long r = 0;
-        for (long i: arr) {
-            r += i;
-        }
-        return r;
-    }
 
     public static long orElse(String s, int o) {
         try {
@@ -196,5 +181,26 @@ public class DataTool {
 
     public static ArgTool getArgument(String argument) {
         return new ArgTool(argument);
+    }
+
+    // I hate this bullshit with my life
+    @SuppressWarnings("unchecked")
+    public static <T, V> V[] getValueFrom(T[] arr, Function<T, V> how2) {
+        V[] result = (V[]) new Object[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            var thing = arr[i];
+            result[i] = how2.apply(thing);
+        }
+        return result;
+    }
+
+    // I hate this bullshit with my life
+    public static <T> int[] getIntValueFrom(T[] arr, Function<T, Integer> how2) {
+        int[] result = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            var thing = arr[i];
+            result[i] = how2.apply(thing);
+        }
+        return result;
     }
 }
