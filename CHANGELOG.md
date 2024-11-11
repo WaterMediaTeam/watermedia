@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.3
+- 🐛 Fixed MacOS workarrounds aren't applied when ``Dvideolan4j.disableMacOsWorkarrounds`` argument is not present
+- 🛠️ Added minimal VLC bindings for version and instance testing (no more dumb crashes when VLC 4 is installed)
+
 # 📦 UPDATE 2.1.2
 - 🐛 Added stub for server-side fabric because fabric still doesn't add sided dependencies but likes breaks things 
 
