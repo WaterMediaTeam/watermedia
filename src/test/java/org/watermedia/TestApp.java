@@ -3,6 +3,7 @@ package org.watermedia;
 import org.watermedia.api.image.ImageAPI;
 import org.watermedia.api.image.ImageCache;
 import org.watermedia.api.image.ImageRenderer;
+import org.watermedia.api.player.videolan.VideoPlayer;
 import org.watermedia.loaders.ILoader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -27,6 +28,7 @@ public class TestApp implements Executor {
     private Queue<Runnable> executor = new LinkedList<>();
     private ImageCache cache;
     private ImageRenderer renderer;
+    private VideoPlayer player;
 
     // The window handle
     private long window;
@@ -136,10 +138,22 @@ public class TestApp implements Executor {
         while ( !glfwWindowShouldClose(window) ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            if (cache.getStatus() == ImageCache.Status.READY)
-                renderer = cache.getRenderer();
+            if (cache.getStatus() == ImageCache.Status.READY) {
+              if (player == null && this.cache.isVideo()) {
+                  player = new VideoPlayer(this);
+                  player.start(cache.uri);
+              } else {
+                  renderer = cache.getRenderer();
+              }
+            }
 
-            glBindTexture(GL_TEXTURE_2D, renderer.texture(System.currentTimeMillis() % renderer.duration));
+            if (cache.isVideo()) {
+                player.preRender();
+                glBindTexture(GL_TEXTURE_2D, player.texture());
+            } else {
+                glBindTexture(GL_TEXTURE_2D, renderer.texture(System.currentTimeMillis() % renderer.duration));
+            }
+
 
             glColor4f(1, 1, 1, 1);
             glBegin(GL_QUADS);
@@ -159,7 +173,8 @@ public class TestApp implements Executor {
     }
 
     public static void main(String[] args) {
-        new TestApp().run(URI.create(args[0]));
+        String url = args.length == 0 ? "https://www.youtube.com/watch?v=bTHN1eWN7iU&list=RDQXw8krpfNAE&index=4" : args[0];
+        new TestApp().run(URI.create(url));
     }
 
     @Override
