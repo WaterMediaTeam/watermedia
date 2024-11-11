@@ -62,12 +62,12 @@ public class ImageSource extends MediaSource {
 
     @Override
     public int width() {
-        return widths[textureIndex];
+        return this.widths[this.textureIndex];
     }
 
     @Override
     public int height() {
-        return heights[textureIndex];
+        return this.heights[this.textureIndex];
     }
 
     @Override
@@ -122,8 +122,8 @@ public class ImageSource extends MediaSource {
 
     @Override
     public boolean seek(long time) {
-        if (time > duration) {
-            time = time % duration;
+        if (time > this.duration) {
+            time = time % this.duration;
         }
         if (time < 0) {
             time = 0;
@@ -139,12 +139,12 @@ public class ImageSource extends MediaSource {
 
     @Override
     public boolean foward() {
-        return seek(time + 5000L);
+        return seek(this.time + 5000L);
     }
 
     @Override
     public boolean rewind() {
-        return seek(time - 5000L);
+        return seek(this.time - 5000L);
     }
 
     @Override
@@ -219,83 +219,82 @@ public class ImageSource extends MediaSource {
 
     @Override
     public boolean canSeek() {
-        return duration > 0;
+        return this.duration > 0;
     }
 
     @Override
     public long duration() {
-        return duration;
+        return this.duration;
     }
 
     @Override
     public long time() {
-        return time;
+        return this.time;
     }
 
     @Override
     public void release() {
         this.state = State.ENDED;
-        RenderAPI.delTexture(texture); // free GPU memory
-        MemoryAPI.deallocate(buffers); // free RAM
-        Arrays.fill(buffers, null);
+        RenderAPI.delTexture(this.texture); // free GPU memory
+        MemoryAPI.deallocate(this.buffers); // free RAM
+        Arrays.fill(this.buffers, null);
     }
 
     @Override
     public int texture() {
-        return textureInTime(time);
+        return textureInTime(this.time);
     }
 
     private void setState(State state) {
-        queueState.add(state);
-        switch (state) {
-
-        }
+        this.queueState.add(state);
     }
 
     // calculate texture
     private int textureInTime(long time) {
-        for (int i = 0; i < delays.length; i++) {
-            time -= delays[i];
+        for (int i = 0; i < this.delays.length; i++) {
+            time -= this.delays[i];
             if (time <= 0) {
-                uploadTexture(i);
-                return texture;
+                this.uploadTexture(i);
+                return this.texture;
             }
         }
-        uploadTexture(buffers.length - 1);
-        return texture;
+        this.uploadTexture(this.buffers.length - 1);
+        return this.texture;
     }
 
     // upload texture
     private void uploadTexture(int index) {
-        if (buffers[index] == null)
+        if (this.buffers[index] == null)
             throw new IllegalStateException("Current MediaSource is released");
-        RenderAPI.uploadBuffer(buffers[index], texture, widths[index], heights[index], firstFrame);
-        firstFrame = false;
+
+        RenderAPI.uploadBuffer(this.buffers[index], this.texture, this.widths[index], this.heights[index], this.firstFrame);
+        this.firstFrame = false;
     }
 
+    // FIXME: this is not working
     private void run() {
         // calculate delta
         long delta = System.currentTimeMillis() - this.systemTime;
 
         // Update state
-        State state = queueState.peek();
+        State state = this.queueState.peek();
         if (state != null) {
             switch (state) {
                 case WAITING, LOADING, PAUSED, STOPPED, BUFFERING, ENDED, ERROR -> {
-                    clock = false;
+                    this.clock = false;
                 }
-                case PLAYING -> clock = true;
+                case PLAYING -> this.clock = true;
             }
             this.state = state;
         }
 
         // compute clocking
-        if (clock) {
-            time = Math.max(time + delta, duration); // start counting
+        if (this.clock) {
+            this.time = Math.max(this.time + delta, this.duration); // start counting
         }
         this.systemTime = System.currentTimeMillis();
 
-        if (time == duration) { // as expected
+        if (this.time == this.duration) { // as expected
             if (this.repeat) {
                 this.time = 0;
             } else {
@@ -303,7 +302,5 @@ public class ImageSource extends MediaSource {
                 this.queueState.clear();
             }
         }
-
-
     }
 }
