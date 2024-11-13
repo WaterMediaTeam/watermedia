@@ -71,7 +71,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * @param vlcArgs arguments used to create new VLC player instances
      * @return MediaPlayerFactory to create custom VLC players. {@link BasePlayer} can accept factory for new instances
      */
-    public static MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
+    public static synchronized MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
         if (NativeDiscovery.discovery()) {
             MediaPlayerFactory factory = new MediaPlayerFactory(vlcArgs);
             MediaPlayerFactory oldFactory = FACTORIES.put(resLoc, factory);
