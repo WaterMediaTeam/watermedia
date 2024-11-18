@@ -27,7 +27,7 @@ import org.watermedia.videolan4j.VideoLan4J;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormat;
 import org.watermedia.videolan4j.binding.lib.Kernel32;
 import org.watermedia.videolan4j.binding.lib.LibC;
-import org.watermedia.videolan4j.binding.lib.types.size_t;
+import org.watermedia.videolan4j.binding.lib.size_t;
 
 import java.nio.ByteBuffer;
 

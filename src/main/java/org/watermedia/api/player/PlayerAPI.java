@@ -31,7 +31,7 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return if PlayerAPI and/or VLC was loaded
      */
     public static boolean isReady() {
-        return NativeDiscovery.isDiscovered();
+        return NativeDiscovery.discovered();
     }
 
     /**
@@ -72,10 +72,10 @@ public class PlayerAPI extends WaterMediaAPI {
      * @return MediaPlayerFactory to create custom VLC players. {@link BasePlayer} can accept factory for new instances
      */
     public static synchronized MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
-        if (NativeDiscovery.discovery()) {
+        if (NativeDiscovery.start()) {
             MediaPlayerFactory factory = new MediaPlayerFactory(vlcArgs);
             MediaPlayerFactory oldFactory = FACTORIES.put(resLoc, factory);
-            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", NativeDiscovery.getDiscoveredPath(), Arrays.toString(vlcArgs));
+            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", NativeDiscovery.discoveryPath(), Arrays.toString(vlcArgs));
             if (oldFactory != null) LOGGER.warn(IT, "Factory {} previously defined was overwritted", resLoc);
             return factory;
         }

@@ -53,6 +53,8 @@ import org.watermedia.videolan4j.binding.internal.libvlc_media_player_t;
  * <p>
  * The overlay implementation in this class simply keeps a supplied window in sync with the video surface. It is the
  * responsibility of the client application itself to supply an appropriate overlay component.
+ *
+ * @watermedia removed OverlayAPI (only works with AWT
  */
 public class EmbeddedMediaPlayer extends MediaPlayer {
 
@@ -63,7 +65,6 @@ public class EmbeddedMediaPlayer extends MediaPlayer {
 
     private final FullScreenApi   fullScreenApi;
     private final InputApi        inputApi;
-    private final OverlayApi      overlayApi;
     private final VideoSurfaceApi videoSurfaceApi;
 
     /**
@@ -80,7 +81,6 @@ public class EmbeddedMediaPlayer extends MediaPlayer {
 
         this.fullScreenApi   = new FullScreenApi  (this);
         this.inputApi        = new InputApi       (this);
-        this.overlayApi      = new OverlayApi     (this);
         this.videoSurfaceApi = new VideoSurfaceApi(this);
     }
 
@@ -101,7 +101,6 @@ public class EmbeddedMediaPlayer extends MediaPlayer {
 
         this.fullScreenApi   = new FullScreenApi  (this);
         this.inputApi        = new InputApi       (this);
-        this.overlayApi      = new OverlayApi     (this);
         this.videoSurfaceApi = new VideoSurfaceApi(this);
     }
 
@@ -111,10 +110,6 @@ public class EmbeddedMediaPlayer extends MediaPlayer {
 
     public final InputApi input() {
         return inputApi;
-    }
-
-    public final OverlayApi overlay() {
-        return overlayApi;
     }
 
     public final VideoSurfaceApi videoSurface() {
@@ -129,7 +124,6 @@ public class EmbeddedMediaPlayer extends MediaPlayer {
     protected final void onBeforeRelease() {
         fullScreenApi  .release();
         inputApi       .release();
-        overlayApi     .release();
         videoSurfaceApi.release();
     }
 

@@ -26,7 +26,7 @@ import org.watermedia.videolan4j.binding.internal.libvlc_media_close_cb;
 import org.watermedia.videolan4j.binding.internal.libvlc_media_open_cb;
 import org.watermedia.videolan4j.binding.internal.libvlc_media_read_cb;
 import org.watermedia.videolan4j.binding.internal.libvlc_media_seek_cb;
-import org.watermedia.videolan4j.binding.lib.types.size_t;
+import org.watermedia.videolan4j.binding.lib.size_t;
 
 import java.io.IOException;
 

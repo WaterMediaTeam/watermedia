@@ -20,7 +20,6 @@
 package org.watermedia.videolan4j.player.component;
 
 import org.watermedia.videolan4j.media.*;
-import org.watermedia.videolan4j.media.*;
 import org.watermedia.videolan4j.player.base.MediaPlayer;
 import org.watermedia.videolan4j.player.base.MediaPlayerEventListener;
 import org.watermedia.videolan4j.player.base.State;
@@ -29,16 +28,17 @@ import java.awt.event.*;
 
 /**
  * Base implementation of an embedded media player.
- * <p>
- * This class serves to keep the {@link EmbeddedMediaPlayerComponent} concrete implementation clean and un-cluttered.
+ * <p>Declusterer for implemented class</p>
+ * @watermedia removed extend of JPanel
+ * @watermedia removed JAWT componnet implementation
+ * @watermedia renamed from "EmbeddedMediaPlayerComponentBase"
  */
-// WATERMeDIA PATCH - Removed extends JPanel
-abstract class EmbeddedMediaPlayerComponentBase implements MediaPlayerEventListener, MediaEventListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener  {
+abstract class MediaPlayerComponentBase implements MediaPlayerEventListener, MediaEventListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener  {
 
     /**
      * Create a media player component.
      */
-    protected EmbeddedMediaPlayerComponentBase() {
+    protected MediaPlayerComponentBase() {
     }
 
     // WATERMeDIA Patcn - removed getBlankCursor and setCursorEnabled

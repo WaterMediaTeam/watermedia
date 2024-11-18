@@ -22,11 +22,10 @@ package org.watermedia.videolan4j.factory;
 import com.sun.jna.StringArray;
 import org.watermedia.videolan4j.discovery.NativeDiscovery;
 import org.watermedia.videolan4j.support.eventmanager.TaskExecutor;
-import org.watermedia.videolan4j.support.version.LibVlcVersion;
 import org.watermedia.videolan4j.binding.internal.libvlc_instance_t;
 import org.watermedia.videolan4j.binding.lib.LibVlc;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Collection;
 
 /**
@@ -34,7 +33,7 @@ import java.util.Collection;
  * <p>
  * When using VLC options/arguments to initialise the factory, generally any options that enable/disable modules (e.g.
  * video/audio filters) must be set via the factory instance and not when invoking
- * {@link org.watermedia.videolan4j.player.base.MediaApi#play(URL, String...)}. However, the module-specific
+ * {@link org.watermedia.videolan4j.player.base.MediaApi#play(URI, String...)}. However, the module-specific
  * options <em>may</em> be able to be passed as media options and be effective via that play call.
  * <p>
  * The factory will attempt to automatically discover the location of the required LibVLC native library, so it should
@@ -89,9 +88,8 @@ public class MediaPlayerFactory {
     public MediaPlayerFactory(String... libvlcArgs) {
 
         try {
-            if (!NativeDiscovery.discovery())
+            if (!NativeDiscovery.start())
                 throw new IllegalStateException("VideoLAN is not properly discovered");
-            checkVersion();
         } catch (NoClassDefFoundError e) {
             throw new NativeLibraryMappingException("Failed to properly initialise the native library", e);
         }
@@ -118,21 +116,6 @@ public class MediaPlayerFactory {
      */
     public MediaPlayerFactory(Collection<String> libvlcArgs) {
         this(libvlcArgs.toArray(new String[0]));
-    }
-
-    /**
-     * Runtime LibVLC version check.
-     * <p>
-     * This check must be done here even though the default {@link NativeDiscovery} implementation already does it,
-     * simply because using the default {@link NativeDiscovery} is optional.
-     */
-    private void checkVersion() {
-        LibVlcVersion version = new LibVlcVersion();
-        if (!version.isSupported()) {
-            throw new RuntimeException(String.format("Failed to find minimum required VLC version %s, found %s",
-                version.getRequiredVersion(),
-                version.getVersion()));
-        }
     }
 
     /**

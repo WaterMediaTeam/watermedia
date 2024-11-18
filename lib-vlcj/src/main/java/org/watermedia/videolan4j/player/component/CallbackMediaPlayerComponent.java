@@ -30,7 +30,6 @@ import org.watermedia.videolan4j.player.embedded.EmbeddedMediaPlayer;
 import org.watermedia.videolan4j.player.embedded.fullscreen.FullScreenStrategy;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.format.RV32BufferFormat;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -46,7 +45,7 @@ import java.nio.ByteBuffer;
  * <p>
  * When the component is no longer needed, it should be released by invoking the {@link #release()} method.
  */
-public class CallbackMediaPlayerComponent extends EmbeddedMediaPlayerComponentBase implements MediaPlayerComponent {
+public class CallbackMediaPlayerComponent extends MediaPlayerComponentBase implements MediaPlayerComponent {
 
     /**
      * Default factory initialisation arguments.

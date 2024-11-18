@@ -20,46 +20,19 @@
 package org.watermedia.videolan4j.factory;
 
 import org.watermedia.videolan4j.player.embedded.videosurface.CallbackVideoSurface;
-import org.watermedia.videolan4j.player.embedded.videosurface.ComponentIdVideoSurface;
-import org.watermedia.videolan4j.player.embedded.videosurface.ComponentVideoSurface;
 import org.watermedia.videolan4j.player.embedded.videosurface.VideoSurfaceAdapters;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCleanupCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
 
-import java.awt.*;
-
 /**
  * Behaviour pertaining to the creation of video surfaces.
+ * @watermedia patched to remove VLCJ component implementation
  */
 public final class VideoSurfaceApi extends BaseApi {
 
     VideoSurfaceApi(MediaPlayerFactory factory) {
         super(factory);
-    }
-
-    /**
-     * Create a new video surface for a Component.
-     * <p>
-     * The optimal component in a {@link Canvas}, {@link Window} can be used, as can any other AWT {@link Component}, at
-     * least in principle.
-     * </p>
-     *
-     * @param component component
-     * @return video surface
-     */
-    public ComponentVideoSurface newVideoSurface(Component component) {
-        return new ComponentVideoSurface(component, VideoSurfaceAdapters.getVideoSurfaceAdapter());
-    }
-
-    /**
-     * Create a new video surface for a native component id.
-     *
-     * @param componentId native component id
-     * @return video surface
-     */
-    public ComponentIdVideoSurface newVideoSurface(long componentId) {
-        return new ComponentIdVideoSurface(componentId, VideoSurfaceAdapters.getVideoSurfaceAdapter());
     }
 
     /**

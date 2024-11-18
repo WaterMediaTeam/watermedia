@@ -2,9 +2,9 @@ package org.watermedia.api.player;
 
 import com.sun.jna.Platform;
 import org.watermedia.WaterMedia;
-import org.watermedia.videolan4j.discovery.DiscoveryProvider;
+import org.watermedia.videolan4j.discovery.providers.IProvider;
 
-public class WaterMediaProvider implements DiscoveryProvider {
+public class WaterMediaProvider implements IProvider {
     @Override
     public Priority priority() {
         return Priority.OVERWRITE;

@@ -25,7 +25,7 @@ import com.sun.jna.ptr.PointerByReference;
 import org.watermedia.videolan4j.binding.internal.libvlc_media_discoverer_description_t;
 import org.watermedia.videolan4j.binding.internal.libvlc_media_discoverer_t;
 import org.watermedia.videolan4j.binding.lib.LibVlc;
-import org.watermedia.videolan4j.binding.lib.types.size_t;
+import org.watermedia.videolan4j.binding.lib.size_t;
 import org.watermedia.videolan4j.media.discoverer.MediaDiscoverer;
 import org.watermedia.videolan4j.media.discoverer.MediaDiscovererCategory;
 import org.watermedia.videolan4j.media.discoverer.MediaDiscovererDescription;

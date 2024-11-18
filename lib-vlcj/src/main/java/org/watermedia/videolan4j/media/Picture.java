@@ -22,7 +22,7 @@ package org.watermedia.videolan4j.media;
 import com.sun.jna.Pointer;
 import org.watermedia.videolan4j.binding.internal.libvlc_picture_t;
 import org.watermedia.videolan4j.binding.lib.LibVlc;
-import org.watermedia.videolan4j.binding.lib.types.size_tByReference;
+import org.watermedia.videolan4j.binding.lib.size_t.size_tByReference;
 
 /**
  * Picture.

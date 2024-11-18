@@ -28,7 +28,6 @@ import org.watermedia.videolan4j.factory.MediaPlayerFactory;
 import org.watermedia.videolan4j.player.embedded.fullscreen.FullScreenStrategy;
 import org.watermedia.videolan4j.player.embedded.fullscreen.adaptive.AdaptiveFullScreenStrategy;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -41,17 +40,9 @@ import java.awt.*;
  * <p>
  * Generally, all component constructor (and therefore builder) parameters are optional, components will themselves
  * provide reasonable defaults.
+ * @watermedia removed embedded spec
  */
 public final class MediaPlayerSpecs {
-
-    /**
-     * Create a new builder for an embedded media player, or an embedded media list player.
-     *
-     * @return embedded media player builder
-     */
-    public static EmbeddedMediaPlayerSpec embeddedMediaPlayerSpec() {
-        return new EmbeddedMediaPlayerSpec();
-    }
 
     /**
      * Create a new builder for a callback media player, or a callback media list player.
@@ -69,131 +60,6 @@ public final class MediaPlayerSpecs {
      */
     public static AudioPlayerSpec audioPlayerSpec() {
         return new AudioPlayerSpec();
-    }
-
-    /**
-     * Builder for an embedded media or media list player.
-     */
-    public static final class EmbeddedMediaPlayerSpec {
-
-        MediaPlayerFactory factory;
-        Component videoSurfaceComponent;
-        FullScreenStrategy fullScreenStrategy;
-        InputEvents inputEvents;
-        Window overlay;
-
-        /**
-         * Specify the media player factory to use.
-         *
-         * @param factory media player factory
-         * @return this builder
-         */
-        public EmbeddedMediaPlayerSpec withFactory(MediaPlayerFactory factory) {
-            this.factory = factory;
-            return this;
-        }
-
-        /**
-         * Specify the heavyweight video surface component to use.
-         * <p>
-         * It is possible to render video into any AWT Component - optimally this would be a Canvas, but Window is
-         * possible, as in fact is Button or anything else (although this is not recommended).
-         * <p>
-         * This video surface component will be added into the media player component layout.
-         *
-         * @param videoSurfaceComponent video surface component
-         * @return this builder
-         */
-        public EmbeddedMediaPlayerSpec withVideoSurfaceComponent(Component videoSurfaceComponent) {
-            this.videoSurfaceComponent = videoSurfaceComponent;
-            return this;
-        }
-
-        /**
-         * Specify the full-screen strategy to use.
-         * <p>
-         * By default if no strategy is set there will be no support for full-screen mode.
-         *
-         * @param fullScreenStrategy full-screen strategy
-         * @return this builder
-         */
-        public EmbeddedMediaPlayerSpec withFullScreenStrategy(FullScreenStrategy fullScreenStrategy) {
-            this.fullScreenStrategy = fullScreenStrategy;
-            return this;
-        }
-
-        /**
-         * Specify to use the default full-screen strategy.
-         * <p>
-         * The default strategy will use the "best" available native strategy depending on the run-time operating
-         * system.
-         *
-         * @param fullScreenWindow window that will be made full-screen (the window containing the video surface)
-         * @return this builder
-         */
-        public EmbeddedMediaPlayerSpec withDefaultFullScreenStrategy(Window fullScreenWindow) {
-            this.fullScreenStrategy = new AdaptiveFullScreenStrategy(fullScreenWindow);
-            return this;
-        }
-
-        /**
-         * Specify to use the do-nothing unsupported full-screen strategy.
-         * <p>
-         * This is not really necessary as the default situation is to have no full-screen strategy.
-         *
-         * @return this builder
-         */
-        public EmbeddedMediaPlayerSpec withUnsupportedFullScreenStrategy() {
-            this.fullScreenStrategy = new UnsupportedFullScreenStrategy();
-            return this;
-        }
-
-        /**
-         * Specify keyboard/mouse input-event configuration.
-         *
-         * @param inputEvents  keyboard/mouse configuration
-         * @return this builder
-         */
-        public EmbeddedMediaPlayerSpec withInputEvents(InputEvents inputEvents) {
-            this.inputEvents = inputEvents;
-            return this;
-        }
-
-        /**
-         * Specify a heavyweight overlay.
-         * <p>
-         * Any {@link Window} can be used as an overlay - it is recommended for the window to have a transparent
-         * background.
-         *
-         * @param overlay overlay
-         * @return this builder
-         */
-        public EmbeddedMediaPlayerSpec withOverlay(Window overlay) {
-            this.overlay = overlay;
-            return this;
-        }
-
-        /**
-         * Create an embedded media player component from this builder.
-         *
-         * @return embedded media player component
-         */
-        public EmbeddedMediaPlayerComponent embeddedMediaPlayer() {
-            return new EmbeddedMediaPlayerComponent(this);
-        }
-
-        /**
-         * Create an embedded media list player component from this builder.
-         *
-         * @return embedded media list player component
-         */
-        public EmbeddedMediaListPlayerComponent embeddedMediaListPlayer() {
-            return new EmbeddedMediaListPlayerComponent(this);
-        }
-
-        private EmbeddedMediaPlayerSpec() {
-        }
-
     }
 
     /**
