@@ -58,6 +58,9 @@ public abstract class BasePlayer {
         if (PlayerAPI.isReady() && raw == null) {
             if (factory == null) factory = PlayerAPI.getFactory();
             this.raw = new CallbackMediaPlayerComponent(factory, true, renderCallback, bufferFormatCallback, cleanupCallback);
+            // no bloat calls
+            this.raw.mediaPlayer().input().enableKeyInputHandling(false);
+            this.raw.mediaPlayer().input().enableMouseInputHandling(false);
             raw.mediaPlayer().events().addMediaPlayerEventListener(LISTENER);
         } else {
             LOGGER.error(IT, "Failed to create raw player because VLC is not loaded");
