@@ -75,7 +75,7 @@ public class TestApp implements Executor {
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
         // Create the window
-        window = glfwCreateWindow(renderer.width, renderer.height, "WATERMeDIA", NULL, NULL);
+        window = glfwCreateWindow(1280, 720, "WATERMeDIA: Multimedia API", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
