@@ -6,10 +6,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,16 +20,20 @@ public class IOTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");
 
     public static String readString(Path from) {
-        try {
-            byte[] bytes = Files.readAllBytes(from);
+        try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(from)))  {
+            byte[] bytes = DataTool.readAllBytes(in);
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
         }
     }
 
+    public static String readString(File from) {
+        return readString(from.toPath());
+    }
+
     public static GifDecoder readGif(Path path) {
-        try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path.toFile().toPath()))) {
+        try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);
             if (status == GifDecoder.STATUS_OK) return gif;
@@ -42,6 +43,19 @@ public class IOTool {
             LOGGER.error(IT, "Failed loading GIF from WaterMedia resources", e);
         }
         return null;
+    }
+
+    public static boolean writeData(File to, byte[] data) {
+        return writeData(to.toPath(), data);
+    }
+
+    public static boolean writeData(Path to, byte[] data) {
+        try (BufferedOutputStream os = new BufferedOutputStream(Files.newOutputStream(to))) {
+            os.write(data);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static void un7zip(Marker it, Path zipFilePath) throws IOException { un7zip(it, zipFilePath, zipFilePath.getParent()); }

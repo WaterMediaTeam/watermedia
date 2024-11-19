@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.watermedia.videolan4j.discovery.providers.IProvider;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;
 import org.watermedia.videolan4j.discovery.NativeDiscovery;
 
@@ -129,7 +130,7 @@ public class PlayerAPI extends WaterMediaAPI {
 
         if (wrapped) {
             String versionInJar = JarTool.readString(configInput);
-            String versionInFile = IOTool.readString(configOutput.toPath());
+            String versionInFile = IOTool.readString(configOutput);
 
             boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
             if (!versionMatch) {
@@ -187,5 +188,62 @@ public class PlayerAPI extends WaterMediaAPI {
     public void release() {
         FACTORIES.forEach((s, mediaPlayerFactory) -> mediaPlayerFactory.release());
         FACTORIES.clear();
+    }
+
+    public static class ConfigProvider implements IProvider {
+        private static final File customPathFile = WaterMedia.getConfigDir().resolve("custom_vlc_path.txt").toFile();
+        private String content;
+
+        public ConfigProvider() {
+            if(!customPathFile.exists())
+                IOTool.writeData(customPathFile, new byte[0]);
+        }
+
+        @Override
+        public String name() {
+            return "WaterMedia Config Provider";
+        }
+
+        @Override
+        public Priority priority() {
+            return Priority.OVERWRITE;
+        }
+
+        @Override
+        public boolean supported() {
+            if (content == null)
+                content = IOTool.readString(customPathFile);
+            File f = new File(content);
+            return f.exists() && f.isDirectory();
+        }
+
+        @Override
+        public String[] directories() {
+            return new String[] {
+                    content
+            };
+        }
+    }
+
+    public static class Provider implements IProvider {
+        @Override
+        public String name() {
+            return "WaterMedia Provider";
+        }
+
+        @Override
+        public Priority priority() {
+            return Priority.HIGHEST;
+        }
+
+        @Override
+        public boolean supported() {
+            return Platform.isWindows() && Platform.is64Bit();
+        }
+
+        @Override
+        public String[] directories() {
+            return new String[] {WaterMedia.getLoader().tempDir().resolve("videolan").toAbsolutePath().toString()};
+        }
     }
 }

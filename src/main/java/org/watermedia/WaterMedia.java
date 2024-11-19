@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -65,6 +66,10 @@ public class WaterMedia {
 	}
 
 	public static ILoader getLoader() { return bootstrap; }
+
+	public static Path getConfigDir() {
+		return bootstrap.processDir().resolve("config/watermedia/");
+	}
 
 	public static void setSlavismMode(boolean mode) {
 		YES_SLAVISM.override(String.valueOf(mode));;

@@ -43,6 +43,9 @@ public class TestApp implements Executor {
             throw new RuntimeException("Failed to load WATERMeDIA", e);
         }
 
+        // enable slavism
+        WaterMedia.setSlavismMode(true);
+
         renderer = ImageAPI.loadingGif();
         cache = ImageAPI.getCache(url, this);
         cache.load();
@@ -57,6 +60,7 @@ public class TestApp implements Executor {
         // Terminate GLFW and free the error callback
         glfwTerminate();
         glfwSetErrorCallback(null).close();
+        System.exit(0);
     }
 
     private void init() {
@@ -128,6 +132,8 @@ public class TestApp implements Executor {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glfwSetWindowSizeCallback(window, (window, width, height) -> {
             glViewport(0, 0, width, height);
@@ -135,7 +141,7 @@ public class TestApp implements Executor {
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
-        while ( !glfwWindowShouldClose(window) ) {
+        while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             if (cache.getStatus() == ImageCache.Status.READY) {
@@ -145,6 +151,11 @@ public class TestApp implements Executor {
               } else {
                   renderer = cache.getRenderer();
               }
+              if (player != null && player.isSafeUse() && player.isEnded()) {
+                  glfwSetWindowShouldClose(window, true);
+              }
+            } else if (cache.getStatus() == ImageCache.Status.FAILED) {
+                throw new RuntimeException("Cannot load specified media");
             }
 
             if (cache.isVideo()) {
@@ -156,12 +167,27 @@ public class TestApp implements Executor {
 
 
             glColor4f(1, 1, 1, 1);
+
             glBegin(GL_QUADS);
+            {
                 glTexCoord2f(0, 1); glVertex2f(-1, -1);
                 glTexCoord2f(0, 0); glVertex2f(-1, 1);
                 glTexCoord2f(1, 0); glVertex2f(1, 1);
                 glTexCoord2f(1, 1); glVertex2f(1, -1);
+            }
             glEnd();
+
+            if (player != null && (!player.isSafeUse() || player.isBuffering() || player.isLoading() || player.isPaused())) {
+                glBindTexture(GL_TEXTURE_2D, ImageAPI.loadingGif().texture(System.currentTimeMillis() % renderer.duration));
+                glBegin(GL_QUADS);
+                {
+                    glTexCoord2f(0, 1); glVertex2f(-1, -1);
+                    glTexCoord2f(0, 0); glVertex2f(-1, 1);
+                    glTexCoord2f(1, 0); glVertex2f(1, 1);
+                    glTexCoord2f(1, 1); glVertex2f(1, -1);
+                }
+                glEnd();
+            }
 
             glfwSwapBuffers(window); // swap the color buffers
 
@@ -173,7 +199,7 @@ public class TestApp implements Executor {
     }
 
     public static void main(String[] args) {
-        String url = args.length == 0 ? "https://www.youtube.com/watch?v=bTHN1eWN7iU&list=RDQXw8krpfNAE&index=4" : args[0];
+        String url = args.length == 0 ? "https://www.youtube.com/watch?v=MuoeG_4lcjo" : args[0];
         new TestApp().run(URI.create(url));
     }
 
