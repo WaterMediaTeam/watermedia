@@ -1,3 +1,17 @@
+# 📦 UPDATE 2.1.4
+**NOTE: this contains breaking changes on WaterMedia internals
+if you're using the API you have nothing to worry about**
+- ✨ Added option to define custom VLC folder (`config/watermedia/custom_vlc_path.txt`)
+- ✨ Added back JVM argument `Dwatermedia.userDiscoveryPath=/path/` to define custom VLC folder
+- ✨ Detected `application/vnd.apple.mpegurl` and `application/x-mpegurl` as playable video mimetypes (suggested by rlishchyshyn)
+- 🛠️ Removed `Dwatermedia.disableMacOsWorkarrounds`
+- 🛠️ Discovery now search recursively on folders which contains "VLC" in the name
+- 🛠️ Discovery won't be searching after a completed-failed search
+- 🛠️ Discovery will continue searching using the current provider when it has more folders instead of skip to the next provider
+- 🛠️ Default folder providers are re-priorized from "high/highest" to "normal/low"
+- 🛠️ `PlayerAPI#registerFactory` is now synchronized
+- 🛠️ Disabled VLC key and mouse input handling
+
 # 📦 UPDATE 2.1.3
 - 🐛 Fixed MacOS workarrounds aren't applied when ``Dvideolan4j.disableMacOsWorkarrounds`` argument is not present
 - 🛠️ Added minimal VLC bindings for version and instance testing (no more dumb crashes when VLC 4 is installed)
