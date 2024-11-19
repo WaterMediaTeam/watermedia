@@ -49,6 +49,26 @@ public class DataTool {
         return GSON.fromJson(s, t);
     }
 
+    public static boolean startsWith(String s, String[] matches) {
+        s = s.toLowerCase();
+        for (String m: matches) {
+            if (s.startsWith(m)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean contains(String s, String[] matches) {
+        s = s.toLowerCase();
+        for (String m: matches) {
+            if (s.contains(m)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static int[] filterValue(int[] its, int v) {
         int size = 0;
         for (int i : its) if (i != v) size++;

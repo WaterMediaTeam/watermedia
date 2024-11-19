@@ -24,8 +24,7 @@ import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
@@ -38,6 +37,7 @@ import static org.watermedia.api.image.ImageAPI.IT;
 public class ImageFetch implements Runnable {
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("ImageFetch-Worker", Thread.NORM_PRIORITY + 1));
+    private static final String[] VID_MIMETYPES = new String[] { "video", "application/vnd.apple.mpegurl", "application/x-mpegurl" };
 
     public final URI uri;
     public BiConsumer<ImageRenderer, Boolean> successConsumer;
@@ -75,7 +75,7 @@ public class ImageFetch implements Runnable {
                 // GENERIC
                 String type = conn.getContentType();
                 if (type != null) {
-                    if (type.startsWith("video"))
+                    if (DataTool.startsWith(type, VID_MIMETYPES))
                         throw new VideoTypeException();
 
                     if (!type.startsWith("image"))
