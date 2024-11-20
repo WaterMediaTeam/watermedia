@@ -24,6 +24,7 @@ public class IOTool {
             byte[] bytes = DataTool.readAllBytes(in);
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
+            LOGGER.error(IT, "Failed to read text file", e);
             return null;
         }
     }
@@ -40,7 +41,7 @@ public class IOTool {
 
             throw new IOException("Failed to process GIF - Decoder status: " + status);
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed loading GIF from WaterMedia resources", e);
+            LOGGER.error(IT, "Failed reading GIF from disk", e);
         }
         return null;
     }
@@ -54,6 +55,7 @@ public class IOTool {
             os.write(data);
             return true;
         } catch (Exception e) {
+            LOGGER.error(IT, "Failed to write text file from disk", e);
             return false;
         }
     }

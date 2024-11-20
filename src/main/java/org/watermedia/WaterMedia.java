@@ -68,7 +68,7 @@ public class WaterMedia {
 	public static ILoader getLoader() { return bootstrap; }
 
 	public static Path getConfigDir() {
-		return bootstrap.processDir().resolve("config/watermedia/");
+		return bootstrap.processDir().resolve("config/watermedia");
 	}
 
 	public static void setSlavismMode(boolean mode) {

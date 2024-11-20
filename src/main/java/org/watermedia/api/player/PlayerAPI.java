@@ -211,8 +211,15 @@ public class PlayerAPI extends WaterMediaAPI {
 
         @Override
         public boolean supported() {
+            // first we check
             if (content == null)
                 content = IOTool.readString(customPathFile);
+
+            // then we reinforce
+            if (content == null)
+                return false;
+
+            // now we validate
             File f = new File(content);
             return f.exists() && f.isDirectory();
         }
