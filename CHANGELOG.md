@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.5
+- 🐛 Fixed NPE issues while loading VLC on some OS
+
 # 📦 UPDATE 2.1.4
 **NOTE: this contains breaking changes on WaterMedia internals
 if you're using the API you have nothing to worry about**
