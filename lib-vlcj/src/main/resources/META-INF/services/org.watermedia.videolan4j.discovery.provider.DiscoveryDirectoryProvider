@@ -1,7 +1,0 @@
-org.watermedia.videolan4j.discovery.provider.ConfigurationFileDiscoveryDirectoryProvider
-org.watermedia.videolan4j.discovery.provider.JnaLibraryPathDirectoryProvider
-org.watermedia.videolan4j.discovery.provider.LinuxWellKnownDirectoryProvider
-org.watermedia.videolan4j.discovery.provider.OsxWellKnownDirectoryProvider
-org.watermedia.videolan4j.discovery.provider.SystemPathDirectoryProvider
-org.watermedia.videolan4j.discovery.provider.UserDirDirectoryProvider
-org.watermedia.videolan4j.discovery.provider.WindowsInstallDirectoryProvider

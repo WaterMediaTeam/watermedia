@@ -25,7 +25,7 @@ import java.net.URI;
 import static org.watermedia.WaterMedia.LOGGER;
 
 public abstract class BasePlayer {
-    protected static final Marker IT = MarkerManager.getMarker("SyncMediaPlayer");
+    protected static final Marker IT = MarkerManager.getMarker("BasePlayer");
     protected static final WaterMediaPlayerEventListener LISTENER = new WaterMediaPlayerEventListener();
 
     // PLAYER
@@ -43,7 +43,7 @@ public abstract class BasePlayer {
     }
 
     /**
-     * This constructor skips raw player creation, instead waits for {@link #init(MediaPlayerFactory, RenderCallback, BufferFormatCallback, Runnable cleanupCallback)} to create raw player
+     * This constructor skips raw player creation, instead waits for {@link #init(MediaPlayerFactory, RenderCallback, BufferFormatCallback, BufferCleanupCallback)} to create raw player
      * Intended to be used just in case you need to do some special implementations of {@link RenderCallback} or {@link BufferFormatCallback}
      */
     protected BasePlayer() {}
