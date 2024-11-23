@@ -1,8 +1,8 @@
 package org.watermedia;
 
 import org.watermedia.api.math.MathAPI;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.watermedia.core.tools.DataTool;
+import org.watermedia.core.tools.IOTool;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.function.ToIntFunction;
 import java.util.logging.*;
 import java.util.stream.Stream;
 
@@ -180,7 +182,7 @@ public class Main {
                 if (crashReportFiles == null || crashReportFiles.length == 0)
                     throw new NullPointerException("No such directory or is empty");
 
-                Arrays.sort(crashReportFiles, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+                Arrays.sort(crashReportFiles, Comparator.comparingLong(File::lastModified));
                 File crashReport = crashReportFiles[0];
 
                 LOGGER.info("Collected files: " + Arrays.toString(crashReportFiles));
@@ -221,7 +223,7 @@ public class Main {
                 File wroot = root.resolve("watermedia_diagnosis").toFile().getAbsoluteFile();
 
                 if (wroot.exists()) {
-                    FileUtils.deleteDirectory(wroot);
+                    IOTool.rmdirs(wroot);
                 }
                 if (!wroot.exists() && !wroot.mkdirs()) {
                     throw new IOException("Cannot mkdir collected files dir");

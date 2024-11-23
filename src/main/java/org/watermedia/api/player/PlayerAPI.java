@@ -4,11 +4,10 @@ import com.sun.jna.Platform;
 import org.watermedia.WaterMedia;
 import org.watermedia.api.WaterMediaAPI;
 import org.watermedia.api.player.videolan.BasePlayer;
+import org.watermedia.core.tools.DataTool;
 import org.watermedia.core.tools.IOTool;
 import org.watermedia.core.tools.JarTool;
 import org.watermedia.loaders.ILoader;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.watermedia.videolan4j.discovery.providers.IProvider;
@@ -138,12 +137,7 @@ public class PlayerAPI extends WaterMediaAPI {
                 LOGGER.info(IT, "Binaries not extracted, extraction scheduled");
                 if (zipOutput.getParentFile().exists()) {
                     LOGGER.warn(IT, "Detected an old installation, cleaning up...");
-                    try {
-                        FileUtils.deleteDirectory(zipOutput.getParentFile());
-                    } catch (Exception e) {
-                        LOGGER.error(IT, "Failed to delete directories", e);
-                    }
-                    LOGGER.warn(IT, "Cleaning up successfully");
+                    LOGGER.warn(IT, IOTool.rmdirs(zipOutput.getParentFile()) ? "Cleaning up successfully" : "Failed to delete directories");
                 }
             } else {
                 LOGGER.warn(IT, "VLC binaries extraction skipped. Extracted version match with wrapped version");
@@ -160,7 +154,7 @@ public class PlayerAPI extends WaterMediaAPI {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
-                IOTool.un7zip(IT, zipOutput.toPath());
+                IOTool.un7zip(zipOutput.toPath());
                 if (!zipOutput.delete()) {
                     LOGGER.error(IT, "Failed to delete binaries zip file...");
                 }
@@ -176,7 +170,7 @@ public class PlayerAPI extends WaterMediaAPI {
         try {
             String[] args = JarTool.readArray("videolan/arguments.json");
             registerFactory(WaterMedia.asResource("default"), args);
-            registerFactory(WaterMedia.asResource("sound_only"), ArrayUtils.addAll(args, "--vout=none"));
+            registerFactory(WaterMedia.asResource("sound_only"), DataTool.concat(args, "--vout=none"));
 
             Runtime.getRuntime().addShutdownHook(new Thread(this::release));
         } catch (Exception e) {

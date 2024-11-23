@@ -3,7 +3,6 @@ package org.watermedia.api.render;
 import org.watermedia.api.WaterMediaAPI;
 import org.watermedia.api.render.memory.MemoryAlloc;
 import org.watermedia.loaders.ILoader;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.*;
@@ -37,7 +36,6 @@ public class RenderAPI extends WaterMediaAPI {
     /**
      * Resizes direct buffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
      *
-     * <p>In case class was missing causes a {@link NotImplementedException}</p>
      * @param buffer buffer to be resized
      * @param newSize new size of the buffer
      * @return resized DirectByteBuffer

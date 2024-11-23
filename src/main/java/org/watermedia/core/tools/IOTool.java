@@ -1,8 +1,8 @@
 package org.watermedia.core.tools;
 
+import net.sf.sevenzipjbinding.*;
+import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import org.watermedia.api.image.decoders.GifDecoder;
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
-import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -18,6 +19,22 @@ import static org.watermedia.WaterMedia.LOGGER;
 
 public class IOTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");
+
+    public static boolean rmdirs(Path path) {
+        return rmdirs(path.toFile());
+    }
+
+    public static boolean rmdirs(File root) {
+        File[] files = root.listFiles();
+
+        if (files == null || files.length == 0) return root.delete();
+        for (File f: files) {
+            File[] childs = f.listFiles();
+            if (childs != null && childs.length != 0 && !rmdirs(f)) return false;
+            if (!f.delete()) return false;
+        }
+        return true;
+    }
 
     public static String readString(Path from) {
         try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(from)))  {
@@ -60,45 +77,31 @@ public class IOTool {
         }
     }
 
-    public static void un7zip(Marker it, Path zipFilePath) throws IOException { un7zip(it, zipFilePath, zipFilePath.getParent()); }
-    public static void un7zip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
-        LOGGER.debug(it, "Un7zipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
-        if (zipFilePath.toString().endsWith(".zip")) throw new IOException("Attempted to extract a .zip as a .7z");
-        File destDir = destDirectory.toFile();
-        if (!destDir.exists()) destDir.mkdir();
+    public static void un7zip(Path zipPath) throws IOException { un7zip(zipPath, zipPath.getParent()); }
+    public static void un7zip(Path zipPath, Path destPath) throws IOException {
+        LOGGER.debug(IT, "Unzipping ZIP file '{}' to directory '{}'", zipPath, destPath);
 
-//        try (SevenZFile sevenZFile = new SevenZFile(zipFilePath.toFile(), "watermedia-is-my-lord".getBytes(StandardCharsets.UTF_16LE))) {
-        try (SevenZFile sevenZFile = new SevenZFile(zipFilePath.toFile())) {
-            SevenZArchiveEntry entry = sevenZFile.getNextEntry();
-
-            while (entry != null) {
-                File outputFile = new File(destDirectory + File.separator + entry.getName());
-                if (!outputFile.exists()) {
-                    if (entry.isDirectory()) {
-                        if (!outputFile.mkdirs()) LOGGER.error(IT, "Cannot create directories of '{}'", entry.getName());
-                    } else {
-                        un7zip$extract(sevenZFile, outputFile.toPath());
-                    }
+        try (RandomAccessFile file = new RandomAccessFile(zipPath.toFile(), "r");
+             IInArchive archive = SevenZip.openInArchive(null, new RandomAccessFileInStream(file))
+        ) {
+            final int count = archive.getNumberOfItems();
+            final ArrayList<Integer> extractIds = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                if ((boolean) archive.getProperty(i, PropID.IS_FOLDER)) {
+                    File f = destPath.resolve(archive.getProperty(i, PropID.PATH).toString()).toFile();
+                    if (!f.exists() && !f.mkdirs()) throw new IOException("Failed to create directories");
                 } else {
-                    LOGGER.warn(it, "Cancelled un7zip attempt of '{}', file already exists", entry.getName());
+                    extractIds.add(i);
                 }
-
-                entry = sevenZFile.getNextEntry();
             }
+
+            archive.extract(DataTool.unbox(extractIds), false, new Seven7ExtractCallback(destPath, archive));
         }
     }
 
-    private static void un7zip$extract(SevenZFile sevenZFile, Path filePath) throws IOException {
-        try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(filePath))) {
-            byte[] content = new byte[4096 * 4]; // MEMORY AHEAD
-            int read;
-            while ((read = sevenZFile.read(content)) != -1) bos.write(content, 0, read);
-        }
-    }
-
-    public static void unzip(Marker it, Path zipFilePath) throws IOException { unzip(it, zipFilePath, zipFilePath.getParent()); }
-    public static void unzip(Marker it, Path zipFilePath, Path destDirectory) throws IOException {
-        LOGGER.debug(it, "Unzipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
+    public static void unzip(Path zipFilePath) throws IOException { unzip(zipFilePath, zipFilePath.getParent()); }
+    public static void unzip(Path zipFilePath, Path destDirectory) throws IOException {
+        LOGGER.debug(IT, "Unzipping file from '{}' to directory '{}'", zipFilePath, destDirectory);
         if (zipFilePath.toString().endsWith(".7z")) throw new IOException("Attempted to extract a 7z as a .zip");
         File destDir = destDirectory.toFile();
         if (!destDir.exists()) destDir.mkdirs();
@@ -128,5 +131,57 @@ public class IOTool {
             int read;
             while ((read = zipIn.read(bytesIn)) != -1) output.write(bytesIn, 0, read);
         }
+    }
+
+    private static final class Seven7ExtractCallback implements IArchiveExtractCallback {
+        private final IInArchive archive;
+        private final Path destPath;
+        private OutputStream out;
+        private int index = 0;
+
+        public Seven7ExtractCallback(Path destPath, IInArchive archive) {
+            this.archive = archive;
+            this.destPath = destPath;
+        }
+
+        @Override
+        public ISequentialOutStream getStream(int i, ExtractAskMode extractAskMode) throws SevenZipException {
+            this.index = i;
+            try {
+                this.out = Files.newOutputStream(destPath.resolve(archive.getProperty(i, PropID.PATH).toString()));
+                return bytes -> {
+                    try {
+                        out.write(bytes);
+                    } catch (IOException e) {
+                        throw new SevenZipException(e);
+                    }
+                    return bytes.length;
+                };
+            } catch (IOException e) {
+                throw new SevenZipException(e);
+            }
+        }
+
+        @Override
+        public void prepareOperation(ExtractAskMode extractAskMode) {}
+
+        @Override
+        public void setOperationResult(ExtractOperationResult extractOperationResult) throws SevenZipException {
+            if (extractOperationResult != ExtractOperationResult.OK) {
+                LOGGER.error(IT, "Failed to extract file {}", archive.getProperty(index, PropID.PATH));
+            }
+
+            try {
+                out.close();
+            } catch (IOException e) {
+                throw new SevenZipException(e);
+            }
+        }
+
+        @Override
+        public void setTotal(long l) {}
+
+        @Override
+        public void setCompleted(long l) {}
     }
 }
