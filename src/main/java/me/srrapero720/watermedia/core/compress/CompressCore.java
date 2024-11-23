@@ -1,8 +1,8 @@
 package me.srrapero720.watermedia.core.compress;
 
 import me.srrapero720.watermedia.core.WaterInternalAPI;
-import me.srrapero720.watermedia.loader.ILoader;
-import me.srrapero720.watermedia.tools.ThreadTool;
+import org.watermedia.WaterMedia;
+import org.watermedia.tools.ThreadTool;
 import net.sf.sevenzipjbinding.SevenZip;
 
 import java.util.concurrent.ExecutorService;
@@ -16,7 +16,7 @@ public class CompressCore extends WaterInternalAPI {
     }
 
     @Override
-    public boolean prepare(ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
         SevenZip.initSevenZipFromPlatformJAR();
         if (EX == null || EX.isTerminated()) {
             EX = null;
@@ -25,7 +25,7 @@ public class CompressCore extends WaterInternalAPI {
     }
 
     @Override
-    public void start(ILoader bootCore) throws Exception { EX = ThreadTool.executorReduced("decompressor"); }
+    public void start(WaterMedia.ILoader bootCore) throws Exception { EX = ThreadTool.executorReduced("decompressor"); }
 
     @Override
     public void release() { EX.shutdown(); }

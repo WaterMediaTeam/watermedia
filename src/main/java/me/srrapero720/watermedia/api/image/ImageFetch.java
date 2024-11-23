@@ -1,10 +1,8 @@
 package me.srrapero720.watermedia.api.image;
 
-import me.srrapero720.watermedia.api.cache.CacheAPI;
-import me.srrapero720.watermedia.api.image.decoders.GifDecoder;
-import me.srrapero720.watermedia.api.network.DynamicURL;
-import me.srrapero720.watermedia.tools.DataTool;
-import me.srrapero720.watermedia.tools.ThreadTool;
+import me.srrapero720.watermedia.core.cache.CacheCore;
+import org.watermedia.tools.DataTool;
+import org.watermedia.tools.ThreadTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -16,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,8 +24,8 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static me.srrapero720.watermedia.WaterMedia.LOGGER;
-import static me.srrapero720.watermedia.api.network.NetworkAPI.USER_AGENT;
+import static org.watermedia.WaterMedia.LOGGER;
+import static org.watermedia.tools.NetTool.USER_AGENT;
 
 /**
  * Tool to fetch new images from internet
@@ -70,23 +69,25 @@ public class ImageFetch {
     public void start() { EX.execute(this::run); }
     private void run() {
         try {
-            DynamicURL result = new DynamicURL(url);
-            if (result.isVideo()) throw new NoPictureException();
+//            DynamicURL result = new DynamicURL(url);
+//            if (result.isVideo()) throw new NoPictureException();
+
+            Object result = null;
 
             byte[] data = load(result);
             String type = readType(data);
 
             try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
                 if (type != null && type.equalsIgnoreCase("gif")) {
-                    GifDecoder gif = new GifDecoder();
-                    int status = gif.read(in);
-
-                    if (status == GifDecoder.STATUS_OK) {
-                        if (successful != null) successful.run(ImageAPI.renderer(gif));
-                    } else {
-                        LOGGER.error(IT, "Failed to read gif: {}", status);
-                        throw new GifDecodingException();
-                    }
+//                    GifDecoder gif = new GifDecoder();
+//                    int status = gif.read(in);
+//
+//                    if (status == GifDecoder.STATUS_OK) {
+//                        if (successful != null) successful.run(ImageAPI.renderer(gif));
+//                    } else {
+//                        LOGGER.error(IT, "Failed to read gif: {}", status);
+//                        throw new GifDecodingException();
+//                    }
                 } else {
                     try {
                         BufferedImage image = ImageIO.read(in);
@@ -104,14 +105,15 @@ public class ImageFetch {
                 LOGGER.error(IT, "An exception occurred while loading image", e);
             }
             if (failed != null) failed.run(e);
-            CacheAPI.deleteEntry(url);
+            // TODO: still use cache even if connection failed
+//            CacheAPI.delete(url);
         }
     }
 
-    private static byte[] load(DynamicURL url) throws IOException, NoPictureException {
-        CacheAPI.Entry entry = CacheAPI.getEntry(url.getSource());
+    private static byte[] load(Object url) throws IOException, NoPictureException {
+        CacheCore.Entry entry = CacheCore.get("");
         long requestTime = System.currentTimeMillis();
-        URLConnection request = url.asURL().openConnection();
+        URLConnection request = ((URL) url).openConnection();
         request.setDefaultUseCaches(false);
         request.setRequestProperty("Accept", "image/*");
         int code = -1;
@@ -119,9 +121,9 @@ public class ImageFetch {
         request.addRequestProperty("User-Agent", USER_AGENT);
         if (request instanceof HttpURLConnection) {
             final HttpURLConnection conn = (HttpURLConnection) request;
-            if (entry != null && entry.getFile().exists()) {
-                if (entry.getTag() != null) conn.setRequestProperty("If-None-Match", entry.getTag());
-                else if (entry.getTime() != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.getTime())));
+            if (entry != null && entry.file.exists()) {
+                if (!entry.tag.equals("null")) conn.setRequestProperty("If-None-Match", entry.tag);
+                else if (entry.requestTime != -1) conn.setRequestProperty("If-Modified-Since", FORMAT.format(new Date(entry.requestTime)));
             }
             code = conn.getResponseCode();
         }
@@ -138,9 +140,16 @@ public class ImageFetch {
             long lastTimestamp, expTimestamp = -1;
             String maxAge = request.getHeaderField("max-age");
 
+            // CONTENT-TYPE
+            String mimeType = request.getHeaderField("Content-Type");
+            if (mimeType != null && !mimeType.isEmpty()) {
+                int i = mimeType.indexOf(";");
+                if (i != -1) mimeType = mimeType.substring(0, i);
+            }
+
             // EXPIRATION GETTER FIRST
             if (maxAge != null && !maxAge.isEmpty()) {
-                long parsed = DataTool.parseLongOr(maxAge, -1);
+                long parsed = DataTool.orElse(maxAge, -1);
                 if (parsed != -1)
                     expTimestamp = requestTime + Long.parseLong(maxAge) * 100;
             }
@@ -165,23 +174,21 @@ public class ImageFetch {
             }
 
             if (entry != null) {
-                String freshTag = entry.getTag();
-                if (tag != null && !tag.isEmpty()) freshTag = tag;
+                String freshTag = tag != null && !tag.isEmpty() ? tag : entry.tag;
 
                 if (code == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                    File file = entry.getFile();
-
-                    if (file.exists()) try (FileInputStream fileStream = new FileInputStream(file)) {
-                        return DataTool.readAllBytes(fileStream);
+                    try (InputStream in2 = entry.getInputStream()) {
+                        return DataTool.readAllBytes(in2);
                     } finally {
-                        CacheAPI.updateEntry(new CacheAPI.Entry(url.getSource(), freshTag, lastTimestamp, expTimestamp));
+                        entry.refresh("URL", freshTag, mimeType, lastTimestamp, expTimestamp);
                     }
                 }
+            } else {
+                entry = CacheCore.create("URL SOURCE", tag, mimeType, lastTimestamp, expTimestamp);
             }
 
-
             byte[] data = DataTool.readAllBytes(in);
-            CacheAPI.saveFile(url.getSource(), tag, lastTimestamp, expTimestamp, data);
+            entry.storeFile(data);
             return data;
         } finally {
             if (request instanceof HttpURLConnection) ((HttpURLConnection) request).disconnect();

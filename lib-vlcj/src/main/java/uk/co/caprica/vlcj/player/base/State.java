@@ -36,7 +36,7 @@ public enum State {
     ENDED          (6),
     ERROR          (7);
 
-    private static final Map<Integer, State> INT_MAP = new HashMap<Integer, State>();
+    private static final Map<Integer, State> INT_MAP = new HashMap<>();
 
     static {
         for (State event : State.values()) {
