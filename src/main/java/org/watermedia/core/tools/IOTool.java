@@ -19,6 +19,18 @@ import static org.watermedia.WaterMedia.LOGGER;
 
 public class IOTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");
+    private static final Exception SEVEN7_EXCEPTION;
+
+    static {
+        Exception ex;
+        try {
+            SevenZip.initSevenZipFromPlatformJAR();
+            ex = null;
+        } catch (SevenZipNativeInitializationException e) {
+            ex = e;
+        }
+        SEVEN7_EXCEPTION = ex;
+    }
 
     public static boolean rmdirs(Path path) {
         return rmdirs(path.toFile());
@@ -41,7 +53,7 @@ public class IOTool {
             byte[] bytes = DataTool.readAllBytes(in);
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            LOGGER.error(IT, "Failed to read text file", e);
+//            LOGGER.error(IT, "Failed to read text file", e);
             return null;
         }
     }
@@ -79,6 +91,10 @@ public class IOTool {
 
     public static void un7zip(Path zipPath) throws IOException { un7zip(zipPath, zipPath.getParent()); }
     public static void un7zip(Path zipPath, Path destPath) throws IOException {
+        if (SEVEN7_EXCEPTION != null) {
+            LOGGER.error(IT, "Cannot unzip '{}', 7zip binaries are not present", zipPath, SEVEN7_EXCEPTION);
+            return;
+        }
         LOGGER.debug(IT, "Unzipping ZIP file '{}' to directory '{}'", zipPath, destPath);
 
         try (RandomAccessFile file = new RandomAccessFile(zipPath.toFile(), "r");

@@ -68,7 +68,7 @@ dependencies {
     shadow "com.github.WaterMediaTeam:ytdl-java:$jyd_version"
     shadow "com.github.WaterMediaTeam:vlcj-submodule:0.0.1"
     shadow "net.sf.sevenzipjbinding:sevenzipjbinding:16.02-2.01"
-    shadow "net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:16.02-2.01"
+    shadow "net.sf.sevenzipjbinding:sevenzipjbinding-windows-amd64:16.02-2.01"
 
     // DEPENDENCIES INCLUDED IN MINECRAFT
     library "net.java.dev.jna:jna:$jna_version"
