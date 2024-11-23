@@ -107,3 +107,6 @@ you need to contact us to cordinate a comercial license for WaterMedia and VLCJ 
 WaterMedia v2.1 shades, and distributes VLCJ and VLCJ-natives
 under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf) 
 donated by [Caprica Software Limited](https://www.capricasoftware.co.uk/)
+
+## LibVLC license
+LibVLC binaries for Windows 10 (x64) is shaded under [LGPLv2.1](https://code.videolan.org/videolan/vlc/-/blob/master/COPYING)
