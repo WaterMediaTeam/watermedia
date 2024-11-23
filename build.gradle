@@ -102,9 +102,8 @@ shadowJar {
     configurations = [project.configurations.shadow]
 
     // Add relocation rules for each dependency
-    relocate 'com.github', 'me.lib720'
-    relocate 'com.alibaba', 'me.lib720.alibaba'
-    relocate 'com.fasterxml', 'me.lib720'
+    relocate 'com.github', 'org.watermedia.shaded'
+    relocate 'com.fasterxml', 'org.watermedia.shaded'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
@@ -149,7 +148,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
 
     // MAIN FILE
     def mainFile = upload(curseforgeid, shadowJar)
-    mainFile.displayName = brandname + "/" + version
+    mainFile.displayName = "WM/$version"
     mainFile.changelog = getChangelogText(false)
     mainFile.changelogType = "markdown"
     mainFile.releaseType = versiontype
@@ -158,7 +157,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1", "client")
     mainFile.addIncompatibility("fancyvideo-api")
     def sourcesFile = mainFile.withAdditionalFile(sourcesJar)
-    sourcesFile.displayName = "$brandname/$version-sources"
+    sourcesFile.displayName = "WM/$version-sources"
     sourcesFile.changelog = ""
     sourcesFile.releaseType = versiontype
 }
@@ -166,7 +165,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
 modrinth {
     token = MT_TOKEN
     projectId = modrinthid
-    versionName = brandname + "/" + version
+    versionName = "$brandname/$version"
     changelog = getChangelogText(true)
     versionNumber = version.toString()
     versionType = versiontype
