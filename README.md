@@ -1,40 +1,40 @@
-[![CurseForge](https://img.shields.io/curseforge/v/869524?style=for-the-badge&label=curseforge&labelColor=%232d2d2d&color=%23e04e14&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fwatermedia%2Ffiles)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
-[![JitPack](https://img.shields.io/jitpack/version/com.github.SrRapero720/watermedia?style=for-the-badge&label=JITPACK&color=34495e&link=https%3A%2F%2Fjitpack.io%2F%23SrRapero720%2Fwatermedia)](https://jitpack.io/#SrRapero720/watermedia)
-[![Modrinth Version](https://img.shields.io/modrinth/v/watermedia?style=for-the-badge&logo=modrinth&label=MODRINTH&color=%231bd96a)](https://modrinth.com/mod/watermedia)<br>
 [![CurseForge downloads](https://cf.way2muchnoise.eu/watermedia.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/watermedia)
+[![CurseForge](https://img.shields.io/curseforge/v/869524?style=for-the-badge&label=curseforge&labelColor=%232d2d2d&color=%23e04e14&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fwatermedia%2Ffiles)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
 [![Minecraft versions supported](https://cf.way2muchnoise.eu/versions/Supports_watermedia_all.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/watermedia/files)
+[![JitPack](https://img.shields.io/jitpack/version/com.github.SrRapero720/watermedia?style=for-the-badge&label=JITPACK&color=34495e&link=https%3A%2F%2Fjitpack.io%2F%23SrRapero720%2Fwatermedia)](https://jitpack.io/#SrRapero720/watermedia)
+[![Build status](https://img.shields.io/github/actions/workflow/status/WaterMediaTeam/watermedia/gradle.yml?style=for-the-badge
+)](https://github.com/WaterMediaTeam/watermedia/actions/workflows/gradle.yml)
 
 [![](https://dcbadge.vercel.app/api/server/cuYAzzZ)](https://discord.gg/cuYAzzZ)
 [![](https://dcbadge.vercel.app/api/server/453QZ749U4)](https://discord.gg/453QZ749U4)
 
-# WATERMeDIA | MULTIMEDIA API
-API-Library providing multimedia support using LibVLC, used by Minecraft mods like VideoPlayer.
-Designed to be used in pure Java and Minecraft environments using MinecraftForge (NeoForge) and Fabric (Quilt).
+# 🔗 WaterMedia: Multimedia API
+API and Library, provides multimedia support for pictures and videos using hand-made decoders and LibVLC,
+a very extensive API used by Minecraft mods like VideoPlayer, LittleFrames and PictureSign.
+Designed to work on Java games like Minecraft via MinecraftForge, NeoForge and Fabric.
 
-our API provides an extra layer of VLCJ MediaPlayers making easier player management,
-async task and concurrency.
-Custom ``URLFixers`` to provide support of platforms like YouTube, Twitch,
-Kick.com, Google Drive, OneDrive, Dropbox, Imgur, Twitter and PornHub.
+Our API is structured to be easy to use for any purpose, audio playing, video playing... catching, downloading.
+Enhanced support for many streaming platforms like Youtube, Twitch, Kick,
+Google Drive, OneDrive, Dropbox, Imgur, Twitter, Pornhub and more
 
-## VERSION STATUS
-WATERMeDIA can be loaded in any MC version in range of 1.16.5 ~ 1.21.x and
-outside Minecraft adding the proper dependencies.
+## 👷 MAINTAINERS
+- [SrRapero720](https://github.com/SrRapero720) | Donations: [Paypal](https://paypal.me/SrRapero720) - [Patreon](https://www.patreon.com/c/SrRapero720) - [Ko-fi](https://ko-fi.com/Manage/Index)
+- [NGoedix](https://github.com/NGoedix) | Donations: [Paypal](https://paypal.me/ngoedix)
 
-> [!IMPORTANT]
-> We only support the most popular versions of Minecraft.
+## 🔢 VERSION STATUS
+✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A** ||| 🚨 - **DROPPING**
 
 | Version | Forge | Fabric | NeoForge |
 |:-------:|:-----:|:------:|:--------:|
-| 1.16.5  |  🚨   |   🚨   |    🚫    |
 | 1.18.2  |   ✅   |   ✅    |    🚫    |
 | 1.19.2  |   ✅   |   ✅    |    🚫    |
 | 1.20.1  |   ✅   |   ✅    |    ✅     |
 | 1.20.x  |   ✅   |   ✅    |    ⛔     |
 | 1.21.1  |   ✅   |   ✅    |    ✅     |
+| 1.21.x  |   ⛔   |   ⛔    |    ⛔     |
 
-✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A** ||| 🚨 - **DROPPING**
 
-# INSTALLATION
+# 🧑‍💻 INSTALLATION (GRADLE)
 We use JitPack.io to build and distribute artifacts using direct GitHub tags or branches.
 <br>Check all available versions here: https://github.com/WaterMediaTeam/watermedia/tags
 
@@ -51,24 +51,15 @@ dependencies {
 }
 ```
 
-# VIDEOLAN OS SUPPORT
-Our API is based in pure JAVA, except video decoding; we use VideoLAN for that.
-It requires VideoLan (libVLC) binaries to load and use video features.
+# ⏯️ VIDEOLAN OS SUPPORT
+Windows (x64) users has a pre-installed VLC version. You won't need to install it there (sometimes)
+Some OS requires manual installation, others aren't supported.
 
-We feature on Windows x64 a pre-installation of VLC in our JAR,
-so they don't have to download it manually.
-But some OS+Arch requires manual installation of VLC,
-and others aren't supported by VLC limitations.
-
-Ensure your OS is supported in this list.<br>
-Linux users: check https://www.videolan.org/vlc/#download
+Ensure your OS is supported in this list.
 
 > [!WARNING]
-> FLATPAK is not supported (or any archlinux thing), use apt-get or manual installation for VLC and Minecraft (or any game)
-
-> [!WARNING]
-> MacOS should install universal arch version (avoiding arch concerns)
-> Download the universal version [here](https://get.videolan.org/vlc/3.0.21/macosx/vlc-3.0.21-universal.dmg)
+> Linux: Flatpak and Pak-man is not supported, use `apt-get` instead or any native option.<br>
+> MacOS: skip this list and download universal binaries: Download the universal version [here](https://get.videolan.org/vlc/3.0.21/macosx/vlc-3.0.21-universal.dmg).
 
 | Operative System | Support status |
 |:----------------:|:--------------:|
@@ -87,35 +78,33 @@ Linux users: check https://www.videolan.org/vlc/#download
 - 🚫 **NOT COMPATIBLE:** Due to VLC limitations
 - ⛔ **UNSUPPORTED:** Not even planned
 
-# Projects using WATERMeDIA
+# 👥 Projects using WATERMeDIA
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - By SrRapero720
 - [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - By NGoedix
 - [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - By CreativeMD
-- [PictureSign](https://www.curseforge.com/minecraft/mc-mods/picturesign) - By Motschen (TeamMidnightDust) 
+- [PictureSign](https://www.curseforge.com/minecraft/mc-mods/picturesign) - By Motschen (TeamMidnightDust)
 - [Nightmare Craft](https://www.curseforge.com/minecraft/modpacks/nightmare-craft-chapter-1) By divinegaminginc
 - [FancyMenu (Coming Soon)](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu) - By Keksuccino
 
-# MAINTAINERS
-- [SrRapero720](https://github.com/SrRapero720) - Donations: https://paypal.me/SrRapero720
-- [NGoedix](https://github.com/NGoedix) - Donations: https://paypal.me/ngoedix
+# 📦 SHADED DEPENDENCIES
+- [Java-Youtube-Downloader](https://github.com/sealedtx/java-youtube-downloader) is public domain
+  - [Jackson Databind](https://github.com/FasterXML/jackson) is shaded under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0) as a dependency of JYD
+- [SevenZipJBinding](https://github.com/borisbrodski/sevenzipjbinding) is shaded under [LGPLv2.1](https://github.com/borisbrodski/sevenzipjbinding?tab=LGPL-2.1-2-ov-file)
+- **NO SHADED**: *LWJGL, JNA/JNA-platform, gson, Log4J-api/core*
 
-# CONTRIBUTORS
-- [zenoarrows](https://github.com/ZenoArrows) - Buffer Eater
-- [cyyynthia](https://github.com/cyyynthia) - Deadlock hunter
+# ⚖️ LEGAL
+## WaterMedia License
+Polyform Strict License v1.0.0<br>
+Is permitted usage for non-comercial purposes (including and not limited to modpacks, serverpacks).
+Redistribution or derivatives works of WaterMedia are not allowed
 
-# SHADED DEPENDENCIES
-**Important:** All libraries are relocated and wrapped using shadowJar.
-- [VLCJ](https://github.com/caprica/vlcj/tree/vlcj-4.x)
-- [Java-youtube-downloader](https://github.com/sealedtx/java-youtube-downloader)
-- [Jackson Databind](https://github.com/FasterXML/jackson-databind)
-- commons-io
-- commons-lang3
-- commons-codec
+In case you want to run on commercial purposes,
+you need to contact us to cordinate a comercial license for WaterMedia and VLCJ with [Caprica Software Limited](https://www.capricasoftware.co.uk/)
 
-# NO SHADED DEPENDENCIES
-- LWJGL
-- jna
-- jna-platform
-- gson
-- log4j-api
-- log4j-core
+## VLCJ license
+WaterMedia v3 shades, and distributes VLCJ-natives
+under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf)
+donated by [Caprica Software Limited](https://www.capricasoftware.co.uk/)
+
+## LibVLC license
+LibVLC binaries for Windows 10 (x64) is shaded under [LGPLv2.1](https://code.videolan.org/videolan/vlc/-/blob/master/COPYING)
