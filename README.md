@@ -7,7 +7,7 @@
 [![](https://dcbadge.vercel.app/api/server/cuYAzzZ)](https://discord.gg/cuYAzzZ)
 [![](https://dcbadge.vercel.app/api/server/453QZ749U4)](https://discord.gg/453QZ749U4)
 
-# WATERMeDIA | MULTIMEDIA API
+# WaterMedia: Multimedia API
 API and Library, provides multimedia support for pictures and videos using hand-made decoders and LibVLC,
 a very extensive API used by Minecraft mods like VideoPlayer, LittleFrames and PictureSign.
 Designed to work on Java games like Minecraft via MinecraftForge, NeoForge and Fabric.
@@ -93,3 +93,17 @@ Ensure your OS is supported in this list.
   - [Jackson Databind](https://github.com/FasterXML/jackson) is shaded under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0) as a dependency of JYD
 - [SevenZipJBinding](https://github.com/borisbrodski/sevenzipjbinding) is shaded under [LGPLv2.1](https://github.com/borisbrodski/sevenzipjbinding?tab=LGPL-2.1-2-ov-file)
 - **NO SHADED**: *LWJGL, JNA/JNA-platform, gson, Log4J-api/core*
+
+# LEGAL
+## WaterMedia License
+Polyform Strict License v1.0.0<br>
+Is permitted usage for non-comercial purposes (including and not limited to modpacks, serverpacks).
+Redistribution or derivatives works of WaterMedia are not allowed
+
+In case you want to run on commercial purposes, 
+you need to contact us to cordinate a comercial license for WaterMedia and VLCJ with [Caprica Software Limited](https://www.capricasoftware.co.uk/)
+
+## VLCJ license
+WaterMedia v2.1 shades, and distributes VLCJ and VLCJ-natives
+under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf) 
+donated by [Caprica Software Limite|d](https://www.capricasoftware.co.uk/)
