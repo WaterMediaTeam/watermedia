@@ -106,4 +106,4 @@ you need to contact us to cordinate a comercial license for WaterMedia and VLCJ 
 ## VLCJ license
 WaterMedia v2.1 shades, and distributes VLCJ and VLCJ-natives
 under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf) 
-donated by [Caprica Software Limite|d](https://www.capricasoftware.co.uk/)
+donated by [Caprica Software Limited](https://www.capricasoftware.co.uk/)
