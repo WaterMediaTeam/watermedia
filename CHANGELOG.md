@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.7
+- 🐛 Fixed some streams urls causes rendering issues when it increases quality
+- 🐛 Use kick v2 api
+
 # 📦 UPDATE 2.1.6
 - ⚖️ Licensed WaterMedia under [Polyform Strict v1.0.0](https://github.com/WaterMediaTeam/watermedia/blob/2.1.x/LICENSE.md).
 - ⚖️ Licensed the shaded VLCJ and VLCJ-natives version under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf)
