@@ -75,6 +75,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         this.width = sourceWidth;
         this.height = sourceHeight;
         this.size = sourceWidth * sourceHeight * 4;
+        this.first = true;
 
         // TODO: This might be wrong; https://wiki.videolan.org/Chroma/
         // TODO: is not wrong but is undocumented...
