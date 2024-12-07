@@ -11,7 +11,7 @@ import java.io.*;
 import java.net.*;
 
 public class KickPatch extends AbstractPatch {
-    private static final String API_URL = "https://kick.com/api/v1/";
+    private static final String API_URL = "https://kick.com/api/v2/";
     private static final Gson GSON = new Gson();
 
     @Override
