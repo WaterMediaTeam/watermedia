@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.8
+- 🐛 Fixed broken apache import
+
 # 📦 UPDATE 2.1.7
 - 🐛 Fixed some streams urls causes rendering issues when it increases quality
 - 🐛 Use kick v2 api
