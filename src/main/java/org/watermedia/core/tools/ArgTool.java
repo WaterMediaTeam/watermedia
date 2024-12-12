@@ -1,8 +1,6 @@
 package org.watermedia.core.tools;
 
-import org.apache.logging.log4j.util.Supplier;
-import org.watermedia.WaterMedia;
-
+import java.util.function.Supplier;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
