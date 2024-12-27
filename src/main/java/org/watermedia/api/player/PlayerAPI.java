@@ -135,6 +135,10 @@ public class PlayerAPI extends WaterMediaAPI {
             String versionInFile = IOTool.readString(configOutput);
 
             boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
+
+            File[] f = zipOutput.getParentFile().listFiles();
+            boolean hasExtracted = f != null && f.length > 4; // libvlc.dll, libvlccore.dll, plugins and version.cfg
+
             if (!versionMatch) {
                 this.extract = true;
                 LOGGER.info(IT, "Binaries extraction scheduled");
@@ -147,7 +151,12 @@ public class PlayerAPI extends WaterMediaAPI {
                         LOGGER.error("Failed to delete old installation");
                 }
             } else {
-                LOGGER.warn(IT, "VLC binaries extraction skipped. Extracted version match with wrapped version");
+                if (!hasExtracted) {
+                    this.extract = true;
+                    LOGGER.warn(IT, "Binaries extraction scheduled due to a broken or missing installation");
+                } else {
+                    LOGGER.warn(IT, "VLC binaries extraction skipped. Extracted version match with wrapped version");
+                }
             }
         } else {
             LOGGER.warn(IT, "[NOT A BUG] {} doesn't contains VLC binaries for your OS and ARCH, you had to download it manually from 'https://www.videolan.org/vlc/'", WaterMedia.NAME);
