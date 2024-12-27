@@ -2,6 +2,7 @@ package org.watermedia;
 
 import com.sun.jna.Platform;
 import org.watermedia.api.WaterMediaAPI;
+import org.watermedia.core.exceptions.UnsupportedArchitechtureException;
 import org.watermedia.core.tools.ArgTool;
 import org.watermedia.core.tools.DataTool;
 import org.watermedia.core.tools.JarTool;
@@ -52,6 +53,9 @@ public class WaterMedia {
 
 		List<WaterMediaAPI> modules = DataTool.toList(ServiceLoader.load(WaterMediaAPI.class));
 		modules.sort(Comparator.comparingInt(e -> e.priority().ordinal()));
+
+		if (!Platform.is64Bit())
+			throw new UnsupportedArchitechtureException();
 
 		for (WaterMediaAPI m: modules) {
 			LOGGER.info(IT, "Starting {}", m.getClass().getSimpleName());
