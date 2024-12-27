@@ -9,102 +9,69 @@
 [![](https://dcbadge.vercel.app/api/server/453QZ749U4)](https://discord.gg/453QZ749U4)
 
 # 🔗 WaterMedia: Multimedia API
-API and Library, provides multimedia support for pictures and videos using hand-made decoders and LibVLC,
-a very extensive API used by Minecraft mods like VideoPlayer, LittleFrames and PictureSign.
-Designed to work on Java games like Minecraft via MinecraftForge, NeoForge and Fabric.
+Provides multimedia support using native/java decoders and LibVLC as video backend.
+Used by many minecraft mods like LittleFrames and VideoPlayer and the superseding of FancyVideo-API in Minecraft,
+integrates support for many platforms such as YouTube, Twitch, Kick, Google Drive, OneDrive, Dropbox, Imgur,
+Twitter, Streamable, Lightshot and more!
 
-Our API is structured to be easy to use for any purpose, audio playing, video playing... catching, downloading.
-Enhanced support for many streaming platforms like Youtube, Twitch, Kick,
-Google Drive, OneDrive, Dropbox, Imgur, Twitter, Pornhub and more
+Designed to work on almost Minecraft Mod Loader (Forge, NeoForge and Fabric) above Minecraft 1.16.5 and
+outside Minecraft contexts.
 
-## 👷 MAINTAINERS
-- [SrRapero720](https://github.com/SrRapero720) | Donations: [Paypal](https://paypal.me/SrRapero720) - [Patreon](https://www.patreon.com/c/SrRapero720) - [Ko-fi](https://ko-fi.com/Manage/Index)
-- [NGoedix](https://github.com/NGoedix) | Donations: [Paypal](https://paypal.me/ngoedix)
+# 💰 Donations
+[![Support me on Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://patreon.com/SrRapero720)
+[![Support me via Paypal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/SrRapero720)
+[![Support me on Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/srrapero720)
 
-## 🔢 VERSION STATUS
-✅ - **SUPPORTED** ||| ⚠ - **PLANNED** ||| ⛔ - **NOT SUPPORT** ||| 🚫 - **N/A** ||| 🚨 - **DROPPING**
+# 🕒 Support Status
+> ✅ Supported || ⚡ Special actions required || 🚧 Planned ||🚨 Dropping
 
-| Version | Forge | Fabric | NeoForge |
-|:-------:|:-----:|:------:|:--------:|
-| 1.18.2  |   ✅   |   ✅    |    🚫    |
-| 1.19.2  |   ✅   |   ✅    |    🚫    |
-| 1.20.1  |   ✅   |   ✅    |    ✅     |
-| 1.20.x  |   ✅   |   ✅    |    ⛔     |
-| 1.21.1  |   ✅   |   ✅    |    ✅     |
-| 1.21.x  |   ⛔   |   ⛔    |    ⛔     |
+## 🎮 Minecraft
+| Version | Status |
+|:-------:|:------:|
+| 1.18.2  |   ✅    |
+| 1.19.2  |   ✅    |
+| 1.20.1  |   ✅    |
+| 1.21.1  |   ✅    |
+| 1.21.4  |   ✅    |
 
 
-# 🧑‍💻 INSTALLATION (GRADLE)
-We use JitPack.io to build and distribute artifacts using direct GitHub tags or branches.
-<br>Check all available versions here: https://github.com/WaterMediaTeam/watermedia/tags
-
-**IN YOUR GRADLE**
-```gradle
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    // doesn't require fg.debof() or any debofuscation tool
-    // watermedia is minecraft-agnostic (we don't believe in notch, or agnes)
-    implementation 'com.github.WaterMediaTeam.watermedia:build:<version>'
-}
-```
-
-# ⏯️ VIDEOLAN OS SUPPORT
-Windows (x64) users has a pre-installed VLC version. You won't need to install it there (sometimes)
-Some OS requires manual installation, others aren't supported.
-
-Ensure your OS is supported in this list.
-
+## ⏯️ VideoLAN
+OS marked with "special actions required" requires to manually download and install [VideoLAN](https://www.videolan.org/vlc/).
 > [!WARNING]
-> Linux: Flatpak and Pak-man is not supported, use `apt-get` instead or any native option.<br>
-> MacOS: skip this list and download universal binaries: Download the universal version [here](https://get.videolan.org/vlc/3.0.21/macosx/vlc-3.0.21-universal.dmg).
+> **Linux:** Flatpak, Pacman or sandboxed installations aren't supported (For VLC and MC).<br>
+> **macOS:** Find the universal install [here](https://get.videolan.org/vlc/3.0.21/macosx/vlc-3.0.21-universal.dmg).
 
-| Operative System | Support status |
-|:----------------:|:--------------:|
-|  Win  1x (x64)   |       ✅        |
-|  Win  1x (x32)   |       ⛔        |
-|  Win  1x (ARM)   |       🚫       |
-|   MacOS (x64)    |       ❎        |
-|   MacOS (ARM)    |       ❎        |
-|   Linux (x64)    |       ❎        |
-|   Linux (ARM)    |       ❎        |
-| Android (Pojav)  |       ⚠        |
+|  Operative System   | Status |
+|:-------------------:|:------:|
+| Windows (x64 & ARM) |   ✅    |
+|  MacOS (x64 & ARM)  |   ⚡    |
+|  Linux (x64 & ARM)  |   ⚡    |
+|   Android (Pojav)   |   🚧   |
 
-- ✅ **SUPPORTED**
-- ❎ **LIMITED:** Needs manually VLC 3 installation
-- ⚠ **PLANNED:** Requires some research
-- 🚫 **NOT COMPATIBLE:** Due to VLC limitations
-- ⛔ **UNSUPPORTED:** Not even planned
-
-# 👥 Projects using WATERMeDIA
+# 🌐 Projects using WaterMedia
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - By SrRapero720
 - [VideoPlayer](https://www.curseforge.com/minecraft/mc-mods/video-player) - By NGoedix
 - [LittlePictureFrames](https://www.curseforge.com/minecraft/mc-mods/littleframes) - By CreativeMD
 - [PictureSign](https://www.curseforge.com/minecraft/mc-mods/picturesign) - By Motschen (TeamMidnightDust)
 - [Nightmare Craft](https://www.curseforge.com/minecraft/modpacks/nightmare-craft-chapter-1) By divinegaminginc
-- [FancyMenu (Coming Soon)](https://legacy.curseforge.com/minecraft/mc-mods/fancymenu) - By Keksuccino
+- [ToshaFrames: WF fork for 1.7.10](https://github.com/Toshayo/WaterFrames) - By Toshayo
+- [FancyMenu (Coming Soon)](https://www.curseforge.com/minecraft/mc-mods/fancymenu) - By Keksuccino
 
-# 📦 SHADED DEPENDENCIES
-- [Java-Youtube-Downloader](https://github.com/sealedtx/java-youtube-downloader) is public domain
-  - [Jackson Databind](https://github.com/FasterXML/jackson) is shaded under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0) as a dependency of JYD
-- [SevenZipJBinding](https://github.com/borisbrodski/sevenzipjbinding) is shaded under [LGPLv2.1](https://github.com/borisbrodski/sevenzipjbinding?tab=LGPL-2.1-2-ov-file)
-- **NO SHADED**: *LWJGL, JNA/JNA-platform, gson, Log4J-api/core*
+# ⚖️ License
+WaterMedia is under Polyform Strict License v1.0.0<br>
 
-# ⚖️ LEGAL
-## WaterMedia License
-Polyform Strict License v1.0.0<br>
-Is permitted usage for non-comercial purposes (including and not limited to modpacks, serverpacks).
-Redistribution or derivatives works of WaterMedia are not allowed
+Permitted non-commercial usage (included and not limited to; ModPacks or ServerPacks)
+Redistribution or derivative versions are not allowed
 
-In case you want to run on commercial purposes,
-you need to contact us to cordinate a comercial license for WaterMedia and VLCJ with [Caprica Software Limited](https://www.capricasoftware.co.uk/)
+For commercial purposes or derivative versions, contact us to coordinate a commercial license with [Caprica Software Limited](https://www.capricasoftware.co.uk/)
+or receive a free license for derivative without commercial purposes under specific conditions (our VLCJ license doesn't apply for your fork).
+
+## Jackson Databind License
+Shaded under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0) as a dependency of [JYD](https://github.com/sealedtx/java-youtube-downloader)
 
 ## VLCJ license
-WaterMedia v3 shades, and distributes VLCJ-natives
-under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf)
-donated by [Caprica Software Limited](https://www.capricasoftware.co.uk/)
+VLCJ and VLCJ-natives are shaded and distributed under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf)
+generously provided and donated by [Caprica Software Limited](https://www.capricasoftware.co.uk/).
 
 ## LibVLC license
-LibVLC binaries for Windows 10 (x64) is shaded under [LGPLv2.1](https://code.videolan.org/videolan/vlc/-/blob/master/COPYING)
+LibVLC Windows 10 (x64) binaries are wrapped under [LGPLv2.1](https://code.videolan.org/videolan/vlc/-/blob/master/COPYING)
