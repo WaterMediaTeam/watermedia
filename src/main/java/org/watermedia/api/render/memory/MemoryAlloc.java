@@ -4,9 +4,17 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 
+/**
+ * @deprecated No replacement
+ */
+@Deprecated
 public class MemoryAlloc {
     private static MemoryUtil.MemoryAllocator ALLOCATOR;
 
+    /**
+     * @deprecated No replacement
+     */
+    @Deprecated
     public static ByteBuffer create(int pSize) {
         if (ALLOCATOR == null) ALLOCATOR = MemoryUtil.getAllocator(false);
 
@@ -18,6 +26,10 @@ public class MemoryAlloc {
         }
     }
 
+    /**
+     * @deprecated No replacement
+     */
+    @Deprecated
     public static ByteBuffer resize(ByteBuffer pBuffer, int pByteSize) {
         if (ALLOCATOR == null) ALLOCATOR = MemoryUtil.getAllocator(false);
 
@@ -29,6 +41,10 @@ public class MemoryAlloc {
         }
     }
 
+    /**
+     * @deprecated No replacement
+     */
+    @Deprecated
     public static void free(ByteBuffer pBuffer) {
         if (pBuffer == null) return;
         if (ALLOCATOR == null) ALLOCATOR = MemoryUtil.getAllocator(false);
