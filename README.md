@@ -23,35 +23,31 @@ outside Minecraft contexts.
 [![Support me on Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/srrapero720)
 
 # 🕒 Support Status
-> **ℹ️ STATUS (NO LISTED MEANS UNSUPPORTED)**<br>
-> -✅ Supported<br>
-> -⚡ Special actions required<br>
-> -🚧 Planned<br>
-> -🚨 Dropping<br>
+> ✅ Supported || ⚡ Special actions required || 🚧 Planned ||🚨 Dropping
 
 ## 🎮 Minecraft
-| Version | Forge |
-|:-------:|:-----:|
-| 1.16.5  |  🚨   |
-| 1.18.2  |   ✅   |
-| 1.19.2  |   ✅   |
-| 1.20.1  |   ✅   |
-| 1.21.1  |   ✅   |
-| 1.21.4  |   ✅   |
+| Version | Status |
+|:-------:|:------:|
+| 1.16.5  |   🚨   |
+| 1.18.2  |   ✅    |
+| 1.19.2  |   ✅    |
+| 1.20.1  |   ✅    |
+| 1.21.1  |   ✅    |
+| 1.21.4  |   ✅    |
 
 
-# ⏯️ VideoLAN status
+## ⏯️ VideoLAN
 OS marked with "special actions required" requires to manually download and install [VideoLAN](https://www.videolan.org/vlc/).
 > [!WARNING]
 > **Linux:** Flatpak, Pacman or sandboxed installations aren't supported (For VLC and MC).<br>
 > **macOS:** Find the universal install [here](https://get.videolan.org/vlc/3.0.21/macosx/vlc-3.0.21-universal.dmg).
 
-| Operative System  | Support status |
-|:-----------------:|:--------------:|
-|   Windows (x64)   |       ✅        |
-| MacOS (x64 & ARM) |       ⚡        |
-| Linux (x64 & ARM) |       ⚡        |
-|  Android (Pojav)  |       🚧       |
+| Operative System  | Status |
+|:-----------------:|:------:|
+|   Windows (x64)   |   ✅    |
+| MacOS (x64 & ARM) |   ⚡    |
+| Linux (x64 & ARM) |   ⚡    |
+|  Android (Pojav)  |   🚧   |
 
 # 🌐 Projects using WaterMedia
 - [WATERFrAMES](https://www.curseforge.com/minecraft/mc-mods/waterframes) - By SrRapero720
