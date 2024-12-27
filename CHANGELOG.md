@@ -1,3 +1,15 @@
+# 📦 UPDATE 2.1.9
+- ✨ Added broken VLC installation detector
+- 🐛 Fixed crashes caused by 7z extractions
+  - 🛠️ This increases Jar size
+- 🛠️ Bumped vlc extraction version
+- 🛠️ Better logging messages
+- 🛠️ Loading WaterMedia on 32-bit systems throws an exception
+- 🛠️ Deprecated MemoryAlloc with no replacement
+- 🛠️ Deprecated BasePlayer#raw() method and field with no replacements
+- 🛠️ Cut changelog from CurseForge per release
+- 🛠️ Removed Herobrine
+
 # 📦 UPDATE 2.1.8
 - 🐛 Fixed broken apache import
 
