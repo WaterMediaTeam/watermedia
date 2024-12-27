@@ -28,6 +28,7 @@ public class ForgeLoader implements ILoader {
     private static final Path processPath = new File("").toPath().toAbsolutePath();
 
     public ForgeLoader() {
+        // STUPID HACK TO AVOID FORGE COMPLAINS WHEN WATERMEDIS ISN'T ON SERVER-SIDE
         try {
             String pairClassName = concatPackage("org", "apache", "commons", "lang3", "tuple", "Pair");
             Method pairOf = Class.forName(pairClassName).getMethod("of", Object.class, Object.class);

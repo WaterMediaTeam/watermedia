@@ -99,11 +99,11 @@ public class PlayerAPI extends WaterMediaAPI {
     public PlayerAPI() {
         super();
         ILoader bootstrap = WaterMedia.getLoader();
-        String zFilename = "win-x64.7z";
+        String zFilename = "win-x64.zip";
 
         this.dir = bootstrap.tempDir().resolve("videolan");
 
-        this.zipInput = "videolan/" + "win-x64.7z";
+        this.zipInput = "videolan/" + zFilename;
         this.configInput = "videolan/version.cfg";
 
         if (this.wrapped) {
@@ -154,7 +154,7 @@ public class PlayerAPI extends WaterMediaAPI {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutput.exists() && JarTool.copyAsset(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
-                IOTool.un7zip(zipOutput.toPath());
+                IOTool.unzip(zipOutput.toPath());
                 if (!zipOutput.delete()) {
                     LOGGER.error(IT, "Failed to delete binaries zip file...");
                 }
