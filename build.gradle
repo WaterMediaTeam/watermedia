@@ -147,7 +147,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
     // MAIN FILE
     def mainFile = upload(curseforgeid, shadowJar)
     mainFile.displayName = "WM/$version"
-    mainFile.changelog = getChangelogText(false)
+    mainFile.changelog = getChangelogText()
     mainFile.changelogType = "markdown"
     mainFile.releaseType = versiontype
     mainFile.addModLoader("Forge", "NeoForge", "Fabric")
@@ -164,7 +164,7 @@ modrinth {
     token = MT_TOKEN
     projectId = modrinthid
     versionName = "$brandname/$version"
-    changelog = getChangelogText(true)
+    changelog = getChangelogText()
     versionNumber = version.toString()
     versionType = versiontype
     uploadFile = shadowJar
@@ -175,10 +175,10 @@ modrinth {
     group = 'publishing'
 }
 
-def getChangelogText(boolean latest) {
+def getChangelogText() {
     def result = ""
     for (String line: file('CHANGELOG.md').readLines('UTF-8')) {
-        if (latest && line.isEmpty()) return result
+        if (line.isEmpty()) return result
         result += line + '\n'
     }
     return result
