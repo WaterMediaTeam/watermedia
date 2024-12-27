@@ -63,6 +63,7 @@ public class WaterMedia {
 			LOGGER.info(IT, "Module {} loaded successfully", m.getClass().getSimpleName());
 		}
 		LOGGER.info(IT, "Startup finished");
+		LOGGER.info(IT, "Are you ready for trouble?");
 	}
 
 	public static ILoader getLoader() { return bootstrap; }

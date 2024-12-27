@@ -67,16 +67,19 @@ public class PlayerAPI extends WaterMediaAPI {
     /**
      * Registers a new FACTORY associated with a identifier (or a well-know Minecraft ResourceLocation as String)
      * check <a href="https://wiki.videolan.org/VLC_command-line_help/">VideoLAN wiki</a>
-     * @param resLoc the identifier (ResourceLocation#toString())
+     * @param id the identifier (ResourceLocation#toString())
      * @param vlcArgs arguments used to create new VLC player instances
      * @return MediaPlayerFactory to create custom VLC players. {@link BasePlayer} can accept factory for new instances
      */
-    public static synchronized MediaPlayerFactory registerFactory(String resLoc, String[] vlcArgs) {
+    public static synchronized MediaPlayerFactory registerFactory(String id, String[] vlcArgs) {
         if (NativeDiscovery.start()) {
             MediaPlayerFactory factory = new MediaPlayerFactory(vlcArgs);
-            MediaPlayerFactory oldFactory = FACTORIES.put(resLoc, factory);
-            LOGGER.info(IT, "Created new VLC instance from '{}' with args: '{}'", NativeDiscovery.discoveryPath(), Arrays.toString(vlcArgs));
-            if (oldFactory != null) LOGGER.warn(IT, "Factory {} previously defined was overwritted", resLoc);
+            MediaPlayerFactory oldFactory = FACTORIES.put(id, factory);
+            LOGGER.info(IT, "Created new VLC instance with ID '{}' with args: '{}'", id, Arrays.toString(vlcArgs));
+            if (oldFactory != null) {
+                LOGGER.warn(IT, "Factory {} previously defined was overwritten", id);
+                oldFactory.release();
+            }
             return factory;
         }
 
@@ -134,10 +137,14 @@ public class PlayerAPI extends WaterMediaAPI {
             boolean versionMatch = versionInFile != null && versionInFile.equalsIgnoreCase(versionInJar);
             if (!versionMatch) {
                 this.extract = true;
-                LOGGER.info(IT, "Binaries not extracted, extraction scheduled");
+                LOGGER.info(IT, "Binaries extraction scheduled");
                 if (zipOutput.getParentFile().exists()) {
-                    LOGGER.warn(IT, "Detected an old installation, cleaning up...");
-                    LOGGER.warn(IT, IOTool.rmdirs(zipOutput.getParentFile()) ? "Cleaning up successfully" : "Failed to delete directories");
+                    LOGGER.warn(IT, "Old installation detected, cleaning it...");
+
+                    if (IOTool.rmdirs(zipOutput.getParentFile()))
+                        LOGGER.info(IT, "Cleanup successfully");
+                    else
+                        LOGGER.error("Failed to delete old installation");
                 }
             } else {
                 LOGGER.warn(IT, "VLC binaries extraction skipped. Extracted version match with wrapped version");
