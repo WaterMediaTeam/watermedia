@@ -31,7 +31,15 @@ public abstract class BasePlayer {
     // PLAYER
     protected volatile URI url;
     protected volatile URI audioUrl;
+    /**
+     * @deprecated no replacement
+     */
+    @Deprecated
     private volatile CallbackMediaPlayerComponent raw;
+    /**
+     * @deprecated no replacement
+     */
+    @Deprecated
     public CallbackMediaPlayerComponent raw() { return raw; }
 
     // PLAYER THREAD
