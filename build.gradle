@@ -1,12 +1,9 @@
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
-
 plugins {
     id 'java'
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '8.1.+'
     id 'com.google.osdetector' version '1.7.+'
-    id 'com.modrinth.minotaur' version '2.+'
-    id 'net.darkhax.curseforgegradle' version '1.1.+'
+    id "me.modmuss50.mod-publish-plugin" version "0.8.3"
 }
 
 def MT_TOKEN = System.getenv("MODRINTH_TOKEN")
@@ -132,47 +129,40 @@ jar {
     finalizedBy shadowJar
 }
 
-tasks.register('releaseJar', GradleBuild) {
-    dependsOn build
-
-    group 'publishing'
-    description 'Uploads new version to modrinth and curseforge.'
-    setTasks(['curseforge', 'modrinth'])
-}
-
-tasks.register('curseforge', TaskPublishCurseForge) {
-    disableVersionDetection()
-    apiToken = CF_TOKEN
-
-    // MAIN FILE
-    def mainFile = upload(curseforgeid, shadowJar)
-    mainFile.displayName = "WM/$version"
-    mainFile.changelog = getChangelogText()
-    mainFile.changelogType = "markdown"
-    mainFile.releaseType = versiontype
-    mainFile.addModLoader("Forge", "NeoForge", "Fabric")
-    mainFile.addJavaVersion("Java 21", "Java 17", "Java 11", "Java 8")
-    mainFile.addGameVersion("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1", "client")
-    mainFile.addIncompatibility("fancyvideo-api")
-    def sourcesFile = mainFile.withAdditionalFile(sourcesJar)
-    sourcesFile.displayName = "WM/$version-sources"
-    sourcesFile.changelog = ""
-    sourcesFile.releaseType = versiontype
-}
-
-modrinth {
-    token = MT_TOKEN
-    projectId = modrinthid
-    versionName = "$brandname/$version"
+publishMods {
+    file = shadowJar.archiveFile
     changelog = getChangelogText()
-    versionNumber = version.toString()
-    versionType = versiontype
-    uploadFile = shadowJar
-    loaders = [ "forge", "neoforge", "fabric" ]
-    gameVersions = [ "1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1" ]
-    additionalFiles = [ sourcesJar ]
+    type = STABLE
+    displayName = "WM/${project.properties.version}"
+    modLoaders.add("forge")
+    modLoaders.add("neoforge")
+    modLoaders.add("fabric")
 
-    group = 'publishing'
+    additionalFiles.from(sourcesJar.archiveFile)
+    maxRetries = 2
+
+    dryRun = false
+
+    curseforge {
+        accessToken = CF_TOKEN
+        projectId = curseforgeid
+        minecraftVersions.addAll("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1")
+        javaVersions.addAll(JavaVersion.VERSION_21, JavaVersion.VERSION_17, JavaVersion.VERSION_11, JavaVersion.VERSION_1_8)
+        clientRequired = true
+        serverRequired = false
+        projectSlug = id
+        incompatible("fancyvideo-api")
+        additionalFile(sourcesJar) {
+            name = "WM-sources/${project.properties.version}"
+        }
+    }
+
+    modrinth {
+        accessToken = MT_TOKEN
+        projectId = modrinthid
+        minecraftVersions.addAll("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1")
+        incompatible("vlcvideoapi-pol")
+    }
 }
 
 def getChangelogText() {
