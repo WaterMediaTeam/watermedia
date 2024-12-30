@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.10
+- ✨ ImageAPI: added methods to get images from jars
+- ✨ BasePlayer: added state name getter
+
 # 📦 UPDATE 2.1.9
 - ✨ Added broken VLC installation detector
 - 🐛 Fixed crashes caused by 7z extractions
