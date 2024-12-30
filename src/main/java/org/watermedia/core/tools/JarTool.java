@@ -24,8 +24,7 @@ public class JarTool {
     static final Marker IT = MarkerManager.getMarker("Tools");
     private static final Gson GSON = new Gson();
 
-    @Deprecated
-    public static String readString(ClassLoader loader, String source) {
+    public static String readString(String source, ClassLoader loader) {
         try {
             byte[] bytes = DataTool.readAllBytes(readResourceAsStream$byClassLoader(source, loader));
             return new String(bytes, Charset.defaultCharset());
@@ -34,8 +33,7 @@ public class JarTool {
         }
     }
 
-    @Deprecated
-    public static boolean copyAsset(ClassLoader loader, String source, Path dest) {
+    public static boolean copyAsset(String source, Path dest, ClassLoader loader) {
         try (InputStream is = readResourceAsStream$byClassLoader(source, loader)) {
             if (is == null) throw new FileNotFoundException("Resource was not found in " + source);
 
@@ -49,8 +47,7 @@ public class JarTool {
         return false;
     }
 
-    @Deprecated
-    public static List<String> readStringList(ClassLoader loader, String source) {
+    public static List<String> readStringList(String source, ClassLoader loader) {
         List<String> result = new ArrayList<>();
         try (InputStreamReader reader = new InputStreamReader(readResourceAsStream$byClassLoader(source, loader))) {
             result.addAll(GSON.fromJson(reader, new TypeToken<List<String>>() {}.getType()));
@@ -61,8 +58,7 @@ public class JarTool {
         return result;
     }
 
-    @Deprecated
-    public static BufferedImage readImage(ClassLoader loader, String path) {
+    public static BufferedImage readImage(String path, ClassLoader loader) {
         try (InputStream in = readResourceAsStream$byClassLoader(path, loader)) {
             BufferedImage image = ImageIO.read(in);
             if (image != null) return image;
@@ -72,8 +68,7 @@ public class JarTool {
         }
     }
 
-    @Deprecated
-    public static GifDecoder readGif(ClassLoader loader, String path) {
+    public static GifDecoder readGif(String path, ClassLoader loader) {
         try (BufferedInputStream in = new BufferedInputStream(readResourceAsStream$byClassLoader(path, loader))) {
             GifDecoder gif = new GifDecoder();
             int status = gif.read(in);

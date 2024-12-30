@@ -112,7 +112,7 @@ public class ImageAPI extends WaterMediaAPI {
 
     /**
      * Creates a custom ImageCache instance
-     * WARNING: this instnace is NOT catched internally, this requires your own catching system
+     * WARNING: this instance is NOT cached internally, this requires your own caching system
      * @param image BufferedImage instance to store in the Renderer
      * @param absolute if the renderer should be released running {@link ImageRenderer#release()} nor {@link ImageRenderer#flush()}
      * @return ImageCache instance with the renderer and no fetch
@@ -131,6 +131,36 @@ public class ImageAPI extends WaterMediaAPI {
 
     /**
      * Creates an instance of an ImageRenderer only for static pictures
+     * It reads the specified path located in your jar such as "pictures/image.png".
+     * Throws an exception if it can't read it
+     * @param jarPath path of the picture
+     * @param classLoader classloader of your jar, some module system uses isolated classloaders
+     * @return ImageRenderer instance
+     */
+    public static ImageRenderer renderer(String jarPath, ClassLoader classLoader) {
+        return renderer(jarPath, classLoader, false);
+    }
+
+    /**
+     * Creates an instance of an ImageRenderer only for static pictures
+     * It reads the specified path located in your jar such as "pictures/image.png".
+     * Throws an exception if it can't read it
+     * @param jarPath path of the picture
+     * @param classLoader classloader of your jar, some module system uses isolated classloaders
+     * @param absolute disables flushing and release methods, by default false
+     * @return ImageRenderer instance
+     */
+    public static ImageRenderer renderer(String jarPath, ClassLoader classLoader, boolean absolute) {
+        if (jarPath.endsWith(".gif")) {
+            return renderer(JarTool.readGif(jarPath, classLoader), absolute);
+        } else {
+            return renderer(JarTool.readImage(jarPath, classLoader), absolute);
+        }
+    }
+
+
+    /**
+     * Creates an instance of an ImageRenderer only for static pictures
      * @param image image to use
      * @return built instance
      */
@@ -141,7 +171,7 @@ public class ImageAPI extends WaterMediaAPI {
     /**
      * Creates an instance of an ImageRenderer only for static pictures
      * @param image image to use
-     * @param absolute disabled flush and release methods, by default false
+     * @param absolute disables flushing and release methods, by default false
      * @return built instance
      */
     public static ImageRenderer renderer(BufferedImage image, boolean absolute) {
