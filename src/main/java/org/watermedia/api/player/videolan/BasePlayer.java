@@ -169,6 +169,10 @@ public abstract class BasePlayer {
      */
     public boolean isSafeUse() { return started; }
 
+    public String getStateName() {
+        return raw.mediaPlayer().status().state().name();
+    }
+
     public boolean isLoading() {
         if (raw == null) return false;
         return raw.mediaPlayer().status().state().equals(State.OPENING);
