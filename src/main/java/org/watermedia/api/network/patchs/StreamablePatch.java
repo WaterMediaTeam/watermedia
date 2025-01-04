@@ -34,8 +34,9 @@ public class StreamablePatch extends AbstractPatch {
             try (InputStreamReader is = new InputStreamReader(connection.getInputStream())) {
                 SAVideo video = GSON.fromJson(is, SAVideo.class);
                 return new Result(new URI(video.files.mp4.url), true, false);
+            } finally {
+                connection.disconnect();
             }
-
         } catch (Exception e) {
             throw new FixingURLException(uri, e);
         }
