@@ -226,7 +226,7 @@ public class PlayerAPI extends WaterMediaAPI {
                 content = IOTool.readString(customPathFile);
 
             // then we reinforce
-            if (content == null)
+            if (content == null || content.isEmpty())
                 return false;
 
             // now we validate
