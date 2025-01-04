@@ -10,15 +10,47 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.watermedia.WaterMedia.LOGGER;
 
 public class NetworkAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker("NetworkAPI");
     private static final List<AbstractPatch> FIXERS = new ArrayList<>();
+
+    private static final Map<URI, AbstractPatch.Result> CACHE = new ConcurrentHashMap<URI, AbstractPatch.Result>() {
+        private final HashMap<AbstractPatch.Result, Long> EXPIRES_IN = new HashMap<>();
+
+        @Override
+        public AbstractPatch.Result get(Object key) {
+            AbstractPatch.Result patch = super.get(key);
+
+            if (patch != null) {
+                long expires = EXPIRES_IN.get(patch);
+                if (System.currentTimeMillis() > expires) {
+                    EXPIRES_IN.remove(patch);
+                    this.remove(key);
+                    LOGGER.debug("Cache patch for '{}' has expired", key);
+                    return null;
+                } else {
+                    return patch;
+                }
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public AbstractPatch.Result put(URI key, AbstractPatch.Result value) {
+            try {
+                return super.put(key, value);
+            } finally {
+                EXPIRES_IN.put(value, System.currentTimeMillis() + 10000);
+            }
+        }
+    };
 
     /**
      * Patchs URI for special online services like Youtube
@@ -31,11 +63,7 @@ public class NetworkAPI extends WaterMediaAPI {
     public static AbstractPatch.Result patch(String strURI) {
         try {
             URI uri = parseURI(strURI);
-
-            for (AbstractPatch fixer: FIXERS) {
-                if (fixer.isValid(uri)) return fixer.patch(uri, null);
-            }
-            return new AbstractPatch.Result(uri, false, false);
+            return patch(uri);
         } catch (Exception e) {
             LOGGER.error(IT, "Exception occurred fixing URL", e);
             return null;
@@ -50,7 +78,14 @@ public class NetworkAPI extends WaterMediaAPI {
     public static AbstractPatch.Result patch(URI uri) {
         try {
             for (AbstractPatch fixer: FIXERS) {
-                if (fixer.isValid(uri)) return fixer.patch(uri, null);
+                if (fixer.isValid(uri)) {
+                    AbstractPatch.Result r = CACHE.get(uri);
+                    if (r != null) return r;
+
+                    r = fixer.patch(uri, null);
+                    CACHE.put(uri, r);
+                    return r;
+                }
             }
             return new AbstractPatch.Result(uri, false, false);
         } catch (Exception e) {
