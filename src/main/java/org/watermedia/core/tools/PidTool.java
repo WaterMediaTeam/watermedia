@@ -15,6 +15,8 @@ public class PidTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");
     private static final Pattern PID_PATTERN = Pattern.compile("^(.+?)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+([\\d,]+\\s+\\S+)$");
 
+    // NOTE FOR PANIC-ED PEOPLE: THIS IS A "TO DEFEAT YOUR ENEMY YOU HAVE TO BECOME YOUR ENEMY" LAUNCHER EDITION...
+    // WITH AN EXTRA T
     public static List<ProcessData> getWindowsPids() {
         final ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "tasklist");
         builder.redirectErrorStream(true);

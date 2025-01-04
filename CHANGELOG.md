@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.11
+- ✨ Re-created Google Drive support
+  - 🛠️ Must work 100%, please report issues of it
+
 # 📦 UPDATE 2.1.10
 - ✨ ImageAPI: added methods to get images from jars
 - ✨ BasePlayer: added state name getter
