@@ -1,5 +1,6 @@
-package org.watermedia;
+package org.watermedia.app;
 
+import org.watermedia.WaterMedia;
 import org.watermedia.api.image.ImageAPI;
 import org.watermedia.api.image.ImageCache;
 import org.watermedia.api.image.ImageRenderer;
@@ -24,8 +25,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class TestApp implements Executor {
-    private Queue<Runnable> executor = new LinkedList<>();
+public class TestOpenGLApp implements Executor {
+    private final Queue<Runnable> executor = new LinkedList<>();
     private ImageCache cache;
     private ImageRenderer renderer;
     private VideoPlayer player;
@@ -34,7 +35,7 @@ public class TestApp implements Executor {
     private long window;
 
     // The media loader
-    private static final String NAME = "TestApp";
+    private static final String NAME = "WATERMeDIA: Multimedia API";
 
     public void run(URI url) {
         try {
@@ -44,7 +45,7 @@ public class TestApp implements Executor {
         }
 
         // enable slavism
-        WaterMedia.setSlavismMode(true);
+        WaterMedia.setSlavismMode(false);
 
         renderer = ImageAPI.loadingGif();
         cache = ImageAPI.getCache(url, this);
@@ -79,7 +80,7 @@ public class TestApp implements Executor {
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
         // Create the window
-        window = glfwCreateWindow(1280, 720, "WATERMeDIA: Multimedia API", NULL, NULL);
+        window = glfwCreateWindow(1280, 720, NAME, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -199,8 +200,8 @@ public class TestApp implements Executor {
     }
 
     public static void main(String[] args) {
-        String url = args.length == 0 ? "https://www.youtube.com/watch?v=MuoeG_4lcjo" : args[0];
-        new TestApp().run(URI.create(url));
+        String url = args.length == 0 ? "https://drive.google.com/file/d/1ILTvds6A-ZM4SX2_5erwlXjX1tAF4Vgh/view?usp=drive_link" : args[0];
+        new TestOpenGLApp().run(URI.create(url));
     }
 
     @Override

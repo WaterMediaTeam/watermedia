@@ -77,7 +77,7 @@ public class WaterMedia {
 	}
 
 	public static void setSlavismMode(boolean mode) {
-		YES_SLAVISM.override(String.valueOf(mode));;
+		YES_SLAVISM.override(String.valueOf(mode));
 	}
 
 
