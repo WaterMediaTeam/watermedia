@@ -41,7 +41,8 @@ public class YoutubePatch extends AbstractPatch {
         if (matcher.find()) {
             try {
                 String videoId = matcher.group(1);
-                Response<VideoInfo> response = DOWNLOADER.getVideoInfo(new RequestVideoInfo(videoId));
+                RequestVideoInfo request = new RequestVideoInfo(videoId);
+                Response<VideoInfo> response = DOWNLOADER.getVideoInfo(request);
                 VideoInfo videoInfo = response.data();
 
                 if (videoInfo == null) {
