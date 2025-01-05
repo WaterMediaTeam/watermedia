@@ -1,9 +1,8 @@
 package org.watermedia.api;
 
-import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.WaterMedia;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.patchs.AbstractPatch;
+import org.watermedia.api.network.patchs.AbstractPatch;
 import org.watermedia.tools.DataTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -17,16 +16,16 @@ import java.util.ServiceLoader;
 
 import static org.watermedia.WaterMedia.LOGGER;
 
-public class NetworkAPI extends WaterMediaAPI {
-    public static final Marker IT = MarkerManager.getMarker(NetworkAPI.class.getSimpleName());
+public class NetworkAPI implements WaterMediaAPI {
+    private static final Marker IT = MarkerManager.getMarker(NetworkAPI.class.getSimpleName());
+    private static ServiceLoader<AbstractPatch> PATCHES;
 
-    private static final ServiceLoader<AbstractPatch> PATCHES = ServiceLoader.load(AbstractPatch.class);
-
-    public static void patchMRL(MRL mrl, MediaContext context) {
+    public static void patchMRL(MRL mrl) {
+        assertIsStarted();
         try {
             for (AbstractPatch patch: PATCHES) {
                 if (!patch.validate(mrl)) continue;
-                patch.patch(context, mrl);
+                patch.patch(mrl);
             }
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to patch URL '{}'", mrl.getUri(), e);
@@ -34,6 +33,8 @@ public class NetworkAPI extends WaterMediaAPI {
     }
 
     public static String[] getPatchNames() {
+        assertIsStarted();
+
         ArrayList<String> r = new ArrayList<>();
         for (AbstractPatch patch: PATCHES) {
             r.add(patch.name());
@@ -82,23 +83,36 @@ public class NetworkAPI extends WaterMediaAPI {
         return "?" + URLEncoder.encode(builder.toString(), StandardCharsets.UTF_8);
     }
 
+    private static void assertIsStarted() {
+        if (PATCHES == null)
+            throw new IllegalStateException("NetworkAPI is not started");
+    }
+
     @Override
     public Priority priority() {
         return Priority.LOW;
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
-        return true;
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
+        return PATCHES == null;
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception {
-
+    public void start(WaterMedia.ILoader loader) throws Exception {
+        if (PATCHES == null) {
+            PATCHES = ServiceLoader.load(AbstractPatch.class);
+            PATCHES.forEach(AbstractPatch::onStart);
+            LOGGER.info(IT, "Patches started successfully");
+        } else {
+            throw new IllegalStateException("NetworkAPI is already started");
+        }
     }
 
     @Override
     public void release() {
-
+        PATCHES.forEach(AbstractPatch::onRelease);
+        LOGGER.info(IT, "Patches released successfully");
+        PATCHES = null;
     }
 }

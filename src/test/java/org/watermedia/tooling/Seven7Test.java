@@ -12,7 +12,7 @@ public class Seven7Test {
 
     @Test
     public void testVideoLanExtraction() throws Exception {
-        File zip = new File("run/win-x64.7z");
+        File zip = new File("run/libvlc_win_x64.7z");
         IOTool.un7zip(zip.toPath());
 
         // delete test shit

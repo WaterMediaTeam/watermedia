@@ -31,14 +31,14 @@ public class CacheCore extends WaterInternalAPI {
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
-        dir = new File(WaterConfig.vlcInstallPath, "cache/pictures");
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
+        dir = loader.tmp().resolve("cache").toFile();
         index = new File(dir, "index");
         return true;
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader loader) throws Exception {
         if (!dir.exists() && !dir.mkdirs())
             throw new IOException("Failed to create cache directories");
 
@@ -154,7 +154,7 @@ public class CacheCore extends WaterInternalAPI {
         }
 
         private static File entry$genFile(String url) {
-            String n = DataTool.encodeHex(url);
+            String n = DataTool.hexEncode(url);
             return new File(dir, n != null ? n : Base64.getEncoder().encodeToString(url.getBytes()));
         }
     }

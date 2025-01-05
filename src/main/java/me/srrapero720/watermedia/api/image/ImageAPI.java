@@ -143,8 +143,8 @@ public class ImageAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
-        this.loadingGifPath = bootCore.cwd().resolve("config/watermedia/assets/loading.gif");
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
+        this.loadingGifPath = loader.cwd().resolve("config/watermedia/assets/wt_loading.gif");
         if (!loadingGifPath.toFile().exists()) {
             LOGGER.info(IT, "Extracting default loading gif...");
             JarTool.extract("/pictures/loading.gif", loadingGifPath);
@@ -154,7 +154,7 @@ public class ImageAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader loader) throws Exception {
         if (IMG_LOADING != null) {
             // TODO: release images and try again
         }

@@ -31,7 +31,7 @@ public class Main {
         window.setSize(1280, 720);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null); // Center window
-        window.setIconImage(new ImageIcon(classLoader.getResource("icon.png")).getImage());
+        window.setIconImage(new ImageIcon(classLoader.getResource("assets/wt_icon.png")).getImage());
 
         // ROOT PANEL
         JPanel root = new JPanel(new BorderLayout());
@@ -41,7 +41,7 @@ public class Main {
         imagePanel.setBackground(new Color(MathAPI.argb(255, 20 ,20, 20))); // Establecer el fondo oscuro
 
         JLabel logo = new JLabel();
-        logo.setIcon(new ImageIcon(new ImageIcon(classLoader.getResource("banner.png")).getImage().getScaledInstance(600, 100, Image.SCALE_FAST)));
+        logo.setIcon(new ImageIcon(new ImageIcon(classLoader.getResource("assets/wt_banner.png")).getImage().getScaledInstance(600, 100, Image.SCALE_FAST)));
         imagePanel.add(logo, BorderLayout.WEST);
         root.add(imagePanel, BorderLayout.NORTH);
 

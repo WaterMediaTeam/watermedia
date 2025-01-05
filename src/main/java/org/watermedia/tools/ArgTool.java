@@ -6,13 +6,12 @@ import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-
 public record ArgTool(String key, String value, AtomicReference<String> override) implements Supplier<String>, BooleanSupplier, IntSupplier, DoubleSupplier {
 
-    /**
-     * it is thread safe
-     * @param key argument key
-     */
+    public static ArgTool of(String argument) {
+        return new ArgTool(argument);
+    }
+
     public ArgTool(String key) {
         this(key, System.getProperty(key), new AtomicReference<>(null));
     }

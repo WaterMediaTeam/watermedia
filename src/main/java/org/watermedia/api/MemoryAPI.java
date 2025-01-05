@@ -6,7 +6,7 @@ import org.watermedia.videolan4j.VideoLan4J;
 
 import java.nio.ByteBuffer;
 
-public class MemoryAPI extends WaterMediaAPI {
+public class MemoryAPI implements WaterMediaAPI {
     private static MemoryUtil.MemoryAllocator ALLOCATOR;
 
     /**
@@ -59,12 +59,12 @@ public class MemoryAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
         return ALLOCATOR == null;
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader loader) throws Exception {
         ALLOCATOR = MemoryUtil.getAllocator(false);
         // REPLACE JAVA WAY FOR LWJGL WAY
         VideoLan4J.setBufferAllocator(MemoryAPI::allocate);

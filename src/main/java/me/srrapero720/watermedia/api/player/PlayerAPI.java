@@ -8,7 +8,7 @@ import org.watermedia.tools.JarTool;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.NativeDiscovery;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -93,7 +93,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
         LOGGER.info(IT, "Binaries are {}", wrapped ? "wrapped" : "not wrapped");
         if (wrapped) {
             String versionInJar = JarTool.readString(configInput);
@@ -132,7 +132,7 @@ public class PlayerAPI extends WaterMediaAPI {
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader loader) throws Exception {
         if (extract) {
             LOGGER.info(IT, "Extracting VideoLAN binaries...");
             if ((!zipOutput.exists() && JarTool.extract(zipInput, zipOutput.toPath())) || zipOutput.exists()) {
@@ -150,7 +150,7 @@ public class PlayerAPI extends WaterMediaAPI {
         }
 
         try {
-            String[] args = JarTool.readArray("videolan/arguments.json");
+            String[] args = JarTool.readArray("natives/libvlc_args.json");
             registerFactory(WaterMedia.asResource("default"), args);
             registerFactory(WaterMedia.asResource("sound_only"), DataTool.concat(args, "--vout=none"));
 

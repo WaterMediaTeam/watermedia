@@ -1,8 +1,7 @@
 package org.watermedia.api.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
-import org.watermedia.api.media.meta.MediaQuality;
-import org.watermedia.api.media.meta.MediaType;
+import org.watermedia.api.media.MediaPlayer;
 
 import java.io.File;
 import java.io.Serializable;
@@ -13,6 +12,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class MRL implements Comparable<URI>, Serializable {
+    public static final long NO_EXPIRATION = -1;
     private static final Map<URI, MRL> MEDIA_URIS = new HashMap<>();
 
     public static MRL get(File file) { return get(file.toURI()); }
@@ -28,7 +28,6 @@ public class MRL implements Comparable<URI>, Serializable {
     // instance
     private final URI uri;
     private final List<Source> sources = new ArrayList<>();
-    private final List<MediaContext> usages = new ArrayList<>();
     private Metadata metadata;
     private long expires;
     private boolean patched;
@@ -38,40 +37,23 @@ public class MRL implements Comparable<URI>, Serializable {
         this.sources.add(new Source(uri));
     }
 
-    public MRL addUsage(MediaContext context) {
-        this.usages.add(context);
-        return this;
-    }
-
-    public MRL removeUsage(MediaContext context) {
-        this.usages.remove(context);
-        return this;
-    }
-
-    public int usages() {
-        return this.usages.size();
-    }
-
-    public boolean hasUsages() {
-        return !this.usages.isEmpty();
-    }
-
     public URI getUri() {
         return uri;
     }
 
-    public Source[] getSources() {
-        return sources.toArray(new Source[0]);
+    public List<Source> getSources() {
+        return List.copyOf(sources);
     }
 
     public boolean patched() {
-        return patched;
+        return patched && (expires == NO_EXPIRATION || System.currentTimeMillis() < expires);
     }
 
     public void apply(Patch patch) {
         this.sources.clear();
         this.sources.addAll(patch.sources);
         this.metadata = patch.metadata;
+        this.expires = patch.expires;
         this.patched = true;
     }
 
@@ -87,12 +69,12 @@ public class MRL implements Comparable<URI>, Serializable {
     public static class Source {
         private final URI uri;
         private final List<Slave> slaves;
-        private final Map<MediaQuality, URI> qualities;
+        private final Map<MediaPlayer.Quality, URI> qualities;
         private URLConnection connection;
-        private MediaType type;
+        private MediaPlayer.Type type;
 
         private URI fallbackUri;
-        private MediaType fallbackType;
+        private MediaPlayer.Type fallbackType;
         private boolean live;
 
         public Source(URI uri) {
@@ -101,7 +83,7 @@ public class MRL implements Comparable<URI>, Serializable {
             this.qualities = new HashMap<>();
         }
 
-        public Source(URI uri, List<Slave> slaves, Map<MediaQuality, URI> qualities) {
+        public Source(URI uri, List<Slave> slaves, Map<MediaPlayer.Quality, URI> qualities) {
             this.uri = uri;
             this.slaves = slaves;
             this.qualities = qualities;
@@ -119,11 +101,11 @@ public class MRL implements Comparable<URI>, Serializable {
             return qualities.isEmpty() ? 1 : qualities.size();
         }
 
-        public URI uri(MediaContext context, MediaQuality quality) {
+        public URI uri(MediaContext context, MediaPlayer.Quality quality) {
             if (qualities.isEmpty()) return this.uri;
 
             URI uri = qualities.get(quality);
-            MediaQuality currentQuality = context.preferLowerQuality() ? quality.getBack() : quality.getNext();
+            MediaPlayer.Quality currentQuality = context.preferLowerQuality() ? quality.getBack() : quality.getNext();
             while (uri == null && currentQuality != null) {
                 uri = qualities.get(currentQuality);
                 currentQuality = context.preferLowerQuality() ? currentQuality.getBack() : currentQuality.getNext();
@@ -134,8 +116,8 @@ public class MRL implements Comparable<URI>, Serializable {
         public URI highQualityUri() {
             if (qualities.isEmpty()) return this.uri;
 
-            URI uri = qualities.get(MediaQuality.HIGHEST);
-            MediaQuality currentQuality = MediaQuality.HIGH;
+            URI uri = qualities.get(MediaPlayer.Quality.HIGHEST);
+            MediaPlayer.Quality currentQuality = MediaPlayer.Quality.HIGH;
             while (uri == null && currentQuality != null) {
                 uri = qualities.get(currentQuality);
                 currentQuality = currentQuality.getBack();
@@ -147,8 +129,8 @@ public class MRL implements Comparable<URI>, Serializable {
         public URI lowerQualityUri() {
             if (qualities.isEmpty()) return this.uri;
 
-            URI uri = qualities.get(MediaQuality.LOWEST);
-            MediaQuality currentQuality = MediaQuality.LOW;
+            URI uri = qualities.get(MediaPlayer.Quality.LOWEST);
+            MediaPlayer.Quality currentQuality = MediaPlayer.Quality.LOW;
             while (uri == null && currentQuality != null) {
                 uri = qualities.get(currentQuality);
                 currentQuality = currentQuality.getNext();
@@ -158,7 +140,7 @@ public class MRL implements Comparable<URI>, Serializable {
         }
 
         public Slave[] slaves() {
-            return slaves.stream().filter(slave -> slave.type == MediaType.AUDIO || slave.type == MediaType.SUBTITLES).toArray(v -> new Slave[0]);
+            return slaves.stream().filter(slave -> slave.type == MediaPlayer.Type.AUDIO || slave.type == MediaPlayer.Type.SUBTITLES).toArray(v -> new Slave[0]);
         }
 
         @Override
@@ -175,16 +157,18 @@ public class MRL implements Comparable<URI>, Serializable {
         }
     }
 
-    public record Slave(MediaType type, URI slave) {}
 
-    public record Metadata(String name, String author, String platform, String description, URI thumbnailURI, long duration) {
-
-    }
 
     public static class Patch {
+
         private final List<Source> sources = new ArrayList<>();
+        private long expires = NO_EXPIRATION;
         private Metadata metadata;
 
+        public Patch setExpiration(long expirationTime) {
+            this.expires = expirationTime;
+            return this;
+        }
 
         public Patch setMetadata(Metadata metadata) {
             this.metadata = metadata;
@@ -197,11 +181,11 @@ public class MRL implements Comparable<URI>, Serializable {
 
         public class SourceBuilder {
             private URI uri;
-            private MediaType type;
-            private MediaType fallbackType;
+            private MediaPlayer.Type type;
+            private MediaPlayer.Type fallbackType;
             private URI fallbackUri;
             private boolean isLive;
-            private final Map<MediaQuality, URI> qualities = new HashMap<>();
+            private final Map<MediaPlayer.Quality, URI> qualities = new HashMap<>();
             private final List<Slave> slaves = new ArrayList<>();
 
             private SourceBuilder() {}
@@ -226,27 +210,27 @@ public class MRL implements Comparable<URI>, Serializable {
                 return this;
             }
 
-            public SourceBuilder setType(MediaType type) {
+            public SourceBuilder setType(MediaPlayer.Type type) {
                 this.type = type;
                 return this;
             }
 
-            public SourceBuilder setFallbackType(MediaType fallbackType) {
+            public SourceBuilder setFallbackType(MediaPlayer.Type fallbackType) {
                 this.fallbackType = fallbackType;
                 return this;
             }
 
-            public SourceBuilder putQuality(MediaQuality quality, URI uri) {
+            public SourceBuilder putQuality(MediaPlayer.Quality quality, URI uri) {
                 this.qualities.put(quality, uri);
                 return this;
             }
 
-            public SourceBuilder putQualityIfAbsent(MediaQuality quality, Function<MediaQuality, URI> uri) {
+            public SourceBuilder putQualityIfAbsent(MediaPlayer.Quality quality, Function<MediaPlayer.Quality, URI> uri) {
                 this.qualities.computeIfAbsent(quality, uri);
                 return this;
             }
 
-            public SourceBuilder putQualityIfAbsent(MediaQuality quality, URI uri) {
+            public SourceBuilder putQualityIfAbsent(MediaPlayer.Quality quality, URI uri) {
                 this.qualities.computeIfAbsent(quality, q -> uri);
                 return this;
             }
@@ -269,5 +253,20 @@ public class MRL implements Comparable<URI>, Serializable {
                 return Patch.this;
             }
         }
+    }
+
+    public record Slave(MediaPlayer.Type type, URI slave) {
+
+    }
+
+    public record Metadata(String name, String author, String platform, String description, URI thumbnailURI, long duration) {
+
+    }
+
+    public enum Status {
+        VALID,
+        FETCHING,
+        CACHING,
+        INVALID,
     }
 }

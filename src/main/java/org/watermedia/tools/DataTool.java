@@ -1,7 +1,9 @@
 package org.watermedia.tools;
 
 import com.google.gson.Gson;
+import org.watermedia.api.MathAPI;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +12,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -19,7 +20,6 @@ import static org.watermedia.WaterMedia.LOGGER;
 public class DataTool {
     public static final Gson GSON = new Gson();
     private static final int DEFAULT_BUFFER_SIZE = 8192;
-    private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     public static long orElse(String s, int o) {
@@ -40,6 +40,10 @@ public class DataTool {
 
     public static String orElse(String s, String s1) {
         return s == null ? s1 : s;
+    }
+
+    public static long futureTime(long afterTimeInSeconds) {
+        return System.currentTimeMillis() + afterTimeInSeconds * 1000;
     }
 
     public static <T> T fromJSON(String s, Type t) {
@@ -96,80 +100,33 @@ public class DataTool {
     }
 
     public static byte[] readAllBytes(InputStream stream) throws IOException {
-        int len = Integer.MAX_VALUE;
+        final int length = stream.available();
+        final ByteArrayOutputStream output = new ByteArrayOutputStream(length > 0 ? length : 32);
 
-        List<byte[]> bufs = null;
-        byte[] result = null;
-        int total = 0;
-        int remaining = len;
-        int n;
-        do {
-            byte[] buf = new byte[Math.min(remaining, DEFAULT_BUFFER_SIZE)];
-            int nread = 0;
+        final byte[] data = new byte[DEFAULT_BUFFER_SIZE];
+        int readed = 0;
 
-            // read to EOF which may read more or less than buffer size
-            while ((n = stream.read(buf, nread,
-                    Math.min(buf.length - nread, remaining))) > 0) {
-                nread += n;
-                remaining -= n;
-            }
-
-            if (nread > 0) {
-                if (MAX_BUFFER_SIZE - total < nread) {
-                    throw new OutOfMemoryError("Required array size too large");
-                }
-                if (nread < buf.length) {
-                    buf = Arrays.copyOfRange(buf, 0, nread);
-                }
-                total += nread;
-                if (result == null) {
-                    result = buf;
-                } else {
-                    if (bufs == null) {
-                        bufs = new ArrayList<>();
-                        bufs.add(result);
-                    }
-                    bufs.add(buf);
-                }
-            }
-            // if the last call to read returned -1 or the number of bytes
-            // requested have been read then break
-        } while (n >= 0 && remaining > 0);
-
-        if (bufs == null) {
-            if (result == null) {
-                return new byte[0];
-            }
-            return result.length == total ?
-                    result : Arrays.copyOf(result, total);
+        while (readed != -1) {
+            readed = stream.read(data);
+            output.write(data, 0, readed);
         }
 
-        result = new byte[total];
-        int offset = 0;
-        remaining = total;
-        for (byte[] b : bufs) {
-            int count = Math.min(b.length, remaining);
-            System.arraycopy(b, 0, result, offset, count);
-            offset += count;
-            remaining -= count;
-        }
-
-        return result;
+        return output.toByteArray();
     }
 
-    public static String encodeHex(String string) {
+    public static String hexEncode(String string) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] bytes = digest.digest(string.getBytes(StandardCharsets.UTF_8));
 
-            return encodeHex(bytes);
+            return hexEncode(bytes);
         } catch (Exception e) {
             LOGGER.error("Failed to digest and encode string {}", string, e);
             return null;
         }
     }
 
-    public static String encodeHex(byte[] bytes) {
+    public static String hexEncode(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -177,10 +134,6 @@ public class DataTool {
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
-    }
-
-    public static ArgTool getArgument(String argument) {
-        return new ArgTool(argument);
     }
 
     // I hate this bullshit with my life

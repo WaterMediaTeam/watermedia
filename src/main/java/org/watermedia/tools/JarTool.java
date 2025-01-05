@@ -1,6 +1,8 @@
 package org.watermedia.tools;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -20,6 +22,7 @@ import static org.watermedia.WaterMedia.LOGGER;
 
 public class JarTool {
     private static final Marker IT = MarkerManager.getMarker("Tools");
+    private static final Gson GSON = new Gson();
 
     public static String readString(String from) {
         try (InputStream is = readResourceAsStream(from)) {
@@ -28,6 +31,14 @@ public class JarTool {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static JsonElement readJson(String from) {
+        String str = readString(from);
+        if (str == null)
+            throw new NullPointerException("Jar file is missing");
+
+        return JsonParser.parseString(str);
     }
 
     public static boolean extract(String origin, Path dest) {

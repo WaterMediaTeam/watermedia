@@ -18,7 +18,7 @@ public final class WaterMedia {
 	private static final Marker IT = MarkerManager.getMarker("Bootstrap");
 	public static final String ID = "watermedia";
 	public static final String NAME = "WATERMeDIA";
-	public static final String VERSION = JarTool.readString("/watermedia/version.cfg");
+	public static final String VERSION = JarTool.readString("/META-INF/version.cfg");
 	public static final String USER_AGENT = "WaterMedia/" + VERSION;
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
@@ -31,8 +31,8 @@ public final class WaterMedia {
 		@Override public boolean client() { return true; }
 	};
 
-	private static final ArgTool NO_BOOT = DataTool.getArgument("watermedia.no_boot");
-	private static final ArgTool FAIL_HARD = DataTool.getArgument("watermedia.fail_hard");
+	private static final ArgTool NO_BOOT = ArgTool.of("watermedia.no_boot");
+	private static final ArgTool FAIL_HARD = ArgTool.of("watermedia.fail_hard");
 	private static ILoader bootstrap;
 	private static WaterMedia instance;
 

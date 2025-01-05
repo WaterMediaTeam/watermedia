@@ -16,7 +16,7 @@ public class CompressCore extends WaterInternalAPI {
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
         SevenZip.initSevenZipFromPlatformJAR();
         if (EX == null || EX.isTerminated()) {
             EX = null;
@@ -25,7 +25,7 @@ public class CompressCore extends WaterInternalAPI {
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception { EX = ThreadTool.executorReduced("decompressor"); }
+    public void start(WaterMedia.ILoader loader) throws Exception { EX = ThreadTool.executorReduced("decompressor"); }
 
     @Override
     public void release() { EX.shutdown(); }

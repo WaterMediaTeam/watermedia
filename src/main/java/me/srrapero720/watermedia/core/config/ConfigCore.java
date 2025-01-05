@@ -131,13 +131,13 @@ public class ConfigCore extends WaterInternalAPI {
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
         return true;
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception {
-        loadConfiguration(bootCore.cwd().resolve("config/watermedia.wt"), config);
+    public void start(WaterMedia.ILoader loader) throws Exception {
+        loadConfiguration(loader.cwd().resolve("config/watermedia.wt"), config);
     }
 
     @Override

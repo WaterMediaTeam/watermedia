@@ -2,7 +2,7 @@ package org.watermedia.network;
 
 import me.srrapero720.watermedia.api.MediaContext;
 import org.watermedia.api.network.MRL;
-import org.watermedia.core.network.patchs.TwitterPatch;
+import org.watermedia.api.network.patchs.TwitterPatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +19,7 @@ public class TwitterPatchTest {
 
         assertTrue(patch.validate(source));
         try {
-            patch.patch(source, CONTEXT);
+            patch.patch(CONTEXT);
         } catch (Exception e) {
             throw new RuntimeException("Failed to patch URL", e);
         }

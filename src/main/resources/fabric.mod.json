@@ -7,8 +7,8 @@
   "authors": $authors_list,
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/watermedia/",
-    "sources": "https://github.com/{github}",
-    "issues": "https://github.com/{github}/issues",
+    "sources": "https://github.com/$github",
+    "issues": "https://github.com/$github/issues",
     "email": "SrRapero720@hotmail.com"
   },
 
@@ -17,7 +17,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "me.srrapero720.watermedia.loaders.McFabricLoader"
+      "org.watermedia.loader.FabricLoader"
     ]
   },
   "depends": {

@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
 
-public class RenderAPI extends WaterMediaAPI {
+public class RenderAPI implements WaterMediaAPI {
 
     /**
      * Converts the image on other formats into 4-BYTE RGBA (java ABGR)
@@ -118,12 +118,12 @@ public class RenderAPI extends WaterMediaAPI {
     }
 
     @Override
-    public boolean prepare(WaterMedia.ILoader bootCore) throws Exception {
+    public boolean prepare(WaterMedia.ILoader loader) throws Exception {
         return true;
     }
 
     @Override
-    public void start(WaterMedia.ILoader bootCore) throws Exception {
+    public void start(WaterMedia.ILoader loader) throws Exception {
 
     }
 
