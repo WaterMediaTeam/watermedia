@@ -2,6 +2,7 @@ package org.watermedia.api.network.patchs;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
 import com.github.kiulian.downloader.downloader.request.RequestVideoInfo;
+import com.github.kiulian.downloader.downloader.response.Response;
 import com.github.kiulian.downloader.model.videos.VideoDetails;
 import com.github.kiulian.downloader.model.videos.VideoInfo;
 import com.github.kiulian.downloader.model.videos.formats.AudioFormat;
@@ -40,7 +41,13 @@ public class YoutubePatch extends AbstractPatch {
         if (matcher.find()) {
             try {
                 String videoId = matcher.group(1);
-                VideoInfo videoInfo = DOWNLOADER.getVideoInfo(new RequestVideoInfo(videoId)).data();
+                Response<VideoInfo> response = DOWNLOADER.getVideoInfo(new RequestVideoInfo(videoId));
+                VideoInfo videoInfo = response.data();
+
+                if (videoInfo == null) {
+                    throw new RuntimeException("Cannot get video info", response.error());
+                }
+
                 VideoDetails videoDetails = videoInfo.details();
 
                 if (videoDetails.isLive()) {
