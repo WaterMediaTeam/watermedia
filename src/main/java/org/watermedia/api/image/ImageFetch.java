@@ -37,7 +37,7 @@ import static org.watermedia.api.image.ImageAPI.IT;
 public class ImageFetch implements Runnable {
     private static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
     private static final ExecutorService EX = Executors.newScheduledThreadPool(ThreadTool.minThreads(), ThreadTool.factory("ImageFetch-Worker", Thread.NORM_PRIORITY + 1));
-    private static final String[] VID_MIMETYPES = new String[] { "video", "application/vnd.apple.mpegurl", "application/x-mpegurl" };
+    private static final String[] VID_MIMETYPES = new String[] { "video", "audio", "application/vnd.apple.mpegurl", "application/x-mpegurl" };
 
     public final URI uri;
     public BiConsumer<ImageRenderer, Boolean> successConsumer;
