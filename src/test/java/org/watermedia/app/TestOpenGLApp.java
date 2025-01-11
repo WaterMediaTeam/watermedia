@@ -15,6 +15,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.net.URI;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Executor;
@@ -45,7 +46,7 @@ public class TestOpenGLApp implements Executor {
         }
 
         // enable slavism
-        WaterMedia.setSlavismMode(false);
+        WaterMedia.setSlavismMode(true);
 
         renderer = ImageAPI.loadingGif();
         cache = ImageAPI.getCache(url, this);
@@ -200,7 +201,8 @@ public class TestOpenGLApp implements Executor {
     }
 
     public static void main(String[] args) {
-        String url = args.length == 0 ? "https://drive.google.com/file/d/1ILTvds6A-ZM4SX2_5erwlXjX1tAF4Vgh/view?usp=drive_link" : args[0];
+        Arrays.asList(new String[]{"", ""});
+        String url = args.length == 0 ? "https://www.youtube.com/watch?v=4JkIs37a2JE&list=RD4JkIs37a2JE&start_radio=1" : args[0];
         new TestOpenGLApp().run(URI.create(url));
     }
 

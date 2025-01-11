@@ -46,7 +46,7 @@ public class YoutubePatch extends AbstractPatch {
                 VideoInfo videoInfo = response.data();
 
                 if (videoInfo == null) {
-                    throw new RuntimeException("Cannot get video info", response.error());
+                    throw new RuntimeException("Cannot fetch video info", response.error());
                 }
 
                 VideoDetails videoDetails = videoInfo.details();
