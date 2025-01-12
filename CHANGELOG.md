@@ -1,3 +1,6 @@
+# # 📦 UPDATE 2.1.13
+- 🐛 Added audio as a valid "video" source 
+
 # 📦 UPDATE 2.1.11
 - ✨ Re-created Google Drive support
   - 🛠️ Must work 100%, please report issues of it
