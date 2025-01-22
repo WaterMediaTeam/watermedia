@@ -65,7 +65,8 @@ public class IOTool {
     }
 
     public static boolean writeData(Path to, byte[] data) {
-        try (BufferedOutputStream os = new BufferedOutputStream(Files.newOutputStream(to))) {
+        to.getParent().toFile().mkdirs();
+        try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(to.toFile()))) {
             os.write(data);
             return true;
         } catch (Exception e) {
