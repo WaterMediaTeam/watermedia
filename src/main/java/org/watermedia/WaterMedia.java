@@ -40,6 +40,7 @@ public class WaterMedia {
 		LOGGER.info(IT, "Preparing '{}' on '{}'", NAME, boot.name());
 		LOGGER.info(IT, "WaterMedia version '{}'", VERSION);
 		LOGGER.info(IT, "OS Detected: {} ({})", System.getProperty("os.name"), Platform.ARCH);
+		LOGGER.info(IT, "Runtime memory Usage: {}MB/{}MB", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576, Runtime.getRuntime().maxMemory() / 1048576);
 
 		WaterMedia.bootstrap = boot;
 		return instance = new WaterMedia();
