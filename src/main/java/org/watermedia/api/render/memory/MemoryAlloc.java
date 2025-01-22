@@ -2,6 +2,7 @@ package org.watermedia.api.render.memory;
 
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 /**
@@ -33,7 +34,8 @@ public class MemoryAlloc {
     public static ByteBuffer resize(ByteBuffer pBuffer, int pByteSize) {
         if (ALLOCATOR == null) ALLOCATOR = MemoryUtil.getAllocator(false);
 
-        long i = ALLOCATOR.realloc(MemoryUtil.memAddress0(pBuffer), pByteSize);
+        // NOTE: LWJGL 3.3 adds more variants for all buffers, useless because all buffers extends buffer.
+        long i = ALLOCATOR.realloc(MemoryUtil.memAddress0((Buffer) pBuffer), pByteSize);
         if (i == 0L) {
             throw new OutOfMemoryError("Failed to resize buffer from " + pBuffer.capacity() + " bytes to " + pByteSize + " bytes");
         } else {
@@ -49,6 +51,7 @@ public class MemoryAlloc {
         if (pBuffer == null) return;
         if (ALLOCATOR == null) ALLOCATOR = MemoryUtil.getAllocator(false);
 
-        ALLOCATOR.free(MemoryUtil.memAddress0(pBuffer));
+        // NOTE: LWJGL 3.3 adds more variants for all buffers, useless because all buffers extends buffer.
+        ALLOCATOR.free(MemoryUtil.memAddress0((Buffer) pBuffer));
     }
 }
