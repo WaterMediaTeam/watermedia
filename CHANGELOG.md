@@ -1,4 +1,14 @@
-# # 📦 UPDATE 2.1.13
+# 📦 UPDATE 2.1.14
+- ✨ Added fallback method for failed patches
+- ✨ Enhanced Google Drive support and speed
+  - ✨ Added fallback method, fallback is slow but _works_
+- 🛠️ Bruteforce all Youtube clients before give up
+  - 🛠️ Will take A LOT (or not) the first time you load a YT video, once it gets loaded the rest loads faster
+- 🛠️ Added better synchronization on `MediaPlayer#start()` and `MediaPlayer#release()`
+- 🐛 Relocate properly fastjson (fixes crashes with other mods)
+- 🐛 Fixed custom_vlc_path.txt wasn't created on clean installations
+
+# 📦 UPDATE 2.1.13
 - 🐛 Added audio as a valid "video" source 
 
 # 📦 UPDATE 2.1.11
