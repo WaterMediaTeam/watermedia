@@ -21,6 +21,8 @@ import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFor
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
 
 import java.net.URI;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.watermedia.WaterMedia.LOGGER;
 
@@ -29,13 +31,13 @@ public abstract class BasePlayer {
     protected static final WaterMediaPlayerEventListener LISTENER = new WaterMediaPlayerEventListener();
 
     // PLAYER
-    protected volatile URI url;
-    protected volatile URI audioUrl;
+    protected URI url;
+    protected URI audioUrl;
     /**
      * @deprecated no replacement
      */
     @Deprecated
-    private volatile CallbackMediaPlayerComponent raw;
+    private CallbackMediaPlayerComponent raw;
     /**
      * @deprecated no replacement
      */
@@ -43,8 +45,8 @@ public abstract class BasePlayer {
     public CallbackMediaPlayerComponent raw() { return raw; }
 
     // PLAYER THREAD
-    protected volatile boolean live = false;
-    protected volatile boolean started = false;
+    protected boolean live = false;
+    protected ReentrantLock lock = new ReentrantLock();
 
     protected BasePlayer(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
         this.init(factory, renderCallback, bufferFormatCallback, cleanupCallback);
@@ -94,8 +96,8 @@ public abstract class BasePlayer {
 
     public void start(URI url) { this.start(url, new String[0]); }
     public void start(URI url, String[] vlcArgs) {
-        started = false;
-        ThreadTool.thread(4, () -> {
+        ThreadTool.thread(() -> {
+            this.lock.lock();
             if (rpa(url)) {
                 if (audioUrl != null) {
                     raw.mediaPlayer().media().prepare(this.url, vlcArgs);
@@ -105,14 +107,14 @@ public abstract class BasePlayer {
                     raw.mediaPlayer().media().start(this.url, vlcArgs);
                 }
             }
-            started = true;
+            this.lock.unlock();
         });
     }
 
     public void startPaused(URI url) { this.startPaused(url, new String[0]); }
     public void startPaused(URI url, String[] vlcArgs) {
-        started = false;
-        ThreadTool.thread(4, () -> {
+        ThreadTool.thread(() -> {
+            this.lock.lock();
             if (rpa(url)) {
                 if (audioUrl != null) {
                     raw.mediaPlayer().media().prepare(this.url, vlcArgs);
@@ -124,7 +126,7 @@ public abstract class BasePlayer {
                     raw.mediaPlayer().media().start(this.url, vlcArgs);
                 }
             }
-            started = true;
+            this.lock.unlock();
         });
     }
 
@@ -167,7 +169,7 @@ public abstract class BasePlayer {
      * basically makes player instance useless.
      * @return true if any async task was active
      */
-    public boolean isSafeUse() { return started; }
+    public boolean isSafeUse() { return !lock.isLocked(); }
 
     public String getStateName() {
         return raw.mediaPlayer().status().state().name();
@@ -330,17 +332,17 @@ public abstract class BasePlayer {
 
     public void release() {
         if (raw == null) return;
-        ThreadTool.thread(Thread.NORM_PRIORITY, () -> {
-            while (!started); // WAIT FOR PLAYER START WAS FINISHED
+        ThreadTool.thread(() -> {
+            lock.lock();
 
-            synchronized (this) {
-                CallbackMediaPlayerComponent rawRef = raw;
-                raw = null;
+            CallbackMediaPlayerComponent rawRef = raw;
+            raw = null;
 
-                // remove callbacks to prevent more blowup stuff
-                if (rawRef == null) return; // If for some reason is triggered 2 times.
-                rawRef.mediaPlayer().release();
-            }
+            // remove callbacks to prevent more blowup stuff
+            if (rawRef == null) return; // If for some reason is triggered 2 times.
+            rawRef.mediaPlayer().release();
+
+            lock.unlock();
         });
     }
 
