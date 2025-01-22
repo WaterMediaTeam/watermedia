@@ -98,7 +98,7 @@ shadowJar {
 
     // Add relocation rules for each dependency
     relocate 'com.github', 'org.watermedia.shaded'
-    relocate 'com.fasterxml', 'org.watermedia.shaded'
+    relocate 'com.alibaba', 'org.watermedia.shaded'
 
     exclude "META-INF/versions/**"
     exclude "META-INF/proguard/**"
