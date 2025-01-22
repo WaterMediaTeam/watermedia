@@ -94,7 +94,7 @@ public class ImageFetch implements Runnable {
                             case HTTP_BAD_REQUEST:
                             case HTTP_FORBIDDEN:
                             case HTTP_NOT_FOUND:
-                                throw new NoImageException();
+                                throw new ForbiddenException();
                             case HTTP_OK:
                             case HTTP_NOT_MODIFIED:
                                 break;
@@ -127,12 +127,15 @@ public class ImageFetch implements Runnable {
                         in.close();
                     }
                 } catch (Exception e) {
-                    AbstractPatch.Result result = patch.fallbackResult.compute(this.uri);
-                    if (result != null) {
-                        patchUri = result.uri;
-                        continue;
-                    } else {
-                        patchUri = null;
+                    if (e instanceof ForbiddenException) {
+                        AbstractPatch.Result result = patch.fallbackResult.compute(this.uri);
+
+                        if (result != null) {
+                            patchUri = result.uri;
+                            continue;
+                        } else {
+                            patchUri = null;
+                        }
                     }
 
                     // READ FROM CACHE AS LAST RESORT
@@ -329,4 +332,5 @@ public class ImageFetch implements Runnable {
     }
     private static class VideoTypeException extends Exception {}
     private static class NoImageException extends Exception {}
+    private static class ForbiddenException extends NoImageException {}
 }
