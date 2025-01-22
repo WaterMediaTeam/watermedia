@@ -55,18 +55,30 @@ public abstract class AbstractPatch {
         public FixingURLException(URI url, Throwable t) { super("Failed to fix URL " + url.toString(), t); }
     }
 
+    public static interface FallbackResult {
+        Result compute(URI uri) throws FixingURLException;
+    }
+
     public static class Result {
+        private static final FallbackResult DEFAULT_FALLBACK = uri -> null;
+
         public final URI uri;
         public URI audioUrl;
         public final Quality quality;
+        public final FallbackResult fallbackResult;
         public final boolean assumeStream;
         public final boolean assumeVideo;
 
         public Result(URI uri, boolean assumeVideo, boolean assumeStream) {
+            this(uri, assumeVideo, assumeStream, DEFAULT_FALLBACK);
+        }
+
+        public Result(URI uri, boolean assumeVideo, boolean assumeStream, FallbackResult fallback) {
             this.uri = uri;
             this.quality = null;
             this.assumeVideo = assumeVideo;
             this.assumeStream = assumeStream;
+            this.fallbackResult = fallback;
         }
 
         public Result setAudioTrack(URI url) {

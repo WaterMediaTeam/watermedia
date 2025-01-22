@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -17,7 +18,7 @@ public class DrivePatch extends AbstractPatch {
     // API-STRATEGY
     private static final String DOWNLOAD_URL = "https://drive.usercontent.google.com/download?id=%s&export=download&authuser=0&acknowledgeAbuse=true";
     private static final String API_URL = "https://www.googleapis.com/drive/v3/files/%s?alt=media&acknowledgeAbuse=true&key=%s";
-//    private static final String LUCK = new String(Base64.decode(new String(Base64.decode("UVVsNllWTjVRVTVpVFhkWGQyWnhiSE5QWWtoVlEwODFjbUZ6TjBGcmNXaE5UWEphUVZWWg=="), StandardCharsets.UTF_8)), StandardCharsets.UTF_8); // JUST TO AVOID SCRAPPER BOTS
+    private static final String LUCK = new String(Base64.getDecoder().decode(new String(Base64.getDecoder().decode("UVVsNllWTjVRVTVpVFhkWGQyWnhiSE5QWWtoVlEwODFjbUZ6TjBGcmNXaE5UWEphUVZWWg=="), StandardCharsets.UTF_8)), StandardCharsets.UTF_8); // JUST TO AVOID SCRAPPER BOTS
     // REGEX
     private static final Pattern HTML_PATTERN = Pattern.compile("<input[^>]*name=\"([^\"]+)\"[^>]*value=\"([^\"]+)\"", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
@@ -36,6 +37,21 @@ public class DrivePatch extends AbstractPatch {
     @Override
     public Result patch(URI uri, Quality preferQuality) throws FixingURLException {
         super.patch(uri, preferQuality);
+
+        try {
+            // PATH GETTER
+            final int start = uri.getPath().indexOf("/file/d/") + 8;
+            int end = uri.getPath().indexOf('/', start);
+            if (end == -1) end = uri.getPath().length();
+            String fileID = uri.getPath().substring(start, end);
+
+            return new Result(new URI(String.format(API_URL, fileID, LUCK)), false, false, this::fallback);
+        } catch (Exception e) {
+            throw new FixingURLException(uri, e);
+        }
+    }
+
+    private Result fallback(URI uri) throws FixingURLException {
         try {
             String fileId = getFileID(uri.getPath());
             String url = String.format(DOWNLOAD_URL, fileId);

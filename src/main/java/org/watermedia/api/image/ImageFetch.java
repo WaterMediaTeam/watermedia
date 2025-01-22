@@ -68,74 +68,86 @@ public class ImageFetch implements Runnable {
 
             // READ FROM WHENEVER IT WAS LOCATED
             URLConnection conn = null;
-            try {
-                int code = 200; // AS EXPECTED
-                conn = openConnection(patch.uri, cache);
+            URI patchUri = patch.uri;
+            while (patchUri != null) {
+                try {
+                    int code = 200; // AS EXPECTED
+                    conn = openConnection(patchUri, cache);
 
-                // GENERIC
-                String type = conn.getContentType();
-                if (type != null) {
-                    if (DataTool.startsWith(type, VID_MIMETYPES))
-                        throw new VideoTypeException();
+                    // GENERIC
+                    String type = conn.getContentType();
+                    if (type != null) {
+                        if (DataTool.startsWith(type, VID_MIMETYPES))
+                            throw new VideoTypeException();
 
-                    if (!type.startsWith("image"))
-                        throw new NoImageException();
-                } else {
-                    throw new NoImageException();
-                }
-
-                // HTTP ADDRESS
-                if (conn instanceof HttpURLConnection) {
-                    HttpURLConnection http = (HttpURLConnection) conn;
-                    code = http.getResponseCode();
-                    switch (code) {
-                        case HTTP_BAD_REQUEST:
-                        case HTTP_FORBIDDEN:
-                        case HTTP_NOT_FOUND:
+                        if (!type.startsWith("image"))
                             throw new NoImageException();
-                        case HTTP_OK:
-                        case HTTP_NOT_MODIFIED:
-                            break;
-                        default:
-                            throw new IllegalStateException("HTTP Server responses an invalid status code: " + code);
+                    } else {
+                        throw new NoImageException();
                     }
-                }
 
-                // NOT MODIFIED SERVER
-                if (cache != null && code == HTTP_NOT_MODIFIED) {
-                    // JUST REFRESH ENTRY DATA, MAYBE EXPIRATION TIME IS EXTENDED
-                    CacheAPI.updateEntry(new CacheAPI.Entry(uri, getEtagOr(conn, cache.getTag()), getLastModificationTime(conn), getExpirationTime(conn)));
+                    // HTTP ADDRESS
+                    if (conn instanceof HttpURLConnection) {
+                        HttpURLConnection http = (HttpURLConnection) conn;
+                        code = http.getResponseCode();
+                        switch (code) {
+                            case HTTP_BAD_REQUEST:
+                            case HTTP_FORBIDDEN:
+                            case HTTP_NOT_FOUND:
+                                throw new NoImageException();
+                            case HTTP_OK:
+                            case HTTP_NOT_MODIFIED:
+                                break;
+                            default:
+                                throw new IllegalStateException("HTTP Server responses an invalid status code: " + code);
+                        }
+                    }
 
-                    // CONSUME
+                    // NOT MODIFIED SERVER
+                    if (cache != null && code == HTTP_NOT_MODIFIED) {
+                        // JUST REFRESH ENTRY DATA, MAYBE EXPIRATION TIME IS EXTENDED
+                        CacheAPI.updateEntry(new CacheAPI.Entry(patchUri, getEtagOr(conn, cache.getTag()), getLastModificationTime(conn), getExpirationTime(conn)));
+
+                        // CONSUME
+                        successConsumer.accept(readImages(cache), true);
+                    } else { // MODIFIED OR WHATEVER
+                        // READ DATA FROM SOURCE
+                        InputStream in = conn.getInputStream();
+                        byte[] data = DataTool.readAllBytes(in);
+
+                        // STORE CACHE
+                        CacheAPI.saveFile(patchUri, getEtagOr(conn, cache != null ? cache.getTag() : ""), getLastModificationTime(conn), getExpirationTime(conn), data);
+
+                        LOGGER.debug(IT, "Successfully downloaded image from '{}'", patchUri);
+
+                        // CONSUME
+                        successConsumer.accept(readImages(data), false);
+
+                        // CLOSE
+                        in.close();
+                    }
+                } catch (Exception e) {
+                    AbstractPatch.Result result = patch.fallbackResult.compute(this.uri);
+                    if (result != null) {
+                        patchUri = result.uri;
+                        continue;
+                    } else {
+                        patchUri = null;
+                    }
+
+                    // READ FROM CACHE AS LAST RESORT
+                    if (cache == null || !cache.getFile().exists()) {
+                        throw e;
+                    }
+
+                    LOGGER.error(IT, "Failed to fetch image, delegating to cache files");
+
                     successConsumer.accept(readImages(cache), true);
-                } else { // MODIFIED OR WHATEVER
-                    // READ DATA FROM SOURCE
-                    InputStream in = conn.getInputStream();
-                    byte[] data = DataTool.readAllBytes(in);
-
-                    // STORE CACHE
-                    CacheAPI.saveFile(uri, getEtagOr(conn, cache != null ? cache.getTag() : ""), getLastModificationTime(conn), getExpirationTime(conn), data);
-
-                    LOGGER.debug(IT, "Successfully downloaded image from '{}'", uri);
-
-                    // CONSUME
-                    successConsumer.accept(readImages(data), false);
-
-                    // CLOSE
-                    in.close();
+                } finally {
+                    if (conn instanceof HttpURLConnection) ((HttpURLConnection) conn).disconnect();
                 }
-            } catch (Exception e) {
-                // READ FROM CACHE AS LAST RESORT
-                if (cache == null || !cache.getFile().exists()) {
-                    throw e;
-                }
-
-                LOGGER.error(IT, "Failed to fetch image, delegating to cache files");
-
-                successConsumer.accept(readImages(cache), true);
-            } finally {
-                if (conn instanceof HttpURLConnection) ((HttpURLConnection) conn).disconnect();
             }
+
         } catch (NoImageException | InternalDecoderException e) {
             LOGGER.error(IT, "Invalid image source from '{}'", uri, e);
             errConsumer.accept(e, false);
