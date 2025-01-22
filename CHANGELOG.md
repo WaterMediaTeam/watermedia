@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.15
+- 🐛 Fixed crashes caused by wrong method call 
+
 # 📦 UPDATE 2.1.14
 - ✨ Added fallback method for failed patches
 - ✨ Enhanced Google Drive support and speed
