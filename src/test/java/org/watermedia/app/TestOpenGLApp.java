@@ -89,6 +89,9 @@ public class TestOpenGLApp implements Executor {
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+            if (key == GLFW_KEY_P) {
+                player.start(URI.create("https://www.youtube.com/watch?v=LlNCDSz5BeE"));
+            }
         });
 
         // Get the thread stack and push a new frame
@@ -202,7 +205,7 @@ public class TestOpenGLApp implements Executor {
 
     public static void main(String[] args) {
         Arrays.asList(new String[]{"", ""});
-        String url = args.length == 0 ? "https://www.youtube.com/watch?v=4JkIs37a2JE&list=RD4JkIs37a2JE&start_radio=1" : args[0];
+        String url = args.length == 0 ? "https://www.youtube.com/watch?v=MuoeG_4lcjo" : args[0];
         new TestOpenGLApp().run(URI.create(url));
     }
 
