@@ -69,7 +69,9 @@ public class ImageFetch implements Runnable {
             // READ FROM WHENEVER IT WAS LOCATED
             URLConnection conn = null;
             URI patchUri = patch.uri;
-            while (patchUri != null) {
+            boolean retry = false;
+
+            do {
                 try {
                     int code = 200; // AS EXPECTED
                     conn = openConnection(patchUri, cache);
@@ -126,12 +128,14 @@ public class ImageFetch implements Runnable {
                         // CLOSE
                         in.close();
                     }
+                    retry = false;
                 } catch (Exception e) {
                     if (e instanceof ForbiddenException) {
                         AbstractPatch.Result result = patch.fallbackResult.compute(this.uri);
 
                         if (result != null) {
                             patchUri = result.uri;
+                            retry = true;
                             continue;
                         } else {
                             patchUri = null;
@@ -149,8 +153,7 @@ public class ImageFetch implements Runnable {
                 } finally {
                     if (conn instanceof HttpURLConnection) ((HttpURLConnection) conn).disconnect();
                 }
-            }
-
+            } while (retry);
         } catch (NoImageException | InternalDecoderException e) {
             LOGGER.error(IT, "Invalid image source from '{}'", uri, e);
             errConsumer.accept(e, false);
