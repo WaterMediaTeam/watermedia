@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.16
+- 🐛 Fixed imagefetch remains fetching forever
+
 # 📦 UPDATE 2.1.15
 - 🐛 Fixed crashes caused by wrong method call 
 
