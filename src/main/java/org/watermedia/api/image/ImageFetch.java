@@ -76,18 +76,6 @@ public class ImageFetch implements Runnable {
                     int code = 200; // AS EXPECTED
                     conn = openConnection(patchUri, cache);
 
-                    // GENERIC
-                    String type = conn.getContentType();
-                    if (type != null) {
-                        if (DataTool.startsWith(type, VID_MIMETYPES))
-                            throw new VideoTypeException();
-
-                        if (!type.startsWith("image"))
-                            throw new NoImageException();
-                    } else {
-                        throw new NoImageException();
-                    }
-
                     // HTTP ADDRESS
                     if (conn instanceof HttpURLConnection) {
                         HttpURLConnection http = (HttpURLConnection) conn;
@@ -103,6 +91,18 @@ public class ImageFetch implements Runnable {
                             default:
                                 throw new IllegalStateException("HTTP Server responses an invalid status code: " + code);
                         }
+                    }
+
+                    // GENERIC
+                    String type = conn.getContentType();
+                    if (type != null) {
+                        if (DataTool.startsWith(type, VID_MIMETYPES))
+                            throw new VideoTypeException();
+
+                        if (!type.startsWith("image"))
+                            throw new NoImageException();
+                    } else {
+                        throw new NoImageException();
                     }
 
                     // NOT MODIFIED SERVER
