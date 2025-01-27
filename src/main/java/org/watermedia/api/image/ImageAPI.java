@@ -74,7 +74,7 @@ public class ImageAPI extends WaterMediaAPI {
             File modConfigParent = modConfig.getParent().toFile();
             if (!modConfigParent.exists()) {
                 LOGGER.warn(IT, "Custom loading gif not found, creating directories and returning default one");
-                if (!modConfigParent.mkdirs()) LOGGER.error("Cannot create dir '{}'", modConfigParent.toString());
+                if (!modConfigParent.mkdirs()) LOGGER.error(IT, "Cannot create dir '{}'", modConfigParent.toString());
             } else {
                 LOGGER.error(IT, "Founded directories but custom loading gif is missing");
             }
