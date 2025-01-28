@@ -205,7 +205,7 @@ public class TestOpenGLApp implements Executor {
 
     public static void main(String[] args) {
         Arrays.asList(new String[]{"", ""});
-        String url = args.length == 0 ? "https://www.youtube.com/watch?v=MuoeG_4lcjo" : args[0];
+        String url = args.length == 0 ? "https://i.imgur.com/0pdCpM3.gif" : args[0];
         new TestOpenGLApp().run(URI.create(url));
     }
 
