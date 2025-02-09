@@ -107,8 +107,8 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
      */
     public int preRender() {
         RenderAPI.bindTexture(this.texture);
+        semaphore.acquireUninterruptibly();
         if (refresh && buffers != null && buffers.length > 0) {
-            semaphore.acquireUninterruptibly();
             RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
             first = false;
             semaphore.release();
