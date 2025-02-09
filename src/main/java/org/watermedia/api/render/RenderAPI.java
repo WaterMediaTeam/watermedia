@@ -1,7 +1,7 @@
 package org.watermedia.api.render;
 
+import org.lwjgl.system.MemoryUtil;
 import org.watermedia.api.WaterMediaAPI;
-import org.watermedia.api.render.memory.MemoryAlloc;
 import org.watermedia.loaders.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -15,12 +15,13 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 /**
- * RenderApi is a tool class for OpenGL rendering compatible with all minecraft versions
+ * RenderApi is a tool class for OpenGL rendering compatible with lwjgl 3.x
  */
 public class RenderAPI extends WaterMediaAPI {
     public static final Marker IT = MarkerManager.getMarker(RenderAPI.class.getSimpleName());
     public static final int NONE = 0;
     public static final long NULL = 0L;
+    public static final boolean ADVANCED_LWJGL = true; // LWJGL 2.9 doesn't have MemoryAllocator
 
     /**
      * Creates a DirectByteBuffer unsafe using {@link org.lwjgl.system.MemoryUtil.MemoryAllocator MemoryAllocator}
@@ -30,7 +31,16 @@ public class RenderAPI extends WaterMediaAPI {
      * @return DirectByteBuffer
      */
     public static ByteBuffer createByteBuffer(int size) {
-        return MemoryAlloc.create(size);
+        if (ADVANCED_LWJGL) {
+            MemoryUtil.MemoryAllocator allocator = MemoryUtil.getAllocator(false);
+            long address = allocator.malloc(size);
+            if (address == NULL)
+                throw new OutOfMemoryError("Insufficient memory to allocate " + size + " bytes");
+
+            return MemoryUtil.memByteBuffer(address, size);
+        } else {
+            return ByteBuffer.allocateDirect(size);
+        }
     }
 
     /**
@@ -41,7 +51,16 @@ public class RenderAPI extends WaterMediaAPI {
      * @return resized DirectByteBuffer
      */
     public static ByteBuffer resizeByteBuffer(ByteBuffer buffer, int newSize) {
-        return MemoryAlloc.resize(buffer, newSize);
+        if (ADVANCED_LWJGL) {
+            MemoryUtil.MemoryAllocator allocator = MemoryUtil.getAllocator(false);
+            long address = allocator.realloc(MemoryUtil.memAddress0((Buffer) buffer), newSize);
+            if (address == NULL)
+                throw new OutOfMemoryError("Insufficient memory to reallocate " + newSize + " bytes");
+
+            return MemoryUtil.memByteBuffer(address, newSize);
+        } else {
+            return ByteBuffer.allocateDirect(newSize).put(buffer);
+        }
     }
 
     /**
@@ -51,7 +70,13 @@ public class RenderAPI extends WaterMediaAPI {
      * @param buffer buffer to free
      */
     public static void freeByteBuffer(ByteBuffer buffer) {
-        MemoryAlloc.free(buffer);
+        if (ADVANCED_LWJGL) {
+            MemoryUtil.MemoryAllocator allocator = MemoryUtil.getAllocator(false);
+            if (buffer == null) return;
+
+            // NOTE: LWJGL 3.3 adds more variants for all buffers, useless because all buffers extends buffer.
+            allocator.free(MemoryUtil.memAddress0((Buffer) buffer));
+        }
     }
 
     /**
@@ -181,8 +206,10 @@ public class RenderAPI extends WaterMediaAPI {
     @Override
     public void start(ILoader bootCore) throws Exception {
         // REPLACE JAVA WAY FOR LWJGL WAY
-        VideoLan4J.setBufferAllocator(RenderAPI::createByteBuffer);
-        VideoLan4J.setBufferDeallocator(RenderAPI::freeByteBuffer);
+        if (ADVANCED_LWJGL) {
+            VideoLan4J.setBufferAllocator(RenderAPI::createByteBuffer);
+            VideoLan4J.setBufferDeallocator(RenderAPI::freeByteBuffer);
+        }
     }
 
     @Override
