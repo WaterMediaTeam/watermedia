@@ -1,3 +1,8 @@
+# 📦 UPDATE 2.1.17
+- 🛠️ Removed MemoryAlloc class (breaking change but doesn't affect any mod)
+- 🐛 Fixed fallback system for google drive doesn't get called
+- 🐛 Fixed a very VERY rare race condition
+
 # 📦 UPDATE 2.1.16
 - 🐛 Fixed imagefetch remains fetching forever
 
