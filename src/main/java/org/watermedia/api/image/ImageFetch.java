@@ -75,7 +75,6 @@ public class ImageFetch implements Runnable {
                 try {
                     int code = 200; // AS EXPECTED
                     conn = openConnection(patchUri, cache);
-                    LOGGER.info(IT, "uri is {}", patchUri);
 
                     // HTTP ADDRESS
                     if (conn instanceof HttpURLConnection) {
@@ -209,7 +208,6 @@ public class ImageFetch implements Runnable {
                         type = reader.getFormatName();
                         if (reader.getFormatName().equalsIgnoreCase("gif")) {
                             // FIXME: ImageIO decoding gifs breaks malloc buffers (how the fuck is that even possible)
-                            //  Found it here: https://stackoverflow.com/questions/8933893/convert-each-animated-gif-frame-to-a-separate-bufferedimage
                             if (true) throw new IllegalArgumentException("Gif format detected, forced-delegation to WM decoders");
                             Node root = metadata.getAsTree(format);
                             Node delayNode = fetchImageNode(root, "GraphicControlExtension");
