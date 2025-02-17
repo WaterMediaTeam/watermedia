@@ -63,7 +63,7 @@ dependencies {
     // DEPENDENCIES
     shadow "com.github.WaterMediaTeam:videolan-natives:$vlcj_natives_version"
     shadow "com.github.WaterMediaTeam:ytdl-java:$jyd_version"
-    shadow "com.github.WaterMediaTeam:vlcj-submodule:0.0.1"
+    shadow "com.github.WaterMediaTeam:vlcj-submodule:$vlcj_submodule_version";
 
     // DEPENDENCIES INCLUDED IN MINECRAFT
     library "net.java.dev.jna:jna:$jna_version"
