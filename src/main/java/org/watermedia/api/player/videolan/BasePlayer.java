@@ -175,6 +175,11 @@ public abstract class BasePlayer {
         return raw.mediaPlayer().status().state().name();
     }
 
+    public boolean isWaiting() {
+        if (raw == null) return false;
+        return raw.mediaPlayer().status().state().equals(State.NOTHING_SPECIAL);
+    }
+
     public boolean isLoading() {
         if (raw == null) return false;
         return raw.mediaPlayer().status().state().equals(State.OPENING);
