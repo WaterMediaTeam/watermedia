@@ -1,3 +1,9 @@
+# 📦 UPDATE 2.1.18
+- 🛠️ Speed up Youtube first media loading time
+- 🛠️ Added isWaiting() method on ``BasePlayer``
+- 🐛 Fixed deadlocks removing or changing media (introduced in 2.1.14)
+- 🐛 Fixed IllegalMemoryAccess issues (introduced in 2.1.17)
+
 # 📦 UPDATE 2.1.17
 - 🛠️ Removed MemoryAlloc class (breaking change but doesn't affect any mod)
 - 🐛 Fixed fallback system for google drive doesn't get called
