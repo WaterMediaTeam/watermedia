@@ -59,6 +59,7 @@ dependencies {
     // MODLOADERS
     compileOnly "com.github.WaterMediaTeam:modloaders:$modloaders_version"
     compileOnly "net.fabricmc:fabric-loader:$fabric_version"
+//    shadow fileTree(dir: 'libs', include: '*.jar')
 
     // DEPENDENCIES
     shadow "com.github.WaterMediaTeam:videolan-natives:$vlcj_natives_version"

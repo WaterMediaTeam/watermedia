@@ -15,6 +15,7 @@ import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFormatCallback, BufferCleanupCallback {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
@@ -61,13 +62,12 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
     @Override
     public void allocatedBuffers(ByteBuffer[] buffers) {
         this.buffers = buffers;
+        this.first = true;
     }
 
     @Override
     public void cleanupBuffers(ByteBuffer[] buffers) {
-        semaphore.acquireUninterruptibly();
         this.buffers = null;
-        semaphore.release();
     }
 
     @Override
@@ -107,11 +107,15 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
      */
     public int preRender() {
         RenderAPI.bindTexture(this.texture);
-        semaphore.acquireUninterruptibly();
-        if (refresh && buffers != null && buffers.length > 0) {
-            RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
-            first = false;
+        try {
+            semaphore.tryAcquire(1, TimeUnit.SECONDS);
+            if (refresh && buffers != null && buffers.length > 0) {
+                RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
+                first = false;
+            }
             semaphore.release();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         RenderAPI.bindTexture(RenderAPI.NONE);
         return texture;
