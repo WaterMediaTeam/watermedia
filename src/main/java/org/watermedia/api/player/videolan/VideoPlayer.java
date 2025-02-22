@@ -13,9 +13,12 @@ import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCal
 
 import java.awt.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import static org.watermedia.WaterMedia.LOGGER;
 
 public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFormatCallback, BufferCleanupCallback {
     private static final Marker IT = MarkerManager.getMarker("VideoPlayer");
@@ -108,12 +111,20 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
     public int preRender() {
         RenderAPI.bindTexture(this.texture);
         try {
-            semaphore.tryAcquire(1, TimeUnit.SECONDS);
-            if (refresh && buffers != null && buffers.length > 0) {
-                RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
-                first = false;
+            if (semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
+                if (refresh && buffers != null && buffers.length > 0) {
+                    RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
+                    first = false;
+                    refresh = false;
+                }
+                semaphore.release();
+            } else {
+                LOGGER.error(IT, "{} took more than 1 second to synchronize with native threads", this, new InterruptedByTimeoutException());
+                if (first) { // first frames means no texture, this might cause serious problems
+                    throw new IllegalStateException("Cannot handle interruption");
+                }
+                this.release();
             }
-            semaphore.release();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
