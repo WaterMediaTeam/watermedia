@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.19
+- 🛠️ Enhanced desynchronization logging and error handling about it
+- 🐛 Fixed lower FPS caused by higher FPS
+
 # 📦 UPDATE 2.1.18
 - 🛠️ Speed up Youtube first media loading time
 - 🛠️ Added isWaiting() method on ``BasePlayer``
