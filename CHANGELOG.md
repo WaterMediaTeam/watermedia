@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.21
+- 🐛 Fixed crashes caused by bad imports 
+
 # 📦 UPDATE 2.1.20
 - 🛠️ Marked Optifine as incompatible (causes odd untrackable crashes)
 
