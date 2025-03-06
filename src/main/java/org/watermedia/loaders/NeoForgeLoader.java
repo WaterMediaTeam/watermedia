@@ -4,6 +4,7 @@ import jdk.internal.loader.ClassLoaders;
 import org.watermedia.WaterMedia;
 import org.watermedia.core.exceptions.IllegalEnvironmentException;
 import org.watermedia.core.exceptions.IllegalTLauncherException;
+import org.watermedia.core.exceptions.IncompatibleModException;
 import org.watermedia.core.tools.Tool;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
@@ -19,12 +20,21 @@ public class NeoForgeLoader implements ILoader {
     public NeoForgeLoader() {
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
+            if (optifineInstalled()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
 
             if (clientSide()) WaterMedia.prepare(this).start();
             else throw new IllegalEnvironmentException();
         } catch (Exception e) {
             throw new RuntimeException("Failed starting " + WaterMedia.NAME + " for " + name() +": " + e.getMessage(), e);
         }
+    }
+
+    public boolean optifineInstalled() {
+        try {
+            Class.forName("optifine.Installer", false, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (Exception ignored) {}
+        return false;
     }
 
     @Override

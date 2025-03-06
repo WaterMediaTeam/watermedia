@@ -45,6 +45,7 @@ public class ForgeLoader implements ILoader {
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
             if (modInstalled("xenon")) throw new IncompatibleModException("xenon", "Xenon", "Embeddium (embeddium) or Sodium (sodium)");
+            if (optifineInstalled()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
 
             if (clientSide()) WaterMedia.prepare(this).start();
             else if (!developerMode()) throw new IllegalEnvironmentException();
@@ -72,17 +73,19 @@ public class ForgeLoader implements ILoader {
     public boolean tlcheck() {
         // first lookup attempt
         boolean isT = Tool.t() || modInstalled("tlskincape") || modInstalled("tlauncher_custom_cape_skin");
+        final ClassLoader current = Thread.currentThread().getContextClassLoader();
 
         try {
             // second attempt
-            final ClassLoader current = Thread.currentThread().getContextClassLoader();
             if (!isT) {
                 Class<?> launcher = Class.forName("cpw.mods.modlauncher.Launcher");
                 Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
+        } catch (Exception ignored) {}
 
+        try {
             // second point one attempt
             if (!isT) {
                 Class<?> launcher = Class.forName("net.minecraftforge.modlauncher.Launcher");
@@ -90,7 +93,9 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
+        } catch (Exception ignored) {}
 
+        try {
             // third... too deep
             if (!isT) {
                 Class<?> launcher = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
@@ -98,7 +103,9 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
+        } catch (Exception ignored) {}
 
+        try {
             // third point one... too deep but not deeper
             if (!isT) {
                 Class<?> launcher = Class.forName("net.minecraftforge.bootstraplauncher.BootstrapLauncher");
@@ -106,23 +113,28 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
+        } catch (Exception ignored) {}
 
-            try {
-                // see you all in hell
-                if (!isT) {
-                    Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
-                    isT = Tool.t();
-                    Thread.currentThread().setContextClassLoader(current);
-                }
+        try {
+            // see you all in hell
+            if (!isT) {
+                Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+        } catch (Throwable ignore) {}
 
-                // welcome to hell
-                if (!isT) {
-                    Thread.currentThread().setContextClassLoader(ClassLoaders.appClassLoader());
-                    isT = Tool.t();
-                    Thread.currentThread().setContextClassLoader(current);
-                }
-            } catch (Throwable ignore) {}
+        try {
+            // welcome to hell
+            if (!isT) {
+                Thread.currentThread().setContextClassLoader(ClassLoaders.appClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+        } catch (Exception ignored) {}
 
+
+        try {
             // I CHOOSE VIOLENCE TODAY
             if (!isT) {
                 Collection<StackTraceElement[]> traceElements = Thread.getAllStackTraces().values();
@@ -135,9 +147,16 @@ public class ForgeLoader implements ILoader {
                     }
                 }
             }
-
         } catch (Exception ignored) {}
         return isT;
+    }
+
+    public boolean optifineInstalled() {
+        try {
+            Class.forName("optifine.Installer", false, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (Exception ignored) {}
+        return false;
     }
 
     public boolean modInstalled(String id) {
