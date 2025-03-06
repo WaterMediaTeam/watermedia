@@ -44,8 +44,8 @@ public class ForgeLoader implements ILoader {
 
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
+            if (ofcheck()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
             if (modInstalled("xenon")) throw new IncompatibleModException("xenon", "Xenon", "Embeddium (embeddium) or Sodium (sodium)");
-            if (optifineInstalled()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
 
             if (clientSide()) WaterMedia.prepare(this).start();
             else if (!developerMode()) throw new IllegalEnvironmentException();
@@ -151,7 +151,7 @@ public class ForgeLoader implements ILoader {
         return isT;
     }
 
-    public boolean optifineInstalled() {
+    public boolean ofcheck() {
         try {
             Class.forName("optifine.Installer", false, Thread.currentThread().getContextClassLoader());
             return true;

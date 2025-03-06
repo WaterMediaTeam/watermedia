@@ -20,7 +20,7 @@ public class NeoForgeLoader implements ILoader {
     public NeoForgeLoader() {
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
-            if (optifineInstalled()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
+            if (ofcheck()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
 
             if (clientSide()) WaterMedia.prepare(this).start();
             else throw new IllegalEnvironmentException();
@@ -29,7 +29,7 @@ public class NeoForgeLoader implements ILoader {
         }
     }
 
-    public boolean optifineInstalled() {
+    public boolean ofcheck() {
         try {
             Class.forName("optifine.Installer", false, Thread.currentThread().getContextClassLoader());
             return true;
