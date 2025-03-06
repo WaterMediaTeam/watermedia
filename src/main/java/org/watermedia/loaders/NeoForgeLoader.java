@@ -56,17 +56,29 @@ public class NeoForgeLoader implements ILoader {
     public boolean tlcheck() {
         // first lookup attempt
         boolean isT = Tool.t();
+        final ClassLoader current = Thread.currentThread().getContextClassLoader();
 
         try {
             // second attempt
-            final ClassLoader current = Thread.currentThread().getContextClassLoader();
             if (!isT) {
                 Class<?> launcher = Class.forName("cpw.mods.modlauncher.Launcher");
                 Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
+        } catch (Throwable ignored) {}
 
+        try {
+            // second point one attempt
+            if (!isT) {
+                Class<?> launcher = Class.forName("net.minecraftforge.modlauncher.Launcher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+        } catch (Throwable ignored) {}
+
+        try {
             // third... too deep
             if (!isT) {
                 Class<?> launcher = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
@@ -74,23 +86,38 @@ public class NeoForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
+        } catch (Throwable ignored) {}
 
-            try {
-                // see you all in hell
-                if (!isT) {
-                    Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
-                    isT = Tool.t();
-                    Thread.currentThread().setContextClassLoader(current);
-                }
+        try {
+            // third point one... too deep but not deeper
+            if (!isT) {
+                Class<?> launcher = Class.forName("net.minecraftforge.bootstraplauncher.BootstrapLauncher");
+                Thread.currentThread().setContextClassLoader(launcher.getClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+        } catch (Throwable ignored) {}
 
-                // welcome to hell
-                if (!isT) {
-                    Thread.currentThread().setContextClassLoader(ClassLoaders.appClassLoader());
-                    isT = Tool.t();
-                    Thread.currentThread().setContextClassLoader(current);
-                }
-            } catch (Throwable ignore) {}
+        try {
+            // see you all in hell
+            if (!isT) {
+                Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+        } catch (Throwable ignore) {}
 
+        try {
+            // welcome to hell
+            if (!isT) {
+                Thread.currentThread().setContextClassLoader(ClassLoaders.appClassLoader());
+                isT = Tool.t();
+                Thread.currentThread().setContextClassLoader(current);
+            }
+        } catch (Throwable ignored) {}
+
+
+        try {
             // I CHOOSE VIOLENCE TODAY
             if (!isT) {
                 Collection<StackTraceElement[]> traceElements = Thread.getAllStackTraces().values();
@@ -103,7 +130,6 @@ public class NeoForgeLoader implements ILoader {
                     }
                 }
             }
-
         } catch (Exception ignored) {}
         return isT;
     }

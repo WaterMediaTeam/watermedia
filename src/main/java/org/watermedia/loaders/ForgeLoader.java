@@ -83,7 +83,7 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
-        } catch (Exception ignored) {}
+        } catch (Throwable ignored) {}
 
         try {
             // second point one attempt
@@ -93,7 +93,7 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
-        } catch (Exception ignored) {}
+        } catch (Throwable ignored) {}
 
         try {
             // third... too deep
@@ -103,7 +103,7 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
-        } catch (Exception ignored) {}
+        } catch (Throwable ignored) {}
 
         try {
             // third point one... too deep but not deeper
@@ -113,7 +113,7 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
-        } catch (Exception ignored) {}
+        } catch (Throwable ignored) {}
 
         try {
             // see you all in hell
@@ -131,7 +131,7 @@ public class ForgeLoader implements ILoader {
                 isT = Tool.t();
                 Thread.currentThread().setContextClassLoader(current);
             }
-        } catch (Exception ignored) {}
+        } catch (Throwable ignored) {}
 
 
         try {
