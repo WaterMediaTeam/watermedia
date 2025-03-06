@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.20
+- 🛠️ Marked Optifine as incompatible (causes odd untrackable crashes)
+
 # 📦 UPDATE 2.1.19
 - 🛠️ Enhanced desynchronization logging and error handling about it
 - 🐛 Fixed lower FPS caused by higher FPS
