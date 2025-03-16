@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class TwitterPatch extends AbstractPatch {
     private static final String API_URL = "https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s&lang=en";
     private static final String API_KEY = "watermedia-java-x-access-token";
-    private static final Pattern ID_PATTERN = Pattern.compile("^/([A-Za-z0-9_]+)/status/(\\d+)$");
+    private static final Pattern ID_PATTERN = Pattern.compile("status/(\\d+)$", Pattern.CASE_INSENSITIVE);
 
     private static final String __TYPE_T = "Tweet";
     private static final String __TYTE_TOMB = "TweetTombstone";
@@ -27,16 +27,25 @@ public class TwitterPatch extends AbstractPatch {
     public boolean isValid(URI uri) {
         String host = uri.getHost();
         String path = uri.getPath();
-        return host != null && path != null && (host.equals("www.x.com") || host.equals("x.com") || host.equals("www.twitter.com") || host.equals("twitter.com"))
-                && ID_PATTERN.matcher(path).matches();
+
+        if (host == null || path == null) return false;
+
+        if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
+
+        return (host.equals("www.x.com") || host.equals("x.com") || host.equals("www.twitter.com") || host.equals("twitter.com"))
+                && ID_PATTERN.matcher(path).find();
     }
 
     @Override
     public Result patch(URI uri, Quality prefQuality) throws FixingURLException {
         try {
-            final Matcher m = ID_PATTERN.matcher(uri.getPath());
-            if (!m.matches()) throw new Exception("No twitter ID match found");
-            final String apiURL = String.format(API_URL, m.group(2), API_KEY);
+            String path = uri.getPath();
+
+            if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
+
+            final Matcher m = ID_PATTERN.matcher(path);
+            if (!m.find()) throw new Exception("No twitter ID match found");
+            final String apiURL = String.format(API_URL, m.group(1), API_KEY);
 
             final HttpURLConnection conn = NetTool.connectToHTTP(apiURL, "GET");
 

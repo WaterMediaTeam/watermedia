@@ -82,9 +82,11 @@ public class ImageFetch implements Runnable {
                         code = http.getResponseCode();
                         switch (code) {
                             case HTTP_BAD_REQUEST:
+                                throw new IllegalArgumentException("Invalid request");
                             case HTTP_FORBIDDEN:
-                            case HTTP_NOT_FOUND:
                                 throw new ForbiddenException();
+                            case HTTP_NOT_FOUND:
+                                throw new NullPointerException("Resource not found");
                             case HTTP_OK:
                             case HTTP_NOT_MODIFIED:
                                 break;

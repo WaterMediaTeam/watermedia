@@ -166,6 +166,8 @@ public class TestOpenGLApp implements Executor {
             if (cache.isVideo()) {
                 player.preRender();
                 glBindTexture(GL_TEXTURE_2D, player.texture());
+            } else if (renderer.duration == 0) {
+                glBindTexture(GL_TEXTURE_2D, renderer.texture(0));
             } else {
                 glBindTexture(GL_TEXTURE_2D, renderer.texture(System.currentTimeMillis() % renderer.duration));
             }
@@ -205,7 +207,7 @@ public class TestOpenGLApp implements Executor {
 
     public static void main(String[] args) {
         Arrays.asList(new String[]{"", ""});
-        String url = args.length == 0 ? "https://www.youtube.com/watch?v=MuoeG_4lcjo" : args[0];
+        String url = args.length == 0 ? "https://x.com/SrRapero720/status/1877925997938368799/" : args[0];
         new TestOpenGLApp().run(URI.create(url));
     }
 
