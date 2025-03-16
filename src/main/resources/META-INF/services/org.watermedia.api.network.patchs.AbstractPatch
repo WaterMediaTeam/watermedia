@@ -4,6 +4,7 @@ org.watermedia.api.network.patchs.DrivePatch
 org.watermedia.api.network.patchs.YoutubePatch
 org.watermedia.api.network.patchs.TwitchPatch
 org.watermedia.api.network.patchs.TwitterPatch
+org.watermedia.api.network.patchs.MediaFirePatch
 org.watermedia.api.network.patchs.DropboxPatch
 org.watermedia.api.network.patchs.StreamablePatch
 org.watermedia.api.network.patchs.KickPatch
