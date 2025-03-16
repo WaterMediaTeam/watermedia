@@ -1,3 +1,9 @@
+# 📦 UPDATE 2.1.22
+- ✨ Added support for "mediafire.com"
+- 🛠️ Removed OneDrive support
+- 🐛 Fixed Twitter (x) support
+- 🐛 Fixed [orange page] support
+
 # 📦 UPDATE 2.1.21
 - 🐛 Fixed crashes caused by bad imports 
 
