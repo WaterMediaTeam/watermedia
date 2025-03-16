@@ -1,6 +1,5 @@
 # NORMAL FIXERS
 org.watermedia.api.network.patchs.DiskPatch
-org.watermedia.api.network.patchs.OnedrivePatch
 org.watermedia.api.network.patchs.DrivePatch
 org.watermedia.api.network.patchs.YoutubePatch
 org.watermedia.api.network.patchs.TwitchPatch
