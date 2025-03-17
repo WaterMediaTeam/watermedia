@@ -1,5 +1,6 @@
 package org.watermedia.api.network.patchs;
 
+import org.watermedia.WaterMedia;
 import org.watermedia.core.tools.DataTool;
 import org.watermedia.core.tools.NetTool;
 
@@ -52,7 +53,15 @@ public class PornHubPatch extends AbstractPatch {
 
             FlashVars flashVars = DataTool.fromJSON(result, FlashVars.class);
 
-            return new Result(new URI(flashVars.mediaDefinitions[0].videoUrl), true, false);
+            String url = flashVars.mediaDefinitions[0].videoUrl;
+
+            for (FlashVars.MediaDefinition mediaDefinition : flashVars.mediaDefinitions) {
+                if (mediaDefinition.defaultQuality) {
+                    url = mediaDefinition.videoUrl;
+                }
+            }
+
+            return new Result(new URI(url), true, false);
         } catch (Exception e) {
             throw new FixingURLException(uri.toString(), e);
         }
