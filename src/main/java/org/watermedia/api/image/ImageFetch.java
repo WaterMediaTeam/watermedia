@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -161,6 +162,9 @@ public class ImageFetch implements Runnable {
             errConsumer.accept(e, false);
         } catch (VideoTypeException e) {
             LOGGER.debug(IT, "Detected a video type from '{}'", uri);
+            errConsumer.accept(e, true);
+        } catch (MalformedURLException e) {
+            LOGGER.warn(IT, "Failed to parse URI to URL, delegating to VLC '{}'", uri, e);
             errConsumer.accept(e, true);
         } catch (Exception e) {
             LOGGER.error(IT, "Unhandled exception occurred while loading image from '{}'", uri, e);
