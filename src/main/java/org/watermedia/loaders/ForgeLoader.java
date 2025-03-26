@@ -154,6 +154,10 @@ public class ForgeLoader implements ILoader {
     public boolean ofcheck() {
         try {
             Class.forName("optifine.Installer", false, Thread.currentThread().getContextClassLoader());
+            if (WaterMedia.getConfigDir().resolve("enable_optifine.txt").toFile().exists()) {
+                LOGGER.warn(IT, "Optifine detected, but crash is disabled by configuration, please remove Optifine to avoid issues, otherwise crashes are up to you");
+                return false;
+            }
             return true;
         } catch (Exception ignored) {}
         return false;
