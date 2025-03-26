@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.23
+- 🛠️ Added a file check in `/config/watermedia/enable_optifine.txt` to skip optifine crash.
+- 🛠️ Delegate to VLC malformed URLs (usually not supported protocols).
+
 # 📦 UPDATE 2.1.22
 - ✨ Added support for "mediafire.com"
 - 🛠️ Removed OneDrive support
