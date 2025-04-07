@@ -10,6 +10,7 @@ import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferCle
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormat;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormatCallback;
 import org.watermedia.videolan4j.player.embedded.videosurface.callback.RenderCallback;
+import org.watermedia.videolan4j.tools.Chroma;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -83,7 +84,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
         // TODO: This might be wrong; https://wiki.videolan.org/Chroma/
         // TODO: is not wrong but is undocumented...
         //  WHY?
-        return new BufferFormat("RGBA", sourceWidth, sourceHeight, new int[]{sourceWidth * 4}, new int[]{sourceHeight});
+        return new BufferFormat(Chroma.RGBA, sourceWidth, sourceHeight);
     }
 
     public int size() {

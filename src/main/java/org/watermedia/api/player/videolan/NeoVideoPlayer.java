@@ -5,15 +5,15 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.watermedia.videolan4j.ByteBufferFactory;
 import org.watermedia.videolan4j.VideoLan4J;
 import org.watermedia.videolan4j.binding.internal.*;
-import org.watermedia.videolan4j.BufferFormat;
 import org.watermedia.videolan4j.binding.lib.Kernel32;
 import org.watermedia.videolan4j.binding.lib.LibC;
 import org.watermedia.videolan4j.binding.lib.size_t;
 import org.watermedia.videolan4j.factory.MediaPlayerFactory;
-import org.watermedia.videolan4j.player.embedded.videosurface.CallbackVideoSurface;
+import org.watermedia.videolan4j.player.embedded.videosurface.callback.BufferFormat;
+import org.watermedia.videolan4j.tools.Buffers;
+import org.watermedia.videolan4j.tools.Chroma;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
@@ -29,7 +29,7 @@ class NeoVideoPlayer extends NeoBasePlayer implements libvlc_video_format_cb, li
 
     public NeoVideoPlayer(MediaPlayerFactory factory, Executor renderExecutor) {
         super(factory);
-        this.bufferFormat = BufferFormat.RGBA;
+        this.bufferFormat = null;
         this.semaphore = new Semaphore(1);
     }
 
@@ -61,9 +61,9 @@ class NeoVideoPlayer extends NeoBasePlayer implements libvlc_video_format_cb, li
     public int format(PointerByReference opaque, PointerByReference chroma, IntByReference width, IntByReference height, PointerByReference pitches, PointerByReference lines) {
         final int w = width.getValue();
         final int h = height.getValue();
-        final byte[] chromaBytes = bufferFormat.getChroma().getBytes();
-        final int[] pitchValues = bufferFormat.getPitches(w, h);
-        final int[] lineValues = bufferFormat.getLines(w, h);
+        final byte[] chromaBytes = bufferFormat.getChroma().canonical().getBytes();
+        final int[] pitchValues = bufferFormat.getChroma().getPitches(w);
+        final int[] lineValues = bufferFormat.getChroma().getLines(h);
         chroma.getPointer().write(0, chromaBytes, 0, Math.min(chromaBytes.length, 4));
         pitches.getPointer().write(0, pitchValues, 0, pitchValues.length);
         lines.getPointer().write(0, lineValues, 0, lineValues.length);
@@ -71,14 +71,13 @@ class NeoVideoPlayer extends NeoBasePlayer implements libvlc_video_format_cb, li
         nativeBuffers = new ByteBuffer[pitchValues.length];
         pointers = new Pointer[pitchValues.length];
         for (int i = 0; i < pitchValues.length; i++) {
-            final ByteBuffer buffer = ByteBufferFactory.alloc(pitchValues[i] * lineValues[i]);
+            final ByteBuffer buffer = Buffers.alloc(pitchValues[i] * lineValues[i]);
             // ALLOCATE
-            if (!ByteBufferFactory.isAligned(ByteBufferFactory.address(buffer))) {
-                VideoLan4J.LOGGER.warn("Detected an unaligned buffer. this might lead in I/O issues");
+            if (!Buffers.isAligned(Buffers.address(buffer))) {
             }
             // STORE
             nativeBuffers[i] = buffer;
-            pointers[i] = Pointer.createConstant(ByteBufferFactory.address(buffer));
+            pointers[i] = Pointer.createConstant(Buffers.address(buffer));
             if (!Platform.isWindows()) {
                 LibC.INSTANCE.mlock(pointers[i], new NativeLong(buffer.capacity()));
             } else {
@@ -100,7 +99,7 @@ class NeoVideoPlayer extends NeoBasePlayer implements libvlc_video_format_cb, li
                 }
             }
             for(ByteBuffer buffer: nativeBuffers) {
-                ByteBufferFactory.dealloc(buffer);
+                Buffers.dealloc(buffer);
             }
             nativeBuffers = null;
             pointers = null;
