@@ -35,13 +35,6 @@ public class YoutubePatch extends AbstractPatch {
     private static boolean WORKING_TESTED;
     private static final ReentrantLock LOCK = new ReentrantLock();
 
-    static {
-        DefaultClients swap1 = (DefaultClients) DefaultClients.VALUES[0];
-        DefaultClients swap2 = DefaultClients.WEB_PARENT_TOOLS;
-        DefaultClients.VALUES[0] = swap2;
-        DefaultClients.VALUES[swap2.ordinal()] = swap1;
-    }
-
     @Override
     public String platform() {
         return "Youtube";
@@ -106,7 +99,7 @@ public class YoutubePatch extends AbstractPatch {
                 }
 
                 if (WORKING_CLIENT == null) {
-                    WORKING_CLIENT = DefaultClients.VALUES[client];
+                    WORKING_CLIENT = DefaultClients.VALUES[0];
                 }
 
                 VideoDetails videoDetails = videoInfo.details();
