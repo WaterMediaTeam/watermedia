@@ -1,4 +1,9 @@
 # 📦 UPDATE 2.1.23
+- 🛠️ JYTD now uses the most effective client as default when the first fetch fails
+- 🛠️ Removed debug loggers of VLCJ and JYTD
+- 🛠️ Tagged 1.21.5 as compatible (dropped support for 1.21.4)
+
+# 📦 UPDATE 2.1.23
 - 🛠️ Added a file check in `/config/watermedia/enable_optifine.txt` to skip optifine crash.
 - 🛠️ Delegate to VLC malformed URLs (usually not supported protocols).
 
