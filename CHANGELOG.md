@@ -1,4 +1,8 @@
-# 📦 UPDATE 2.1.23
+# 📦 UPDATE 2.1.25
+- 🐛 Fixed MacOS and Linux VLC discovery not working
+- 🛠️ Added compatibility with NixOS (Linux) [[#144](https://github.com/WaterMediaTeam/watermedia/issues/144)]
+
+# 📦 UPDATE 2.1.24
 - 🛠️ JYTD now uses the most effective client as default when the first fetch fails
 - 🛠️ Removed debug loggers of VLCJ and JYTD
 - 🛠️ Tagged 1.21.5 as compatible (dropped support for 1.21.4)
