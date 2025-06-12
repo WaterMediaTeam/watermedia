@@ -1,48 +1,45 @@
 package org.watermedia.api.media;
 
 import com.sun.jna.ptr.IntByReference;
-import org.watermedia.videolan4j.binding.internal.libvlc_instance_t;
+import org.watermedia.api.MediaAPI;
+import org.watermedia.videolan4j.VideoLan4J;
 import org.watermedia.videolan4j.binding.internal.libvlc_media_player_t;
+import org.watermedia.videolan4j.binding.internal.libvlc_media_t;
 import org.watermedia.videolan4j.binding.lib.LibVlc;
 
-import java.awt.*;
+import java.net.URI;
 
-public class VideoLanSource extends MediaSource {
-    private final IntByReference width = new IntByReference();
-    private final IntByReference height = new IntByReference();
-    private final libvlc_instance_t core;
-    private final libvlc_media_player_t raw;
+public class VideoPlayer extends MediaPlayer {
+    private IntByReference width;
+    private IntByReference height;
+    private libvlc_media_player_t player;
 
-    public VideoLanSource() {
-        this.raw = null;
-        this.core = null;
+    public VideoPlayer() {
+        super();
+        this.width = new IntByReference();
+        this.height = new IntByReference();
     }
 
     @Override
-    public int width() {
-        int result = LibVlc.libvlc_video_get_size(this.raw, 0, this.width, this.height);
-        if (result != 0)
-            return 0;
-
-        return this.width.getValue();
+    public void start() {
+        libvlc_media_t media = VideoLan4J.getMediaInstance(MediaAPI.videoLanFactory(), (URI) null);
+        LibVlc.libvlc_media_player_set_media(player, media);
+        LibVlc.libvlc_media_player_play(player);
+        this.pause();
     }
 
     @Override
-    public int height() {
-        int result = LibVlc.libvlc_video_get_size(this.raw, 0, this.width, this.height);
-        if (result != 0)
-            return 0;
+    public void startPaused() {
 
-        return this.height.getValue();
     }
 
     @Override
-    public boolean start() {
+    public boolean startSync() {
         return false;
     }
 
     @Override
-    public boolean startPaused() {
+    public boolean startSyncPaused() {
         return false;
     }
 
@@ -89,6 +86,11 @@ public class VideoLanSource extends MediaSource {
     @Override
     public boolean rewind() {
         return false;
+    }
+
+    @Override
+    public float speed() {
+        return 0;
     }
 
     @Override
@@ -174,6 +176,41 @@ public class VideoLanSource extends MediaSource {
     @Override
     public void release() {
 
+    }
+
+    @Override
+    public void volume(float volume) {
+
+    }
+
+    @Override
+    public float volume() {
+        return 0;
+    }
+
+    @Override
+    public void mute(boolean mute) {
+
+    }
+
+    @Override
+    public boolean mute() {
+        return false;
+    }
+
+    @Override
+    public void quality(Quality quality) {
+
+    }
+
+    @Override
+    public Quality quality() {
+        return null;
+    }
+
+    @Override
+    public Type type() {
+        return null;
     }
 
     @Override
