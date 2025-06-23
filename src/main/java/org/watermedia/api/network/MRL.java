@@ -9,6 +9,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 public class MRL implements Comparable<URI>, Serializable {
@@ -28,9 +30,11 @@ public class MRL implements Comparable<URI>, Serializable {
     // instance
     private final URI uri;
     private final List<Source> sources = new ArrayList<>();
+    private final Lock lock = new ReentrantLock();
     private Metadata metadata;
     private long expires;
     private boolean patched;
+
 
     private MRL(URI uri) {
         this.uri = uri;
@@ -64,6 +68,14 @@ public class MRL implements Comparable<URI>, Serializable {
     @Override
     public int compareTo(URI o) {
         return o.compareTo(this.uri);
+    }
+
+    public void lock() {
+        this.lock.lock();
+    }
+
+    public void unlock() {
+        this.lock.unlock();
     }
 
     public static class Source {

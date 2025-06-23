@@ -67,7 +67,20 @@ public class MediaRequest {
         // CACHE CHECK
 
         // REQUEST
-        List<MRL.Source> source = ;
+        List<MRL.Source> source = mrl.getSources();
+        if (source.isEmpty()) {
+            throw new ConnectException("No sources available for MRL: " + mrl.getUri());
+        }
+
+        // SELECT SOURCE
+        for (MRL.Source src: source) {
+            if (src.slaves() == this.quality) {
+                LOGGER.info(IT, "Selected source: {}", src);
+                return;
+            }
+        }
+
+
         URLConnection conn = source.get(this.context, this.quality).toURL().openConnection();
 
         List<MRL.Source> sources = mrl.getSources();

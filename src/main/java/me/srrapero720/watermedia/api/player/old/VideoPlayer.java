@@ -232,6 +232,7 @@ public class VideoPlayer extends VLCPlayer {
      */
     public Dimension getDimensions() {
         if (raw() == null) return null;
+        raw().mediaPlayer().video().videoDimension()
         return new Dimension(width, height);
     }
 
