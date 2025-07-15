@@ -67,12 +67,12 @@ Redistribution or derivative versions are not allowed
 For commercial purposes or derivative versions, contact us to coordinate a commercial license with [Caprica Software Limited](https://www.capricasoftware.co.uk/) 
 or receive a free license for derivative without commercial purposes under specific conditions (our VLCJ license doesn't apply for your fork).
 
-## Jackson Databind License
-Shaded under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0) as a dependency of [JYD](https://github.com/sealedtx/java-youtube-downloader)
-
 ## VLCJ license
 VLCJ and VLCJ-natives are shaded and distributed under the [Commercial license for vlcj](https://www.capricasoftware.co.uk/docs/Caprica%20Software%20vlcj%20Commercial%20License%20Standard%20Offer.pdf)
 generously provided and donated by [Caprica Software Limited](https://www.capricasoftware.co.uk/).
 
 ## LibVLC license
 LibVLC Windows 10 (x64) binaries are wrapped under [LGPLv2.1](https://code.videolan.org/videolan/vlc/-/blob/master/COPYING)
+
+# NewPipeExtractor license
+NewPipeExtractor is shaded and distrubted under the [GNU General Public License v3.0](https://github.com/TeamNewPipe/NewPipeExtractor/blob/dev/LICENSE)

@@ -63,7 +63,7 @@ dependencies {
 
     // DEPENDENCIES
     shadow "com.github.WaterMediaTeam:videolan-natives:$vlcj_natives_version"
-    shadow "com.github.teamnewpipe.NewPipeExtractor:extractor:v0.24.6"
+    shadow "com.github.teamnewpipe.NewPipeExtractor:extractor:$npe_version"
     shadow "com.github.WaterMediaTeam:vlcj-submodule:$vlcj_submodule_version";
 
     // DEPENDENCIES INCLUDED IN MINECRAFT
