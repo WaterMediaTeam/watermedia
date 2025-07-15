@@ -95,7 +95,6 @@ processResources {
 // Add required module exports
 compileJava {
     options.compilerArgs.add('--add-exports=java.base/jdk.internal.loader=ALL-UNNAMED')
-    options.compilerArgs.add('--add-exports=java.naming/com.sun.jndi.toolkit.url=ALL-UNNAMED')
 }
 
 // ShadowJar task (run this task to make a built JAR.
@@ -114,6 +113,7 @@ shadowJar {
     exclude "META-INF/LICENSE"
     exclude "META-INF/NOTICE.**"
     exclude "META-INF/NOTICE"
+    exclude 'javax/annotation/**'
 
     mergeServiceFiles()
     archiveClassifier = ""
@@ -153,7 +153,7 @@ publishMods {
     curseforge {
         accessToken = CF_TOKEN
         projectId = curseforgeid
-        minecraftVersions.addAll("1.18.2", "1.19.2", "1.20.1", "1.21.1", "1.21.5")
+        minecraftVersions.addAll("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1", "1.21.5")
         javaVersions.addAll(JavaVersion.VERSION_21, JavaVersion.VERSION_17, JavaVersion.VERSION_11, JavaVersion.VERSION_1_8)
         clientRequired = true
         serverRequired = false
