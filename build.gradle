@@ -20,7 +20,7 @@ test {
 
 java {
     withSourcesJar()
-    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 }
 
 sourcesJar {
@@ -63,7 +63,7 @@ dependencies {
 
     // DEPENDENCIES
     shadow "com.github.WaterMediaTeam:videolan-natives:$vlcj_natives_version"
-    shadow "com.github.WaterMediaTeam:ytdl-java:$jyd_version"
+    shadow "com.github.teamnewpipe.NewPipeExtractor:extractor:v0.24.6"
     shadow "com.github.WaterMediaTeam:vlcj-submodule:$vlcj_submodule_version";
 
     // DEPENDENCIES INCLUDED IN MINECRAFT
@@ -90,6 +90,12 @@ processResources {
     filesMatching(['META-INF/mods.toml', 'META-INF/neoforge.mods.toml', 'pack.mcmeta', 'fabric.mod.json', "watermedia/version.cfg"]) {
         expand(project.properties)
     }
+}
+
+// Add required module exports
+compileJava {
+    options.compilerArgs.add('--add-exports=java.base/jdk.internal.loader=ALL-UNNAMED')
+    options.compilerArgs.add('--add-exports=java.naming/com.sun.jndi.toolkit.url=ALL-UNNAMED')
 }
 
 // ShadowJar task (run this task to make a built JAR.
@@ -147,7 +153,7 @@ publishMods {
     curseforge {
         accessToken = CF_TOKEN
         projectId = curseforgeid
-        minecraftVersions.addAll("1.16.5", "1.18.2", "1.19.2", "1.20.1", "1.21.1", "1.21.5")
+        minecraftVersions.addAll("1.18.2", "1.19.2", "1.20.1", "1.21.1", "1.21.5")
         javaVersions.addAll(JavaVersion.VERSION_21, JavaVersion.VERSION_17, JavaVersion.VERSION_11, JavaVersion.VERSION_1_8)
         clientRequired = true
         serverRequired = false
