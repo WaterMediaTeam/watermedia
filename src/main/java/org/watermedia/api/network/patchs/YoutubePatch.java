@@ -60,10 +60,10 @@ public class YoutubePatch extends AbstractPatch {
                 }
                 throw new RuntimeException("Failed to parse live playlist");
             } else {
-                VideoStream bestCombined = getBestVideo(extractor.getVideoStreams());
-                VideoStream bestVideo = getBestVideo(extractor.getVideoOnlyStreams());
+                VideoStream bestCombined = getBestVideo(extractor.getVideoStreams(), preferQuality);
+                VideoStream bestVideo = getBestVideo(extractor.getVideoOnlyStreams(), preferQuality);
                 AudioStream bestAudio = getBestAudio(extractor.getAudioStreams());
-                
+
                 if (WaterMedia.YES_SLAVISM.getAsBoolean()) {
                     if (bestVideo != null) { 
                         Result r = new Result(new URI(bestVideo.getContent()), true, false);
@@ -86,23 +86,50 @@ public class YoutubePatch extends AbstractPatch {
         }
     }
 
-    private VideoStream getBestVideo(List<VideoStream> streams) {
-        if(streams == null) return null;
-        VideoStream bestStream = null;
-
-        // Filter down to only URL streams at 1080p and below + 30fps or fewer and then find largest remaining with greatest FPS
-        for(var stream : streams.stream().filter(s -> s.getWidth() <= 1920 && s.getFps() <= 30).collect(Collectors.toList())) {
-            if(bestStream == null) { bestStream = stream; continue; };
-            if(stream.getWidth() >= bestStream.getWidth() && stream.getFps() >= bestStream.getFps()) {
-                bestStream = stream;
-            }
+    private Integer getMaxWidthForQuality(Quality preferQuality) {
+        switch(preferQuality != null ? preferQuality : Quality.MIDDLE) {
+            case LOWEST:
+                return 256;
+            case LOW:
+                return 426;
+            case MIDDLE:
+                return 480;
+            case HIGH:
+                return 1280;
+            case HIGHEST:
+            default:
+                return 1920;
         }
-        return bestStream;
     }
 
-    private AudioStream getBestAudio(List<AudioStream> streams ) {
+    private Integer getMaxFPSForQuality(Quality preferQuality) {
+        switch(preferQuality != null ? preferQuality : Quality.MIDDLE) {
+            case HIGHEST:
+            case HIGH:
+                return 60;
+            case MIDDLE:
+            case LOW:
+            case LOWEST:
+            default:
+                return 30;
+        }
+    }
+
+    private VideoStream getBestVideo(List<VideoStream> streams, Quality preferQuality) {
         if(streams == null) return null;
-        // Filter down to only URL streams
+
+        // Filter to URL streams and sort by quality. Initialize return with lowest quality then incrementally incrase quality up to preferred.
+        List<VideoStream> priorityStreams = streams.stream()
+            .filter(VideoStream::isUrl)
+            .sorted((a,b) -> a.getWidth() >= a.getWidth() && a.getFps() >= b.getFps() ? 1 : -1)
+            .collect(Collectors.toList());
+        return priorityStreams.stream()
+            .filter(s -> s.getWidth() <= getMaxWidthForQuality(preferQuality) && s.getFps() <= getMaxFPSForQuality(preferQuality))
+            .reduce((a,b) -> a).orElse(priorityStreams.get(0));
+    }
+
+    private AudioStream getBestAudio(List<AudioStream> streams) {
+        if(streams == null) return null;
         return streams.stream().filter(s -> s.isUrl()).reduce((current, next) -> {
             return next.getBitrate() > current.getBitrate() ? next : current;
         }).orElse(null);
