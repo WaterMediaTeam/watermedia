@@ -1,11 +1,8 @@
 [
   "--no-quiet",
 
-  "--cr-average=5000",
-  "--swscale-mode=0",
-
   "--network-synchronisation",
-  "--network-caching=5000",
+  "--network-caching=1000",
   "--live-caching=1000",
   "--file-caching=1000",
 
