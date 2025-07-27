@@ -1,3 +1,11 @@
+# 📦 UPDATE 2.1.27
+- 🛠️ Split VLC arguments for Windows and Linux
+  - This must fix watermedia "not load" on linux in general trying to apply codecc optimizations... AGAIN
+
+# 📦 UPDATE 2.1.26
+- 🐛 Removed missing VLC command-line arguments on (Arch) Linux
+  - This must fix watermedia "not load" on linux in general
+
 # 📦 UPDATE 2.1.25
 - 🐛 Fixed MacOS and Linux VLC discovery not working
 - 🛠️ Added compatibility with NixOS (Linux) [[#144](https://github.com/WaterMediaTeam/watermedia/issues/144)]
