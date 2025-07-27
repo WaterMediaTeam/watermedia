@@ -184,7 +184,7 @@ public class PlayerAPI extends WaterMediaAPI {
         }
 
         try {
-            String[] args = JarTool.readArray("videolan/arguments.json");
+            String[] args = JarTool.readArray(Platform.isWindows() ? "videolan/arguments.json" : "videolan/arguments_linux.json");
             registerFactory(WaterMedia.asResource("default"), args);
             registerFactory(WaterMedia.asResource("sound_only"), DataTool.concat(args, "--vout=none"));
 
