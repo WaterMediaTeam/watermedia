@@ -1,6 +1,9 @@
+# 📦 UPDATE 2.1.28
+- 🛠️ Fixed path discovery for NixOS and support flatpak "workarrounds" made by users
+
 # 📦 UPDATE 2.1.27
 - 🛠️ Split VLC arguments for Windows and Linux
-  - This must fix watermedia "not load" on linux in general trying to apply codecc optimizations... AGAIN
+  - This must fix watermedia "not load" on linux in general trying to apply codec optimizations... AGAIN
 
 # 📦 UPDATE 2.1.26
 - 🐛 Removed missing VLC command-line arguments on (Arch) Linux
