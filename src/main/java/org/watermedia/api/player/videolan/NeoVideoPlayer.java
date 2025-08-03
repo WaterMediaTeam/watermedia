@@ -61,7 +61,7 @@ class NeoVideoPlayer extends NeoBasePlayer implements libvlc_video_format_cb, li
     public int format(PointerByReference opaque, PointerByReference chroma, IntByReference width, IntByReference height, PointerByReference pitches, PointerByReference lines) {
         final int w = width.getValue();
         final int h = height.getValue();
-        final byte[] chromaBytes = bufferFormat.getChroma().canonical().getBytes();
+        final byte[] chromaBytes = bufferFormat.getChroma().chroma();
         final int[] pitchValues = bufferFormat.getChroma().getPitches(w);
         final int[] lineValues = bufferFormat.getChroma().getLines(h);
         chroma.getPointer().write(0, chromaBytes, 0, Math.min(chromaBytes.length, 4));
