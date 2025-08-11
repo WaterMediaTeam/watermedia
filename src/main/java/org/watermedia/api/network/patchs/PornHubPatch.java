@@ -22,7 +22,7 @@ public class PornHubPatch extends AbstractPatch {
     public boolean isValid(URI uri) {
         String host = uri.getHost();
         String path  = uri.getPath();
-        return host != null && host.endsWith("es.pornhub.com") && path != null && path.startsWith("/view_video.php");
+        return host != null && host.endsWith("pornhub.com") && path != null && path.startsWith("/view_video.php");
     }
 
     @Override
@@ -55,7 +55,7 @@ public class PornHubPatch extends AbstractPatch {
 
             String url = flashVars.mediaDefinitions[0].videoUrl;
 
-            for (FlashVars.MediaDefinition mediaDefinition : flashVars.mediaDefinitions) {
+            for (FlashVars.MediaDefinition mediaDefinition: flashVars.mediaDefinitions) {
                 if (mediaDefinition.defaultQuality) {
                     url = mediaDefinition.videoUrl;
                 }
