@@ -1,17 +1,17 @@
 package org.watermedia.api.network.patchs;
 
-import com.sun.jndi.toolkit.url.Uri;
 import org.watermedia.core.tools.DataTool;
 import org.watermedia.core.tools.NetTool;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MediaFirePatch extends AbstractPatch {
-    private static final Pattern PATTERN = Pattern.compile("<a\\s+class=\"input\\s+popsok\"\\s+aria-label=\"Download\\s+file\"\\s+href=\"([^\"]+)\"[^>]*>");
+    private static final Pattern PATTERN = Pattern.compile("data-scrambled-url=\"([^\"]+)\"");
 
 
     @Override
@@ -53,7 +53,9 @@ public class MediaFirePatch extends AbstractPatch {
             Matcher matcher = PATTERN.matcher(html);
 
             if (matcher.find()) {
-                return new Result(new URI(matcher.group(1)), false, false);
+                String encoded = matcher.group(1);
+                byte[] decoded = Base64.getDecoder().decode(encoded);
+                return new Result(new URI(new String(decoded, StandardCharsets.UTF_8)), false, false);
             } else {
                 throw new NullPointerException("No link found in MediaFire page - URL: " + uri);
             }
