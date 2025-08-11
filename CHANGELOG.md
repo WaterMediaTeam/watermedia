@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.30
+- 🐛 Fixed broken library bundling
+  - 🛠️ Somehow github actions managed to import old vlcj-natives version
+
 # 📦 UPDATE 2.1.29
 - 🐛 Fixed MediaFire support
 - 🐛 Fixed BasePlayer#startPaused() starting unpaused
