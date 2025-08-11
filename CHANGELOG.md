@@ -1,3 +1,9 @@
+# 📦 UPDATE 2.1.29
+- 🐛 Fixed MediaFire support
+- 🐛 Fixed BasePlayer#startPaused() starting unpaused
+- 🐛 Remove language limit on PH url patcher
+- 🛠️ Robustified loggers for VLC discovery (diagnostic purposes)
+
 # 📦 UPDATE 2.1.28
 - 🛠️ Fixed path discovery for NixOS and support flatpak "workarrounds" made by users
 
