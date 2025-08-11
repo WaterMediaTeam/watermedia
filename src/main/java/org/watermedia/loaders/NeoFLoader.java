@@ -6,57 +6,40 @@ import org.watermedia.core.exceptions.IllegalEnvironmentException;
 import org.watermedia.core.exceptions.IllegalTLauncherException;
 import org.watermedia.core.exceptions.IncompatibleModException;
 import org.watermedia.core.tools.Tool;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLLoader;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLLoader;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.function.Supplier;
-
-import static org.watermedia.WaterMedia.LOGGER;
 
 @Mod(value = WaterMedia.ID)
-public class ForgeLoader implements ILoader {
-    private static final Marker IT = MarkerManager.getMarker("ForgeLoader");
+public class NeoFLoader implements ILoader {
     private static final Path tmpPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve(WaterMedia.ID);
-    private static final Path processPath = new File("").toPath().toAbsolutePath();
 
-    public ForgeLoader() {
-        // STUPID HACK TO AVOID FORGE COMPLAINS WHEN WATERMEDIS ISN'T ON SERVER-SIDE
-        try {
-            String pairClassName = concatPackage("org", "apache", "commons", "lang3", "tuple", "Pair");
-            Method pairOf = Class.forName(pairClassName).getMethod("of", Object.class, Object.class);
-
-            Supplier<String> stringSupplier = () -> "";
-            Supplier<Boolean> booleanSupplier = () -> true;
-
-            Object o = pairOf.invoke(null, stringSupplier, booleanSupplier);
-
-            ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> o);
-            LOGGER.info(IT, "DISPLAYTEST correctly updated");
-        } catch (Throwable ignored) {}
-
+    public NeoFLoader() {
         try {
             if (tlcheck()) throw new IllegalTLauncherException();
             if (ofcheck()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
-            if (modInstalled("xenon")) throw new IncompatibleModException("xenon", "Xenon", "Embeddium (embeddium) or Sodium (sodium)");
 
             if (clientSide()) WaterMedia.prepare(this).start();
-            else if (!developerMode()) throw new IllegalEnvironmentException();
+            else throw new IllegalEnvironmentException();
         } catch (Exception e) {
             throw new RuntimeException("Failed starting " + WaterMedia.NAME + " for " + name() +": " + e.getMessage(), e);
         }
     }
 
+    public boolean ofcheck() {
+        try {
+            Class.forName("optifine.Installer", false, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (Exception ignored) {}
+        return false;
+    }
+
     @Override
     public String name() {
-        return "Forge";
+        return "NeoForge";
     }
 
     @Override
@@ -66,13 +49,13 @@ public class ForgeLoader implements ILoader {
 
     @Override
     public Path processDir() {
-        return processPath;
+        return FMLLoader.getGamePath();
     }
 
     @Override
     public boolean tlcheck() {
         // first lookup attempt
-        boolean isT = Tool.t() || modInstalled("tlskincape") || modInstalled("tlauncher_custom_cape_skin");
+        boolean isT = Tool.t();
         final ClassLoader current = Thread.currentThread().getContextClassLoader();
 
         try {
@@ -151,52 +134,13 @@ public class ForgeLoader implements ILoader {
         return isT;
     }
 
-    public boolean ofcheck() {
-        try {
-            Class.forName("optifine.Installer", false, Thread.currentThread().getContextClassLoader());
-            if (WaterMedia.getConfigDir().resolve("enable_optifine.txt").toFile().exists()) {
-                LOGGER.warn(IT, "Optifine detected, but crash is disabled by configuration, please remove Optifine to avoid issues, otherwise crashes are up to you");
-                return false;
-            }
-            return true;
-        } catch (Exception ignored) {}
-        return false;
-    }
-
-    public boolean modInstalled(String id) {
-        return FMLLoader.getLoadingModList().getModFileById(id) != null;
-    }
-
     @Override
     public boolean clientSide() {
-        try {
-            return FMLLoader.getDist().isClient();
-        } catch (Throwable t2) {
-            LOGGER.error(IT, "Cannot check if was client, assuming it was");
-            return true;
-        }
+        return FMLLoader.getDist().isClient();
     }
 
     @Override
     public boolean developerMode() {
-        try {
-            return !FMLLoader.isProduction();
-        } catch (Throwable t) {
-            LOGGER.error(IT, "Cannot check if was developer env, assuming it wasn't");
-            return false;
-        }
-    }
-
-    private String concatPackage(String... pgk) {
-        StringBuilder r = new StringBuilder();
-        for (String s : pgk) {
-            r.append(s).append(".");
-        }
-
-        if (r.length() > 0) {
-            r.setLength(r.length() - 1);
-        }
-
-        return r.toString();
+        return FMLLoader.isProduction();
     }
 }

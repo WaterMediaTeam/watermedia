@@ -15,7 +15,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 
-public class FavricLoader implements ClientModInitializer, ModInitializer, ILoader {
+public class FavricMCLoader implements ClientModInitializer, ModInitializer, ILoader {
     private static final Marker IT = MarkerManager.getMarker("FabricLoader");
 
     private final Path tempPath = new File(System.getProperty("java.io.tmpdir")).toPath().toAbsolutePath().resolve("watermedia");

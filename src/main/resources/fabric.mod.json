@@ -17,10 +17,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "org.watermedia.loaders.FavricLoader"
+      "org.watermedia.loaders.FavricMCLoader"
     ],
     "main": [
-      "org.watermedia.loaders.FavricLoader"
+      "org.watermedia.loaders.FavricMCLoader"
     ]
   },
   "breaks": {
