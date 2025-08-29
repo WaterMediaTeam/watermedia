@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.31
+- 🐛 Fixed crashes on NeoForge running developments 
+
 # 📦 UPDATE 2.1.30
 - 🐛 Fixed broken library bundling
   - 🛠️ Somehow github actions managed to import old vlcj-natives version
