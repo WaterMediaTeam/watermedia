@@ -1,4 +1,4 @@
-# 📦 UPDATE 2.1.31
+# 📦 UPDATE 2.1.32
 - 🐛 Fixed crashes on NeoForge running developments 
 
 # 📦 UPDATE 2.1.30
