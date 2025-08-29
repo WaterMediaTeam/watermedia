@@ -23,7 +23,7 @@ public class NeoFLoader implements ILoader {
             if (ofcheck()) throw new IncompatibleModException("optifine", "Optifine", "Embeddium (embeddium) or Sodium (sodium)");
 
             if (clientSide()) WaterMedia.prepare(this).start();
-            else throw new IllegalEnvironmentException();
+            else if (!developerMode()) throw new IllegalEnvironmentException();
         } catch (Exception e) {
             throw new RuntimeException("Failed starting " + WaterMedia.NAME + " for " + name() +": " + e.getMessage(), e);
         }
