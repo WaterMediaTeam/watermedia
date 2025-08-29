@@ -141,6 +141,6 @@ public class NeoFLoader implements ILoader {
 
     @Override
     public boolean developerMode() {
-        return FMLLoader.isProduction();
+        return !FMLLoader.isProduction();
     }
 }
