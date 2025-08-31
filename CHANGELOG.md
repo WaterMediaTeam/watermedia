@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.33
+- 🐛 Fixed the small freezes starting media (specially playing youtube videos)
+- 🛠️ Remove slaves support 
+
 # 📦 UPDATE 2.1.32
 - 🐛 Fixed crashes on NeoForge running developments 
 
