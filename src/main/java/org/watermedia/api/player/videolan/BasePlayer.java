@@ -32,7 +32,6 @@ public abstract class BasePlayer {
 
     // PLAYER
     protected URI url;
-    protected URI audioUrl;
     /**
      * @deprecated no replacement
      */
@@ -85,7 +84,6 @@ public abstract class BasePlayer {
             if (result == null) throw new IllegalArgumentException("Invalid URL");
 
             this.url = result.uri;
-            this.audioUrl = result.audioUrl;
             this.live = result.assumeStream;
             return true;
         } catch (Exception e) {
@@ -99,13 +97,7 @@ public abstract class BasePlayer {
         ThreadTool.thread(() -> {
             this.lock.lock();
             if (rpa(url)) {
-                if (audioUrl != null) {
-                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                    raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
-                    raw.mediaPlayer().controls().start();
-                } else {
-                    raw.mediaPlayer().media().start(this.url, vlcArgs);
-                }
+                raw.mediaPlayer().media().play(this.url, vlcArgs);
             }
             this.lock.unlock();
         });
@@ -113,18 +105,14 @@ public abstract class BasePlayer {
 
     public void startPaused(URI url) { this.startPaused(url, new String[0]); }
     public void startPaused(URI url, String[] vlcArgs) {
+        final String[] args = new String[vlcArgs.length + 1];
+        System.arraycopy(vlcArgs, 0, args, 0, vlcArgs.length);
+        args[vlcArgs.length] = "start-paused"; // pause on start
+
         ThreadTool.thread(() -> {
             this.lock.lock();
             if (rpa(url)) {
-                if (audioUrl != null) {
-                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                    if (!raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString())) {
-                        LOGGER.warn(IT, "Failed to add audio slave {} for {}", audioUrl.toString(), this.url.toString());
-                    }
-                    raw.mediaPlayer().controls().start();
-                } else {
-                    raw.mediaPlayer().media().start(this.url, vlcArgs);
-                }
+                raw.mediaPlayer().media().play(this.url, args);
             }
             this.lock.unlock();
         });
