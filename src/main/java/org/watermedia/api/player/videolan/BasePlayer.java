@@ -46,6 +46,7 @@ public abstract class BasePlayer {
 
     // PLAYER THREAD
     protected boolean live = false;
+    protected ReentrantLock lock = new ReentrantLock();
 
     protected BasePlayer(MediaPlayerFactory factory, RenderCallback renderCallback, BufferFormatCallback bufferFormatCallback, BufferCleanupCallback cleanupCallback) {
         this.init(factory, renderCallback, bufferFormatCallback, cleanupCallback);
@@ -95,36 +96,38 @@ public abstract class BasePlayer {
 
     public void start(URI url) { this.start(url, new String[0]); }
     public void start(URI url, String[] vlcArgs) {
-        if (rpa(url)) {
-            if (audioUrl != null) {
-                raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
-                raw.mediaPlayer().controls().play();
-            } else {
-                raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                raw.mediaPlayer().media().play(this.url, vlcArgs);
+        ThreadTool.thread(() -> {
+            this.lock.lock();
+            if (rpa(url)) {
+                if (audioUrl != null) {
+                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
+                    raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString());
+                    raw.mediaPlayer().controls().start();
+                } else {
+                    raw.mediaPlayer().media().start(this.url, vlcArgs);
+                }
             }
-        }
+            this.lock.unlock();
+        });
     }
 
     public void startPaused(URI url) { this.startPaused(url, new String[0]); }
     public void startPaused(URI url, String[] vlcArgs) {
-        final String[] args = new String[vlcArgs.length + 1];
-        System.arraycopy(vlcArgs, 0, args, 0, vlcArgs.length);
-        args[vlcArgs.length] = "start-paused"; // pause on start
-        vlcArgs = args;
-        if (rpa(url)) {
-            if (audioUrl != null) {
-                raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                if (!raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString())) {
-                    LOGGER.warn(IT, "Failed to add audio slave {} for {}", audioUrl.toString(), this.url.toString());
+        ThreadTool.thread(() -> {
+            this.lock.lock();
+            if (rpa(url)) {
+                if (audioUrl != null) {
+                    raw.mediaPlayer().media().prepare(this.url, vlcArgs);
+                    if (!raw.mediaPlayer().media().slaves().add(MediaSlaveType.AUDIO, MediaSlavePriority.HIGHEST, audioUrl.toString())) {
+                        LOGGER.warn(IT, "Failed to add audio slave {} for {}", audioUrl.toString(), this.url.toString());
+                    }
+                    raw.mediaPlayer().controls().start();
+                } else {
+                    raw.mediaPlayer().media().start(this.url, vlcArgs);
                 }
-                raw.mediaPlayer().controls().play();
-            } else {
-                raw.mediaPlayer().media().prepare(this.url, vlcArgs);
-                raw.mediaPlayer().controls().play();
             }
-        }
+            this.lock.unlock();
+        });
     }
 
     public void resume() {
@@ -166,7 +169,7 @@ public abstract class BasePlayer {
      * basically makes player instance useless.
      * @return true if any async task was active
      */
-    public boolean isSafeUse() { return true; }
+    public boolean isSafeUse() { return !lock.isLocked(); }
 
     public String getStateName() {
         return raw.mediaPlayer().status().state().name();
@@ -334,11 +337,18 @@ public abstract class BasePlayer {
 
     public void release() {
         if (raw == null) return;
-        CallbackMediaPlayerComponent rawRef = raw;
-        raw = null;
+        ThreadTool.thread(() -> {
+            lock.lock();
 
-        // remove callbacks to prevent more blowup stuff
-        rawRef.mediaPlayer().release();
+            CallbackMediaPlayerComponent rawRef = raw;
+            raw = null;
+
+            // remove callbacks to prevent more blowup stuff
+            if (rawRef == null) return; // If for some reason is triggered 2 times.
+            rawRef.mediaPlayer().release();
+
+            lock.unlock();
+        });
     }
 
     protected static final class WaterMediaPlayerEventListener extends EmbededMediaPlayerEventListener {
