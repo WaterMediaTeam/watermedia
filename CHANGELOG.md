@@ -1,3 +1,6 @@
+# 📦 UPDATE 2.1.34
+- 🐛 Fixed VLC doesn't load on Linux (under certain distros)
+
 # 📦 UPDATE 2.1.33
 - 🐛 Fixed the small freezes starting media (specially playing youtube videos)
 - 🛠️ Remove slaves support 
