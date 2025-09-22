@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.35
+- ✨ Deprecate method `preRender` in VideoPlayer class
+  - Now it uses render thread executor to run preRender task such as upload the texture
+
 # 📦 UPDATE 2.1.34
 - 🐛 Fixed VLC doesn't load on Linux (under certain distros)
 
