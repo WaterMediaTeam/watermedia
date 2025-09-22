@@ -15,6 +15,7 @@ import org.watermedia.videolan4j.tools.Chroma;
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.InterruptedByTimeoutException;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,6 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
     private int width = 1;
     private int height = 1;
     private int size = width * height * 4;
-    private boolean refresh = false;
     private boolean first = true;
     private final int texture;
     private final Semaphore semaphore = new Semaphore(1);
@@ -48,7 +48,7 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
     public VideoPlayer(MediaPlayerFactory factory, Executor renderExecutor) {
         super();
         this.texture = RenderAPI.createTexture();
-        this.renderExecutor = renderExecutor;
+        this.renderExecutor = Objects.requireNonNull(renderExecutor, "Executor cannot be null");
         this.init(factory, this, this, this);
         if (raw() == null) {
             RenderAPI.deleteTexture(texture);
@@ -60,7 +60,26 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
 
     @Override
     public void display(MediaPlayer mediaPlayer, ByteBuffer[] nativeBuffers, BufferFormat bufferFormat) {
-        this.refresh = true;
+        renderExecutor.execute(() -> {
+            RenderAPI.bindTexture(this.texture);
+            try {
+                if (semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
+                    if (buffers != null && buffers.length > 0) {
+                        RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
+                        first = false;
+                    }
+                    semaphore.release();
+                } else {
+                    LOGGER.error(IT, "{} took more than 1 second to synchronize with native threads", this, new InterruptedByTimeoutException());
+                    if (first) { // first frames means no texture, this might cause serious problems
+                        throw new IllegalStateException("Cannot handle interruption");
+                    }
+                    this.release();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -107,29 +126,12 @@ public class VideoPlayer extends BasePlayer implements RenderCallback, BufferFor
      * Uploads the buffer in the current state
      *
      * <p>Ensure execution on RenderThread</p>
-     * @return
+     * @deprecated as part of the v3 development, this was made OBSOLETE,
+     * now pre-rendering its automatically done using render thread executor
+     * @return gl texture identifier
      */
+    @Deprecated(forRemoval = true)
     public int preRender() {
-        RenderAPI.bindTexture(this.texture);
-        try {
-            if (semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
-                if (refresh && buffers != null && buffers.length > 0) {
-                    RenderAPI.uploadBuffer(buffers[0], texture, GL12.GL_RGBA, width, height, first);
-                    first = false;
-                    refresh = false;
-                }
-                semaphore.release();
-            } else {
-                LOGGER.error(IT, "{} took more than 1 second to synchronize with native threads", this, new InterruptedByTimeoutException());
-                if (first) { // first frames means no texture, this might cause serious problems
-                    throw new IllegalStateException("Cannot handle interruption");
-                }
-                this.release();
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        RenderAPI.bindTexture(RenderAPI.NONE);
         return texture;
     }
 
