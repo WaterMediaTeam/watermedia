@@ -2,7 +2,7 @@ package org.watermedia.api.network;
 
 import org.watermedia.api.WaterMediaAPI;
 import org.watermedia.api.network.patchs.AbstractPatch;
-import org.watermedia.core.tools.DataTool;
+import org.watermedia.api.network.patchs.*;
 import org.watermedia.loaders.ILoader;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -143,6 +143,27 @@ public class NetworkAPI extends WaterMediaAPI {
         return queryParams;
     }
 
+    /**
+     * Registers a patch to be used on the API
+     * @see AbstractPatch
+     * @param patch patch instance
+     */
+    public static void registerPatch(AbstractPatch patch) {
+        if (patch != null && !FIXERS.contains(patch)) {
+            FIXERS.add(patch);
+        }
+    }
+
+    /**
+     * Unregisters a patch from the API
+     * @see AbstractPatch
+     * @param patch patch instance
+     */
+    public static void unregisterPatch(AbstractPatch patch) {
+        if (patch != null) {
+            FIXERS.remove(patch);
+        }
+    }
 
     @Override
     public Priority priority() {
@@ -156,11 +177,24 @@ public class NetworkAPI extends WaterMediaAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        FIXERS.addAll(DataTool.toList(ServiceLoader.load(AbstractPatch.class)));
+        // YES, I HATE MIXINS ON WATERMEDIA (I)-(I)''
+        registerPatch(new DiskPatch());
+        registerPatch(new DrivePatch());
+        registerPatch(new DropboxPatch());
+        registerPatch(new KickPatch());
+        registerPatch(new LightshotPatch());
+        registerPatch(new MediaFirePatch());
+        registerPatch(new OnedrivePatch());
+        registerPatch(new PornHubPatch());
+        registerPatch(new StreamablePatch());
+        registerPatch(new TwitchPatch());
+        registerPatch(new TwitterPatch());
+        registerPatch(new YoutubePatch());
     }
 
     @Override
     public void release() {
-
+        FIXERS.clear();
+        CACHE.clear();
     }
 }
