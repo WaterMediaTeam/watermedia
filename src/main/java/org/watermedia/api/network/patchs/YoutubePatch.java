@@ -109,36 +109,19 @@ public class YoutubePatch extends AbstractPatch {
                     String ytLivePlaylist = fetchLivePlaylist(videoDetails.liveUrl());
                     if (ytLivePlaylist != null) return new Result(new URI(StreamQuality.parse(ytLivePlaylist).get(0).getUrl()), true, true);
                 } else {
-                    if (WaterMedia.YES_SLAVISM.getAsBoolean()) {
-                        // WITHOUT AUDIO
-                        VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
-                        VideoFormat bestVideo = videoInfo.bestVideoFormat();
-                        AudioFormat bestAudio = videoInfo.bestAudioFormat();
+                    // BEST WITH ALL
+                    VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
+                    if (bestAll != null) return new Result(new URI(bestAll.url()), true, false);
 
-                        if (bestVideo != null) {
-                            Result r = new Result(new URI(bestVideo.url()), true, false);
-                            if (bestVideo != bestAll) {
-                                r.setAudioTrack(new URI(bestAudio.url()));
-                            }
-                            return r;
-                        } else if (bestAudio != null) {
-                            return new Result(new URI(bestAudio.url()), true, false);
-                        }
-                    } else {
-                        // BEST WITH ALL
-                        VideoFormat bestAll = videoInfo.bestVideoWithAudioFormat();
-                        if (bestAll != null) return new Result(new URI(bestAll.url()), true, false);
-
-                        // AUDIO ONLY
-                        VideoFormat bestVideo = videoInfo.bestVideoFormat();
-                        if (bestVideo != null) {
-                            return new Result(new URI(bestVideo.url()), true, false);
-                        }
-
-                        // VIDEO ONLY
-                        AudioFormat bestAudio = videoInfo.bestAudioFormat();
-                        if (bestAudio != null) return new Result(new URI(bestAudio.url()), true, false);
+                    // AUDIO ONLY
+                    VideoFormat bestVideo = videoInfo.bestVideoFormat();
+                    if (bestVideo != null) {
+                        return new Result(new URI(bestVideo.url()), true, false);
                     }
+
+                    // VIDEO ONLY
+                    AudioFormat bestAudio = videoInfo.bestAudioFormat();
+                    if (bestAudio != null) return new Result(new URI(bestAudio.url()), true, false);
                 }
 
                 // VLC shouldn't use LUAC

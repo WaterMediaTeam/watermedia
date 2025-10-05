@@ -27,9 +27,8 @@ public class WaterMedia {
 
 	public static final ArgTool NO_BOOTING = new ArgTool("watermedia.disableBoot");
 	public static final ArgTool NO_VLC = new ArgTool("watermedia.disableVLC");
-	public static final ArgTool YES_SLAVISM = new ArgTool("watermedia.slavist");
 
-	private static ILoader bootstrap;
+    private static ILoader bootstrap;
 	private static WaterMedia instance;
 
 	private WaterMedia() {}
@@ -91,8 +90,13 @@ public class WaterMedia {
 		return bootstrap.processDir().resolve("config/watermedia");
 	}
 
+    /**
+     * Enables or disables slavism mode, which enables some extra features
+     * @deprecated This method is deprecated and will be removed in future versions. It has no effect.
+     * @param mode true to enable slavism mode, false to disable it
+     */
+    @Deprecated(forRemoval = true)
 	public static void setSlavismMode(boolean mode) {
-		YES_SLAVISM.override(String.valueOf(mode));
 	}
 
 
