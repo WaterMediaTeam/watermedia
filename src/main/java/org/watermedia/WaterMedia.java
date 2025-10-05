@@ -67,6 +67,20 @@ public class WaterMedia {
 			m.start(bootstrap);
 			LOGGER.info(IT, "Module {} loaded successfully", m.getClass().getSimpleName());
 		}
+        LOGGER.info(IT, "Setting up shutdown hook");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            LOGGER.info(IT, "Shutting down...");
+            for (WaterMediaAPI m : modules) {
+                try {
+                    LOGGER.info(IT, "Releasing {}", m.getClass().getSimpleName());
+                    m.release();
+                } catch (Exception e) {
+                    LOGGER.error(IT, "Failed to release module {}: {}", m.getClass().getSimpleName(), e.getMessage(), e);
+                }
+            }
+            LOGGER.info(IT, "Shutdown complete");
+        }));
+
 		LOGGER.info(IT, "Startup finished");
 		LOGGER.info(IT, "Are you ready for trouble?");
 	}

@@ -187,8 +187,6 @@ public class PlayerAPI extends WaterMediaAPI {
             String[] args = JarTool.readArray(Platform.isWindows() ? "videolan/arguments.json" : "videolan/arguments_linux.json");
             registerFactory(WaterMedia.asResource("default"), args);
             registerFactory(WaterMedia.asResource("sound_only"), DataTool.concat(args, "--vout=none"));
-
-            Runtime.getRuntime().addShutdownHook(new Thread(this::release));
         } catch (Exception e) {
             LOGGER.error(IT, "Failed to load VLC", e);
         }
