@@ -1,3 +1,7 @@
+# 📦 UPDATE 2.1.36
+- 🛠️ Fixed wrong buffer alignment for VLC players (sometimes causes frame corruption)
+- 🛠️ Fixed MediaFire support (again)
+
 # 📦 UPDATE 2.1.35
 - ✨ Deprecate method `preRender` in VideoPlayer class
   - Now it uses render thread executor to run preRender task such as upload the texture
