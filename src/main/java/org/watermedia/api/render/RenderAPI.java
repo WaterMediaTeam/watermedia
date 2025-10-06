@@ -28,18 +28,19 @@ public class RenderAPI extends WaterMediaAPI {
      *
      * <p>In case class was missing uses instead {@link ByteBuffer#allocateDirect(int) DirectByteBuffer#allocateDirect(int)}</p>
      * @param size size of the buffer
+     *
      * @return DirectByteBuffer
      */
+    @Deprecated(forRemoval = true)
     public static ByteBuffer createByteBuffer(int size) {
-        if (ADVANCED_LWJGL) {
-            MemoryUtil.MemoryAllocator allocator = MemoryUtil.getAllocator(false);
-            long address = allocator.malloc(size);
-            if (address == NULL)
-                throw new OutOfMemoryError("Insufficient memory to allocate " + size + " bytes");
+        return createByteBuffer(1, size);
+    }
 
-            return MemoryUtil.memByteBuffer(address, size);
+    public static ByteBuffer createByteBuffer(int alignment, int size) {
+        if (ADVANCED_LWJGL) {
+            return MemoryUtil.memAlignedAlloc(alignment, size);
         } else {
-            return ByteBuffer.allocateDirect(size);
+            return ByteBuffer.allocateDirect(size); // Fallback to old way
         }
     }
 
@@ -71,11 +72,7 @@ public class RenderAPI extends WaterMediaAPI {
      */
     public static void freeByteBuffer(ByteBuffer buffer) {
         if (ADVANCED_LWJGL) {
-            MemoryUtil.MemoryAllocator allocator = MemoryUtil.getAllocator(false);
-            if (buffer == null) return;
-
-            // NOTE: LWJGL 3.3 adds more variants for all buffers, useless because all buffers extends buffer.
-            allocator.free(MemoryUtil.memAddress0((Buffer) buffer));
+            MemoryUtil.memAlignedFree(buffer);
         }
     }
 

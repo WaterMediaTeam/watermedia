@@ -175,8 +175,7 @@ public class TestOpenGLApp implements Executor {
 
             glColor4f(1, 1, 1, 1);
 
-            glBegin(GL_QUADS);
-            {
+            glBegin(GL_QUADS); {
                 glTexCoord2f(0, 1); glVertex2f(-1, -1);
                 glTexCoord2f(0, 0); glVertex2f(-1, 1);
                 glTexCoord2f(1, 0); glVertex2f(1, 1);
@@ -186,8 +185,7 @@ public class TestOpenGLApp implements Executor {
 
             if (player != null && (!player.isSafeUse() || player.isBuffering() || player.isLoading() || player.isPaused())) {
                 glBindTexture(GL_TEXTURE_2D, ImageAPI.loadingGif().texture(System.currentTimeMillis() % renderer.duration));
-                glBegin(GL_QUADS);
-                {
+                glBegin(GL_QUADS); {
                     glTexCoord2f(0, 1); glVertex2f(-1, -1);
                     glTexCoord2f(0, 0); glVertex2f(-1, 1);
                     glTexCoord2f(1, 0); glVertex2f(1, 1);
