@@ -177,7 +177,6 @@ public class NetworkAPI extends WaterMediaAPI {
 
     @Override
     public void start(ILoader bootCore) throws Exception {
-        // YES, I HATE MIXINS ON WATERMEDIA (I)-(I)''
         registerPatch(new DiskPatch());
         registerPatch(new DrivePatch());
         registerPatch(new DropboxPatch());

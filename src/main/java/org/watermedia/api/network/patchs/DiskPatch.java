@@ -27,8 +27,6 @@ public class DiskPatch extends AbstractPatch {
                 switch (uri.getHost()) {
                     case "local":
                         return new AbstractPatch.Result(new File("").toPath().resolve(uri.getPath().substring(1)).toUri(), false, false);
-                    case "user":
-                        break; // NO-OP for now, requires security checks
                     case "temp":
                         return new AbstractPatch.Result(WaterMedia.getLoader().tempDir().resolve(uri.getPath().substring(1)).toUri(), false, false);
                 }
