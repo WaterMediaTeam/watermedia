@@ -189,7 +189,6 @@ public class NetworkAPI extends WaterMediaAPI {
         registerPatch(new StreamablePatch());
         registerPatch(new TwitchPatch());
         registerPatch(new TwitterPatch());
-        registerPatch(new YoutubePatch());
     }
 
     @Override
