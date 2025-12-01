@@ -1,3 +1,9 @@
+# 📦 UPDATE 2.1.37
+- 🛠️ Removed Youtube support (broken for months, time to say goodbye)
+  - Will be replaced with an addon
+  - Also deletes JYTD dependency and stops shading fastjson library
+- 🐛 Fixed Kick vods
+
 # 📦 UPDATE 2.1.36
 - 🛠️ Fixed wrong buffer alignment for VLC players (sometimes causes frame corruption)
 - 🛠️ Fixed MediaFire support (again)
