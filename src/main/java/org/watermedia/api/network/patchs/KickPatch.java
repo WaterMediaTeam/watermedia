@@ -53,7 +53,7 @@ public class KickPatch extends AbstractPatch {
     }
 
     public KickVideo getVideoInfo(String videoId) throws Exception {
-        try (InputStreamReader in = new InputStreamReader(getInputStream(new URI(API_URL + "video/" + videoId)))) {
+        try (InputStreamReader in = new InputStreamReader(getInputStream(new URI("https://kick.com/api/v1/" + "video/" + videoId)))) {
             return GSON.fromJson(in, KickVideo.class);
         }
     }
