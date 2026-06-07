@@ -9,12 +9,12 @@
 [![](https://dcbadge.vercel.app/api/server/453QZ749U4)](https://discord.gg/453QZ749U4)
 
 # 🔗 WaterMedia: Multimedia API
-Provides multimedia support using native/java decoders and LibVLC as video backend.
-Used by many minecraft mods like LittleFrames and VideoPlayer and the superseding of FancyVideo-API in Minecraft,
-integrates support for many platforms such as YouTube, Twitch, Kick, Google Drive, OneDrive, Dropbox, Imgur,
+Provides multimedia support using native/java decoders and LibVLC as a video backend.
+Used by many minecraft mods such as LittleFrames, VideoPlayer and the superseding of FancyVideo-API in Minecraft,
+integrates support for many platforms such as ~~YouTube~~, Twitch, Kick, Google Drive, OneDrive, Dropbox, Imgur,
 Twitter, Streamable, Lightshot and more!
 
-Designed to work on almost Minecraft Mod Loader (Forge, NeoForge and Fabric) above Minecraft 1.16.5 and 
+Designed to work on almost every Minecraft Mod Loader (Forge, NeoForge and Fabric) above Minecraft 1.16.5 and 
 outside Minecraft contexts.
 
 # 💰 Donations
@@ -37,7 +37,7 @@ outside Minecraft contexts.
 
 
 ## ⏯️ VideoLAN
-OS marked with "special actions required" requires to manually download and install [VideoLAN](https://www.videolan.org/vlc/).
+Operating Systems marked with ⚡ require you to manually download and install [VideoLAN](https://www.videolan.org/vlc/).
 > [!WARNING]
 > **Linux:** Flatpak, Pacman or sandboxed installations aren't supported (For VLC and MC).<br>
 > **macOS:** Find the universal install [here](https://get.videolan.org/vlc/3.0.21/macosx/vlc-3.0.21-universal.dmg).
@@ -59,9 +59,9 @@ OS marked with "special actions required" requires to manually download and inst
 - [FancyMenu (Coming Soon)](https://www.curseforge.com/minecraft/mc-mods/fancymenu) - By Keksuccino
 
 # ⚖️ License
-WaterMedia is under Polyform Strict License v1.0.0<br>
+WaterMedia is licensed under the Polyform Strict License v1.0.0<br>
 
-Permitted non-commercial usage (included and not limited to; ModPacks or ServerPacks)
+Permitted non-commercial usage (including and not limited to; ModPacks or ServerPacks)
 Redistribution or derivative versions are not allowed
 
 For commercial purposes or derivative versions, contact us to coordinate a commercial license with [Caprica Software Limited](https://www.capricasoftware.co.uk/) 
