@@ -10,8 +10,9 @@
 
 # 🔗 WaterMedia: Multimedia API
 Provides multimedia support using native/java decoders and LibVLC as a video backend.
-Used by many minecraft mods such as LittleFrames, VideoPlayer and the superseding of FancyVideo-API in Minecraft,
-integrates support for many platforms such as ~~YouTube~~, Twitch, Kick, Google Drive, OneDrive, Dropbox, Imgur,
+WaterMedia is a dependency for many minecraft mods such as LittleFrames, VideoPlayer, etc. 
+It is a successor to, and supersedes, FancyVideo-API.
+Integrates native support for many platforms such as ~~YouTube~~, Twitch, Kick, Google Drive, OneDrive, Dropbox, Imgur,
 Twitter, Streamable, Lightshot and more!
 
 Designed to work on almost every Minecraft Mod Loader (Forge, NeoForge and Fabric) above Minecraft 1.16.5 and 
@@ -61,7 +62,7 @@ Operating Systems marked with ⚡ require you to manually download and install [
 # ⚖️ License
 WaterMedia is licensed under the Polyform Strict License v1.0.0<br>
 
-Permitted non-commercial usage (including and not limited to; ModPacks or ServerPacks)
+Permitted non-commercial usage (including but not limited to; ModPacks or ServerPacks)
 Redistribution or derivative versions are not allowed
 
 For commercial purposes or derivative versions, contact us to coordinate a commercial license with [Caprica Software Limited](https://www.capricasoftware.co.uk/) 
