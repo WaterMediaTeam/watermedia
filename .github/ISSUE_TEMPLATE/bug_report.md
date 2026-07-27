@@ -83,6 +83,7 @@ Please attach any relevant files.
 Recommended:
 - `latest.log`
 - `debug.log` (if enabled)
+- `stdout-logs.txt`
 - Crash report (`crash-reports/...`)
 - Launcher log (Prism Launcher, CurseForge, MultiMC, etc.)
 
